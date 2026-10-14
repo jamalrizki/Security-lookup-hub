@@ -150,7 +150,8 @@ async function explainRoute(request, env, ctx, origin) {
   }
 
   const cache = caches.default;
-  const key = cacheUrl(`${CACHE_VERSION}/explain3/${encodeURIComponent(MODEL)}/${encodeURIComponent(body.value)}`);
+  const subject = body.type === 'email' ? `email:${body.value.split('@').pop()}` : body.value;
+  const key = cacheUrl(`${CACHE_VERSION}/explain3/${encodeURIComponent(MODEL)}/${encodeURIComponent(subject)}`);
   const hit = await cache.match(key);
   if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);
 

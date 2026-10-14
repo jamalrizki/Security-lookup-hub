@@ -65,3 +65,9 @@ test('verdict is decided in code, and abused platforms are not called malicious'
   assert.equal(verdict([{ id: 'vtFile', status: 'skipped' }, { id: 'bazaar', status: 'error' }]).verdict, 'Not enough data');
   assert.equal(verdict([{ id: 'bazaar', status: 'empty' }]).verdict, 'No evidence of harm found');
 });
+
+test('email lookups send only the domain to the model', () => {
+  const f = facts({ type: 'email', value: 'jane.doe@example.org', sources: [{ id: 'dns', name: 'DNS records', status: 'empty' }] });
+  assert.deepEqual(f.indicator, { type: 'email domain', value: 'example.org' });
+  assert.ok(!JSON.stringify(f).includes('jane'));
+});

@@ -77,7 +77,11 @@ export function verdict(sources) {
 /** Reduces Worker lookup results to the facts the model is allowed to see. */
 export function facts(lookup) {
   return {
-    indicator: { type: lookup.type, value: cut(lookup.value, 200) },
+    // For an email, only the domain is sent: the address itself is personal data
+    // and the results are all about the domain anyway.
+    indicator: lookup.type === 'email'
+      ? { type: 'email domain', value: cut(lookup.value.split('@').pop(), 200) }
+      : { type: lookup.type, value: cut(lookup.value, 200) },
     overall: verdict(lookup.sources),
     sources: lookup.sources.map((s) => ({
       source: s.name,
