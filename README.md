@@ -8,7 +8,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 |---|---|---|
 | 1 | Reference page; hash identifier, hash calculator, decoder, password check; type detection with "open in" links | Done |
 | 2 | Threat actors page from MITRE ATT&CK data | Done |
-| 3 | Cloudflare Worker with keyless lookups (RDAP, DNS, certificates, Shodan InternetDB), validation, cache, rate limit | Done |
+| 3 | Cloudflare Worker with keyless lookups (RDAP, DNS, certificates, Shodan InternetDB), validation, cache | Done |
 | 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar, URLhaus | Done |
 | 5 | Result cards, polish, deploy | Not started |
 
@@ -45,7 +45,7 @@ A source whose key is missing shows as "Skipped", and the rest still work.
 - Results are cached at the edge for 24 hours (1 hour for "nothing found"), per data centre.
 - VirusTotal's free tier allows 4 requests a minute and 500 a day. The Worker allows at most 4 VirusTotal calls a minute site-wide, and a URL search makes only one VirusTotal call. If any source answers 429, the Worker pauses that source for at least a minute. The card shows "Skipped" instead of failing.
 - All keyed free tiers are for non-commercial use only.
-- Each visitor gets 20 lookups per clock hour, counted in the edge cache under a hashed IP. Cloudflare's rate-limiting binding is configured too, but in testing it did not enforce anything on the Free plan.
+- There is no per-visitor limit, by choice. Every account is on a free tier with no payment method, so running out of a quota only pauses that source until it resets. It costs nothing.
 - crt.sh is frequently down. Cert Spotter allows only a few keyless queries per hour, so the certificates card is the one most likely to say "Unavailable".
 
 Run it locally with `wrangler dev`. Pages served from `localhost:8000` call the local Worker automatically:

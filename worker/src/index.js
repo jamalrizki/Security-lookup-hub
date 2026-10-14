@@ -5,8 +5,10 @@
 //
 // Guardrails (see Docs/Requirements.md): input validated with the same rules as
 // the page before any outbound request; private/reserved targets rejected;
-// Origin allowlist; per-visitor rate limit; results cached per indicator;
-// nothing about visitors or queries is logged or stored.
+// Origin allowlist; site-wide quota guards on keyed sources; results cached per
+// indicator; nothing about visitors or queries is logged or stored. There is
+// deliberately no per-visitor limit: every account is on a free tier with no
+// payment method, so exhausting a quota pauses that source but costs nothing.
 
 import { detect } from '../../js/detect.js';
 import { SOURCES, plan } from './sources.js';
@@ -103,32 +105,6 @@ async function runSource(id, value, ctx, tools) {
   return { ...base, ...result, cached: false };
 }
 
-// Per-visitor limit: HOURLY_LIMIT lookups per clock hour, counted in the edge
-// cache (free, no daily write cap). The cache is per data centre and the
-// read-then-write isn't atomic, so the limit is approximate, which is enough
-// to stop one caller draining the shared free quotas. The visitor's IP is only
-// stored as a salted hash, and the counter expires after the hour.
-const HOURLY_LIMIT = 20;
-
-async function rateLimited(request, env, ctx) {
-  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
-
-  // Cloudflare's rate limiting binding, if the plan enforces it (burst control).
-  if (env.LOOKUP_LIMITER && !(await env.LOOKUP_LIMITER.limit({ key: ip })).success) return 60;
-
-  const now = Date.now();
-  const hour = Math.floor(now / 3_600_000);
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${hour}:${ip}`));
-  const id = [...new Uint8Array(digest)].slice(0, 16).map((b) => b.toString(16).padStart(2, '0')).join('');
-  const key = cacheUrl(`rl/${id}`);
-  const hit = await caches.default.match(key);
-  const count = hit ? Number(await hit.text()) || 0 : 0;
-  const secondsLeft = Math.ceil(((hour + 1) * 3_600_000 - now) / 1000);
-  if (count >= HOURLY_LIMIT) return secondsLeft;
-  ctx.waitUntil(caches.default.put(key, new Response(String(count + 1), { headers: { 'cache-control': `max-age=${secondsLeft}` } })));
-  return 0;
-}
-
 async function lookup(request, env, ctx, origin) {
   const q = new URL(request.url).searchParams.get('q') || '';
   if (q.length > 2048) return json({ error: 'Input is too long.' }, 400, origin);
@@ -139,10 +115,6 @@ async function lookup(request, env, ctx, origin) {
     return json({ error: detected.error || 'Not a supported indicator.', type: detected.type }, 422, origin);
   }
 
-  const retryAfter = await rateLimited(request, env, ctx);
-  if (retryAfter) {
-    return json({ error: `Too many lookups from your connection. Try again in ${Math.ceil(retryAfter / 60)} minutes.` }, 429, origin, { 'retry-after': String(retryAfter) });
-  }
 
   const steps = plan(detected);
   const tools = quotaTools(env, ctx);
