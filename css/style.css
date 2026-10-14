@@ -207,3 +207,45 @@ button:disabled { opacity: 0.6; cursor: progress; }
 .empty { color: var(--muted); }
 
 footer.site-footer { max-width: 1040px; margin: 0 auto; padding: 0 16px 32px; color: var(--muted); font-size: 0.85rem; }
+
+/* ---------- Threat actors page ---------- */
+
+.filters select { flex: 0 1 220px; width: auto; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 500;
+}
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: transparent; }
+.chip-count { margin-left: 8px; font-size: 0.8rem; opacity: 0.75; }
+
+.actor {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+.actor summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style-position: outside;
+}
+.actor[open] summary { border-bottom: 1px solid var(--border); }
+.actor-name { font-weight: 700; }
+.aliases { flex-basis: 100%; color: var(--muted); font-size: 0.88rem; }
+.badge.muted { color: var(--muted); }
+.actor-body { padding: 4px 16px 12px; }
+.actor-body h3 { margin-top: 16px; }
+.evidence { margin: 12px 0; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--surface-2); border-radius: 0 6px 6px 0; }
+.inline-list { line-height: 1.8; }
+.techniques { columns: 2 300px; column-gap: 24px; padding-left: 18px; margin: 0; font-size: 0.9rem; }
+.techniques li { break-inside: avoid; margin-bottom: 2px; }
+.techniques a { font-family: var(--mono); }

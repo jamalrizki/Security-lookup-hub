@@ -6,7 +6,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <meta name="referrer" content="no-referrer">
   <title>Threat actors · Security Lookup Hub</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/actors.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -23,15 +25,18 @@
 
   <main id="main">
     <h1>Threat actors</h1>
-    <p class="lede">A searchable list of APT groups from MITRE ATT&amp;CK, filterable by country, is coming next.</p>
-    <section class="panel">
-      <p>Until then, browse the groups directly:</p>
-      <ul>
-        <li><a href="https://attack.mitre.org/groups/" target="_blank" rel="noopener noreferrer">MITRE ATT&amp;CK Groups</a></li>
-        <li><a href="https://apt.etda.or.th/cgi-bin/aptgroups.cgi" target="_blank" rel="noopener noreferrer">ETDA Threat Group Cards</a> (name cross-reference across vendors)</li>
-        <li><a href="https://malpedia.caad.fkie.fraunhofer.de/actors" target="_blank" rel="noopener noreferrer">Malpedia actors</a></li>
-      </ul>
-    </section>
+    <p class="lede">APT and criminal groups tracked by MITRE ATT&amp;CK, with their aliases and known techniques. Country is shown only where MITRE's own description attributes the group.</p>
+
+    <div class="filters">
+      <input id="actor-filter" type="search" placeholder="Name, alias, malware or technique (e.g. Wicked Panda, Cobalt Strike, T1566)" aria-label="Search groups">
+      <select id="actor-sector" aria-label="Sector"><option value="">All sectors</option></select>
+    </div>
+    <div id="actor-countries" class="chips" role="group" aria-label="Filter by country"></div>
+
+    <p id="actor-count" class="hint" aria-live="polite"></p>
+    <div id="actor-list"></div>
   </main>
+
+  <footer class="site-footer" id="actor-source"></footer>
 </body>
 </html>

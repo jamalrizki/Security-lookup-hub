@@ -1,0 +1,16 @@
+{
+  "_comment": "Fixes for groups the phrase matcher gets wrong. Every entry must quote MITRE's own description as evidence.",
+  "Moafee": {
+    "countries": ["China"],
+    "evidence": "Moafee is a threat group that appears to operate from the Guandong Province of China."
+  },
+  "Winter Vivern": {
+    "countries": ["Russia", "Belarus"],
+    "evidence": "Winter Vivern is a group linked to Russian and Belorussian interests active since at least 2020 targeting various European government and NGO entities, along with sporadic targeting of Indian and US victims."
+  },
+  "Water Galura": {
+    "countries": [],
+    "evidence": null,
+    "_why": "MITRE mentions affiliates recruited on Russian cybercrime forums, which is not an attribution of the group itself."
+  }
+}
