@@ -6,6 +6,8 @@ import { linksFor } from './links.js';
 import { md5, toHex } from './md5.js';
 import { CODECS } from './encoding.js';
 import { checkPassword } from './pwned.js';
+import { API_BASE } from './config.js';
+import { sourceCard } from './results.js';
 
 const $ = (id) => document.getElementById(id);
 const TYPE_LABELS = { ipv4: 'IPv4 address', ipv6: 'IPv6 address', domain: 'Domain', url: 'URL', email: 'Email address' };
@@ -35,6 +37,36 @@ async function sha(algo, bytes) {
 
 // ---------- Search ----------
 
+let searchRun = 0;
+
+async function fetchResults(d, box) {
+  const run = ++searchRun;
+  box.replaceChildren(el('p', { class: 'hint' }, 'Checking sources\u2026'));
+  let body;
+  let status;
+  try {
+    const res = await fetch(`${API_BASE}/api/lookup?q=${encodeURIComponent(d.value)}`, { referrerPolicy: 'no-referrer' });
+    status = res.status;
+    body = await res.json();
+  } catch {
+    body = { error: 'The lookup service could not be reached. The links below still work.' };
+  }
+  if (run !== searchRun) return; // a newer search replaced this one
+  if (body.error) {
+    box.replaceChildren(notice(status === 429 ? 'bad' : 'warn', body.error));
+    return;
+  }
+  if (!body.sources.length) {
+    box.replaceChildren(el('p', { class: 'hint' }, body.note));
+    return;
+  }
+  box.replaceChildren(...[
+    d.type === 'url' ? el('p', { class: 'hint' }, `Results are for the URL\u2019s host, ${defang(d.host)}.`) : null,
+    d.type === 'email' ? el('p', { class: 'hint' }, 'Results are for the email domain. Breach checks for an address need Have I Been Pwned\u2019s site (their email API is paid).') : null,
+    el('div', { class: 'cards' }, ...body.sources.map(sourceCard)),
+  ].filter(Boolean));
+}
+
 function renderSearch(raw) {
   const out = $('search-result');
   const d = detect(raw);
@@ -56,20 +88,17 @@ function renderSearch(raw) {
     return;
   }
 
+  const results = el('div', { 'aria-live': 'polite' });
+  out.append(results);
+  if (d.type === 'hash') {
+    results.append(el('p', { class: 'hint' }, 'Automatic hash results (VirusTotal, MalwareBazaar) arrive in the next phase. Use the links below for now.'));
+  } else {
+    fetchResults(d, results);
+  }
+
   out.append(el('h3', {}, 'Open in'));
   out.append(el('ul', { class: 'links' }, ...linksFor(d).map((l) =>
     el('li', {}, externalLink(l.href, el('strong', {}, l.name), el('span', { class: 'what' }, l.what))))));
-
-  if (d.type === 'url') {
-    const btn = el('button', { type: 'button', class: 'secondary small' }, `Look up host ${defang(d.host)} instead`);
-    btn.addEventListener('click', () => {
-      $('search-input').value = d.host;
-      renderSearch(d.host);
-    });
-    out.append(el('p', { class: 'hint' }, btn));
-  }
-  out.append(el('p', { class: 'hint' },
-    'Automatic results from these sources are coming in a later phase. For now each link opens the source’s own report.'));
 }
 
 $('search-form').addEventListener('submit', (ev) => {

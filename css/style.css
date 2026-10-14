@@ -249,3 +249,32 @@ footer.site-footer { max-width: 1040px; margin: 0 auto; padding: 0 16px 32px; co
 .techniques { columns: 2 300px; column-gap: 24px; padding-left: 18px; margin: 0; font-size: 0.9rem; }
 .techniques li { break-inside: avoid; margin-bottom: 2px; }
 .techniques a { font-family: var(--mono); }
+
+/* ---------- Lookup result cards ---------- */
+
+.cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); margin-bottom: 20px; }
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.card header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.card h3 { margin: 0; }
+.card footer { margin-top: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 0.88rem; padding-top: 6px; }
+.card .notice { padding: 8px 10px; font-size: 0.92rem; }
+.flag { font-size: 0.78rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.flag.ok { background: var(--ok-bg); color: var(--ok); }
+.flag.warn { background: var(--warn-bg); color: var(--warn); }
+.flag.bad { background: var(--bad-bg); color: var(--bad); }
+.flag.muted { background: var(--surface-2); color: var(--muted); }
+.facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: 0.92rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.more summary { cursor: pointer; font-size: 0.9rem; color: var(--muted); }
+.mono-list { font-family: var(--mono); font-size: 0.82rem; margin: 6px 0 0; padding-left: 18px; max-height: 240px; overflow: auto; overflow-wrap: anywhere; }
+.small { font-size: 0.82rem; overflow-wrap: anywhere; margin: 0; }

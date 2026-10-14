@@ -8,7 +8,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 |---|---|---|
 | 1 | Reference page; hash identifier, hash calculator, decoder, password check; type detection with "open in" links | Done |
 | 2 | Threat actors page from MITRE ATT&CK data | Done |
-| 3 | Cloudflare Worker with keyless lookups (RDAP, DNS, crt.sh, Shodan InternetDB), validation, cache, rate limit | Not started |
+| 3 | Cloudflare Worker with keyless lookups (RDAP, DNS, certificates, Shodan InternetDB), validation, cache, rate limit | Done |
 | 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar | Not started |
 | 5 | Result cards, polish, deploy | Not started |
 
@@ -21,6 +21,39 @@ python3 -m http.server 8000
 ```
 
 Then open http://localhost:8000. Lookups can be deep-linked as `/#q=8.8.8.8`. The indicator sits in the URL fragment, which browsers never send to the server.
+
+## Lookup API (Cloudflare Worker)
+
+The Worker in `worker/` is deployed at https://security-lookup-hub.jamalrizki.workers.dev. It only answers requests whose `Origin` is in `ALLOWED_ORIGINS` (`worker/wrangler.toml`).
+
+| Indicator | Sources |
+|---|---|
+| Domain | RDAP via rdap.org (registration date, registrar), Cloudflare DNS over HTTPS (A, AAAA, MX, NS, TXT, SPF, DMARC), certificates from crt.sh with Cert Spotter as fallback |
+| IP | Shodan InternetDB (ports, CVEs, hostnames), RDAP via rdap.org (network owner) |
+| URL | Same as domain or IP, for the URL's host |
+| Email | DNS for the email's domain |
+| Hash | None keyless; VirusTotal and MalwareBazaar arrive in phase 4 |
+
+- Results are cached at the edge for 24 hours (1 hour for "nothing found"), per data centre.
+- Each visitor gets 20 lookups per clock hour, counted in the edge cache under a hashed IP. Cloudflare's rate-limiting binding is configured too, but in testing it did not enforce anything on the Free plan.
+- crt.sh is frequently down. Cert Spotter allows only a few keyless queries per hour, so the certificates card is the one most likely to say "Unavailable".
+
+Run it locally with `wrangler dev`. Pages served from `localhost:8000` call the local Worker automatically:
+
+```sh
+cd worker
+npm install
+npx wrangler dev --port 8787 --ip 127.0.0.1
+```
+
+Deploy:
+
+```sh
+cd worker
+npx wrangler deploy
+```
+
+wrangler is pinned to 4.86.0 because later 4.x versions need Node 22.
 
 ## Tests
 
@@ -64,15 +97,18 @@ js/pwned.js      Pwned Passwords k-anonymity check
 js/lookup.js     Lookup page wiring
 js/reference.js  Reference page rendering
 js/actors.js     Threat actors page rendering
+js/config.js     Worker URL (local or deployed)
+js/results.js    result cards for Worker lookups
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache), src/sources.js (lookup sources and parsers)
 tests/           node:test unit tests
 ```
 
 ## Security notes
 
-- Each page sets a strict Content-Security-Policy: no inline script or style, and the only network calls allowed are same-origin plus `api.pwnedpasswords.com`.
+- Each page sets a strict Content-Security-Policy: no inline script or style, and the only network calls allowed are same-origin, `api.pwnedpasswords.com` and the lookup Worker.
 - Everything is rendered with `textContent`; no fetched or pasted string is ever parsed as HTML.
 - Private, loopback, link-local, CGNAT, documentation and multicast addresses, and internal names (`.local`, `.internal`, `localhost`…), are rejected before any link or lookup is built. `js/detect.js` is written to be imported by the Worker so it enforces the same rules.
 - The password is hashed in the browser, and only a 5-character SHA-1 prefix is sent, with `Add-Padding` set so the response size doesn't leak the match.
