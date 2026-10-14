@@ -63,7 +63,10 @@ async function fetchResults(d, box) {
   box.replaceChildren(...[
     d.type === 'url' ? el('p', { class: 'hint' }, `Results are for the URL\u2019s host, ${defang(d.host)}.`) : null,
     d.type === 'email' ? el('p', { class: 'hint' }, 'Results are for the email domain. Breach checks for an address need Have I Been Pwned\u2019s site (their email API is paid).') : null,
-    el('div', { class: 'cards' }, ...body.sources.map(sourceCard)),
+    // Results first; skipped or failed sources go last (sort is stable).
+    el('div', { class: 'cards' }, ...[...body.sources]
+      .sort((a, b) => ['skipped', 'error'].includes(a.status) - ['skipped', 'error'].includes(b.status))
+      .map(sourceCard)),
   ].filter(Boolean));
 }
 

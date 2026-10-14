@@ -176,14 +176,17 @@ Object.assign(RENDER, {
     el('p', { class: 'verdict bad' }, el('strong', {}, 'Listed as malicious'), ` \u2014 ${d.threat || 'malware'}`),
     rows([['Status', d.status === 'online' ? flag('bad', 'Online now') : d.status], ['Added', fmtDate(d.added)], d.tags.length ? ['Tags', list(d.tags)] : null, blacklisted(d.blacklists).length ? ['Blocklists', list(blacklisted(d.blacklists))] : null]),
   ],
+  // A host listing means malware was served from it, not that the host is
+  // malicious: GitHub, Google Drive and Discord all carry thousands.
   urlhausHost: (d) => [
-    el('p', { class: 'verdict bad' }, el('strong', {}, `${d.urlCount} malware URL${d.urlCount === 1 ? '' : 's'}`), ' seen on this host'),
+    el('p', { class: 'verdict warn' }, el('strong', {}, `${d.urlCount.toLocaleString()} malware URL${d.urlCount === 1 ? '' : 's'}`), ` ${d.urlCount === 1 ? 'has' : 'have'} been served from this host`),
+    el('p', { class: 'hint' }, 'This means the host has been used to deliver malware. Big file-sharing and code-hosting sites are abused this way constantly, so it does not by itself make the host malicious. Check the URLs below and the blocklists.'),
     rows([['First seen', fmtDate(d.firstSeen)], blacklisted(d.blacklists).length ? ['Blocklists', list(blacklisted(d.blacklists))] : null]),
     urlTable(d.urls),
   ],
   urlhausPayload: (d) => [
     el('p', { class: 'verdict bad' }, el('strong', {}, 'Distributed by malware URLs'), d.family ? ` \u2014 ${d.family}` : ''),
-    rows([['Type', d.fileType], ['First seen', fmtDate(d.firstSeen)], ['Seen on', `${d.urlCount} URL${d.urlCount === 1 ? '' : 's'}`]]),
+    rows([['Type', d.fileType], ['First seen', fmtDate(d.firstSeen)], ['Seen on', `${d.urlCount.toLocaleString()} URL${d.urlCount === 1 ? '' : 's'}`]]),
     urlTable(d.urls),
   ],
 });
@@ -194,7 +197,8 @@ const LISTED = new Set(['bazaar', 'urlhausUrl', 'urlhausHost', 'urlhausPayload']
 
 export function sourceCard(s) {
   const [kind, text] = s.status === 'ok' && s.id.startsWith('vt') ? VERDICT[s.data.verdict] || VERDICT.unknown
-    : s.status === 'ok' && LISTED.has(s.id) ? ['bad', 'Listed']
+    : s.status === 'ok' && s.id === 'urlhausHost' ? ['warn', 'Used for malware']
+      : s.status === 'ok' && LISTED.has(s.id) ? ['bad', 'Listed']
     : s.status === 'empty' && LISTED.has(s.id) ? ['ok', 'Not listed']
       : STATUS[s.status] || ['muted', s.status];
   const body = s.status === 'ok' && RENDER[s.id] ? RENDER[s.id](s.data) : [el('p', { class: 'hint' }, s.message || '')];

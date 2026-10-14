@@ -10,7 +10,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 2 | Threat actors page from MITRE ATT&CK data | Done |
 | 3 | Cloudflare Worker with keyless lookups (RDAP, DNS, certificates, Shodan InternetDB), validation, cache | Done |
 | 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar, URLhaus | Done |
-| 5 | Result cards, polish, deploy | Not started |
+| 5 | Result cards, polish, deploy | Done |
 
 ## Run locally
 
