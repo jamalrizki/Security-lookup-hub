@@ -1,7 +1,8 @@
 // Parser tests using trimmed copies of real responses (captured 2026-10-14).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseDomainRdap, parseDns, parseCrtSh, parseCertSpotter, parseInternetDb, parseIpRdap, plan } from '../worker/src/sources.js';
+import { parseDomainRdap, parseDns, parseCrtSh, parseCertSpotter, parseInternetDb, parseIpRdap, plan, SOURCES } from '../worker/src/sources.js';
+import { vtVerdict, parseVt, parseAbuseIpdb, parseBazaar, parseUrlhaus } from '../worker/src/keyed.js';
 import { detect } from '../js/detect.js';
 
 test('domain RDAP: dates, age, registrar, nameservers', () => {
@@ -76,12 +77,55 @@ test('InternetDB and IP RDAP', () => {
   assert.equal(r.registry, 'ARIN');
 });
 
-test('plan picks sources per indicator type', () => {
+test('plan picks sources per indicator type, verdict sources first', () => {
   const ids = (q) => plan(detect(q)).map((s) => `${s.id}:${s.value}`);
-  assert.deepEqual(ids('example.com'), ['rdap:example.com', 'dns:example.com', 'certs:example.com']);
-  assert.deepEqual(ids('8.8.8.8'), ['internetdb:8.8.8.8', 'ipowner:8.8.8.8']);
-  assert.deepEqual(ids('https://www.example.com/x'), ['rdap:www.example.com', 'dns:www.example.com', 'certs:www.example.com']);
-  assert.deepEqual(ids('http://[2606:4700::1111]/'), ['internetdb:2606:4700::1111', 'ipowner:2606:4700::1111']);
+  assert.deepEqual(ids('example.com'), ['vtDomain', 'urlhausHost', 'rdap', 'dns', 'certs'].map((i) => `${i}:example.com`));
+  assert.deepEqual(ids('8.8.8.8'), ['abuseipdb', 'vtIp', 'urlhausHost', 'internetdb', 'ipowner'].map((i) => `${i}:8.8.8.8`));
+  assert.deepEqual(ids('https://www.example.com/x'), [
+    'vtUrl:https://www.example.com/x', 'urlhausUrl:https://www.example.com/x',
+    'rdap:www.example.com', 'dns:www.example.com', 'certs:www.example.com',
+  ]);
+  assert.deepEqual(ids('http://[2606:4700::1111]/'), [
+    'vtUrl:http://[2606:4700::1111]/', 'urlhausUrl:http://[2606:4700::1111]/',
+    'abuseipdb:2606:4700::1111', 'internetdb:2606:4700::1111', 'ipowner:2606:4700::1111',
+  ]);
   assert.deepEqual(ids('a@example.org'), ['dns:example.org']);
-  assert.deepEqual(ids('d41d8cd98f00b204e9800998ecf8427e'), []);
+  const h = 'd41d8cd98f00b204e9800998ecf8427e';
+  assert.deepEqual(ids(h), ['vtFile', 'bazaar', 'urlhausPayload'].map((i) => `${i}:${h}`));
+  assert.equal(plan(detect('https://evil.example.com/')).filter((s) => s.id.startsWith('vt')).length, 1, 'one VirusTotal call per URL search');
+});
+
+test('every planned source exists in the registry', () => {
+  for (const q of ['example.com', '8.8.8.8', 'https://x.example.com/', 'a@example.org', 'a'.repeat(64)]) {
+    for (const s of plan(detect(q))) assert.ok(SOURCES[s.id], s.id);
+  }
+});
+
+// Shapes follow the VirusTotal v3, AbuseIPDB v2 and abuse.ch API docs.
+test('VirusTotal verdicts and file parsing', () => {
+  assert.equal(vtVerdict({ malicious: 0, suspicious: 0, undetected: 60, harmless: 10 }).verdict, 'clean');
+  assert.equal(vtVerdict({ malicious: 1, undetected: 60 }).verdict, 'suspicious');
+  assert.equal(vtVerdict({ malicious: 40, undetected: 20, timeout: 5 }).engines, 60, 'timeouts not counted as engines');
+  assert.equal(vtVerdict({}).verdict, 'unknown');
+  const f = parseVt('file', { data: { id: 'x', attributes: {
+    last_analysis_stats: { malicious: 62, undetected: 5 },
+    meaningful_name: 'eicar.com', type_description: 'Text', first_submission_date: 1148301722,
+    popular_threat_classification: { suggested_threat_label: 'virus.eicar/test', popular_threat_name: [{ value: 'eicar', count: 40 }] },
+  } } });
+  assert.equal(f.verdict, 'malicious');
+  assert.equal(f.label, 'virus.eicar/test');
+  assert.deepEqual(f.families, ['eicar']);
+  assert.equal(f.firstSeen, '2006-05-22T12:42:02.000Z');
+});
+
+test('AbuseIPDB, MalwareBazaar and URLhaus parsing', () => {
+  const a = parseAbuseIpdb({ data: { abuseConfidenceScore: 100, totalReports: 512, numDistinctUsers: 80, isTor: false, countryCode: 'NL', usageType: 'Data Center/Web Hosting/Transit' } });
+  assert.equal(a.score, 100);
+  assert.equal(a.reports, 512);
+  const b = parseBazaar({ query_status: 'ok', data: [{ sha256_hash: 'ab', signature: 'AgentTesla', first_seen: '2024-01-31 12:34:56', tags: ['exe'] }] });
+  assert.equal(b.family, 'AgentTesla');
+  assert.equal(b.firstSeen, '2024-01-31T12:34:56.000Z');
+  const host = parseUrlhaus('host', { url_count: '3', firstseen: '2019-01-19 01:33:26 UTC', urls: [{ url: 'http://bad.example/x.exe', url_status: 'online', threat: 'malware_download', date_added: '2019-01-19 01:33:26 UTC' }] });
+  assert.equal(host.urlCount, 3);
+  assert.equal(host.urls[0].added, '2019-01-19T01:33:26.000Z');
 });

@@ -278,3 +278,8 @@ footer.site-footer { max-width: 1040px; margin: 0 auto; padding: 0 16px 32px; co
 .more summary { cursor: pointer; font-size: 0.9rem; color: var(--muted); }
 .mono-list { font-family: var(--mono); font-size: 0.82rem; margin: 6px 0 0; padding-left: 18px; max-height: 240px; overflow: auto; overflow-wrap: anywhere; }
 .small { font-size: 0.82rem; overflow-wrap: anywhere; margin: 0; }
+.verdict { margin: 0; padding: 8px 10px; border-radius: 6px; font-size: 0.95rem; }
+.verdict.ok { background: var(--ok-bg); color: var(--ok); }
+.verdict.warn { background: var(--warn-bg); color: var(--warn); }
+.verdict.bad { background: var(--bad-bg); color: var(--bad); }
+.verdict.muted { background: var(--surface-2); color: var(--muted); }

@@ -1,49 +1,13 @@
-// Keyless lookup sources. Each source asks a third-party database about the
-// indicator; none of them ever connects to the indicator itself.
+// Lookup sources. Each source asks a third-party database about the indicator;
+// none of them ever connects to the indicator itself.
 //
-// A source's run() returns { status, data?, message? } where status is
-// "ok" (found something), "empty" (source answered, nothing known) or "error".
-// Parsers are exported separately so they can be tested on saved responses.
+// A source's run(value, tools) returns { status, data?, message?, link? } where
+// status is "ok" (found something), "empty" (source answered, nothing known),
+// "error", or "skipped" (rate limit or missing key). Keyed sources live in
+// keyed.js. Parsers are exported so they can be tested on saved responses.
 
-const TIMEOUT_MS = 8000;
-const UA = 'SecurityLookupHub/1.0 (+https://github.com/jamalrizki/Security-lookup-hub)';
-
-async function getJson(url, { accept = 'application/json', timeout = TIMEOUT_MS, maxBytes = 1_000_000 } = {}) {
-  const res = await fetch(url, {
-    headers: { accept, 'user-agent': UA },
-    signal: AbortSignal.timeout(timeout),
-    redirect: 'follow',
-  });
-  if (res.status === 404) return { status: 404 };
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await readCapped(res, maxBytes);
-  if (text === null) return { status: 413 };
-  return { status: res.status, json: JSON.parse(text) };
-}
-
-// Reads at most maxBytes so one huge response can't blow the CPU or memory budget.
-async function readCapped(res, maxBytes) {
-  const reader = res.body.getReader();
-  const chunks = [];
-  let size = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > maxBytes) {
-      await reader.cancel();
-      return null;
-    }
-    chunks.push(value);
-  }
-  const all = new Uint8Array(size);
-  let off = 0;
-  for (const c of chunks) {
-    all.set(c, off);
-    off += c.byteLength;
-  }
-  return new TextDecoder().decode(all);
-}
+import { getJson } from './http.js';
+import { KEYED_SOURCES } from './keyed.js';
 
 const DAY = 86_400_000;
 const vcardName = (entity) => entity?.vcardArray?.[1]?.find((v) => v[0] === 'fn')?.[3] || null;
@@ -211,18 +175,28 @@ export const SOURCES = {
   certs: { name: 'Certificates', run: certificates, link: (d) => `https://crt.sh/?q=${encodeURIComponent(d)}` },
   internetdb: { name: 'Shodan InternetDB', run: internetDb, link: (ip) => `https://www.shodan.io/host/${ip}` },
   ipowner: { name: 'Network owner (RDAP)', run: rdapIp, link: (ip) => `https://ipinfo.io/${ip}` },
+  ...KEYED_SOURCES,
 };
 
-/** Which sources run for each detected type, and on which value. */
+/** Which sources run for each detected type, and on which value. Verdict sources first. */
 export function plan(detected) {
-  const forDomain = (d) => ['rdap', 'dns', 'certs'].map((id) => ({ id, value: d }));
-  const forIp = (ip) => ['internetdb', 'ipowner'].map((id) => ({ id, value: ip }));
+  const run = (ids, value) => ids.map((id) => ({ id, value }));
+  const forDomain = (d) => run(['vtDomain', 'urlhausHost', 'rdap', 'dns', 'certs'], d);
+  const forIp = (ip) => run(['abuseipdb', 'vtIp', 'urlhausHost', 'internetdb', 'ipowner'], ip);
   switch (detected.type) {
+    case 'hash': return run(['vtFile', 'bazaar', 'urlhausPayload'], detected.value);
     case 'domain': return forDomain(detected.value);
     case 'ipv4':
     case 'ipv6': return forIp(detected.value);
-    case 'url': return /^[\d.]+$|:/.test(detected.host) ? forIp(detected.host.replace(/^\[|\]$/g, '')) : forDomain(detected.host);
-    case 'email': return [{ id: 'dns', value: detected.value.split('@')[1] }];
+    case 'url': {
+      // One VirusTotal call per search: the URL itself, not its host as well.
+      const host = detected.host.replace(/^\[|\]$/g, '');
+      const hostSources = /^[\d.]+$|:/.test(host)
+        ? run(['abuseipdb', 'internetdb', 'ipowner'], host)
+        : run(['rdap', 'dns', 'certs'], host);
+      return [...run(['vtUrl', 'urlhausUrl'], detected.value), ...hostSources];
+    }
+    case 'email': return run(['dns'], detected.value.split('@')[1]);
     default: return [];
   }
 }

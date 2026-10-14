@@ -9,7 +9,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 1 | Reference page; hash identifier, hash calculator, decoder, password check; type detection with "open in" links | Done |
 | 2 | Threat actors page from MITRE ATT&CK data | Done |
 | 3 | Cloudflare Worker with keyless lookups (RDAP, DNS, certificates, Shodan InternetDB), validation, cache, rate limit | Done |
-| 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar | Not started |
+| 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar, URLhaus | Done |
 | 5 | Result cards, polish, deploy | Not started |
 
 ## Run locally
@@ -28,13 +28,23 @@ The Worker in `worker/` is deployed at https://security-lookup-hub.jamalrizki.wo
 
 | Indicator | Sources |
 |---|---|
-| Domain | RDAP via rdap.org (registration date, registrar), Cloudflare DNS over HTTPS (A, AAAA, MX, NS, TXT, SPF, DMARC), certificates from crt.sh with Cert Spotter as fallback |
-| IP | Shodan InternetDB (ports, CVEs, hostnames), RDAP via rdap.org (network owner) |
-| URL | Same as domain or IP, for the URL's host |
+| Hash | VirusTotal, MalwareBazaar, URLhaus (MD5 and SHA-256 only) |
+| Domain | VirusTotal, URLhaus, RDAP via rdap.org (registration date, registrar), Cloudflare DNS over HTTPS (A, AAAA, MX, NS, TXT, SPF, DMARC), certificates from crt.sh with Cert Spotter as fallback |
+| IP | AbuseIPDB, VirusTotal, URLhaus, Shodan InternetDB (ports, CVEs, hostnames), RDAP (network owner) |
+| URL | VirusTotal and URLhaus for the URL, plus the keyless domain or IP sources for its host |
 | Email | DNS for the email's domain |
-| Hash | None keyless; VirusTotal and MalwareBazaar arrive in phase 4 |
+
+API keys are Worker secrets: `VT_API_KEY`, `ABUSEIPDB_API_KEY` and `ABUSECH_AUTH_KEY` (used by both MalwareBazaar and URLhaus). To set or rotate one, run this from `worker/`. It prompts for the value:
+
+```sh
+npx wrangler secret put VT_API_KEY
+```
+
+A source whose key is missing shows as "Skipped", and the rest still work.
 
 - Results are cached at the edge for 24 hours (1 hour for "nothing found"), per data centre.
+- VirusTotal's free tier allows 4 requests a minute and 500 a day. The Worker allows at most 4 VirusTotal calls a minute site-wide, and a URL search makes only one VirusTotal call. If any source answers 429, the Worker pauses that source for at least a minute. The card shows "Skipped" instead of failing.
+- All keyed free tiers are for non-commercial use only.
 - Each visitor gets 20 lookups per clock hour, counted in the edge cache under a hashed IP. Cloudflare's rate-limiting binding is configured too, but in testing it did not enforce anything on the Free plan.
 - crt.sh is frequently down. Cert Spotter allows only a few keyless queries per hour, so the certificates card is the one most likely to say "Unavailable".
 
@@ -102,7 +112,7 @@ js/results.js    result cards for Worker lookups
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
-worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache), src/sources.js (lookup sources and parsers)
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/http.js
 tests/           node:test unit tests
 ```
 

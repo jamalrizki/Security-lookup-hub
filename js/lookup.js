@@ -90,11 +90,7 @@ function renderSearch(raw) {
 
   const results = el('div', { 'aria-live': 'polite' });
   out.append(results);
-  if (d.type === 'hash') {
-    results.append(el('p', { class: 'hint' }, 'Automatic hash results (VirusTotal, MalwareBazaar) arrive in the next phase. Use the links below for now.'));
-  } else {
-    fetchResults(d, results);
-  }
+  fetchResults(d, results);
 
   out.append(el('h3', {}, 'Open in'));
   out.append(el('ul', { class: 'links' }, ...linksFor(d).map((l) =>

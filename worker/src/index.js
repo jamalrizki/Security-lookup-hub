@@ -10,6 +10,7 @@
 
 import { detect } from '../../js/detect.js';
 import { SOURCES, plan } from './sources.js';
+import { QuotaError } from './http.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -40,22 +41,62 @@ function allowedOrigin(request, env) {
   return origin && allowed.includes(origin) ? origin : null;
 }
 
-async function runSource(id, value, ctx) {
+const cacheUrl = (path) => new Request(`https://cache.lookup-hub.internal/${path}`);
+
+// Site-wide quota guards for sources with tight free tiers, kept in the edge
+// cache. Approximate (per data centre, not atomic), like the visitor limit.
+function quotaTools(env, ctx) {
+  const cache = caches.default;
+  return {
+    env,
+    async paused(name) {
+      return Boolean(await cache.match(cacheUrl(`pause/${name}`)));
+    },
+    /** False if the source has already been called perMinute times this minute. */
+    async allow(name, perMinute) {
+      const minute = Math.floor(Date.now() / 60_000);
+      const key = cacheUrl(`quota/${name}/${minute}`);
+      const hit = await cache.match(key);
+      const used = hit ? Number(await hit.text()) || 0 : 0;
+      if (used >= perMinute) return false;
+      ctx.waitUntil(cache.put(key, new Response(String(used + 1), { headers: { 'cache-control': 'max-age=120' } })));
+      return true;
+    },
+    pause(name, seconds) {
+      ctx.waitUntil(cache.put(cacheUrl(`pause/${name}`), new Response('1', { headers: { 'cache-control': `max-age=${seconds}` } })));
+    },
+  };
+}
+
+async function runSource(id, value, ctx, tools) {
   const source = SOURCES[id];
   const base = { id, name: source.name, link: source.link(value), value };
+  if (source.key && !tools.env[source.key]) {
+    return { ...base, status: 'skipped', message: 'This source is not configured (no API key).', cached: false };
+  }
   const cache = caches.default;
-  const key = new Request(`https://cache.lookup-hub.internal/${CACHE_VERSION}/${id}/${encodeURIComponent(value)}`);
+  const key = cacheUrl(`${CACHE_VERSION}/${id}/${encodeURIComponent(value)}`);
 
   const hit = await cache.match(key);
   if (hit) return { ...base, ...(await hit.json()), cached: true };
 
+  if (source.key && (await tools.paused(source.key))) {
+    return { ...base, status: 'skipped', message: `${source.name}\u2019s free limit is used up for now. Try again later.`, cached: false };
+  }
+
   let result;
   try {
-    result = await source.run(value);
+    result = await source.run(value, tools);
   } catch (err) {
+    if (err instanceof QuotaError) {
+      const quotaName = source.key || id;
+      tools.pause(quotaName, Math.min(Math.max(err.retryAfter, 60), 3600));
+      return { ...base, status: 'skipped', message: `${source.name} says its free limit is used up. It will be retried later.`, cached: false };
+    }
     const message = err.name === 'TimeoutError' ? 'The source did not answer in time.' : `The source returned an error (${err.message}).`;
     return { ...base, status: 'error', message, cached: false };
   }
+  if (result.status === 'skipped') return { ...base, ...result, cached: false };
   result.checkedAt = new Date().toISOString();
   const ttl = result.status === 'ok' ? CACHE_TTL : EMPTY_TTL;
   ctx.waitUntil(cache.put(key, new Response(JSON.stringify(result), { headers: { 'cache-control': `max-age=${ttl}` } })));
@@ -79,7 +120,7 @@ async function rateLimited(request, env, ctx) {
   const hour = Math.floor(now / 3_600_000);
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${hour}:${ip}`));
   const id = [...new Uint8Array(digest)].slice(0, 16).map((b) => b.toString(16).padStart(2, '0')).join('');
-  const key = new Request(`https://cache.lookup-hub.internal/rl/${id}`);
+  const key = cacheUrl(`rl/${id}`);
   const hit = await caches.default.match(key);
   const count = hit ? Number(await hit.text()) || 0 : 0;
   const secondsLeft = Math.ceil(((hour + 1) * 3_600_000 - now) / 1000);
@@ -104,14 +145,15 @@ async function lookup(request, env, ctx, origin) {
   }
 
   const steps = plan(detected);
-  const sources = await Promise.all(steps.map((s) => runSource(s.id, s.value, ctx)));
+  const tools = quotaTools(env, ctx);
+  const sources = await Promise.all(steps.map((s) => runSource(s.id, s.value, ctx, tools)));
   return json({
     type: detected.type,
     label: detected.label,
     value: detected.value,
     host: detected.host,
     sources,
-    note: steps.length ? undefined : 'No keyless source covers this indicator type yet. Use the links to check it on each site.',
+    note: steps.length ? undefined : 'No source covers this indicator type. Use the links to check it on each site.',
   }, 200, origin);
 }
 

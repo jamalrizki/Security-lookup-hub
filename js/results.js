@@ -2,6 +2,8 @@
 // TXT records, certificate names), so everything is inserted as text and
 // nothing from a feed becomes a link except CVE IDs, which are validated first.
 
+import { defang } from './detect.js';
+
 const fmtDate = (iso) => (iso ? new Date(iso).toISOString().slice(0, 10) : '—');
 
 function el(tag, attrs = {}, ...children) {
@@ -108,10 +110,93 @@ const RENDER = {
   },
 };
 
-const STATUS = { ok: ['ok', 'Found'], empty: ['muted', 'No data'], error: ['warn', 'Unavailable'] };
+// ---------- Keyed sources ----------
+
+const VERDICT = {
+  malicious: ['bad', 'Malicious'],
+  suspicious: ['warn', 'Suspicious'],
+  clean: ['ok', 'No detections'],
+  unknown: ['muted', 'Not analysed'],
+};
+
+function vt(d, extra) {
+  const [kind, text] = VERDICT[d.verdict] || VERDICT.unknown;
+  return [
+    el('p', { class: `verdict ${kind}` }, el('strong', {}, `${d.malicious} / ${d.engines}`), ` engines flag this \u2014 ${text.toLowerCase()}`),
+    rows([...extra, d.suspicious ? ['Suspicious', String(d.suspicious)] : null, ['Last analysed', fmtDate(d.lastAnalysis)]]),
+  ];
+}
+
+const blacklisted = (b = {}) => Object.entries(b).filter(([, v]) => v && v !== 'not listed').map(([k, v]) => `${k}: ${v}`);
+
+function urlTable(urls) {
+  if (!urls?.length) return null;
+  return el('details', { class: 'more' }, el('summary', {}, `Malicious URLs (${urls.length} shown, defanged)`),
+    el('ul', { class: 'mono-list' }, ...urls.map((u) =>
+      el('li', {}, defang(u.url), el('span', { class: 'hint' }, ` \u2014 ${u.status || '?'}${u.threat ? `, ${u.threat}` : ''}, ${fmtDate(u.added)}`)))));
+}
+
+Object.assign(RENDER, {
+  vtFile: (d) => [
+    ...vt(d, [
+      d.label ? ['Threat label', el('strong', {}, d.label)] : null,
+      d.families.length ? ['Families', list(d.families)] : null,
+      ['File name', d.name],
+      ['Type', d.fileType],
+      ['First seen', fmtDate(d.firstSeen)],
+    ]),
+    d.tags.length ? el('div', { class: 'ref-meta' }, ...d.tags.map((t) => el('span', { class: 'badge' }, t))) : null,
+  ],
+  vtDomain: (d) => vt(d, [d.categories.length ? ['Categories', list(d.categories)] : null, ['Reputation', String(d.reputation ?? '\u2014')]]),
+  vtIp: (d) => vt(d, [['AS owner', d.asOwner], d.asn ? ['ASN', `AS${d.asn}`] : null, ['Country', d.country]]),
+  vtUrl: (d) => vt(d, [d.title ? ['Page title', d.title] : null, d.finalUrl ? ['Final URL', el('span', { class: 'mono' }, defang(d.finalUrl))] : null, d.categories.length ? ['Categories', list(d.categories)] : null]),
+
+  abuseipdb(d) {
+    const kind = d.score >= 75 ? 'bad' : d.score >= 25 ? 'warn' : 'ok';
+    return [
+      el('p', { class: `verdict ${kind}` }, el('strong', {}, `${d.score}%`), ' abuse confidence'),
+      rows([
+        ['Reports (90 days)', `${d.reports} from ${d.reporters} users`],
+        ['Last reported', fmtDate(d.lastReported)],
+        ['ISP', d.isp],
+        ['Usage', d.usageType],
+        ['Country', d.country],
+        d.isTor ? ['Tor exit node', flag('warn', 'Yes')] : null,
+      ]),
+    ];
+  },
+
+  bazaar: (d) => [
+    el('p', { class: 'verdict bad' }, el('strong', {}, 'Known malware'), d.family ? ` \u2014 ${d.family}` : ''),
+    rows([['File name', d.fileName], ['Type', d.fileType], ['First seen', fmtDate(d.firstSeen)], ['Last seen', fmtDate(d.lastSeen)], d.deliveryMethod ? ['Delivered by', d.deliveryMethod] : null]),
+    d.tags.length ? el('div', { class: 'ref-meta' }, ...d.tags.map((t) => el('span', { class: 'badge' }, t))) : null,
+  ],
+
+  urlhausUrl: (d) => [
+    el('p', { class: 'verdict bad' }, el('strong', {}, 'Listed as malicious'), ` \u2014 ${d.threat || 'malware'}`),
+    rows([['Status', d.status === 'online' ? flag('bad', 'Online now') : d.status], ['Added', fmtDate(d.added)], d.tags.length ? ['Tags', list(d.tags)] : null, blacklisted(d.blacklists).length ? ['Blocklists', list(blacklisted(d.blacklists))] : null]),
+  ],
+  urlhausHost: (d) => [
+    el('p', { class: 'verdict bad' }, el('strong', {}, `${d.urlCount} malware URL${d.urlCount === 1 ? '' : 's'}`), ' seen on this host'),
+    rows([['First seen', fmtDate(d.firstSeen)], blacklisted(d.blacklists).length ? ['Blocklists', list(blacklisted(d.blacklists))] : null]),
+    urlTable(d.urls),
+  ],
+  urlhausPayload: (d) => [
+    el('p', { class: 'verdict bad' }, el('strong', {}, 'Distributed by malware URLs'), d.family ? ` \u2014 ${d.family}` : ''),
+    rows([['Type', d.fileType], ['First seen', fmtDate(d.firstSeen)], ['Seen on', `${d.urlCount} URL${d.urlCount === 1 ? '' : 's'}`]]),
+    urlTable(d.urls),
+  ],
+});
+
+const STATUS = { ok: ['ok', 'Found'], empty: ['muted', 'No data'], error: ['warn', 'Unavailable'], skipped: ['warn', 'Skipped'] };
+// A "found" result from a threat feed is bad news, not good news.
+const LISTED = new Set(['bazaar', 'urlhausUrl', 'urlhausHost', 'urlhausPayload']);
 
 export function sourceCard(s) {
-  const [kind, text] = STATUS[s.status] || ['muted', s.status];
+  const [kind, text] = s.status === 'ok' && s.id.startsWith('vt') ? VERDICT[s.data.verdict] || VERDICT.unknown
+    : s.status === 'ok' && LISTED.has(s.id) ? ['bad', 'Listed']
+    : s.status === 'empty' && LISTED.has(s.id) ? ['ok', 'Not listed']
+      : STATUS[s.status] || ['muted', s.status];
   const body = s.status === 'ok' && RENDER[s.id] ? RENDER[s.id](s.data) : [el('p', { class: 'hint' }, s.message || '')];
   const sourceHost = new URL(s.link).hostname.replace(/^www\./, '');
   return el('article', { class: 'card' },
