@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Reference · Security Lookup Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/reference.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Security Lookup Hub</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Lookup</a>
+        <a href="actors.html">Threat actors</a>
+        <a href="reference.html" aria-current="page">Reference</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <h1>Reference</h1>
+    <p class="lede">Free security sites for digging further, grouped by what they do. <span class="badge star">Lookup</span> marks sources that feed the Lookup page.</p>
+
+    <div class="filters">
+      <input id="ref-filter" type="search" placeholder="Filter, e.g. sandbox, DNS, CVE" aria-label="Filter sites">
+      <label><input id="ref-noaccount" type="checkbox"> No account needed</label>
+      <label><input id="ref-lookup" type="checkbox"> Lookup sources only</label>
+    </div>
+
+    <div id="ref-list" aria-live="polite"></div>
+  </main>
+
+  <footer class="site-footer">
+    Listing a site is not an endorsement. Check each site's terms before automating against it.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.pwnedpasswords.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Lookup · Security Lookup Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/lookup.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Security Lookup Hub</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./" aria-current="page">Lookup</a>
+        <a href="actors.html">Threat actors</a>
+        <a href="reference.html">Reference</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <h1>Lookup</h1>
+    <p class="lede">Paste a hash, domain, IP address, URL or email. Defanged indicators like <code>hxxp://bad[.]example</code> work too.</p>
+
+    <section class="panel" aria-labelledby="search-h">
+      <h2 id="search-h" class="visually-hidden">Search</h2>
+      <form id="search-form" class="row" autocomplete="off">
+        <input id="search-input" class="big-input" type="text" spellcheck="false"
+               aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, or a SHA-256 hash">
+        <button type="submit">Look up</button>
+      </form>
+      <div id="search-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="pw-h">
+      <h2 id="pw-h">Check a password</h2>
+      <p class="hint">Your password never leaves this page. It is hashed with SHA-1 here, and only the first 5 characters of the hash are sent to Have I Been Pwned (<a href="https://haveibeenpwned.com/API/v3#SearchingPwnedPasswordsByRange" rel="noopener noreferrer" target="_blank">k-anonymity</a>).</p>
+      <form id="pw-form" class="row" autocomplete="off">
+        <input id="pw-input" type="password" aria-label="Password to check" autocomplete="off" spellcheck="false">
+        <button type="button" id="pw-toggle" class="secondary" aria-pressed="false">Show</button>
+        <button type="submit">Check</button>
+      </form>
+      <div id="pw-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <div class="tools">
+      <section class="panel" aria-labelledby="hid-h">
+        <h2 id="hid-h">Hash identifier</h2>
+        <label for="hid-input">Hash</label>
+        <input id="hid-input" type="text" spellcheck="false" autocomplete="off" placeholder="$2b$12$… or 5f4dcc3b…">
+        <div id="hid-result" class="result" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="calc-h">
+        <h2 id="calc-h">Hash calculator</h2>
+        <label for="calc-input">Text (hashed as UTF-8)</label>
+        <textarea id="calc-input" spellcheck="false"></textarea>
+        <dl id="calc-result" class="kv"></dl>
+      </section>
+    </div>
+
+    <section class="panel spaced" aria-labelledby="dec-h">
+      <h2 id="dec-h">Decoder</h2>
+      <div class="row">
+        <select id="dec-codec" aria-label="Encoding"></select>
+        <button type="button" id="dec-encode" class="secondary">Encode →</button>
+        <button type="button" id="dec-decode" class="secondary">Decode →</button>
+        <button type="button" id="dec-swap" class="secondary" title="Move output to input">⇅ Swap</button>
+      </div>
+      <div class="tools pair">
+        <div>
+          <label for="dec-input">Input</label>
+          <textarea id="dec-input" spellcheck="false"></textarea>
+        </div>
+        <div>
+          <label for="dec-output">Output</label>
+          <textarea id="dec-output" spellcheck="false" readonly></textarea>
+        </div>
+      </div>
+      <div id="dec-error" class="result" aria-live="polite"></div>
+      <p class="hint">Need more operations? <a href="https://gchq.github.io/CyberChef/" rel="noopener noreferrer" target="_blank">CyberChef</a> does hundreds.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    Passive lookups only: this site never connects to the hosts you search for. Results link to each source's own site.
+  </footer>
+</body>
+</html>

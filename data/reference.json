@@ -1,0 +1,93 @@
+{
+  "accountLegend": {
+    "no": "No account needed",
+    "api": "Free account needed for the API only",
+    "yes": "Free account needed",
+    "paid": "Paid for the API"
+  },
+  "groups": [
+    {
+      "id": "files",
+      "title": "Files, hashes and malware",
+      "sites": [
+        { "name": "VirusTotal", "url": "https://www.virustotal.com/", "desc": "Checks a hash, file, URL, domain or IP against ~70 antivirus engines and reputation feeds.", "account": "api", "lookup": true },
+        { "name": "MalwareBazaar", "url": "https://bazaar.abuse.ch/", "desc": "Database of known malware samples, searchable by hash, family or tag.", "account": "api", "lookup": true },
+        { "name": "URLhaus", "url": "https://urlhaus.abuse.ch/", "desc": "Database of URLs known to distribute malware.", "account": "api", "lookup": true },
+        { "name": "ThreatFox", "url": "https://threatfox.abuse.ch/", "desc": "Indicators of compromise (IPs, domains, hashes) tied to malware families.", "account": "api" },
+        { "name": "Hybrid Analysis", "url": "https://www.hybrid-analysis.com/", "desc": "Free sandbox: runs a file and reports what it did.", "account": "yes" },
+        { "name": "ANY.RUN", "url": "https://any.run/", "desc": "Interactive sandbox you watch live.", "account": "yes" },
+        { "name": "CyberChef", "url": "https://gchq.github.io/CyberChef/", "desc": "\"Cyber Swiss Army knife\": encode, decode, hash, decrypt and parse data in the browser.", "account": "no" },
+        { "name": "hashes.com hash identifier", "url": "https://hashes.com/en/tools/hash_identifier", "desc": "Identifies a hash type from its format.", "account": "no" }
+      ]
+    },
+    {
+      "id": "domains",
+      "title": "Domains, DNS and certificates",
+      "sites": [
+        { "name": "ICANN Lookup", "url": "https://lookup.icann.org/", "desc": "Official domain registration lookup (RDAP, the successor to WHOIS).", "account": "no", "lookup": true },
+        { "name": "crt.sh", "url": "https://crt.sh/", "desc": "Certificate transparency search: every certificate issued for a domain, which reveals subdomains.", "account": "no", "lookup": true },
+        { "name": "MXToolbox", "url": "https://mxtoolbox.com/", "desc": "DNS, MX, SPF, DMARC and blocklist checks.", "account": "no" },
+        { "name": "DNSDumpster", "url": "https://dnsdumpster.com/", "desc": "Maps a domain's DNS records and hosts.", "account": "no" },
+        { "name": "SecurityTrails", "url": "https://securitytrails.com/", "desc": "Historical DNS and WHOIS records.", "account": "yes" },
+        { "name": "urlscan.io", "url": "https://urlscan.io/", "desc": "Loads a URL in a sandbox browser and shows screenshots, requests and verdict.", "account": "api" },
+        { "name": "Google Safe Browsing site status", "url": "https://transparencyreport.google.com/safe-browsing/search", "desc": "Whether Google flags a site as unsafe.", "account": "no" },
+        { "name": "SSL Labs", "url": "https://www.ssllabs.com/ssltest/", "desc": "Grades a site's TLS configuration.", "account": "no" },
+        { "name": "securityheaders.com", "url": "https://securityheaders.com/", "desc": "Grades a site's HTTP security headers.", "account": "no" }
+      ]
+    },
+    {
+      "id": "ips",
+      "title": "IP addresses and exposure",
+      "sites": [
+        { "name": "AbuseIPDB", "url": "https://www.abuseipdb.com/", "desc": "Community abuse reports for an IP, with a confidence score.", "account": "api", "lookup": true },
+        { "name": "GreyNoise", "url": "https://viz.greynoise.io/", "desc": "Whether an IP is internet-wide scanning \"noise\" or something targeted.", "account": "api", "lookup": true },
+        { "name": "Shodan", "url": "https://www.shodan.io/", "desc": "Search engine for internet-connected devices: open ports, banners, known CVEs.", "account": "yes", "lookup": true },
+        { "name": "Censys", "url": "https://search.censys.io/", "desc": "Shodan alternative focused on hosts and certificates.", "account": "yes" },
+        { "name": "AlienVault OTX", "url": "https://otx.alienvault.com/", "desc": "Open threat exchange: community \"pulses\" of indicators.", "account": "api" },
+        { "name": "IPinfo", "url": "https://ipinfo.io/", "desc": "IP owner, network (ASN) and location.", "account": "api" }
+      ]
+    },
+    {
+      "id": "breaches",
+      "title": "Breaches and passwords",
+      "sites": [
+        { "name": "Have I Been Pwned", "url": "https://haveibeenpwned.com/", "desc": "Whether an email appeared in a data breach.", "account": "paid", "lookup": true },
+        { "name": "Have I Been Pwned: Passwords", "url": "https://haveibeenpwned.com/Passwords", "desc": "Checks a password against breached-password lists without sending it.", "account": "no", "lookup": true }
+      ]
+    },
+    {
+      "id": "actors",
+      "title": "Threat actors and attacker techniques",
+      "sites": [
+        { "name": "MITRE ATT&CK Groups", "url": "https://attack.mitre.org/groups/", "desc": "Profiles of APT groups (including Chinese, Russian, Iranian and North Korean groups) and the techniques they use.", "account": "no", "lookup": true },
+        { "name": "MITRE ATT&CK Navigator", "url": "https://mitre-attack.github.io/attack-navigator/", "desc": "Heat-map of techniques for a group or for your defenses.", "account": "no" },
+        { "name": "Malpedia", "url": "https://malpedia.caad.fkie.fraunhofer.de/", "desc": "Encyclopedia of malware families and the actors behind them.", "account": "no" },
+        { "name": "CISA advisories", "url": "https://www.cisa.gov/news-events/cybersecurity-advisories", "desc": "US government advisories, including joint ones on state-sponsored actors.", "account": "no" },
+        { "name": "ETDA Threat Group Cards", "url": "https://apt.etda.or.th/cgi-bin/aptgroups.cgi", "desc": "Cross-reference of APT group names across vendors.", "account": "no" }
+      ]
+    },
+    {
+      "id": "vulns",
+      "title": "Vulnerabilities and exploits",
+      "sites": [
+        { "name": "NVD", "url": "https://nvd.nist.gov/", "desc": "US National Vulnerability Database: CVE details and CVSS scores.", "account": "no" },
+        { "name": "CISA KEV", "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog", "desc": "CVEs confirmed exploited in the wild.", "account": "no" },
+        { "name": "FIRST EPSS", "url": "https://www.first.org/epss/", "desc": "Probability a CVE will be exploited in the next 30 days.", "account": "no" },
+        { "name": "OSV.dev", "url": "https://osv.dev/", "desc": "Known vulnerabilities by open-source package and version.", "account": "no" },
+        { "name": "Exploit-DB", "url": "https://www.exploit-db.com/", "desc": "Archive of public exploits (the source of searchsploit).", "account": "no" },
+        { "name": "CVE Explainer", "url": null, "desc": "Plain-English CVE summaries (your own app).", "account": "no" }
+      ]
+    },
+    {
+      "id": "learning",
+      "title": "Learning and practice",
+      "sites": [
+        { "name": "TryHackMe", "url": "https://tryhackme.com/", "desc": "Guided hands-on security labs.", "account": "yes" },
+        { "name": "Hack The Box", "url": "https://www.hackthebox.com/", "desc": "Practice machines and challenges.", "account": "yes" },
+        { "name": "OverTheWire", "url": "https://overthewire.org/wargames/", "desc": "Classic command-line wargames.", "account": "no" },
+        { "name": "GTFOBins", "url": "https://gtfobins.github.io/", "desc": "Unix binaries that can be abused to bypass restrictions (privilege escalation reference).", "account": "no" },
+        { "name": "LOLBAS", "url": "https://lolbas-project.github.io/", "desc": "The Windows equivalent of GTFOBins.", "account": "no" }
+      ]
+    }
+  ]
+}
