@@ -11,6 +11,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 3 | Cloudflare Worker with keyless lookups (RDAP, DNS, certificates, Shodan InternetDB), validation, cache | Done |
 | 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar, URLhaus | Done |
 | 5 | Result cards, polish, deploy | Done |
+| Extra | "Explain these results" AI summary (Groq free tier) | Done |
 
 ## Run locally
 
@@ -65,6 +66,15 @@ npx wrangler deploy
 
 wrangler is pinned to 4.86.0 because later 4.x versions need Node 22.
 
+## AI explanations
+
+The "Explain these results" button calls `GET /api/explain?q=`. That route reuses the cached source results and asks `openai/gpt-oss-120b` on Groq's free tier (no payment method) for a short plain-English summary. The key is the Worker secret `GROQ_API_KEY`.
+
+- **On demand only.** Nothing is sent to Groq unless a visitor clicks the button. Groq doesn't retain API data by default, and Zero Data Retention can be enabled under Data Controls.
+- **The verdict is decided in code** (`verdict()` in `worker/src/explain.js`), and the model only explains it. Left to choose, the model called github.com "Likely malicious" because URLhaus lists malware hosted there.
+- **Prompt injection.** Threat feeds contain attacker-written text, so the model only sees selected structured fields, truncated. It never sees TXT records, page titles, file names or URL lists. It's told the data is untrusted, it has no tools, and its output is shown as plain text with URLs defanged.
+- **Caching and limits.** Explanations are cached for 24 hours per indicator, except when a source was skipped. The Worker allows at most 20 Groq calls a minute (Groq's free limit is 30 a minute and 1,000 a day).
+
 ## Tests
 
 Node 20 or later, no dependencies:
@@ -112,7 +122,7 @@ js/results.js    result cards for Worker lookups
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
-worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/http.js
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary), src/http.js
 tests/           node:test unit tests
 ```
 

@@ -1,6 +1,7 @@
 // Security Lookup Hub API.
 //
-//   GET /api/lookup?q=<indicator>   fan out to keyless sources, one combined JSON result
+//   GET /api/lookup?q=<indicator>   fan out to the sources, one combined JSON result
+//   GET /api/explain?q=<indicator>  plain-English AI summary of the same results (Groq)
 //   GET /api/health
 //
 // Guardrails (see Docs/Requirements.md): input validated with the same rules as
@@ -13,6 +14,7 @@
 import { detect } from '../../js/detect.js';
 import { SOURCES, plan } from './sources.js';
 import { QuotaError } from './http.js';
+import { explain, MODEL } from './explain.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -105,28 +107,74 @@ async function runSource(id, value, ctx, tools) {
   return { ...base, ...result, cached: false };
 }
 
-async function lookup(request, env, ctx, origin) {
+/** Validates the query and runs its sources. Returns { status, body }. */
+async function runLookup(request, env, ctx) {
   const q = new URL(request.url).searchParams.get('q') || '';
-  if (q.length > 2048) return json({ error: 'Input is too long.' }, 400, origin);
+  if (q.length > 2048) return { status: 400, body: { error: 'Input is too long.' } };
 
   const detected = detect(q);
-  if (detected.type === 'empty') return json({ error: 'Nothing to look up.' }, 400, origin);
+  if (detected.type === 'empty') return { status: 400, body: { error: 'Nothing to look up.' } };
   if (detected.type === 'unknown' || detected.error) {
-    return json({ error: detected.error || 'Not a supported indicator.', type: detected.type }, 422, origin);
+    return { status: 422, body: { error: detected.error || 'Not a supported indicator.', type: detected.type } };
   }
-
 
   const steps = plan(detected);
   const tools = quotaTools(env, ctx);
   const sources = await Promise.all(steps.map((s) => runSource(s.id, s.value, ctx, tools)));
-  return json({
-    type: detected.type,
-    label: detected.label,
-    value: detected.value,
-    host: detected.host,
-    sources,
-    note: steps.length ? undefined : 'No source covers this indicator type. Use the links to check it on each site.',
-  }, 200, origin);
+  return {
+    status: 200,
+    body: {
+      type: detected.type,
+      label: detected.label,
+      value: detected.value,
+      host: detected.host,
+      sources,
+      note: steps.length ? undefined : 'No source covers this indicator type. Use the links to check it on each site.',
+    },
+  };
+}
+
+async function lookup(request, env, ctx, origin) {
+  const { status, body } = await runLookup(request, env, ctx);
+  return json(body, status, origin);
+}
+
+// The explanation is built from the same (cached) source results the page
+// shows, so asking for one doesn't call the threat feeds again.
+async function explainRoute(request, env, ctx, origin) {
+  if (!env.GROQ_API_KEY) return json({ error: 'AI explanations are not configured.' }, 503, origin);
+  const { status, body } = await runLookup(request, env, ctx);
+  if (status !== 200) return json(body, status, origin);
+  if (!body.sources.some((s) => s.status === 'ok' || s.status === 'empty')) {
+    return json({ error: 'Not enough results to explain.' }, 422, origin);
+  }
+
+  const cache = caches.default;
+  const key = cacheUrl(`${CACHE_VERSION}/explain3/${encodeURIComponent(MODEL)}/${encodeURIComponent(body.value)}`);
+  const hit = await cache.match(key);
+  if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);
+
+  const tools = quotaTools(env, ctx);
+  if ((await tools.paused('GROQ_API_KEY')) || !(await tools.allow('GROQ_API_KEY', 20))) {
+    return json({ error: 'The AI explainer is busy (free tier limit). Try again in a minute.' }, 429, origin, { 'retry-after': '60' });
+  }
+  let text;
+  try {
+    text = await explain(body, env.GROQ_API_KEY);
+  } catch (err) {
+    if (err instanceof QuotaError) {
+      tools.pause('GROQ_API_KEY', Math.min(Math.max(err.retryAfter, 60), 3600));
+      return json({ error: 'The AI explainer has hit its free limit. Try again later.' }, 429, origin, { 'retry-after': '60' });
+    }
+    return json({ error: err.name === 'TimeoutError' ? 'The AI explainer took too long. Try again.' : 'The AI explainer failed. Try again later.' }, 502, origin);
+  }
+  // Explanations of partial results (a source skipped or errored) are not cached,
+  // so a later request can explain the full picture.
+  const result = { explanation: text, model: MODEL, generatedAt: new Date().toISOString() };
+  if (!body.sources.some((s) => s.status === 'skipped' || s.status === 'error')) {
+    ctx.waitUntil(cache.put(key, new Response(JSON.stringify(result), { headers: { 'cache-control': `max-age=${CACHE_TTL}` } })));
+  }
+  return json({ ...result, cached: false }, 200, origin);
 }
 
 export default {
@@ -140,6 +188,7 @@ export default {
     if (url.pathname === '/api/health') return json({ ok: true }, 200, origin);
     if (!origin) return json({ error: 'This API only serves the Security Lookup Hub site.' }, 403, null);
     if (url.pathname === '/api/lookup') return lookup(request, env, ctx, origin);
+    if (url.pathname === '/api/explain') return explainRoute(request, env, ctx, origin);
     return json({ error: 'Not found.' }, 404, origin);
   },
 };

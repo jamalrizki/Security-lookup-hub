@@ -284,3 +284,10 @@ footer.site-footer { max-width: 1040px; margin: 0 auto; padding: 0 16px 32px; co
 .verdict.bad { background: var(--bad-bg); color: var(--bad); }
 .verdict.muted { background: var(--surface-2); color: var(--muted); }
 .result h3 { margin-top: 16px; }
+
+/* ---------- AI explanation ---------- */
+
+.explain { margin: 0 0 20px; padding: 14px 16px; border: 1px dashed var(--border); border-radius: 8px; }
+.explain .hint { margin-top: 8px; }
+.explain h3 { margin-top: 0; }
+.explain-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
