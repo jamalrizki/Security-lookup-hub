@@ -158,3 +158,16 @@ test('headers: folded lines, body ignored, 200 KB cap, junk input', () => {
   });
   assert.equal(decodeMimeWords('=?UTF-8?Q?Caf=C3=A9_menu?='), 'Café menu');
 });
+
+test('headers: missing fields are reported as missing, never as agreeing', () => {
+  const onlyFrom = parseHeaders('From: Jo <jo@example.com>\nSubject: hi\n', { psl });
+  assert.deepEqual(onlyFrom.present, ['From']);
+  assert.deepEqual(onlyFrom.missing, ['Reply-To', 'Return-Path', 'Message-ID']);
+  assert.deepEqual(onlyFrom.mismatches, []);
+  const two = parseHeaders('From: jo@example.com\nReply-To: help@mail.example.com\n', { psl });
+  assert.deepEqual(two.present, ['From', 'Reply-To']);
+  assert.deepEqual(two.mismatches, [], 'same registrable domain');
+  const none = parseHeaders('Subject: no addresses\n', { psl });
+  assert.deepEqual(none.present, []);
+});
+

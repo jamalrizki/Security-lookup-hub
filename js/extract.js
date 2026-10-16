@@ -526,6 +526,10 @@ export function parseHeaders(raw, { psl = null } = {}) {
   if (fromDomain && replyTo && site(fromDomain) !== site(replyTo)) mismatches.push(`Replies go to ${replyTo}, not the sender's domain ${fromDomain}`);
   if (fromDomain && returnPath && site(fromDomain) !== site(returnPath)) mismatches.push(`Bounces go to ${returnPath} (Return-Path), not ${fromDomain}`);
   if (fromDomain && messageId && site(fromDomain) !== site(messageId)) mismatches.push(`The Message-ID was created by ${messageId}, not ${fromDomain}`);
+  // Which fields the comparison could actually use, so "no mismatch" is never claimed about missing ones.
+  const fields = { From: fromDomain, 'Reply-To': replyTo, 'Return-Path': returnPath, 'Message-ID': messageId };
+  const present = Object.keys(fields).filter((k) => fields[k]);
+  const missing = Object.keys(fields).filter((k) => !fields[k]);
 
   // The topmost Authentication-Results is the one your own provider added.
   const authRaw = one('authentication-results');
@@ -547,6 +551,8 @@ export function parseHeaders(raw, { psl = null } = {}) {
     auth,
     authHeaders: all('authentication-results').length,
     mismatches,
+    present,
+    missing,
     iocs,
   };
 }

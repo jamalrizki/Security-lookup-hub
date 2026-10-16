@@ -24,6 +24,25 @@ function authRow(method, results) {
   ]))];
 }
 
+const missingText = () => el('span', { class: 'hint' }, 'missing');
+const listOf = (a) => (a.length > 1 ? `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}` : a[0]);
+
+/** The domain comparison, worded from the fields that were actually present. */
+function comparison(h) {
+  const missingNote = h.missing.length ? el('p', { class: 'hint' }, `Missing, so not compared: ${listOf(h.missing)}.`) : null;
+  if (h.mismatches.length) {
+    return el('div', { class: 'verdict warn' }, el('strong', {}, 'Mismatches'),
+      el('ul', { class: 'plain-list' }, ...h.mismatches.map((m) => el('li', {}, m))), missingNote);
+  }
+  if (!h.present.includes('From')) {
+    return el('div', { class: 'verdict muted' }, 'No From address with a domain, so nothing could be compared.', missingNote);
+  }
+  if (h.present.length < 2) {
+    return el('div', { class: 'verdict muted' }, 'Nothing to compare: only the From address is present.', missingNote);
+  }
+  return el('div', { class: 'verdict ok' }, `No mismatch detected among available fields (${listOf(h.present)}).`, missingNote);
+}
+
 async function analyze() {
   const raw = $('headers-input').value;
   const out = $('headers-result');
@@ -45,14 +64,12 @@ async function analyze() {
   parts.push(rows([
     ['Subject', h.subject],
     ['From', h.from],
-    ['Reply-To', h.replyTo],
-    ['Return-Path', h.returnPath],
-    ['Message-ID domain', h.messageId],
+    ['Reply-To', h.replyTo ?? missingText()],
+    ['Return-Path', h.returnPath ?? missingText()],
+    ['Message-ID domain', h.messageId ?? missingText()],
     ['Date', h.date],
   ]));
-  parts.push(h.mismatches.length
-    ? el('div', { class: 'verdict warn' }, el('strong', {}, 'Mismatches'), el('ul', { class: 'plain-list' }, ...h.mismatches.map((m) => el('li', {}, m))))
-    : el('p', { class: 'verdict ok' }, 'From, Reply-To, Return-Path and Message-ID domains agree.'));
+  parts.push(comparison(h));
 
   parts.push(el('h3', {}, 'Authentication'),
     el('p', { class: 'hint' }, h.authHeaders
