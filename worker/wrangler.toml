@@ -15,7 +15,7 @@ crons = ["17,37,57 * * * *"]
 
 [[kv_namespaces]]
 binding = "NEWS"
-id = "00000000000000000000000000000000" # TODO: replace with the id from kv namespace create
+id = "5325f3f20acc4b50a1c03613d6cf9096" # from: npx wrangler kv namespace create NEWS
 
 # Store nothing about visitors: no Workers Logs or traces.
 [observability]
