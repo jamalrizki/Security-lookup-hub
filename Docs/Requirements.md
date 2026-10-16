@@ -18,8 +18,12 @@ Non-goals
 • No user accounts, saved history or stored lookups.
 • Not tied to the Claude exam or the MCP build. AI and MCP are optional extras, not requirements.
 • Not a replacement for a SOC tool or a sandbox. It points to deeper tools; it does not detonate files.
+• No website security-header checker: the Worker would fetch arbitrary user-supplied sites (active, and an SSRF surface). (Added in v2.)
+• No WiGLE lookup: locating people's Wi-Fi networks is a privacy and stalking risk. (Added in v2.)
+• No password generator or text diff (low value here), and no running or connecting offensive tools. (Added in v2.)
+• No chat or MCP endpoint in the hub; CVE Explainer stays a separate app. (Added in v2.)
 Core features
-The app has three pages: Lookup (the search box), Threat actors, and Reference.
+The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze, and a security tools guide linked from Reference.
 1. Lookup: one box, type detected automatically
 The input type is detected in code (regex and length), then only the matching lookups run. Each result card shows the verdict, the key numbers, and a "view full report" link to the source.
 You paste
@@ -51,6 +55,8 @@ Extra tools on the same page, done entirely in the browser with no API:
 A searchable list of APT groups from MITRE ATT&CK, filterable by country of attribution, with aliases (for example APT41 / Double Dragon / Wicked Panda), targeted sectors, and their known techniques linked to the ATT&CK site. Data is a static file refreshed from MITRE's published JSON, so it needs no API.
 3. Reference
 The directory in the next section, rendered as a page: every site grouped by job, with one line on what it does, whether it needs an account, and a link.
+4. CVEs (v2)
+A CVE ID pasted into Lookup is detected like a hash or IP, and the Worker calls NVD, CISA KEV and FIRST EPSS directly; a rule-of-thumb patching priority is decided in code. The CVEs page searches NVD by product or keyword and shows the 10 newest matches.
 Reference directory
 These are the sites the Reference page lists, grouped by job. "Account" means a free sign-up is needed to use the site or its API. Sites marked with ★ also feed the Lookup page.
 Files, hashes and malware

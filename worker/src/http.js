@@ -11,16 +11,19 @@ export class QuotaError extends Error {
   }
 }
 
-export async function getJson(url, { accept = 'application/json', timeout = TIMEOUT_MS, maxBytes = 1_000_000, method = 'GET', body, headers = {} } = {}) {
+// rateLimitStatuses: NVD answers 403 as well as 429 when rate limited.
+// cf: Cloudflare fetch options, e.g. edge-caching a large shared download.
+export async function getJson(url, { accept = 'application/json', timeout = TIMEOUT_MS, maxBytes = 1_000_000, method = 'GET', body, headers = {}, rateLimitStatuses = [429], cf } = {}) {
   const res = await fetch(url, {
     method,
     body,
     headers: { accept, 'user-agent': UA, ...headers },
     signal: AbortSignal.timeout(timeout),
     redirect: 'follow',
+    ...(cf ? { cf } : {}),
   });
   if (res.status === 404) return { status: 404 };
-  if (res.status === 429) throw new QuotaError(Number(res.headers.get('retry-after')) || 60);
+  if (rateLimitStatuses.includes(res.status)) throw new QuotaError(Number(res.headers.get('retry-after')) || 60);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const text = await readCapped(res, maxBytes);
   if (text === null) return { status: 413 };

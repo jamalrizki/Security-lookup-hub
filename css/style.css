@@ -283,7 +283,7 @@ footer.site-footer { max-width: 1040px; margin: 0 auto; padding: 0 16px 32px; co
 .verdict.warn { background: var(--warn-bg); color: var(--warn); }
 .verdict.bad { background: var(--bad-bg); color: var(--bad); }
 .verdict.muted { background: var(--surface-2); color: var(--muted); }
-.result h3 { margin-top: 16px; }
+.result > h3 { margin-top: 16px; } /* the "Open in" heading, not card titles */
 
 /* ---------- AI explanation ---------- */
 
@@ -291,3 +291,14 @@ footer.site-footer { max-width: 1040px; margin: 0 auto; padding: 0 16px 32px; co
 .explain .hint { margin-top: 8px; }
 .explain h3 { margin-top: 0; }
 .explain-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+
+/* ---------- CVEs ---------- */
+
+.priority { margin-bottom: 12px; }
+.plain-list { margin: 0; padding-left: 18px; font-size: 0.92rem; }
+.plain-list li { margin-bottom: 2px; overflow-wrap: anywhere; }
+.cve-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.cve-row { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+.cve-row p { margin: 6px 0 0; font-size: 0.93rem; overflow-wrap: anywhere; }
+.cve-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.cve-head a { font-weight: 600; }

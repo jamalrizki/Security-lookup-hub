@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' http://127.0.0.1:8787 https://security-lookup-hub.jamalrizki.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>CVEs · Security Lookup Hub</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/cves.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Security Lookup Hub</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Lookup</a>
+        <a href="cves.html" aria-current="page">CVEs</a>
+        <a href="actors.html">Threat actors</a>
+        <a href="reference.html">Reference</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <h1>CVEs</h1>
+    <p class="lede">Search NVD for vulnerabilities by product or keyword. Have a CVE ID already? Paste it into <a href="./">Lookup</a> for the full record, CISA KEV and EPSS.</p>
+
+    <section class="panel">
+      <form id="cve-form" class="row" autocomplete="off">
+        <input id="cve-q" type="search" maxlength="60" spellcheck="false" aria-label="Product or keyword" placeholder="e.g. fortinet, openssh, log4j">
+        <select id="cve-sev" aria-label="Severity">
+          <option value="">Any severity</option>
+          <option value="CRITICAL">Critical</option>
+          <option value="HIGH">High</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="LOW">Low</option>
+        </select>
+        <button type="submit">Search</button>
+      </form>
+      <p class="hint">Letters, digits, spaces, dots, dashes and underscores; 2 to 60 characters. Severity uses CVSS v3. Results are the 10 newest matches.</p>
+      <div id="cve-results" class="result" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    Data from the NIST National Vulnerability Database. This product uses the NVD API but is not endorsed or certified by the NVD.
+  </footer>
+</body>
+</html>

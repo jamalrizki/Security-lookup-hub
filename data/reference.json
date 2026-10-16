@@ -75,7 +75,7 @@
         { "name": "FIRST EPSS", "url": "https://www.first.org/epss/", "desc": "Probability a CVE will be exploited in the next 30 days.", "account": "no" },
         { "name": "OSV.dev", "url": "https://osv.dev/", "desc": "Known vulnerabilities by open-source package and version.", "account": "no" },
         { "name": "Exploit-DB", "url": "https://www.exploit-db.com/", "desc": "Archive of public exploits (the source of searchsploit).", "account": "no" },
-        { "name": "CVE Explainer", "url": null, "desc": "Plain-English CVE summaries (your own app).", "account": "no" }
+        { "name": "CVE Explainer", "url": "https://jamalrizki.github.io/cve-explainer/", "desc": "Ask questions about a CVE in plain English (a chat app by the same author).", "account": "no" }
       ]
     },
     {

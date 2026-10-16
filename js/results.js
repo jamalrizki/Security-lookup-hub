@@ -17,6 +17,18 @@ function el(tag, attrs = {}, ...children) {
 }
 
 const extLink = (href, ...children) => el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, ...children);
+// Opens the hub's own lookup for an indicator (same tab; the page reacts to #q=).
+export const hubLink = (value, text = value) => el('a', { href: `./#q=${encodeURIComponent(value)}` }, text);
+
+/** Returns the URL if it is https with no userinfo, else null. Feed data decides these links. */
+export function safeUrl(raw) {
+  try {
+    const u = new URL(raw);
+    return u.protocol === 'https:' && !u.username && !u.password ? u.href : null;
+  } catch {
+    return null;
+  }
+}
 const flag = (kind, text) => el('span', { class: `flag ${kind}` }, text);
 
 function rows(pairs) {
@@ -88,7 +100,7 @@ const RENDER = {
       d.tags.includes('scanner') ? el('p', { class: 'notice warn' }, 'Tagged as a scanner: likely internet background noise.') : null,
       rows([
         ['Open ports', list(d.ports.map(String), 'None seen')],
-        ['Known CVEs', cves.length ? el('span', {}, ...cves.slice(0, 20).flatMap((c, i) => [i ? ', ' : null, extLink(`https://nvd.nist.gov/vuln/detail/${c}`, c)])) : el('span', { class: 'hint' }, 'None listed')],
+        ['Known CVEs', cves.length ? el('span', {}, ...cves.slice(0, 20).flatMap((c, i) => [i ? ', ' : null, hubLink(c)])) : el('span', { class: 'hint' }, 'None listed')],
         ['Tags', list(d.tags)],
         ['Hostnames', list(d.hostnames.slice(0, 10))],
       ]),
@@ -191,12 +203,87 @@ Object.assign(RENDER, {
   ],
 });
 
+// ---------- CVE sources ----------
+
+const SEVERITY_KIND = { CRITICAL: 'bad', HIGH: 'bad', MEDIUM: 'warn', LOW: 'ok' };
+
+Object.assign(RENDER, {
+  nvd(d) {
+    const c = d.cvss;
+    const sev = (c?.severity || '').toUpperCase();
+    const refs = d.references.map((r) => {
+      const href = safeUrl(r.url);
+      const label = r.tags.length ? ` (${r.tags.slice(0, 2).join(', ')})` : '';
+      // Non-https or userinfo URLs are shown as text, never linked.
+      return el('li', {}, href ? extLink(href, new URL(href).hostname) : el('span', { class: 'mono' }, defang(r.url)), el('span', { class: 'hint' }, label));
+    });
+    return [
+      ...d.notes.map((n) => el('p', { class: 'notice warn' }, n)),
+      c ? el('p', { class: `verdict ${SEVERITY_KIND[sev] || 'muted'}` }, el('strong', {}, `${sev ? `${sev[0]}${sev.slice(1).toLowerCase()} ` : ''}${c.baseScore}`), ` \u2014 CVSS ${c.version}, scored by ${c.scoredBy}`)
+        : el('p', { class: 'verdict muted' }, 'No CVSS score yet'),
+      c?.plainEnglish.length ? el('ul', { class: 'plain-list' }, ...c.plainEnglish.map((l) => el('li', {}, l))) : null,
+      el('p', {}, d.description, d.descriptionTruncated ? el('span', { class: 'hint' }, ' (more on NVD)') : null),
+      rows([
+        d.weaknesses.length ? ['Weakness', list(d.weaknesses.map((w) => (w.name ? `${w.name} (${w.id})` : w.id)))] : null,
+        ['Published', d.published],
+        ['Modified', d.modified],
+        ['Status', d.status],
+      ]),
+      d.affected.length ? el('details', { class: 'more' }, el('summary', {}, `Affected products (${d.affectedTotal > d.affected.length ? `${d.affected.length} of ${d.affectedTotal}` : d.affected.length})`),
+        el('ul', { class: 'mono-list' }, ...d.affected.map((a) => el('li', {}, `${a.vendor} ${a.product}: ${a.versions}`)))) : null,
+      refs.length ? el('details', { class: 'more' }, el('summary', {}, `References (${refs.length})`), el('ul', { class: 'plain-list' }, ...refs)) : null,
+    ];
+  },
+
+  kev(d) {
+    if (!d.inKev) return [el('p', { class: 'verdict muted' }, el('strong', {}, 'Not in KEV')), el('p', { class: 'hint' }, d.message)];
+    return [
+      el('p', { class: 'verdict bad' }, el('strong', {}, 'Exploited in the wild'), ' \u2014 listed in CISA KEV'),
+      rows([
+        ['Vulnerability', d.name],
+        ['Product', [d.vendorProject, d.product].filter(Boolean).join(' ')],
+        ['Date added', d.dateAdded],
+        ['CISA due date', d.dueDate],
+        ['Ransomware use', d.ransomware ? flag('bad', 'Known') : 'Not known'],
+        ['Required action', d.requiredAction],
+      ]),
+    ];
+  },
+
+  epss(d) {
+    const kind = d.epss >= 0.1 ? 'bad' : d.epss >= 0.01 ? 'warn' : 'ok';
+    return [
+      el('p', { class: `verdict ${kind}` }, el('strong', {}, `${(d.epss * 100).toFixed(d.epss < 0.01 ? 2 : 1)}%`), ' chance of exploitation in 30 days'),
+      el('p', {}, d.meaning),
+      rows([['Percentile', `${(d.percentile * 100).toFixed(1)}`], ['Score date', d.scoreDate]]),
+    ];
+  },
+});
+
+const PRIORITY_KIND = {
+  'Rejected: not a valid vulnerability': 'muted',
+  'Exploited in the wild: patch urgently': 'bad',
+  'High priority': 'bad',
+  'Patch soon': 'warn',
+  'Patch on your normal cycle': 'ok',
+  'Low priority': 'ok',
+};
+
+/** The rule-of-thumb priority strip shown above CVE cards. */
+export function priorityStrip(p) {
+  return el('div', { class: `priority verdict ${PRIORITY_KIND[p.verdict] || 'muted'}` },
+    el('span', { class: 'hint' }, 'Priority (rule of thumb): '),
+    el('strong', {}, p.verdict),
+    p.reasons.length ? el('span', {}, ` \u2014 ${p.reasons.join('; ')}`) : null);
+}
+
 const STATUS = { ok: ['ok', 'Found'], empty: ['muted', 'No data'], error: ['warn', 'Unavailable'], skipped: ['warn', 'Skipped'] };
 // A "found" result from a threat feed is bad news, not good news.
 const LISTED = new Set(['bazaar', 'urlhausUrl', 'urlhausHost', 'urlhausPayload']);
 
 export function sourceCard(s) {
-  const [kind, text] = s.status === 'ok' && s.id.startsWith('vt') ? VERDICT[s.data.verdict] || VERDICT.unknown
+  const [kind, text] = s.status === 'ok' && s.id === 'kev' ? (s.data.inKev ? ['bad', 'In KEV'] : ['muted', 'Not in KEV'])
+    : s.status === 'ok' && s.id.startsWith('vt') ? VERDICT[s.data.verdict] || VERDICT.unknown
     : s.status === 'ok' && s.id === 'urlhausHost' ? ['warn', 'Used for malware']
       : s.status === 'ok' && LISTED.has(s.id) ? ['bad', 'Listed']
     : s.status === 'empty' && LISTED.has(s.id) ? ['ok', 'Not listed']

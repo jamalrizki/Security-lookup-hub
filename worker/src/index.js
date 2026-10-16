@@ -2,6 +2,7 @@
 //
 //   GET /api/lookup?q=<indicator>   fan out to the sources, one combined JSON result
 //   GET /api/explain?q=<indicator>  plain-English AI summary of the same results (Groq)
+//   GET /api/cve-search?q=&severity= newest NVD matches for a keyword
 //   GET /api/health
 //
 // Guardrails (see Docs/Requirements.md): input validated with the same rules as
@@ -14,7 +15,8 @@
 import { detect } from '../../js/detect.js';
 import { SOURCES, plan } from './sources.js';
 import { QuotaError } from './http.js';
-import { explain, MODEL } from './explain.js';
+import { explain, MODEL, verdict } from './explain.js';
+import { validateSearch, searchCves, CVE_TTL } from './cve.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -75,6 +77,8 @@ function quotaTools(env, ctx) {
 async function runSource(id, value, ctx, tools) {
   const source = SOURCES[id];
   const base = { id, name: source.name, link: source.link(value), value };
+  // Quota name for pausing: the API key's name, or an explicit one (NVD works without a key).
+  const quota = source.quota || source.key;
   if (source.key && !tools.env[source.key]) {
     return { ...base, status: 'skipped', message: 'This source is not configured (no API key).', cached: false };
   }
@@ -84,7 +88,7 @@ async function runSource(id, value, ctx, tools) {
   const hit = await cache.match(key);
   if (hit) return { ...base, ...(await hit.json()), cached: true };
 
-  if (source.key && (await tools.paused(source.key))) {
+  if (quota && (await tools.paused(quota))) {
     return { ...base, status: 'skipped', message: `${source.name}\u2019s free limit is used up for now. Try again later.`, cached: false };
   }
 
@@ -93,8 +97,7 @@ async function runSource(id, value, ctx, tools) {
     result = await source.run(value, tools);
   } catch (err) {
     if (err instanceof QuotaError) {
-      const quotaName = source.key || id;
-      tools.pause(quotaName, Math.min(Math.max(err.retryAfter, 60), 3600));
+      tools.pause(quota || id, Math.min(Math.max(err.retryAfter, 60), 3600));
       return { ...base, status: 'skipped', message: `${source.name} says its free limit is used up. It will be retried later.`, cached: false };
     }
     const message = err.name === 'TimeoutError' ? 'The source did not answer in time.' : `The source returned an error (${err.message}).`;
@@ -102,7 +105,8 @@ async function runSource(id, value, ctx, tools) {
   }
   if (result.status === 'skipped') return { ...base, ...result, cached: false };
   result.checkedAt = new Date().toISOString();
-  const ttl = result.status === 'ok' ? CACHE_TTL : EMPTY_TTL;
+  const okTtl = source.ttl || CACHE_TTL;
+  const ttl = result.status === 'ok' ? okTtl : Math.min(EMPTY_TTL, okTtl);
   ctx.waitUntil(cache.put(key, new Response(JSON.stringify(result), { headers: { 'cache-control': `max-age=${ttl}` } })));
   return { ...base, ...result, cached: false };
 }
@@ -129,6 +133,8 @@ async function runLookup(request, env, ctx) {
       value: detected.value,
       host: detected.host,
       sources,
+      // CVE priority is decided in code (the same rule the Explain button uses).
+      priority: detected.type === 'cve' ? verdict(sources) : undefined,
       note: steps.length ? undefined : 'No source covers this indicator type. Use the links to check it on each site.',
     },
   };
@@ -137,6 +143,36 @@ async function runLookup(request, env, ctx) {
 async function lookup(request, env, ctx, origin) {
   const { status, body } = await runLookup(request, env, ctx);
   return json(body, status, origin);
+}
+
+// GET /api/cve-search?q=&severity=  The 10 newest NVD matches for a keyword.
+async function cveSearchRoute(request, env, ctx, origin) {
+  const params = new URL(request.url).searchParams;
+  const v = validateSearch(params.get('q'), params.get('severity'));
+  if (v.error) return json({ error: v.error }, 400, origin);
+
+  const cache = caches.default;
+  const key = cacheUrl(`${CACHE_VERSION}/cve-search/${encodeURIComponent(v.keyword.toLowerCase())}/${v.severity || 'any'}`);
+  const hit = await cache.match(key);
+  if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);
+
+  const tools = quotaTools(env, ctx);
+  const busy = () => json({ error: 'NVD\u2019s free rate limit is in use. Try again in a minute.' }, 429, origin, { 'retry-after': '60' });
+  if (await tools.paused('nvd')) return busy();
+  let result;
+  try {
+    result = await searchCves(v, tools);
+  } catch (err) {
+    if (err instanceof QuotaError) {
+      tools.pause('nvd', 60);
+      return busy();
+    }
+    return json({ error: err.name === 'TimeoutError' ? 'NVD did not answer in time. Try again.' : 'NVD search failed. Try again later.' }, 502, origin);
+  }
+  if (result.skipped) return busy();
+  const body = { keyword: v.keyword, severity: v.severity, ...result, checkedAt: new Date().toISOString() };
+  ctx.waitUntil(cache.put(key, new Response(JSON.stringify(body), { headers: { 'cache-control': `max-age=${CVE_TTL}` } })));
+  return json({ ...body, cached: false }, 200, origin);
 }
 
 // The explanation is built from the same (cached) source results the page
@@ -190,6 +226,7 @@ export default {
     if (!origin) return json({ error: 'This API only serves the Security Lookup Hub site.' }, 403, null);
     if (url.pathname === '/api/lookup') return lookup(request, env, ctx, origin);
     if (url.pathname === '/api/explain') return explainRoute(request, env, ctx, origin);
+    if (url.pathname === '/api/cve-search') return cveSearchRoute(request, env, ctx, origin);
     return json({ error: 'Not found.' }, 404, origin);
   },
 };

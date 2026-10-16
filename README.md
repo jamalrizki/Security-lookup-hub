@@ -12,6 +12,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar, URLhaus | Done |
 | 5 | Result cards, polish, deploy | Done |
 | Extra | "Explain these results" AI summary (Groq free tier) | Done |
+| 6 | CVE lookups: CVE IDs in Lookup (NVD, CISA KEV, FIRST EPSS, priority rule), CVEs keyword search page | Built on `v2`, not deployed |
 
 ## Run locally
 
@@ -66,6 +67,27 @@ npx wrangler deploy
 
 wrangler is pinned to 4.86.0 because later 4.x versions need Node 22.
 
+## CVEs
+
+A CVE ID in the Lookup box (any case, with copy-paste dash variants such as non-breaking hyphens) runs three sources, all keyless:
+
+| Source | What it gives | Limit handling |
+|---|---|---|
+| NVD API 2.0 | Description, CVSS score and a plain-English vector, CWE names, affected products (8), references (6, vendor advisories first) | 8 calls a minute site-wide without a key (NVD allows 5 per rolling 30 s), 80 with `NVD_API_KEY`. A 403 or 429 pauses NVD for a minute |
+| CISA KEV | In the catalog or not; date added, due date, ransomware use, required action | The ~1.8 MB file is downloaded once per Worker isolate per hour (GitHub mirror as fallback) and edge-cached |
+| FIRST EPSS | Probability of exploitation in the next 30 days, percentile | None needed |
+
+- CVE results are cached for 6 hours, not 24, because KEV and EPSS change daily.
+- **Priority** is a rule of thumb decided in code, in this order: Rejected; in KEV ("Exploited in the wild: patch urgently"); EPSS of 10% or more, or CVSS 9+ that is remote with no login and no user action ("High priority"); otherwise by CVSS severity.
+- Optional secret `NVD_API_KEY` (free from NVD). It is only sent if it looks like an NVD key (a UUID); anything else is ignored. CVE Explainer's key does not carry over, since secrets are per Worker. To set it, run this from `worker/`. It prompts for the value:
+
+```sh
+npx wrangler secret put NVD_API_KEY
+```
+
+- The CVEs page (`cves.html`) calls `GET /api/cve-search?q=&severity=`. Keywords are 2 to 60 letters, digits, spaces, dots, dashes or underscores. NVD lists matches oldest first and can't sort, so the Worker makes two requests (count, then the last page) and returns the 10 newest. Searches are cached for 6 hours.
+- Lookup links CVE results to [CVE Explainer](https://jamalrizki.github.io/cve-explainer/) for follow-up questions. The parsing code in `worker/src/cve.js` is copied from it, not shared.
+
 ## AI explanations
 
 The "Explain these results" button calls `GET /api/explain?q=`. That route reuses the cached source results and asks `openai/gpt-oss-120b` on Groq's free tier (no payment method) for a short plain-English summary. The key is the Worker secret `GROQ_API_KEY`.
@@ -106,10 +128,11 @@ The script prints the group count and the per-country totals. Check them against
 ## Layout
 
 ```
-index.html, actors.html, reference.html   the three pages
+index.html, cves.html, actors.html, reference.html   the pages
+scripts/nav.py   rewrites the shared nav in every page (run after adding a page)
 favicon.svg
 css/style.css
-js/detect.js     input detection, validation, refang/defang, hash identification (shared with the Worker later)
+js/detect.js     input detection (incl. CVE IDs), validation, refang/defang, hash identification; shared with the Worker
 js/links.js      "open in <source>" link builders
 js/md5.js        MD5 (WebCrypto has none)
 js/encoding.js   Base64 / URL / hex codecs
@@ -119,10 +142,11 @@ js/reference.js  Reference page rendering
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
+js/cves.js       CVEs page (keyword search)
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
-worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary), src/http.js
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/http.js
 tests/           node:test unit tests
 ```
 

@@ -7,10 +7,10 @@ import { md5, toHex } from './md5.js';
 import { CODECS } from './encoding.js';
 import { checkPassword } from './pwned.js';
 import { API_BASE } from './config.js';
-import { sourceCard } from './results.js';
+import { sourceCard, priorityStrip } from './results.js';
 
 const $ = (id) => document.getElementById(id);
-const TYPE_LABELS = { ipv4: 'IPv4 address', ipv6: 'IPv6 address', domain: 'Domain', url: 'URL', email: 'Email address' };
+const TYPE_LABELS = { cve: 'CVE ID', ipv4: 'IPv4 address', ipv6: 'IPv6 address', domain: 'Domain', url: 'URL', email: 'Email address' };
 const utf8 = new TextEncoder();
 
 function el(tag, attrs = {}, ...children) {
@@ -62,12 +62,15 @@ async function fetchResults(d, box) {
   }
   box.replaceChildren(...[
     d.type === 'url' ? el('p', { class: 'hint' }, `Results are for the URL\u2019s host, ${defang(d.host)}.`) : null,
+    body.priority ? priorityStrip(body.priority) : null,
     d.type === 'email' ? el('p', { class: 'hint' }, 'Results are for the email domain. Breach checks for an address need Have I Been Pwned\u2019s site (their email API is paid).') : null,
     // Results first; skipped or failed sources go last (sort is stable).
     el('div', { class: 'cards' }, ...[...body.sources]
       .sort((a, b) => ['skipped', 'error'].includes(a.status) - ['skipped', 'error'].includes(b.status))
       .map(sourceCard)),
     explainPanel(d),
+    d.type === 'cve' ? el('p', { class: 'hint' }, 'Want to ask questions about it? ',
+      el('a', { href: 'https://jamalrizki.github.io/cve-explainer/', target: '_blank', rel: 'noopener noreferrer' }, 'Try CVE Explainer \u2192')) : null,
   ].filter(Boolean));
 }
 

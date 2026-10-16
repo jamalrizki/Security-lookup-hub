@@ -42,7 +42,15 @@ const EMAIL = [
   ['Have I Been Pwned', 'Paste the address on their site (the email API is paid)', () => 'https://haveibeenpwned.com/'],
 ];
 
-const TABLE = { hash: HASH, domain: DOMAIN, ipv4: IP, ipv6: IP, url: URL_LINKS, email: EMAIL };
+const CVE = [
+  ['NVD', 'Official record and CVSS', (id) => `https://nvd.nist.gov/vuln/detail/${id}`],
+  ['CVE.org', 'The CVE record itself', (id) => `https://www.cve.org/CVERecord?id=${id}`],
+  ['CISA KEV', 'Known exploited?', (id) => `https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=${e(id)}`],
+  ['OSV.dev', 'Affected open-source packages', (id) => `https://osv.dev/vulnerability/${id}`],
+  ['FIRST EPSS', 'Exploitation probability', () => 'https://www.first.org/epss/'],
+];
+
+const TABLE = { cve: CVE, hash: HASH, domain: DOMAIN, ipv4: IP, ipv6: IP, url: URL_LINKS, email: EMAIL };
 
 /** Returns [{ name, what, href }] for a successful detect() result. */
 export function linksFor(detected) {

@@ -219,17 +219,55 @@ export function identifyHash(input) {
   return out;
 }
 
+// ---------- CVE IDs ----------
+
+// Any case, with the dash variants copy-paste produces (hyphen, non-breaking
+// hyphen, en/em dash, minus sign), underscores or spaces. Same rule as CVE Explainer.
+const CVE_LOOSE = /^CVE[\s\u2010-\u2015\u2212_-]*(\d{4})[\s\u2010-\u2015\u2212_-]*(\d{4,19})$/i;
+export const CVE_ID_PATTERN = /^CVE-\d{4}-\d{4,19}$/;
+
+/**
+ * Normalises a CVE ID to CVE-YYYY-NNNN... Returns { value } or { error }, or
+ * null when the input doesn't start like a CVE ID at all.
+ */
+export function normalizeCveId(input, now = new Date()) {
+  const s = String(input).trim();
+  if (!/^CVE[\s\u2010-\u2015\u2212_-]*\d/i.test(s)) return null;
+  const m = CVE_LOOSE.exec(s);
+  if (!m) return { error: 'CVE IDs look like CVE-2021-44228: a 4-digit year, then at least 4 digits.' };
+  const year = Number(m[1]);
+  const maxYear = now.getUTCFullYear() + 1;
+  if (year < 1999 || year > maxYear) return { error: `CVE years run from 1999 to ${maxYear}; ${year} isn't valid.` };
+  return { value: `CVE-${m[1]}-${m[2]}` };
+}
+
+const SEVERITIES = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
+
+/** CVE keyword search rules, shared by the CVEs page and the Worker. Returns { keyword, severity } or { error }. */
+export function validateCveSearch(q, severity) {
+  const keyword = String(q ?? '').trim().replace(/\s+/g, ' ');
+  if (keyword.length < 2 || keyword.length > 60) return { error: 'Search for 2 to 60 characters.' };
+  if (!/^[A-Za-z0-9 ._-]+$/.test(keyword)) return { error: 'Use letters, digits, spaces, dots, dashes and underscores only.' };
+  const sev = String(severity ?? '').trim().toUpperCase();
+  if (sev && !SEVERITIES.includes(sev)) return { error: 'Severity must be Low, Medium, High or Critical.' };
+  return { keyword, severity: sev || null };
+}
+
 // ---------- Top-level detection ----------
 
 /**
  * Works out what kind of indicator was pasted.
  * Returns { type, value, label } on success, or { type, value, error } when the
  * input is recognisable but not something we will look up (private IPs etc.).
- * type is one of: hash, ipv4, ipv6, domain, url, email, unknown, empty.
+ * type is one of: cve, hash, ipv4, ipv6, domain, url, email, unknown, empty.
  */
 export function detect(raw) {
   const s = refang(raw);
   if (!s) return { type: 'empty', value: '' };
+
+  // Before the domain/hash rules: checked first so "CVE-2021-44228" is never a hostname.
+  const cve = normalizeCveId(s);
+  if (cve) return cve.error ? { type: 'cve', value: s, error: cve.error } : { type: 'cve', value: cve.value, label: 'CVE ID' };
 
   if (/^https?:\/\//i.test(s)) {
     let u;

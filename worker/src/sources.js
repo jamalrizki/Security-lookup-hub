@@ -8,6 +8,7 @@
 
 import { getJson } from './http.js';
 import { KEYED_SOURCES } from './keyed.js';
+import { CVE_SOURCES } from './cve.js';
 
 const DAY = 86_400_000;
 const vcardName = (entity) => entity?.vcardArray?.[1]?.find((v) => v[0] === 'fn')?.[3] || null;
@@ -176,6 +177,7 @@ export const SOURCES = {
   internetdb: { name: 'Shodan InternetDB', run: internetDb, link: (ip) => `https://www.shodan.io/host/${ip}` },
   ipowner: { name: 'Network owner (RDAP)', run: rdapIp, link: (ip) => `https://ipinfo.io/${ip}` },
   ...KEYED_SOURCES,
+  ...CVE_SOURCES,
 };
 
 /** Which sources run for each detected type, and on which value. Verdict sources first. */
@@ -184,6 +186,7 @@ export function plan(detected) {
   const forDomain = (d) => run(['vtDomain', 'urlhausHost', 'rdap', 'dns', 'certs'], d);
   const forIp = (ip) => run(['abuseipdb', 'vtIp', 'urlhausHost', 'internetdb', 'ipowner'], ip);
   switch (detected.type) {
+    case 'cve': return run(['nvd', 'kev', 'epss'], detected.value);
     case 'hash': return run(['vtFile', 'bazaar', 'urlhausPayload'], detected.value);
     case 'domain': return forDomain(detected.value);
     case 'ipv4':
