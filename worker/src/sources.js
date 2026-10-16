@@ -47,38 +47,156 @@ async function rdapDomain(domain) {
 
 // ---------- DNS (Cloudflare DNS over HTTPS) ----------
 
-const DNS_TYPES = { 1: 'A', 28: 'AAAA', 15: 'MX', 2: 'NS', 16: 'TXT', 5: 'CNAME' };
-const unquote = (s) => s.replace(/^"|"$/g, '').replace(/" "/g, '');
+// ----- Email security: SPF, DMARC, DKIM, null MX, grade -----
 
-export function parseDns(answers) {
-  const records = {};
-  for (const [type, j] of Object.entries(answers)) {
-    if (type === 'DMARC') continue;
-    records[type] = (j.Answer || []).filter((a) => DNS_TYPES[a.type] === type).map((a) => (type === 'TXT' ? unquote(a.data) : a.data.replace(/\.$/, '')));
-  }
-  const spf = (records.TXT || []).filter((t) => /^v=spf1\b/i.test(t));
-  const dmarc = (answers.DMARC?.Answer || []).map((a) => unquote(a.data)).filter((t) => /^v=DMARC1\b/i.test(t));
-  const policy = dmarc[0]?.match(/\bp=(\w+)/i)?.[1]?.toLowerCase() || null;
+/** SPF details from the top record. includes aren't expanded, so lookups is a minimum. */
+export function parseSpf(record) {
+  if (!record) return null;
+  const terms = record.split(/\s+/).slice(1);
+  const all = terms.map((t) => /^([+\-~?]?)all$/i.exec(t)).find(Boolean);
+  const qualifier = all ? (all[1] || '+') : null;
+  const lookups = terms.filter((t) => /^[+\-~?]?(include:|a\b|a:|a\/|mx\b|mx:|mx\/|ptr\b|ptr:|exists:)/i.test(t) || /^redirect=/i.test(t)).length;
   return {
-    records,
-    spf: spf[0] || null,
-    spfMultiple: spf.length > 1,
-    dmarc: dmarc[0] || null,
-    dmarcPolicy: policy,
+    all: qualifier ? `${qualifier}all` : null,
+    allMeaning: { '-': 'strict: others are rejected', '~': 'soft: others are marked suspicious', '?': 'neutral: no opinion on others', '+': 'dangerous: anyone may send as this domain' }[qualifier] || 'no "all" mechanism',
+    ptr: terms.some((t) => /^[+\-~?]?ptr\b/i.test(t)),
+    redirect: terms.find((t) => /^redirect=/i.test(t))?.slice(9) || null,
+    lookups,
   };
 }
 
-async function dns(domain) {
+/** DMARC tags, with the RFC 7489 defaults filled in. */
+export function parseDmarc(record) {
+  if (!record) return null;
+  const tags = {};
+  for (const part of record.split(';')) {
+    const m = /^\s*([a-z]+)\s*=\s*(.*?)\s*$/i.exec(part);
+    if (m) tags[m[1].toLowerCase()] = m[2];
+  }
+  const pct = /^\d{1,3}$/.test(tags.pct || '') ? Math.min(Number(tags.pct), 100) : 100;
+  return {
+    p: (tags.p || '').toLowerCase() || null,
+    sp: (tags.sp || '').toLowerCase() || null,
+    pct,
+    adkim: (tags.adkim || 'r').toLowerCase() === 's' ? 'strict' : 'relaxed',
+    aspf: (tags.aspf || 'r').toLowerCase() === 's' ? 'strict' : 'relaxed',
+    rua: Boolean(tags.rua),
+  };
+}
+
+/** A DKIM key record: present, revoked (empty p=) or missing. */
+export function parseDkim(records, selector) {
+  if (!selector) return null;
+  const rec = records.find((t) => /(^|;)\s*p\s*=/i.test(t) || /^v=DKIM1/i.test(t));
+  if (!rec) return { selector, found: false };
+  const p = /(?:^|;)\s*p\s*=\s*([^;]*)/i.exec(rec)?.[1]?.replace(/\s+/g, '') ?? '';
+  const k = (/(?:^|;)\s*k\s*=\s*([^;\s]*)/i.exec(rec)?.[1] || 'rsa').toLowerCase();
+  // An RSA public key's DER is roughly modulus bytes + ~38; good enough for 1024 vs 2048 vs 4096.
+  const bytes = Math.floor((p.replace(/=+$/, '').length * 3) / 4);
+  const bits = k === 'rsa' && bytes > 60 ? Math.round(((bytes - 38) * 8) / 1024) * 1024 : null;
+  return { selector, found: true, revoked: p === '', keyType: k, keyBits: bits };
+}
+
+/**
+ * Spoofing grade, decided in code:
+ *  Protected: SPF -all or ~all, and DMARC quarantine/reject at 100%.
+ *  Easy to spoof: no DMARC, p=none, no SPF, or SPF +all.
+ *  Partly protected: anything in between.
+ */
+export function emailGrade({ spf, dmarc, nullMx, spfMultiple }) {
+  const reasons = [];
+  const policy = dmarc ? (dmarc.inherited && dmarc.sp ? dmarc.sp : dmarc.p) : null;
+  if (!spf) reasons.push('No SPF record');
+  else if (spfMultiple) reasons.push('More than one SPF record, which makes SPF invalid');
+  else if (spf.all === '+all') reasons.push('SPF ends in +all, so anyone may send as this domain');
+  else if (!spf.all && spf.redirect) reasons.push(`SPF hands its policy to ${spf.redirect} (redirect=), which isn't expanded here`);
+  else if (spf.all === '?all' || !spf.all) reasons.push(`SPF ${spf.all ? 'ends in ?all (neutral)' : 'has no "all" mechanism'}, so it doesn't reject other senders`);
+  if (!dmarc) reasons.push('No DMARC record');
+  else if (!policy || policy === 'none') reasons.push('DMARC policy is p=none: spoofed mail is reported, not blocked');
+  else if (dmarc.pct < 100) reasons.push(`DMARC ${policy} applies to only ${dmarc.pct}% of failing mail`);
+  if (spf?.lookups > 10) reasons.push(`SPF uses at least ${spf.lookups} DNS lookups; more than 10 makes it fail`);
+
+  // A redirect= delegates the whole policy; it's given the benefit of the doubt since it isn't expanded.
+  const spfOk = spf && !spfMultiple && (spf.all === '-all' || spf.all === '~all' || (!spf.all && Boolean(spf.redirect)));
+  const dmarcOk = dmarc && (policy === 'quarantine' || policy === 'reject') && dmarc.pct === 100;
+  const easy = !dmarc || !policy || policy === 'none' || !spf || spf.all === '+all' || spfMultiple;
+  const grade = spfOk && dmarcOk && spf.lookups <= 10 ? 'Protected' : easy ? 'Easy to spoof' : 'Partly protected';
+  if (grade === 'Protected') reasons.push(`SPF ${spf.all || `via ${spf.redirect}`} and DMARC p=${policy}${nullMx ? ', and a null MX says it accepts no mail' : ''}`);
+  return { grade, reasons };
+}
+
+const DNS_TYPES = { 1: 'A', 28: 'AAAA', 15: 'MX', 2: 'NS', 16: 'TXT', 5: 'CNAME' };
+const unquote = (s) => s.replace(/^"|"$/g, '').replace(/" "/g, '');
+const txt = (j) => (j?.Answer || []).filter((a) => a.type === 16).map((a) => unquote(a.data));
+
+/**
+ * answers: DoH JSON per type (A, AAAA, MX, NS, TXT), plus DMARC (and dmarcFrom
+ * when it came from a parent domain) and DKIM when a selector was given.
+ */
+export function parseDns(answers, { domain = null, dmarcFrom = null, selector = null } = {}) {
+  const records = {};
+  for (const type of ['A', 'AAAA', 'MX', 'NS', 'TXT']) {
+    if (!answers[type]) continue;
+    records[type] = (answers[type].Answer || []).filter((a) => DNS_TYPES[a.type] === type).map((a) => (type === 'TXT' ? unquote(a.data) : a.data.replace(/\.$/, '')));
+  }
+  const spfRecords = (records.TXT || []).filter((t) => /^v=spf1\b/i.test(t));
+  const dmarcRecords = txt(answers.DMARC).filter((t) => /^v=DMARC1\b/i.test(t));
+  const mx = records.MX || [];
+  // RFC 7505 null MX: a single "0 ." record.
+  const nullMx = mx.length === 1 && /^0\s*\.?$/.test(mx[0].trim());
+  const spf = parseSpf(spfRecords[0]);
+  const dmarc = parseDmarc(dmarcRecords[0]);
+  if (dmarc && dmarcFrom && dmarcFrom !== domain) Object.assign(dmarc, { inherited: true, from: dmarcFrom });
+  const email = emailGrade({ spf, dmarc, nullMx, spfMultiple: spfRecords.length > 1 });
+  return {
+    records,
+    spf: spfRecords[0] || null,
+    spfMultiple: spfRecords.length > 1,
+    spfDetails: spf,
+    dmarc: dmarcRecords[0] || null,
+    dmarcPolicy: dmarc?.p ?? null,
+    dmarcDetails: dmarc,
+    nullMx,
+    noMx: !mx.length,
+    dkim: parseDkim(txt(answers.DKIM), selector),
+    emailGrade: email.grade,
+    emailReasons: email.reasons,
+    // A domain that sends no mail can still be spoofed unless it says so.
+    parkedAdvice: !mx.length && email.grade !== 'Protected',
+  };
+}
+
+/** DKIM selectors: DNS labels (letters, digits, -, _) joined by dots; 63 per label, 100 in all. */
+export function validSelector(sel) {
+  return typeof sel === 'string' && sel.length <= 100 && sel.split('.').every((l) => /^[A-Za-z0-9_-]{1,63}$/.test(l));
+}
+
+async function dns(domain, tools, opts = {}) {
   const ask = (name, type) => getJson(
     `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`,
     { accept: 'application/dns-json' },
   ).then((r) => r.json || {});
   const types = ['A', 'AAAA', 'MX', 'NS', 'TXT'];
-  const results = await Promise.all([...types.map((t) => ask(domain, t)), ask(`_dmarc.${domain}`, 'TXT')]);
+  const selector = validSelector(opts.selector) ? opts.selector : null;
+  const results = await Promise.all([
+    ...types.map((t) => ask(domain, t)),
+    ask(`_dmarc.${domain}`, 'TXT'),
+    selector ? ask(`${selector}._domainkey.${domain}`, 'TXT') : null,
+  ]);
   const answers = Object.fromEntries(types.map((t, i) => [t, results[i]]));
-  answers.DMARC = results[types.length];
   if (answers.A.Status === 3) return { status: 'empty', message: 'The domain does not exist in DNS (NXDOMAIN).' };
-  return { status: 'ok', data: parseDns(answers) };
+  answers.DMARC = results[types.length];
+  answers.DKIM = results[types.length + 1];
+
+  // Receivers apply the organisational domain's DMARC policy (its sp=) to
+  // subdomains. Without a Public Suffix List here, walk up to two parents.
+  let dmarcFrom = domain;
+  const labels = domain.split('.');
+  for (let i = 1; i <= 2 && labels.length - i >= 2 && !txt(answers.DMARC).some((t) => /^v=DMARC1\b/i.test(t)); i++) {
+    dmarcFrom = labels.slice(i).join('.');
+    answers.DMARC = await ask(`_dmarc.${dmarcFrom}`, 'TXT');
+  }
+  return { status: 'ok', data: parseDns(answers, { domain, dmarcFrom, selector }) };
 }
 
 // ---------- Certificates (crt.sh, Cert Spotter fallback) ----------

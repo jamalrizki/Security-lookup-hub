@@ -26,7 +26,18 @@ const PICK = {
   urlhausHost: (d) => ({ malwareUrlsServedFromHost: d.urlCount, firstSeen: d.firstSeen, onBlocklists: blocklisted(d.blacklists) }),
   urlhausPayload: (d) => ({ distributedByMalwareUrls: d.urlCount, family: cut(d.family, 40), firstSeen: d.firstSeen }),
   rdap: (d) => ({ registered: d.registered, ageDays: d.ageDays, newlyRegistered: d.newlyRegistered, registrar: cut(d.registrar) }),
-  dns: (d) => ({ hasSpf: Boolean(d.spf), dmarcPolicy: d.dmarcPolicy, aRecords: (d.records.A || []).length, mxRecords: (d.records.MX || []).length }),
+  dns: (d) => ({
+    hasSpf: Boolean(d.spf),
+    spfAll: d.spfDetails?.all ?? null,
+    dmarcPolicy: d.dmarcDetails ? (d.dmarcDetails.inherited && d.dmarcDetails.sp ? d.dmarcDetails.sp : d.dmarcDetails.p) : null,
+    dmarcPct: d.dmarcDetails?.pct ?? null,
+    nullMx: Boolean(d.nullMx),
+    dkim: d.dkim ? (d.dkim.found ? (d.dkim.revoked ? 'revoked' : 'present') : 'not found') : 'not checked (no selector)',
+    emailSecurityGrade: d.emailGrade ?? null,
+    emailSecurityReasons: cutList(d.emailReasons, 5, 120),
+    aRecords: (d.records.A || []).length,
+    mxRecords: (d.records.MX || []).length,
+  }),
   certs: (d) => ({ hostnamesOnCertificates: d.total, tooManyToCount: Boolean(d.tooMany) }),
   internetdb: (d) => ({ openPorts: (d.ports || []).slice(0, 15), knownCves: (d.vulns || []).length, exampleCves: cutList(d.vulns, 5, 20), tags: cutList(d.tags, 5, 20) }),
   ipowner: (d) => ({ owner: cut(d.owner), network: cut(d.network, 40), registry: d.registry }),
@@ -150,6 +161,7 @@ Rules:
 - Point out when sources disagree, and when a source was skipped or errored.
 - "No detections" is not proof something is safe; say so when it matters.
 - A host that has served malware URLs (URLhaus host results) is often a legitimate platform that was abused, not malicious itself.
+- For a domain or email domain, an emailSecurityGrade (how easily someone could send mail pretending to be it) may be included. It is separate from the overall verdict about whether the domain is malicious; mention it briefly with its reasons.
 - For a CVE, the verdict is a patching priority (a rule of thumb, not a fact). Explain what the flaw is, how it can be exploited and how likely exploitation is (CISA KEV, EPSS). Not being in KEV never means a CVE is safe; say so if it isn't in KEV.
 - End with 1-2 practical next steps that fit the verdict. If the verdict is "No evidence of harm found", do not suggest blocking the indicator.
 - Under 170 words. Plain text only: no markdown headings, bold, tables or links.`;

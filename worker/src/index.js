@@ -14,7 +14,7 @@
 // payment method, so exhausting a quota pauses that source but costs nothing.
 
 import { detect } from '../../js/detect.js';
-import { SOURCES, plan } from './sources.js';
+import { SOURCES, plan, validSelector } from './sources.js';
 import { QuotaError } from './http.js';
 import { explain, MODEL, verdict } from './explain.js';
 import { validateSearch, searchCves, CVE_TTL } from './cve.js';
@@ -22,7 +22,8 @@ import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
-const CACHE_VERSION = 'v1';
+// v2: the DNS result gained email-security fields (Phase 9); bump when a cached shape changes.
+const CACHE_VERSION = 'v2';
 
 function corsHeaders(origin) {
   return origin
@@ -76,7 +77,7 @@ function quotaTools(env, ctx) {
   };
 }
 
-async function runSource(id, value, ctx, tools) {
+async function runSource(id, value, ctx, tools, opts = {}) {
   const source = SOURCES[id];
   const base = { id, name: source.name, link: source.link(value), value };
   // Quota name for pausing: the API key's name, or an explicit one (NVD works without a key).
@@ -85,7 +86,9 @@ async function runSource(id, value, ctx, tools) {
     return { ...base, status: 'skipped', message: 'This source is not configured (no API key).', cached: false };
   }
   const cache = caches.default;
-  const key = cacheUrl(`${CACHE_VERSION}/${id}/${encodeURIComponent(value)}`);
+  // Options that change the answer (a DKIM selector) are part of the cache key.
+  const suffix = opts.selector ? `/dkim=${encodeURIComponent(opts.selector)}` : '';
+  const key = cacheUrl(`${CACHE_VERSION}/${id}/${encodeURIComponent(value)}${suffix}`);
 
   const hit = await cache.match(key);
   if (hit) return { ...base, ...(await hit.json()), cached: true };
@@ -96,7 +99,7 @@ async function runSource(id, value, ctx, tools) {
 
   let result;
   try {
-    result = await source.run(value, tools);
+    result = await source.run(value, tools, opts);
   } catch (err) {
     if (err instanceof QuotaError) {
       tools.pause(quota || id, Math.min(Math.max(err.retryAfter, 60), 3600));
@@ -124,9 +127,16 @@ async function runLookup(request, env, ctx) {
     return { status: 422, body: { error: detected.error || 'Not a supported indicator.', type: detected.type } };
   }
 
+  // Optional DKIM selector for domain and email lookups.
+  const selector = (new URL(request.url).searchParams.get('dkim') || '').trim();
+  if (selector && !validSelector(selector)) {
+    return { status: 400, body: { error: 'DKIM selectors are DNS labels: letters, digits, - and _, separated by dots (63 per label, 100 in all).' } };
+  }
+  const useSelector = selector && ['domain', 'email'].includes(detected.type);
+
   const steps = plan(detected);
   const tools = quotaTools(env, ctx);
-  const sources = await Promise.all(steps.map((s) => runSource(s.id, s.value, ctx, tools)));
+  const sources = await Promise.all(steps.map((s) => runSource(s.id, s.value, ctx, tools, s.id === 'dns' && useSelector ? { selector } : {})));
   return {
     status: 200,
     body: {
@@ -203,7 +213,8 @@ async function explainRoute(request, env, ctx, origin) {
   }
 
   const cache = caches.default;
-  const subject = body.type === 'email' ? `email:${body.value.split('@').pop()}` : body.value;
+  const sel = (new URL(request.url).searchParams.get('dkim') || '').trim();
+  const subject = `${body.type === 'email' ? `email:${body.value.split('@').pop()}` : body.value}${sel && ['domain', 'email'].includes(body.type) ? `/dkim=${sel}` : ''}`;
   const key = cacheUrl(`${CACHE_VERSION}/explain3/${encodeURIComponent(MODEL)}/${encodeURIComponent(subject)}`);
   const hit = await cache.match(key);
   if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);

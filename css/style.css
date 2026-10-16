@@ -344,3 +344,9 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; font-weight:
   .ioc-table td.actions { white-space: normal; }
 }
 .ioc-table .flag { white-space: normal; display: inline-block; margin-top: 2px; }
+
+/* ---------- Email security ---------- */
+
+.dkim-row { flex-basis: 100%; margin-top: 4px; }
+.dkim-row label { font-weight: 500; font-size: 0.92rem; }
+.dkim-row input { max-width: 320px; }

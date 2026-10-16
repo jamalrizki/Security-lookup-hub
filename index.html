@@ -36,6 +36,11 @@
         <input id="search-input" class="big-input" type="text" spellcheck="false"
                aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, or a SHA-256 hash">
         <button type="submit">Look up</button>
+        <div id="dkim-row" class="dkim-row" hidden>
+          <label for="dkim-input">DKIM selector <span class="hint">(optional)</span></label>
+          <input id="dkim-input" type="text" spellcheck="false" maxlength="100" placeholder="e.g. selector1, google, s1">
+          <p class="hint">DKIM keys live at &lt;selector&gt;._domainkey.&lt;domain&gt;, and DNS can't list selectors, so DKIM can only be checked if you know one. Find it as <code>s=</code> in a DKIM-Signature header of a message from this domain.</p>
+        </div>
       </form>
       <div id="search-result" class="result" aria-live="polite"></div>
     </section>

@@ -64,20 +64,41 @@ const RENDER = {
 
   dns(d) {
     const r = d.records;
-    const dmarc = !d.dmarc ? flag('bad', 'Missing')
-      : d.dmarcPolicy === 'none' ? flag('warn', 'p=none (monitor only)')
-        : flag('ok', `p=${d.dmarcPolicy}`);
+    const spf = d.spfDetails;
+    const dm = d.dmarcDetails;
+    const policy = dm ? (dm.inherited && dm.sp ? dm.sp : dm.p) : null;
+    const spfFlag = !d.spf ? flag('bad', 'Missing')
+      : d.spfMultiple ? flag('bad', 'Multiple records (invalid)')
+        : flag({ '-all': 'ok', '~all': 'ok', '?all': 'warn', '+all': 'bad' }[spf.all] || 'warn', spf.all || 'no "all"');
+    const dmarcFlag = !dm ? flag('bad', 'Missing')
+      : !policy || policy === 'none' ? flag('warn', 'p=none (monitor only)')
+        : flag(dm.pct < 100 ? 'warn' : 'ok', `p=${policy}${dm.pct < 100 ? ` at ${dm.pct}%` : ''}`);
+    const dkim = !d.dkim ? el('span', { class: 'hint' }, 'Add a selector above to check')
+      : !d.dkim.found ? flag('warn', `No key at ${d.dkim.selector}`)
+        : d.dkim.revoked ? flag('warn', `${d.dkim.selector}: revoked (empty key)`)
+          : flag('ok', `${d.dkim.selector}: ${d.dkim.keyType.toUpperCase()}${d.dkim.keyBits ? ` ~${d.dkim.keyBits}-bit` : ''}`);
+    const gradeKind = { Protected: 'ok', 'Partly protected': 'warn', 'Easy to spoof': 'bad' }[d.emailGrade] || 'muted';
     return [
+      d.emailGrade ? el('div', { class: `verdict ${gradeKind}` },
+        el('span', { class: 'hint' }, 'Email spoofing: '), el('strong', {}, d.emailGrade),
+        el('ul', { class: 'plain-list' }, ...d.emailReasons.map((x) => el('li', {}, x)))) : null,
+      d.nullMx ? el('p', { class: 'notice ok' }, 'Null MX: this domain says it accepts no email.') : null,
+      d.parkedAdvice ? el('p', { class: 'hint' }, 'No mail servers (MX) are set. If this domain never sends mail, publish a null MX (0 .), "v=spf1 -all" and a DMARC p=reject record so nobody can send mail pretending to be it.') : null,
       rows([
-        ['SPF', d.spf ? (d.spfMultiple ? flag('warn', 'Multiple records (invalid)') : flag('ok', 'Present')) : flag('bad', 'Missing')],
-        ['DMARC', dmarc],
+        ['SPF', spfFlag],
+        spf ? ['SPF lookups', `${spf.lookups}${spf.lookups ? '+' : ''} of 10${spf.ptr ? '; uses ptr (deprecated)' : ''}`] : null,
+        ['DMARC', dmarcFlag],
+        dm ? ['DMARC details', `${dm.inherited ? `inherited from ${dm.from}; ` : ''}alignment DKIM ${dm.adkim}, SPF ${dm.aspf}; reports ${dm.rua ? 'on' : 'off'}${dm.sp && !dm.inherited ? `; subdomains p=${dm.sp}` : ''}`] : null,
+        ['DKIM', dkim],
         ['A', list(r.A)],
         ['AAAA', list(r.AAAA)],
-        ['MX', list(r.MX)],
+        ['MX', d.nullMx ? 'Null MX (accepts no mail)' : list(r.MX)],
         ['NS', list(r.NS)],
       ]),
+      spf && spf.lookups ? el('p', { class: 'hint' }, 'Includes aren\u2019t expanded here, so the real number of SPF lookups is at least this; SPF fails above 10.') : null,
       moreList('TXT records', r.TXT || []),
       d.spf ? el('p', { class: 'mono small' }, d.spf) : null,
+      d.dmarc ? el('p', { class: 'mono small' }, d.dmarc) : null,
     ];
   },
 

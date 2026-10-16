@@ -15,6 +15,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 6 | CVE lookups: CVE IDs in Lookup (NVD, CISA KEV, FIRST EPSS, priority rule), CVEs keyword search page | Built on `v2`, not deployed |
 | 7 | News page: CISA KEV, CISA advisories, BleepingComputer via a Cron Trigger into Workers KV | Built on `v2`, not deployed |
 | 8 | Analyze page: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer (browser only) | Built on `v2`, not deployed |
+| 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Built on `v2`, not deployed |
 
 ## Run locally
 
@@ -124,6 +125,22 @@ curl "http://127.0.0.1:8787/__scheduled"
 ```
 
 - **Adding a feed:** add an entry to `FEEDS` in `worker/src/news.js` with its id, display name, filter (`news`, `advisories` or `kev`), URL, and the publisher domain(s) its links may point to (`hosts`). Set `summary: true` only for government sources. Give it a cron minute in `CRON_MINUTES` and add that minute to the cron in `wrangler.toml`. Add a fixture test in `tests/news.test.mjs`. Planned next (Phase 7b, after a week): The Hacker News and UK NCSC, confirming each feed URL on the publisher's own site.
+
+## Email security
+
+Domain and email lookups grade how easily someone could send mail pretending to be the domain. The grade is decided in code, in `emailGrade()` in `worker/src/sources.js`, and the Explain button gets the same grade and reasons.
+
+| Grade | Rule |
+|---|---|
+| Protected | SPF ends in `-all` or `~all` (or delegates with `redirect=`), and DMARC is `quarantine` or `reject` at 100%, with at most 10 SPF lookups |
+| Easy to spoof | No DMARC, `p=none`, no SPF, SPF `+all`, or more than one SPF record |
+| Partly protected | Anything in between, e.g. SPF `?all`, DMARC `pct` below 100, or more than 10 SPF lookups |
+
+- **Null MX** (RFC 7505, a single `0 .` record) is reported as "accepts no email". A domain with no MX at all gets advice to publish null MX, `v=spf1 -all` and DMARC `p=reject`, so a parked domain can't be spoofed.
+- **SPF lookups** counts the DNS-lookup mechanisms in the top record (include, a, mx, ptr, exists, redirect). Includes aren't expanded, so the real total is at least that; the limit is 10. `ptr` is flagged as deprecated.
+- **DMARC on subdomains:** if the exact name has no `_dmarc` record, the Worker walks up to two parent labels and applies the parent's `sp=` (falling back to `p=`), as receivers do with the organisational domain. The card says where the policy came from.
+- **DKIM** needs a selector, because DNS can't list them. The optional "DKIM selector" field appears for domain and email lookups. Selectors are validated as DNS labels (letters, digits, `-`, `_`, dots between labels, 63 per label, 100 in all) on the page and in the Worker, and are part of the cache key. The card reports the key as present (with an approximate RSA size), revoked (empty `p=`) or not found.
+- `CACHE_VERSION` went to `v2` in this phase, because the cached DNS result gained these fields.
 
 ## Analyze tools
 

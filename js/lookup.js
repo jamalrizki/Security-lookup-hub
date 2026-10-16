@@ -39,13 +39,21 @@ async function sha(algo, bytes) {
 
 let searchRun = 0;
 
+/** Query string for /api/lookup and /api/explain; the DKIM selector only for domains and emails. */
+function lookupParams(d) {
+  const p = new URLSearchParams({ q: d.value });
+  const sel = $('dkim-input').value.trim();
+  if (sel && ['domain', 'email'].includes(d.type)) p.set('dkim', sel);
+  return p.toString();
+}
+
 async function fetchResults(d, box) {
   const run = ++searchRun;
   box.replaceChildren(el('p', { class: 'hint' }, 'Checking sources\u2026'));
   let body;
   let status;
   try {
-    const res = await fetch(`${API_BASE}/api/lookup?q=${encodeURIComponent(d.value)}`, { referrerPolicy: 'no-referrer' });
+    const res = await fetch(`${API_BASE}/api/lookup?${lookupParams(d)}`, { referrerPolicy: 'no-referrer' });
     status = res.status;
     body = await res.json();
   } catch {
@@ -85,7 +93,7 @@ function explainPanel(d) {
     button.textContent = 'Explaining\u2026';
     let body;
     try {
-      const res = await fetch(`${API_BASE}/api/explain?q=${encodeURIComponent(d.value)}`, { referrerPolicy: 'no-referrer' });
+      const res = await fetch(`${API_BASE}/api/explain?${lookupParams(d)}`, { referrerPolicy: 'no-referrer' });
       body = await res.json();
     } catch {
       body = { error: 'The explainer could not be reached.' };
@@ -109,6 +117,8 @@ function explainPanel(d) {
 function renderSearch(raw) {
   const out = $('search-result');
   const d = detect(raw);
+  // The DKIM selector field only makes sense for domain and email lookups.
+  $('dkim-row').hidden = !['domain', 'email'].includes(d.type);
   out.replaceChildren();
   if (d.type === 'empty') return;
 
