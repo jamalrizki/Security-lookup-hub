@@ -1,8 +1,9 @@
 """Rewrites the main nav in every page so it stays identical across pages.
 
-Run from the repo root after adding a page:  python3 scripts/nav.py
+Run from the repo root after adding a page or changing css/style.css or
+js/nav.js (it also stamps their content hash into every page):  python3 scripts/nav.py
 """
-import pathlib, re
+import hashlib, pathlib, re
 
 NAV = [
     ('./', 'index.html', 'Lookup'),
@@ -24,6 +25,8 @@ TOGGLE = (
 )
 
 root = pathlib.Path(__file__).resolve().parent.parent
+ASSETS = ['css/style.css', 'js/nav.js']
+VERSIONS = {a: hashlib.sha256((root / a).read_bytes()).hexdigest()[:10] for a in ASSETS}
 existing = {p for p in PAGES if (root / p).exists()}
 for page in sorted(existing):
     path = root / page
@@ -41,7 +44,12 @@ for page in sorted(existing):
     # Phone menu button (shown by js/nav.js on narrow screens) and its script.
     if 'class="nav-toggle"' not in new:
         new = new.replace('      <nav class="site-nav"', TOGGLE + '      <nav class="site-nav"', 1)
-    if 'src="js/nav.js"' not in new:
-        new = new.replace('  <link rel="stylesheet" href="css/style.css">', '  <link rel="stylesheet" href="css/style.css">\n  <script src="js/nav.js"></script>', 1)
+    if 'src="js/nav.js' not in new:
+        new = new.replace('  <link rel="stylesheet" href="css/style.css', '  <script src="js/nav.js"></script>\n  <link rel="stylesheet" href="css/style.css', 1)
+    # Cache-busting: GitHub Pages lets browsers keep files for 10 minutes, so a
+    # fresh page could pair with an old cached stylesheet. A content hash in the
+    # URL changes whenever the file does.
+    for asset in ASSETS:
+        new = re.sub(rf'(["\']){re.escape(asset)}(\?v=[0-9a-f]+)?(["\'])', rf'\g<1>{asset}?v={VERSIONS[asset]}\g<3>', new)
     path.write_text(new)
     print('nav updated:', page)

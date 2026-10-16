@@ -232,7 +232,7 @@ The script prints the group count and the per-country totals. Check them against
 
 ```
 index.html, cves.html, news.html, analyze.html, actors.html, reference.html, tools.html   the pages
-scripts/nav.py   rewrites the shared nav (and the phone menu button) in every page; run after adding a page
+scripts/nav.py   rewrites the shared nav (and the phone menu button) in every page and stamps css/style.css and js/nav.js with a content hash (?v=…) so browsers never mix a new page with an old cached file; run after adding a page or editing either file (tests/assets.test.mjs fails if you forget)
 js/nav.js        phone menu toggle (classic script in <head>; without JS the nav stays visible)
 favicon.svg
 css/style.css
