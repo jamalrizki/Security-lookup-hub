@@ -34,11 +34,10 @@ Repo layout today, with what this spec adds (★ new, ✎ changed).
 Security-lookup-hub/
 ├── index.html                 ✎ Lookup: CVE IDs, DKIM selector field, new nav
 ├── actors.html                ✎ nav only
-├── reference.html             ✎ "Where to start" section, link to tools.html, new nav
+├── reference.html             ✎ "Where to start" section, new nav
 ├── cves.html                  ★ Phase 6
 ├── news.html                  ★ Phase 7
 ├── analyze.html               ★ Phases 8, 10, 12
-├── tools.html                 ★ Phase 11
 ├── favicon.svg
 ├── css/style.css              ✎
 ├── js/
@@ -52,7 +51,7 @@ Security-lookup-hub/
 │   └── analyze/               ★ one module per tool: ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, cert.js, nmap.js
 ├── data/
 │   ├── reference.json         ✎   actors.json (generated, don't hand-edit)
-│   ├── tools.json             ★   brands.json ★   public_suffix_list.dat ★
+│   ├── brands.json ★   public_suffix_list.dat ★
 ├── scripts/                   build-actors.js, attribution.js, attribution-overrides.json
 ├── tests/                     core, worker, explain, attribution  +  cve ★, news ★, extract ★, email-security ★, subnet ★
 │   └── fixtures/              ★ RSS/Atom samples, headers, URLs, JWTs, Nmap XML, certs
@@ -97,7 +96,7 @@ Lookup (existing): now also accepts CVE IDs. Email-security details on domain/em
 CVEs (cves.html, new): product/keyword search for CVEs.
 News (news.html, new): advisories, exploited vulns, news.
 Analyze (analyze.html, new): paste/drop tools: IOC extractor, link inspector, email-header analyzer, JWT decoder, file analyzer, subnet calculator; later certificate viewer and Nmap viewer. Each tool is a section with an anchor (analyze.html#ioc) and a short contents list at the top.
-Reference (existing): gains a "Where to start" section and a second page tools.html (security tools guide), linked from Reference rather than the main nav.
+Reference (existing): gains a "Where to start" section.
 
 Nav must wrap cleanly on a 390px phone (no horizontal scroll). Every new page copies the existing CSP meta tag; connect-src lists only what that page actually calls.
 
@@ -270,13 +269,8 @@ Phase 11: Reference additions
 
 "Where to start" (top of reference.html). One row per thing you might have: hash, domain, IP, URL, email address, email headers, CVE, suspicious file, threat actor name. For each: "Try it here first" (link to the hub feature) and the 2–3 best outside sites from the directory with one line on when to use each. Data in data/reference.json.
 
-Security tools guide (tools.html, data/tools.json). An educational catalog, descriptions only.
+(The security tools guide originally planned for this phase was dropped on Oct 15, 2026; see README.)
 
-Categories: network discovery, packet analysis, wireless, reconnaissance, DNS utilities, vulnerability scanning, web/API testing, web enumeration, cloud assessment, container/code checks, password auditing, directory/Windows assessment, remote access/pivoting, exploitation frameworks, social-engineering tooling, mobile/specialised testing, attack simulation, debugging/file inspection, sandboxing.
-Tools to cover: Nmap/NSE, Angry IP Scanner; Wireshark, tcpdump; Kismet, inSSIDer, Aircrack-ng, WiFi-Pumpkin; Maltego, Recon-ng, SpiderFoot, Amass, theHarvester; nslookup, dig; Nessus, OpenVAS/Greenbone, Nikto; Burp Suite, ZAP, Postman, Arachni; sqlmap, Gobuster, DirBuster, Wfuzz, WPScan; Prowler, Scout Suite, Pacu; Trivy, Grype, Docker Bench, kube-hunter, TruffleHog; Hashcat, John the Ripper, Hydra, Medusa; BloodHound, Impacket, CrackMapExec, Responder, Mimikatz, Rubeus, Certify, Seatbelt; Netcat, PsExec, Evil-WinRM, sshuttle, Proxychains; Metasploit, msfvenom, Covenant; SET, Gophish, Evilginx, BeEF; MobSF, Frida, Drozer, ADB, Scapy, tcprelay, Bluestrike; Caldera, Infection Monkey, Atomic Red Team; Immunity Debugger, GDB, strings; Cuckoo Sandbox.
-Each entry: name, category, one-line purpose, "what defenders see" (what it typically looks like in logs or network traffic), licence (open source / free / commercial), maintenance status, official site or repo link.
-Verify every entry against its official site or repo. Mark status honestly (known as of this spec: Arachni discontinued; Cuckoo unmaintained, CAPEv2 is its successor; inSSIDer now commercial; WiFi-Pumpkin continues as WiFi-Pumpkin3; check Covenant and CrackMapExec, which may have moved or been renamed). Drop any name you can't find an official page for and list it in the PR description.
-No commands, usage instructions, payloads or download mirrors. Link to the official source only.
 Phase 12 (later): Certificate viewer and Nmap viewer
 
 Certificate viewer (#cert). Paste PEM or drop .cer/.crt/.der. Minimal DER/X.509 parser written locally (no CDN; CSP forbids it): subject, issuer, SANs, validity with expired/not-yet-valid flags, key type and size, signature algorithm, SHA-256 fingerprint, self-signed flag, a crt.sh link by fingerprint. If the pasted text contains PRIVATE KEY, refuse to parse it and tell the user to treat that key as exposed and replace it.

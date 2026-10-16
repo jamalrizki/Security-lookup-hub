@@ -5,6 +5,87 @@
     "yes": "Free account needed",
     "paid": "Paid for the API"
   },
+  "whereToStart": [
+    {
+      "have": "A file hash",
+      "hub": [{ "label": "Lookup", "href": "./" }],
+      "sites": [
+        { "name": "VirusTotal", "when": "Detections from ~70 antivirus engines and any behaviour reports." },
+        { "name": "MalwareBazaar", "when": "Whether it's a known malware sample, with family and tags." },
+        { "name": "Hybrid Analysis", "when": "Sandbox reports, if someone has already submitted the file." }
+      ]
+    },
+    {
+      "have": "A domain",
+      "hub": [{ "label": "Lookup", "href": "./" }],
+      "sites": [
+        { "name": "ICANN Lookup", "when": "Who registered it and when; very new domains are a phishing signal." },
+        { "name": "crt.sh", "when": "Every certificate issued for it, which reveals subdomains." },
+        { "name": "urlscan.io", "when": "Screenshots of what the site looked like when others scanned it." }
+      ]
+    },
+    {
+      "have": "An IP address",
+      "hub": [{ "label": "Lookup", "href": "./" }],
+      "sites": [
+        { "name": "AbuseIPDB", "when": "Community abuse reports and a confidence score." },
+        { "name": "GreyNoise", "when": "Whether it's internet-wide scanning noise or something targeted." },
+        { "name": "Shodan", "when": "Which services and ports it exposes to the internet." }
+      ]
+    },
+    {
+      "have": "A URL",
+      "hub": [{ "label": "Lookup", "href": "./" }, { "label": "Link inspector", "href": "analyze.html#link" }],
+      "sites": [
+        { "name": "urlscan.io", "when": "A safe look at the page from a sandbox browser, without opening it yourself." },
+        { "name": "URLhaus", "when": "Whether it's a known malware download link." },
+        { "name": "Google Safe Browsing site status", "when": "Whether Google already warns users about it." }
+      ]
+    },
+    {
+      "have": "An email address",
+      "hub": [{ "label": "Lookup", "href": "./" }],
+      "sites": [
+        { "name": "Have I Been Pwned", "when": "Whether the address appears in known data breaches." },
+        { "name": "MXToolbox", "when": "Mail records and blocklist checks for the address's domain." }
+      ]
+    },
+    {
+      "have": "Email headers",
+      "hub": [{ "label": "Header analyzer", "href": "analyze.html#headers" }],
+      "sites": [
+        { "name": "MXToolbox", "when": "Blocklist status of the sending server." },
+        { "name": "AbuseIPDB", "when": "Reputation of the sending IP from the Received lines." }
+      ]
+    },
+    {
+      "have": "A CVE ID",
+      "hub": [{ "label": "Lookup", "href": "./" }, { "label": "CVEs", "href": "cves.html" }],
+      "sites": [
+        { "name": "NVD", "when": "The official record, CVSS score and affected products." },
+        { "name": "CISA KEV", "when": "Whether it's confirmed exploited in the wild." },
+        { "name": "CVE Explainer", "when": "Ask questions about it in plain English." }
+      ]
+    },
+    {
+      "have": "A suspicious file",
+      "hub": [{ "label": "File analyzer", "href": "analyze.html#file" }],
+      "sites": [
+        { "name": "VirusTotal", "when": "Search by hash first: uploading shares the file with paid users." },
+        { "name": "Hybrid Analysis", "when": "Detailed sandbox run, for files that aren't private." },
+        { "name": "ANY.RUN", "when": "Watch the file run in an interactive sandbox, for files that aren't private." }
+      ]
+    },
+    {
+      "have": "A threat actor name",
+      "hub": [{ "label": "Threat actors", "href": "actors.html" }],
+      "sites": [
+        { "name": "MITRE ATT&CK Groups", "when": "The group's profile and the techniques it uses." },
+        { "name": "ETDA Threat Group Cards", "when": "Which other names vendors use for the same group." },
+        { "name": "Malpedia", "when": "Malware families linked to the group." }
+      ]
+    }
+  ],
   "groups": [
     {
       "id": "files",

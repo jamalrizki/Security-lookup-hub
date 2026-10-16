@@ -355,3 +355,11 @@ pre.json, pre.strings { background: var(--bg); border: 1px solid var(--border); 
 .drop.over, .drop:hover { border-color: var(--accent); color: var(--text); }
 .drop:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
 .facts.hashes dd { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+
+/* ---------- Reference: where to start ---------- */
+
+.where { margin-bottom: 28px; }
+.wts-list { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); }
+.wts-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.wts-card h3 { margin: 0 0 6px; }
+.wts-hub { margin: 0 0 8px; }

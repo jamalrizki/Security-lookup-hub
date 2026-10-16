@@ -23,7 +23,7 @@ Non-goals
 • No password generator or text diff (low value here), and no running or connecting offensive tools. (Added in v2.)
 • No chat or MCP endpoint in the hub; CVE Explainer stays a separate app. (Added in v2.)
 Core features
-The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze, and a security tools guide linked from Reference.
+The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze.
 1. Lookup: one box, type detected automatically
 The input type is detected in code (regex and length), then only the matching lookups run. Each result card shows the verdict, the key numbers, and a "view full report" link to the source.
 You paste

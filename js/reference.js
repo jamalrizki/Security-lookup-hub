@@ -45,11 +45,31 @@ function render() {
   $('ref-list').replaceChildren(...(sections.length ? sections : [el('p', { class: 'empty' }, 'No sites match.')]));
 }
 
+// "Where to start": every outside link is looked up in the directory itself,
+// so this section can only ever point at sites listed below.
+export function siteByName(json, name) {
+  for (const g of json.groups) for (const s of g.sites) if (s.name === name) return s;
+  return null;
+}
+
+function renderWhereToStart() {
+  $('wts-list').replaceChildren(...(data.whereToStart || []).map((row) => el('article', { class: 'wts-card' },
+    el('h3', {}, row.have),
+    el('p', { class: 'wts-hub' }, el('span', { class: 'hint' }, 'Try it here first: '),
+      ...row.hub.flatMap((h, i) => [i ? ' \u00b7 ' : null, el('a', { href: h.href }, h.label)])),
+    el('ul', { class: 'plain-list' }, ...row.sites.map((ref) => {
+      const site = siteByName(data, ref.name);
+      const name = site?.url ? el('a', { href: site.url, target: '_blank', rel: 'noopener noreferrer' }, site.name) : ref.name;
+      return el('li', {}, el('strong', {}, name), ` \u2014 ${ref.when}`);
+    })))));
+}
+
 try {
   const res = await fetch('data/reference.json');
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   data = await res.json();
   for (const id of ['ref-filter', 'ref-noaccount', 'ref-lookup']) $(id).addEventListener('input', render);
+  renderWhereToStart();
   render();
 } catch (err) {
   $('ref-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the directory: ${err.message}`));

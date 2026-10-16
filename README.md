@@ -17,6 +17,9 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 8 | Analyze page: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer (browser only) | Built on `v2`, not deployed |
 | 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Built on `v2`, not deployed |
 | 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Built on `v2`, not deployed |
+| 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Built on `v2`, not deployed |
+
+**Dropped from v2:** the security tools guide (`tools.html` / `data/tools.json`) that Docs/spec-v2.md originally planned for Phase 11 was dropped on Oct 15, 2026 and removed from the spec. The Reference page has the "Where to start" section only.
 
 ## Run locally
 
@@ -142,6 +145,10 @@ Domain and email lookups grade how easily someone could send mail pretending to 
 - **DMARC on subdomains:** if the exact name has no `_dmarc` record, the Worker walks up to two parent labels and applies the parent's `sp=` (falling back to `p=`), as receivers do with the organisational domain. The card says where the policy came from.
 - **DKIM** needs a selector, because DNS can't list them. The optional "DKIM selector" field appears for domain and email lookups. Selectors are validated as DNS labels (letters, digits, `-`, `_`, dots between labels, 63 per label, 100 in all) on the page and in the Worker, and are part of the cache key. The card reports the key as present (with an approximate RSA size), revoked (empty `p=`) or not found.
 - `CACHE_VERSION` went to `v2` in this phase, because the cached DNS result gained these fields.
+
+## Reference: where to start
+
+The top of `reference.html` has one card per thing you might have: a hash, domain, IP, URL, email address, email headers, CVE, suspicious file or threat actor name. Each card links first to the hub feature to try, then to 2–3 outside sites with one line on when to use each. The data is `whereToStart` in `data/reference.json`. Outside sites are named, not linked: the page takes each URL from the directory entry of the same name, so it can only point at sites the directory already lists. `tests/reference.test.mjs` fails if a name isn't in the directory.
 
 ## Analyze tools
 
