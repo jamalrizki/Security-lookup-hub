@@ -1,0 +1,16 @@
+Incident summary (defanged per policy)
+
+The phishing email linked to hxxps://login-secure[.]example[.]com/verify?id=123 and
+hxxp://198.51.100.7:8080/payload.exe. A second stage came from 45[.]33[.]32[.]156 and
+the C2 domain update-check(.)example(.)net. Exfiltration went to 2606:4700:4700::1111.
+
+Hashes:
+ MD5    44d88612fea8a8f36de82e1278abb02f
+ SHA1   3395856ce81f2b7382dee72602f798b642f14140
+ SHA256 275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f
+The actor exploited CVE-2024-3400 and cve 2021 44228. Contact: soc[at]example(.)org
+
+Internal hosts seen: 10.1.2.3, 192.168.0.10, fe80::1, dc01.corp.local, intranet.lan
+Files: invoice.zip, report.txt, setup.py, notes.docx, README.md
+Noise: version 1.2.3, time 12:30:45, MAC aa:bb:cc:dd:ee:ff, e.g. i.e.
+Again: 45.33.32.156 and 45.33.32.156.

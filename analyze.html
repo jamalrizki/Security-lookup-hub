@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Analyze · Security Lookup Hub</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/analyze/ioc.js"></script>
+  <script type="module" src="js/analyze/link.js"></script>
+  <script type="module" src="js/analyze/headers.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Security Lookup Hub</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Lookup</a>
+        <a href="cves.html">CVEs</a>
+        <a href="news.html">News</a>
+        <a href="analyze.html" aria-current="page">Analyze</a>
+        <a href="actors.html">Threat actors</a>
+        <a href="reference.html">Reference</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <h1>Analyze</h1>
+    <p class="lede">Paste-and-check tools that run entirely in your browser. Nothing you paste is sent anywhere; only a <strong>Look up</strong> click on one extracted indicator calls the lookup service.</p>
+
+    <nav class="panel contents" aria-label="Tools on this page">
+      <strong>Tools:</strong>
+      <a href="#ioc">IOC extractor</a>
+      <a href="#link">Link inspector</a>
+      <a href="#headers">Email headers</a>
+    </nav>
+
+    <section class="panel" id="ioc" aria-labelledby="ioc-h">
+      <h2 id="ioc-h">IOC extractor</h2>
+      <p class="hint">Paste an email, report or log (up to 500 KB). Defanged indicators are refanged first. Private IPs and internal names are left out, with a count of what was dropped.</p>
+      <form id="ioc-form" autocomplete="off">
+        <label for="ioc-input" class="visually-hidden">Text to scan</label>
+        <textarea id="ioc-input" class="tall" spellcheck="false" placeholder="Paste text here"></textarea>
+        <div class="row tool-actions">
+          <label class="inline"><input id="ioc-log" type="checkbox"> Log mode</label>
+          <button type="submit">Extract</button>
+          <button type="button" id="ioc-clear" class="secondary">Clear</button>
+        </div>
+        <div id="ioc-filter-row" class="row" hidden>
+          <label for="ioc-filter" class="visually-hidden">Only lines containing</label>
+          <input id="ioc-filter" type="text" spellcheck="false" placeholder="Only lines containing… (plain text, not a regex)">
+        </div>
+      </form>
+      <div id="ioc-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="link" aria-labelledby="link-h">
+      <h2 id="link-h">Suspicious-link inspector</h2>
+      <p class="hint">Paste one URL. This page never opens or fetches it; it only reads the text: the real host, tricks like <code>paypal.com@evil.example</code>, look-alike brand names, encodings and redirects.</p>
+      <form id="link-form" class="row" autocomplete="off">
+        <input id="link-input" type="text" class="mono-input" spellcheck="false" aria-label="URL to inspect" placeholder="hxxps://example[.]com/login?next=…">
+        <button type="submit">Inspect</button>
+      </form>
+      <div id="link-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="headers" aria-labelledby="headers-h">
+      <h2 id="headers-h">Email-header analyzer</h2>
+      <p class="hint">Paste the raw headers of a message (Gmail: ⋮ → Show original; Outlook: View → View message source). Headers include your own address; they are read here and never leave the page.</p>
+      <form id="headers-form" autocomplete="off">
+        <label for="headers-input" class="visually-hidden">Raw email headers</label>
+        <textarea id="headers-input" class="tall" spellcheck="false" placeholder="Received: from …"></textarea>
+        <div class="row tool-actions"><button type="submit">Analyze</button></div>
+      </form>
+      <div id="headers-result" class="result" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    Everything on this page runs locally. Domain checks use a copy of the Public Suffix List bundled with the site.
+  </footer>
+</body>
+</html>

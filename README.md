@@ -14,6 +14,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | Extra | "Explain these results" AI summary (Groq free tier) | Done |
 | 6 | CVE lookups: CVE IDs in Lookup (NVD, CISA KEV, FIRST EPSS, priority rule), CVEs keyword search page | Built on `v2`, not deployed |
 | 7 | News page: CISA KEV, CISA advisories, BleepingComputer via a Cron Trigger into Workers KV | Built on `v2`, not deployed |
+| 8 | Analyze page: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer (browser only) | Built on `v2`, not deployed |
 
 ## Run locally
 
@@ -124,6 +125,39 @@ curl "http://127.0.0.1:8787/__scheduled"
 
 - **Adding a feed:** add an entry to `FEEDS` in `worker/src/news.js` with its id, display name, filter (`news`, `advisories` or `kev`), URL, and the publisher domain(s) its links may point to (`hosts`). Set `summary: true` only for government sources. Give it a cron minute in `CRON_MINUTES` and add that minute to the cron in `wrangler.toml`. Add a fixture test in `tests/news.test.mjs`. Planned next (Phase 7b, after a week): The Hacker News and UK NCSC, confirming each feed URL on the publisher's own site.
 
+## Analyze tools
+
+`analyze.html` holds paste-and-check tools that run entirely in the browser; nothing pasted is sent anywhere. The page's CSP allows same-origin requests only, for the two data files. A "Look up" link on one extracted value opens the normal lookup (`./#q=…`). There is deliberately no "look up all", because VirusTotal allows 4 lookups a minute for the whole site. The tools keep working offline once the page has loaded.
+
+- **IOC extractor** (`#ioc`): reads up to 500 KB and refangs it first. It extracts URLs, domains, IPv4/IPv6, emails, MD5/SHA-1/SHA-256 and CVE IDs, and checks each one with the same `detect()` the Worker uses. Private or reserved IPs, internal names and file names with no real top-level domain (`report.txt`) are dropped, with a count by reason. File-like domains on real TLDs (`invoice.zip`, `setup.py`) are kept but flagged. Log mode adds a plain-substring line filter and top IPs/domains. You can copy everything defanged, or download a CSV (cells starting with `=`, `+`, `-` or `@` are prefixed so spreadsheets don't run them).
+- **Link inspector** (`#link`): never fetches the URL. It reports:
+  - the real host and registrable domain;
+  - text before `@` (`paypal.com@evil.example`), IP hosts and ports;
+  - punycode alongside Unicode, and mixed scripts in one label;
+  - brand lookalikes from `data/brands.json`: a curated confusables map ("skeleton"), edit distance on the first label, and brand names used only as a subdomain;
+  - up to 3 layers of percent-encoding, Base64 parameters and redirect parameters (with "Inspect this nested URL"), and link shorteners.
+
+  The verdict is decided in code: "Looks normal" or "Suspicious" with reasons. Edit distance is 2 for brand labels of 6+ characters, 1 for 4–5 and 0 for 3 or fewer (only look-alike characters count for `ups` or `ibm`). Any listed brand's own domain is never flagged.
+- **Email-header analyzer** (`#headers`): reads up to 200 KB and unfolds continuation lines. It shows:
+  - the Received chain oldest first, with delays and the IP each server actually saw;
+  - From / Reply-To / Return-Path / Message-ID mismatches, compared by registrable domain;
+  - SPF / DKIM / DMARC from the topmost Authentication-Results header;
+  - public IPs and domains, with Look up links.
+
+**Refreshing the Public Suffix List.** The tools use a bundled copy, `data/public_suffix_list.dat`; the version is on its line 8. Download it only from publicsuffix.org (macOS/Linux):
+
+```sh
+curl -sS -o data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat
+```
+
+Then check the tests still pass:
+
+```sh
+npm test
+```
+
+**Adding a brand:** edit `data/brands.json`. `label` is compared against domains, and `domains` lists the registrable domains the brand really uses. If a real brand domain gets flagged, add it there.
+
 ## AI explanations
 
 The "Explain these results" button calls `GET /api/explain?q=`. That route reuses the cached source results and asks `openai/gpt-oss-120b` on Groq's free tier (no payment method) for a short plain-English summary. The key is the Worker secret `GROQ_API_KEY`.
@@ -164,7 +198,7 @@ The script prints the group count and the per-country totals. Check them against
 ## Layout
 
 ```
-index.html, cves.html, news.html, actors.html, reference.html   the pages
+index.html, cves.html, news.html, analyze.html, actors.html, reference.html   the pages
 scripts/nav.py   rewrites the shared nav in every page (run after adding a page)
 favicon.svg
 css/style.css
@@ -180,8 +214,12 @@ js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
 js/cves.js       CVEs page (keyword search)
 js/news.js       News page
+js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node
+js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js) plus ui.js and data.js
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
+data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
+data/brands.json      brands for the lookalike check
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
 worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js
 tests/           node:test unit tests; tests/fixtures/ holds feed samples

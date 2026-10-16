@@ -1,0 +1,25 @@
+Delivered-To: victim@example.org
+Received: by 2002:a05:6a10:1234:b0:5c1:aaaa:bbbb with SMTP id x1csp123456;
+        Wed, 14 Oct 2026 09:15:12 -0700 (PDT)
+Authentication-Results: mx.example.org;
+       dkim=pass header.i=@mailer.evil-shipping.example header.s=s1 header.b=AbCdEf;
+       spf=pass (example.org: domain of bounce@mailer.evil-shipping.example designates 8.8.4.4 as permitted sender) smtp.mailfrom=bounce@mailer.evil-shipping.example;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=paypal.com
+Received: from mail.evil-shipping.example (mail.evil-shipping.example. [8.8.4.4])
+        by mx.example.org with ESMTPS id abc123
+        for <victim@example.org>;
+        Wed, 14 Oct 2026 09:15:10 -0700 (PDT)
+Received: from [10.0.0.5] (unknown [198.51.100.23])
+        by mail.evil-shipping.example (Postfix) with ESMTPSA id 4F2A1;
+        Wed, 14 Oct 2026 16:14:40 +0000 (UTC)
+Authentication-Results: forged.example; spf=pass smtp.mailfrom=paypal.com; dkim=pass header.d=paypal.com
+Return-Path: <bounce@mailer.evil-shipping.example>
+From: "PayPal Service" <service@paypal.com>
+Reply-To: <support@paypal-help-desk.example>
+Subject: =?UTF-8?B?QWNjb3VudCBsaW1pdGVk?= <script>alert('subject')</script>
+Message-ID: <20261014161440.4F2A1@mail.evil-shipping.example>
+Date: Wed, 14 Oct 2026 16:14:40 +0000
+X-Originating-IP: [203.0.113.99]
+Content-Type: text/html; charset=UTF-8
+
+<html><body><a href="hxxps://paypal.com.account-check[.]example/login">Verify</a></body></html>
