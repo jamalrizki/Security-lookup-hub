@@ -350,3 +350,8 @@ label.inline { display: inline-flex; gap: 6px; align-items: center; font-weight:
 .dkim-row { flex-basis: 100%; margin-top: 4px; }
 .dkim-row label { font-weight: 500; font-size: 0.92rem; }
 .dkim-row input { max-width: 320px; }
+pre.json, pre.strings { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: var(--mono); font-size: 0.85rem; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; margin: 0; }
+.drop { display: block; border: 2px dashed var(--border); border-radius: var(--radius); padding: 28px 16px; text-align: center; color: var(--muted); cursor: pointer; font-weight: 500; }
+.drop.over, .drop:hover { border-color: var(--accent); color: var(--text); }
+.drop:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.facts.hashes dd { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }

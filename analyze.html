@@ -11,6 +11,9 @@
   <script type="module" src="js/analyze/ioc.js"></script>
   <script type="module" src="js/analyze/link.js"></script>
   <script type="module" src="js/analyze/headers.js"></script>
+  <script type="module" src="js/analyze/jwt.js"></script>
+  <script type="module" src="js/analyze/file.js"></script>
+  <script type="module" src="js/analyze/subnet.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -37,6 +40,9 @@
       <a href="#ioc">IOC extractor</a>
       <a href="#link">Link inspector</a>
       <a href="#headers">Email headers</a>
+      <a href="#jwt">JWT decoder</a>
+      <a href="#file">File analyzer</a>
+      <a href="#subnet">Subnet calculator</a>
     </nav>
 
     <section class="panel" id="ioc" aria-labelledby="ioc-h">
@@ -77,6 +83,36 @@
         <div class="row tool-actions"><button type="submit">Analyze</button></div>
       </form>
       <div id="headers-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="jwt" aria-labelledby="jwt-h">
+      <h2 id="jwt-h">JWT decoder</h2>
+      <p class="hint">Decodes a JSON Web Token's header and payload in your browser. It does not verify the signature, and the token is not sent anywhere. Treat live tokens like passwords.</p>
+      <form id="jwt-form" autocomplete="off">
+        <label for="jwt-input" class="visually-hidden">Token</label>
+        <textarea id="jwt-input" spellcheck="false" placeholder="eyJhbGciOi…"></textarea>
+      </form>
+      <div id="jwt-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="file" aria-labelledby="file-h">
+      <h2 id="file-h">File analyzer</h2>
+      <p class="hint">Hashes, real file type and readable strings, worked out in your browser. The file is never uploaded. Up to 50 MB.</p>
+      <label id="file-drop" class="drop" for="file-input">
+        <span>Drop a file here or <u>choose one</u></span>
+        <input id="file-input" type="file" class="visually-hidden">
+      </label>
+      <div id="file-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="subnet" aria-labelledby="subnet-h">
+      <h2 id="subnet-h">Subnet calculator</h2>
+      <form id="subnet-form" class="row" autocomplete="off">
+        <input id="subnet-input" type="text" class="mono-input" spellcheck="false" aria-label="Address and prefix" placeholder="192.168.1.0/24 or 2001:db8::/48">
+        <input id="subnet-check" type="text" class="mono-input" spellcheck="false" aria-label="Is this IP in the range?" placeholder="Is this IP in it? (optional)">
+        <button type="submit">Calculate</button>
+      </form>
+      <div id="subnet-result" class="result" aria-live="polite"></div>
     </section>
   </main>
 

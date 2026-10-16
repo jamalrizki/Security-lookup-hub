@@ -16,6 +16,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 7 | News page: CISA KEV, CISA advisories, BleepingComputer via a Cron Trigger into Workers KV | Built on `v2`, not deployed |
 | 8 | Analyze page: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer (browser only) | Built on `v2`, not deployed |
 | 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Built on `v2`, not deployed |
+| 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Built on `v2`, not deployed |
 
 ## Run locally
 
@@ -161,6 +162,10 @@ Domain and email lookups grade how easily someone could send mail pretending to 
   - SPF / DKIM / DMARC from the topmost Authentication-Results header;
   - public IPs and domains, with Look up links.
 
+- **JWT decoder** (`#jwt`): splits the token and Base64url-decodes the header and payload, shown as text. It flags `alg: none`, empty signatures and `jku`/`x5u` key URLs, and shows `exp`/`iat`/`nbf` as dates with expired / not-yet-valid status. It says plainly that the signature is not checked. Encrypted (JWE) tokens are recognised and not decoded.
+- **File analyzer** (`#file`): reads a dropped or chosen file locally (up to 50 MB). It computes MD5, SHA-1 and SHA-256 (with Look up links), and detects the real type from magic bytes: PE/MZ, ELF, Mach-O and fat Mach-O (told apart from Java class files), PDF, ZIP (Office, JAR and APK), OLE, PNG, JPEG, GIF, gzip, RAR, 7z and script shebangs. It flags extensions that don't match the content and double extensions such as `invoice.pdf.exe`. It also lists the first 5,000 ASCII and UTF-16LE strings of 6+ characters, with a filter and a button that sends them to the IOC extractor. The page warns that uploading to VirusTotal shares the file with its paid users, so search by hash first.
+- **Subnet calculator** (`#subnet`): for IPv4 it gives the network, netmask, wildcard, broadcast, first/last host and host counts. `/31` follows RFC 3021 (two usable hosts, no broadcast) and `/32` is a single host; dotted netmasks are accepted. For IPv6 it gives the network and first/last address, with BigInt address counts and RFC 5952 formatting. It also answers "Is this IP in this range?".
+
 **Refreshing the Public Suffix List.** The tools use a bundled copy, `data/public_suffix_list.dat`; the version is on its line 8. Download it only from publicsuffix.org (macOS/Linux):
 
 ```sh
@@ -232,7 +237,7 @@ js/results.js    result cards for Worker lookups
 js/cves.js       CVEs page (keyword search)
 js/news.js       News page
 js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node
-js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js) plus ui.js and data.js
+js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js) plus ui.js and data.js; tool modules export their pure functions for tests and only wire up the page in a browser
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
