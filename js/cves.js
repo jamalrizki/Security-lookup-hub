@@ -20,13 +20,15 @@ const SEVERITY_KIND = { CRITICAL: 'bad', HIGH: 'bad', MEDIUM: 'warn', LOW: 'ok' 
 const notice = (kind, text) => el('p', { class: `notice ${kind}` }, text);
 
 function row(r) {
-  const sev = r.severity ? `${r.severity[0]}${r.severity.slice(1).toLowerCase()}` : null;
+  const sev = (r.severity || '').toLowerCase();
+  const href = `./#q=${encodeURIComponent(r.id)}`;
   return el('li', { class: 'cve-row' },
-    el('div', { class: 'cve-head' },
-      el('a', { href: `./#q=${encodeURIComponent(r.id)}`, class: 'mono' }, r.id),
-      sev ? el('span', { class: `flag ${SEVERITY_KIND[r.severity] || 'muted'}` }, `${sev} ${r.score}`) : el('span', { class: 'flag muted' }, 'No score yet'),
-      el('span', { class: 'hint' }, r.published)),
-    el('p', {}, r.summary));
+    el('span', { class: `cve-score sev-${sev || 'none'}` }, r.score != null ? String(r.score) : '\u2014'),
+    el('div', { class: 'cve-id' },
+      el('strong', { class: 'mono' }, r.id),
+      el('span', { class: `sev-${sev || 'none'}` }, sev ? `${sev} \u00b7 ${r.published}` : `No score yet \u00b7 ${r.published}`)),
+    el('p', { class: 'cve-desc' }, r.summary),
+    el('a', { class: 'cve-go', href }, 'Look up \u2192'));
 }
 
 let run = 0;
@@ -59,8 +61,16 @@ async function search(q, severity) {
   }
   out.replaceChildren(
     el('p', { class: 'hint' }, `Showing the ${body.results.length} newest of ${body.total.toLocaleString()} matches${body.cached ? ' (cached)' : ''}.`),
-    el('ul', { class: 'cve-list' }, ...body.results.map(row)),
+    el('ul', { class: 'rows' }, ...body.results.map(row)),
   );
+}
+
+// Severity is a segmented control: one radio per level, "" for any.
+const getSev = () => document.querySelector('input[name="cve-sev"]:checked')?.value || '';
+function setSev(v) {
+  const want = String(v || '').toUpperCase();
+  const box = document.querySelector(`input[name="cve-sev"][value="${['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].includes(want) ? want : ''}"]`);
+  if (box) box.checked = true;
 }
 
 function fromHash() {
@@ -68,15 +78,15 @@ function fromHash() {
   const q = p.get('q');
   if (!q) return;
   $('cve-q').value = q;
-  $('cve-sev').value = (p.get('severity') || '').toUpperCase();
+  setSev(p.get('severity'));
   search(q, p.get('severity'));
 }
 
 $('cve-form').addEventListener('submit', (ev) => {
   ev.preventDefault();
   const params = new URLSearchParams({ q: $('cve-q').value.trim() });
-  if ($('cve-sev').value) params.set('severity', $('cve-sev').value);
-  if (location.hash.slice(1) === params.toString()) search($('cve-q').value, $('cve-sev').value);
+  if (getSev()) params.set('severity', getSev());
+  if (location.hash.slice(1) === params.toString()) search($('cve-q').value, getSev());
   else location.hash = params.toString(); // triggers hashchange -> search
 });
 window.addEventListener('hashchange', fromHash);

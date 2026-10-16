@@ -22,6 +22,16 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 
 **Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
+## Design
+
+The site uses the "Red Team Brutalist" design from the handoff (`Docs/design_handoff_security_lookup_hub/`, not committed). It's a reskin only: every lookup and tool works as before.
+
+- **Fonts are self-hosted** in `fonts/`: Anton, Space Mono and JetBrains Mono, Latin subset, 68 KB in total, with their SIL Open Font License texts. The CSP stays `'self'`-only, and visitors' browsers never contact Google.
+- **Shared chrome is generated** by `scripts/nav.py` on every page: the terminal bar, binary rain and hex ticker (decorative and `aria-hidden`), the header and nav, and the hero (outlined title, the page's intro paragraph, and the radar with "MODULE 0N/07"). Re-run it after adding a page or editing `css/style.css`, `js/nav.js` or `js/chrome.js`; it also refreshes the cache-busting `?v=` hashes.
+- **`js/chrome.js`** types each page's decorative terminal commands and fills the ticker and rain. It runs nothing. The rain columns are styled through the CSSOM, which the CSP allows (it only forbids `style` attributes in markup).
+- **One breakpoint at 720px** gives the phone menu, hidden terminal output, half-size radar beside the title, full-width search buttons and stacked rows.
+- **`prefers-reduced-motion`** turns off the rain, ticker, fill sweep, radar spin and typing; the terminal shows its first command statically.
+
 ## Run locally
 
 ES modules don't load from `file://`, so serve the folder over HTTP:
@@ -234,6 +244,8 @@ The script prints the group count and the per-country totals. Check them against
 index.html, cves.html, news.html, analyze.html, actors.html, reference.html, tools.html   the pages
 scripts/nav.py   rewrites the shared nav (and the phone menu button) in every page and stamps css/style.css and js/nav.js with a content hash (?v=…) so browsers never mix a new page with an old cached file; run after adding a page or editing either file (tests/assets.test.mjs fails if you forget)
 js/nav.js        phone menu toggle (classic script in <head>; without JS the nav stays visible)
+js/chrome.js     decorative terminal typing, hex ticker and binary rain
+fonts/           self-hosted woff2 fonts (Anton, Space Mono, JetBrains Mono) and their OFL licenses
 favicon.svg
 css/style.css
 js/detect.js     input detection (incl. CVE IDs), validation, refang/defang, hash identification; shared with the Worker

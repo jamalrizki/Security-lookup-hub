@@ -17,9 +17,9 @@ function el(tag, attrs = {}, ...children) {
 
 const FILTERS = [
   ['all', 'All'],
+  ['advisories', 'Advisories'],
+  ['kev', 'KEV'],
   ['news', 'News'],
-  ['advisories', 'Official advisories'],
-  ['kev', 'Exploited vulnerabilities'],
 ];
 const STALE_MS = 3 * 3600 * 1000; // hourly refresh; three missed runs is stale
 
@@ -51,20 +51,26 @@ function safe(href) {
   }
 }
 
+const KIND = { kev: 'KEV', advisories: 'Advisory', news: 'News' };
+
 function itemRow(item, sources) {
   const href = safe(item.link);
   const title = href ? el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, item.title) : el('span', {}, item.title);
   const publisher = sources[item.source]?.name || item.source;
-  const meta = el('div', { class: 'news-meta' }, el('span', {}, publisher), when(item.date));
-  const row = el('li', { class: `news-item news-${item.filter}` }, el('h3', {}, title), meta);
+  const body = el('div', { class: 'news-body' },
+    el('h3', { class: 'news-title' }, title),
+    el('div', { class: 'news-source' }, publisher));
   if (item.cve) {
-    row.append(el('p', { class: 'kev-line' },
+    body.append(el('p', { class: 'kev-line' },
       el('a', { href: `./#q=${encodeURIComponent(item.cve)}`, class: 'mono' }, item.cve),
-      ` · ${[item.vendor, item.product].filter(Boolean).join(' ')}`,
+      ` \u00b7 ${[item.vendor, item.product].filter(Boolean).join(' ')}`,
       item.ransomware ? el('span', { class: 'flag bad' }, 'Ransomware use') : null));
   }
-  if (item.summary) row.append(el('p', { class: 'news-summary' }, item.summary));
-  return row;
+  if (item.summary) body.append(el('p', { class: 'news-summary' }, item.summary));
+  return el('li', { class: 'news-row' },
+    el('span', { class: `news-tag ${item.filter}` }, KIND[item.filter] || item.filter),
+    body,
+    el('span', { class: 'news-age' }, when(item.date)));
 }
 
 let data;
@@ -87,7 +93,7 @@ function render() {
     $('news-list').replaceChildren(el('p', { class: 'notice warn' }, 'First update runs within the hour.'));
   } else {
     $('news-list').replaceChildren(shown.length
-      ? el('ul', { class: 'news-list' }, ...shown.map((i) => itemRow(i, sources)))
+      ? el('ul', { class: 'rows' }, ...shown.map((i) => itemRow(i, sources)))
       : el('p', { class: 'empty' }, 'Nothing here yet.'));
   }
 

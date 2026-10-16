@@ -1,4 +1,4 @@
-// Every page must request css/style.css and js/nav.js with the content hash of
+// Every page must request css/style.css, js/nav.js and js/chrome.js with the content hash of
 // the current files, so browsers never pair a new page with an old cached copy.
 // If this fails, run: python3 scripts/nav.py
 import { test } from 'node:test';
@@ -12,7 +12,7 @@ const hash = (p) => createHash('sha256').update(readFileSync(new URL(p, root))).
 test('pages reference the current CSS and nav script versions', () => {
   const pages = readdirSync(root).filter((f) => f.endsWith('.html'));
   assert.ok(pages.length >= 7);
-  for (const asset of ['css/style.css', 'js/nav.js']) {
+  for (const asset of ['css/style.css', 'js/nav.js', 'js/chrome.js']) {
     const want = `${asset}?v=${hash(asset)}`;
     for (const page of pages) {
       const html = readFileSync(new URL(page, root), 'utf8');

@@ -7,7 +7,8 @@
   <meta name="referrer" content="no-referrer">
   <title>Analyze · Security Lookup Hub</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=e36b0a471d">
+  <script type="module" src="js/chrome.js?v=c86ba8df6f"></script>
+  <link rel="stylesheet" href="css/style.css?v=ab66ca3eb1">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/analyze/ioc.js"></script>
   <script type="module" src="js/analyze/link.js"></script>
@@ -18,14 +19,20 @@
   <script type="module" src="js/analyze/cert.js"></script>
   <script type="module" src="js/analyze/nmap.js"></script>
 </head>
-<body>
+<body data-page="analyze">
   <a class="skip" href="#main">Skip to content</a>
+  <div class="rain" aria-hidden="true"></div>
+  <div class="term" aria-hidden="true">
+    <span class="term-prompt">root@slh:~/analyze#</span>
+    <span class="term-line"><span class="term-cmd"></span><span class="term-cursor"></span></span>
+    <span class="term-out"></span>
+    <span class="term-pid">PID 0000 &middot; tty/0</span>
+  </div>
   <header class="site-header">
     <div class="inner">
-      <a class="brand" href="./">Security Lookup Hub</a>
+      <a class="brand" href="./" aria-label="Security Lookup Hub, home"><span class="brand-dot" aria-hidden="true"></span>SECURITY_LOOKUP_HUB</a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>
-        <span class="nav-toggle-bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Menu</span>
+        <span class="when-closed">&#9776; MENU</span><span class="when-open">&#10005; CLOSE</span>
       </button>
       <nav class="site-nav" id="site-nav" aria-label="Main">
         <a href="./">Lookup</a>
@@ -38,116 +45,134 @@
       </nav>
     </div>
   </header>
+  <div class="ticker" aria-hidden="true"><span class="ticker-track"></span></div>
 
   <main id="main">
-    <h1>Analyze</h1>
-    <p class="lede">Paste-and-check tools that run entirely in your browser. Nothing you paste is sent anywhere; only a <strong>Look up</strong> click on one extracted indicator calls the lookup service.</p>
+    <section class="hero">
+      <div class="hero-text">
+        <h1 class="hero-title"><span class="hero-outline">Analyze</span><span class="hero-fill" aria-hidden="true">Analyze</span></h1>
+        <p class="lede">Paste-and-check tools that run entirely in your browser. Nothing you paste is sent anywhere; only a <strong>Look up</strong> click on one extracted indicator calls the lookup service.</p>
+      </div>
+      <div class="radar-block" aria-hidden="true">
+        <div class="radar"><span class="radar-sweep"></span><span class="radar-ring"></span><span class="radar-blip"></span><span class="radar-dot"></span></div>
+        <p class="radar-caption">MODULE 02/07<br>STATUS: ARMED</p>
+      </div>
+    </section>
 
-    <nav class="panel contents" aria-label="Tools on this page">
-      <strong>Tools:</strong>
-      <a href="#ioc">IOC extractor</a>
-      <a href="#link">Link inspector</a>
-      <a href="#headers">Email headers</a>
-      <a href="#jwt">JWT decoder</a>
-      <a href="#file">File analyzer</a>
-      <a href="#subnet">Subnet calculator</a>
-      <a href="#cert">Certificate viewer</a>
-      <a href="#nmap">Nmap viewer</a>
+    <nav class="jumps" aria-label="Tools on this page">
+      <a href="#ioc"><span>01</span>IOC extractor</a>
+      <a href="#link"><span>02</span>Link inspector</a>
+      <a href="#headers"><span>03</span>Email headers</a>
+      <a href="#jwt"><span>04</span>JWT decoder</a>
+      <a href="#file"><span>05</span>File analyzer</a>
+      <a href="#subnet"><span>06</span>Subnet calculator</a>
+      <a href="#cert"><span>07</span>Certificate viewer</a>
+      <a href="#nmap"><span>08</span>Nmap viewer</a>
     </nav>
 
-    <section class="panel" id="ioc" aria-labelledby="ioc-h">
-      <h2 id="ioc-h">IOC extractor</h2>
-      <p class="hint">Paste an email, report or log (up to 500 KB). Defanged indicators are refanged first. Private IPs and internal names are left out, with a count of what was dropped.</p>
-      <form id="ioc-form" autocomplete="off">
-        <label for="ioc-input" class="visually-hidden">Text to scan</label>
-        <textarea id="ioc-input" class="tall" spellcheck="false" placeholder="Paste text here"></textarea>
-        <div class="row tool-actions">
-          <label class="inline"><input id="ioc-log" type="checkbox"> Log mode</label>
-          <button type="submit">Extract</button>
-          <button type="button" id="ioc-clear" class="secondary">Clear</button>
-        </div>
-        <div id="ioc-filter-row" class="row" hidden>
-          <label for="ioc-filter" class="visually-hidden">Only lines containing</label>
-          <input id="ioc-filter" type="text" spellcheck="false" placeholder="Only lines containing… (plain text, not a regex)">
-        </div>
-      </form>
-      <div id="ioc-result" class="result" aria-live="polite"></div>
-    </section>
+    <div class="card-grid">
+      <section class="panel" id="ioc" aria-labelledby="ioc-h">
+        <span class="num" aria-hidden="true">01</span>
+        <h2 id="ioc-h">IOC extractor</h2>
+        <p class="hint">Paste an email, report or log (up to 500 KB). Defanged indicators are refanged first. Private IPs and internal names are left out, with a count of what was dropped.</p>
+        <form id="ioc-form" autocomplete="off">
+          <label for="ioc-input" class="visually-hidden">Text to scan</label>
+          <textarea id="ioc-input" class="tall" spellcheck="false" placeholder="Paste text here"></textarea>
+          <div class="row tool-actions">
+            <label class="inline"><input id="ioc-log" type="checkbox"> Log mode</label>
+            <button type="submit">Extract</button>
+            <button type="button" id="ioc-clear" class="secondary">Clear</button>
+          </div>
+          <div id="ioc-filter-row" class="row" hidden>
+            <label for="ioc-filter" class="visually-hidden">Only lines containing</label>
+            <input id="ioc-filter" type="text" spellcheck="false" placeholder="Only lines containing… (plain text, not a regex)">
+          </div>
+        </form>
+        <div id="ioc-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <section class="panel" id="link" aria-labelledby="link-h">
-      <h2 id="link-h">Suspicious-link inspector</h2>
-      <p class="hint">Paste one URL. This page never opens or fetches it; it only reads the text: the real host, tricks like <code>paypal.com@evil.example</code>, look-alike brand names, encodings and redirects.</p>
-      <form id="link-form" class="row" autocomplete="off">
-        <input id="link-input" type="text" class="mono-input" spellcheck="false" aria-label="URL to inspect" placeholder="hxxps://example[.]com/login?next=…">
-        <button type="submit">Inspect</button>
-      </form>
-      <div id="link-result" class="result" aria-live="polite"></div>
-    </section>
+      <section class="panel" id="link" aria-labelledby="link-h">
+        <span class="num" aria-hidden="true">02</span>
+        <h2 id="link-h">Suspicious-link inspector</h2>
+        <p class="hint">Paste one URL. This page never opens or fetches it; it only reads the text: the real host, tricks like <code>paypal.com@evil.example</code>, look-alike brand names, encodings and redirects.</p>
+        <form id="link-form" class="row" autocomplete="off">
+          <input id="link-input" type="text" class="mono-input" spellcheck="false" aria-label="URL to inspect" placeholder="hxxps://example[.]com/login?next=…">
+          <button type="submit">Inspect</button>
+        </form>
+        <div id="link-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <section class="panel" id="headers" aria-labelledby="headers-h">
-      <h2 id="headers-h">Email-header analyzer</h2>
-      <p class="hint">Paste the raw headers of a message (Gmail: ⋮ → Show original; Outlook: View → View message source). Headers include your own address; they are read here and never leave the page.</p>
-      <form id="headers-form" autocomplete="off">
-        <label for="headers-input" class="visually-hidden">Raw email headers</label>
-        <textarea id="headers-input" class="tall" spellcheck="false" placeholder="Received: from …"></textarea>
-        <div class="row tool-actions"><button type="submit">Analyze</button></div>
-      </form>
-      <div id="headers-result" class="result" aria-live="polite"></div>
-    </section>
+      <section class="panel" id="headers" aria-labelledby="headers-h">
+        <span class="num" aria-hidden="true">03</span>
+        <h2 id="headers-h">Email-header analyzer</h2>
+        <p class="hint">Paste the raw headers of a message (Gmail: ⋮ → Show original; Outlook: View → View message source). Headers include your own address; they are read here and never leave the page.</p>
+        <form id="headers-form" autocomplete="off">
+          <label for="headers-input" class="visually-hidden">Raw email headers</label>
+          <textarea id="headers-input" class="tall" spellcheck="false" placeholder="Received: from …"></textarea>
+          <div class="row tool-actions"><button type="submit">Analyze &rarr;</button></div>
+        </form>
+        <div id="headers-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <section class="panel" id="jwt" aria-labelledby="jwt-h">
-      <h2 id="jwt-h">JWT decoder</h2>
-      <p class="hint">Decodes a JSON Web Token's header and payload in your browser. It does not verify the signature, and the token is not sent anywhere. Treat live tokens like passwords.</p>
-      <form id="jwt-form" autocomplete="off">
-        <label for="jwt-input" class="visually-hidden">Token</label>
-        <textarea id="jwt-input" spellcheck="false" placeholder="eyJhbGciOi…"></textarea>
-      </form>
-      <div id="jwt-result" class="result" aria-live="polite"></div>
-    </section>
+      <section class="panel" id="jwt" aria-labelledby="jwt-h">
+        <span class="num" aria-hidden="true">04</span>
+        <h2 id="jwt-h">JWT decoder</h2>
+        <p class="hint">Decodes a JSON Web Token's header and payload in your browser. It does not verify the signature, and the token is not sent anywhere. Treat live tokens like passwords.</p>
+        <form id="jwt-form" autocomplete="off">
+          <label for="jwt-input" class="visually-hidden">Token</label>
+          <textarea id="jwt-input" spellcheck="false" placeholder="eyJhbGciOi…"></textarea>
+        </form>
+        <div id="jwt-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <section class="panel" id="file" aria-labelledby="file-h">
-      <h2 id="file-h">File analyzer</h2>
-      <p class="hint">Hashes, real file type and readable strings, worked out in your browser. The file is never uploaded. Up to 50 MB.</p>
-      <label id="file-drop" class="drop" for="file-input">
-        <span>Drop a file here or <u>choose one</u></span>
-        <input id="file-input" type="file" class="visually-hidden">
-      </label>
-      <div id="file-result" class="result" aria-live="polite"></div>
-    </section>
+      <section class="panel" id="file" aria-labelledby="file-h">
+        <span class="num" aria-hidden="true">05</span>
+        <h2 id="file-h">File analyzer</h2>
+        <p class="hint">Hashes, real file type and readable strings, worked out in your browser. The file is never uploaded. Up to 50 MB.</p>
+        <label id="file-drop" class="drop" for="file-input">
+          <span>Drop a file here or <u>choose one</u></span>
+          <input id="file-input" type="file" class="visually-hidden">
+        </label>
+        <div id="file-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <section class="panel" id="subnet" aria-labelledby="subnet-h">
-      <h2 id="subnet-h">Subnet calculator</h2>
-      <form id="subnet-form" class="row" autocomplete="off">
-        <input id="subnet-input" type="text" class="mono-input" spellcheck="false" aria-label="Address and prefix" placeholder="192.168.1.0/24 or 2001:db8::/48">
-        <input id="subnet-check" type="text" class="mono-input" spellcheck="false" aria-label="Is this IP in the range?" placeholder="Is this IP in it? (optional)">
-        <button type="submit">Calculate</button>
-      </form>
-      <div id="subnet-result" class="result" aria-live="polite"></div>
-    </section>
+      <section class="panel" id="subnet" aria-labelledby="subnet-h">
+        <span class="num" aria-hidden="true">06</span>
+        <h2 id="subnet-h">Subnet calculator</h2>
+        <form id="subnet-form" class="row" autocomplete="off">
+          <input id="subnet-input" type="text" class="mono-input" spellcheck="false" aria-label="Address and prefix" placeholder="192.168.1.0/24 or 2001:db8::/48">
+          <input id="subnet-check" type="text" class="mono-input" spellcheck="false" aria-label="Is this IP in the range?" placeholder="Is this IP in it? (optional)">
+          <button type="submit">Calculate</button>
+        </form>
+        <div id="subnet-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <section class="panel" id="cert" aria-labelledby="cert-h">
-      <h2 id="cert-h">Certificate viewer</h2>
-      <p class="hint">Paste a PEM certificate (or a chain), or drop a .cer, .crt or .der file. It is read in your browser. Paste certificates only: never a private key.</p>
-      <form id="cert-form" autocomplete="off">
-        <label for="cert-input" class="visually-hidden">PEM certificate</label>
-        <textarea id="cert-input" spellcheck="false" placeholder="-----BEGIN CERTIFICATE-----"></textarea>
-        <div class="row tool-actions">
-          <label id="cert-drop" class="drop small-drop" for="cert-file"><span>Drop a file or <u>choose one</u></span><input id="cert-file" type="file" class="visually-hidden" accept=".cer,.crt,.der,.pem"></label>
-          <button type="submit">Read</button>
-        </div>
-      </form>
-      <div id="cert-result" class="result" aria-live="polite"></div>
-    </section>
+      <section class="panel" id="cert" aria-labelledby="cert-h">
+        <span class="num" aria-hidden="true">07</span>
+        <h2 id="cert-h">Certificate viewer</h2>
+        <p class="hint">Paste a PEM certificate (or a chain), or drop a .cer, .crt or .der file. It is read in your browser. Paste certificates only: never a private key.</p>
+        <form id="cert-form" autocomplete="off">
+          <label for="cert-input" class="visually-hidden">PEM certificate</label>
+          <textarea id="cert-input" spellcheck="false" placeholder="-----BEGIN CERTIFICATE-----"></textarea>
+          <div class="row tool-actions">
+            <label id="cert-drop" class="drop small-drop" for="cert-file"><span>Drop a file or <u>choose one</u></span><input id="cert-file" type="file" class="visually-hidden" accept=".cer,.crt,.der,.pem"></label>
+            <button type="submit">Read</button>
+          </div>
+        </form>
+        <div id="cert-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <section class="panel" id="nmap" aria-labelledby="nmap-h">
-      <h2 id="nmap-h">Nmap viewer</h2>
-      <p class="hint">Drop the XML from a scan you ran (saved with <code>-oX</code>, up to 20 MB) to get a filterable table. It is read in your browser; private addresses are shown, and only public ones get a Look up link.</p>
-      <label id="nmap-drop" class="drop" for="nmap-file">
-        <span>Drop Nmap XML here or <u>choose a file</u></span>
-        <input id="nmap-file" type="file" class="visually-hidden" accept=".xml">
-      </label>
-      <div id="nmap-result" class="result" aria-live="polite"></div>
-    </section>
+      <section class="panel" id="nmap" aria-labelledby="nmap-h">
+        <span class="num" aria-hidden="true">08</span>
+        <h2 id="nmap-h">Nmap viewer</h2>
+        <p class="hint">Drop the XML from a scan you ran (saved with <code>-oX</code>, up to 20 MB) to get a filterable table. It is read in your browser; private addresses are shown, and only public ones get a Look up link.</p>
+        <label id="nmap-drop" class="drop" for="nmap-file">
+          <span>Drop Nmap XML here or <u>choose a file</u></span>
+          <input id="nmap-file" type="file" class="visually-hidden" accept=".xml">
+        </label>
+        <div id="nmap-result" class="result" aria-live="polite"></div>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer">

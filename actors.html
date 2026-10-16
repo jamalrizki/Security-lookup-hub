@@ -7,18 +7,25 @@
   <meta name="referrer" content="no-referrer">
   <title>Threat actors · Security Lookup Hub</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=e36b0a471d">
+  <script type="module" src="js/chrome.js?v=c86ba8df6f"></script>
+  <link rel="stylesheet" href="css/style.css?v=ab66ca3eb1">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/actors.js"></script>
 </head>
-<body>
+<body data-page="actors">
   <a class="skip" href="#main">Skip to content</a>
+  <div class="rain" aria-hidden="true"></div>
+  <div class="term" aria-hidden="true">
+    <span class="term-prompt">root@slh:~/actors#</span>
+    <span class="term-line"><span class="term-cmd"></span><span class="term-cursor"></span></span>
+    <span class="term-out"></span>
+    <span class="term-pid">PID 0000 &middot; tty/0</span>
+  </div>
   <header class="site-header">
     <div class="inner">
-      <a class="brand" href="./">Security Lookup Hub</a>
+      <a class="brand" href="./" aria-label="Security Lookup Hub, home"><span class="brand-dot" aria-hidden="true"></span>SECURITY_LOOKUP_HUB</a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>
-        <span class="nav-toggle-bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Menu</span>
+        <span class="when-closed">&#9776; MENU</span><span class="when-open">&#10005; CLOSE</span>
       </button>
       <nav class="site-nav" id="site-nav" aria-label="Main">
         <a href="./">Lookup</a>
@@ -31,19 +38,28 @@
       </nav>
     </div>
   </header>
+  <div class="ticker" aria-hidden="true"><span class="ticker-track"></span></div>
 
   <main id="main">
-    <h1>Threat actors</h1>
-    <p class="lede">APT and criminal groups tracked by MITRE ATT&amp;CK, with their aliases and known techniques. Country is shown only where MITRE's own description attributes the group.</p>
+    <section class="hero">
+      <div class="hero-text">
+        <h1 class="hero-title"><span class="hero-outline">Threat actors</span><span class="hero-fill" aria-hidden="true">Threat actors</span></h1>
+        <p class="lede">APT and criminal groups tracked by MITRE ATT&amp;CK, with their aliases and known techniques. Country is shown only where MITRE's own description attributes the group.</p>
+      </div>
+      <div class="radar-block" aria-hidden="true">
+        <div class="radar"><span class="radar-sweep"></span><span class="radar-ring"></span><span class="radar-blip"></span><span class="radar-dot"></span></div>
+        <p class="radar-caption">MODULE 05/07<br>STATUS: ARMED</p>
+      </div>
+    </section>
 
-    <div class="filters">
-      <input id="actor-filter" type="search" placeholder="Name, alias, malware or technique (e.g. Wicked Panda, Cobalt Strike, T1566)" aria-label="Search groups">
+    <div class="bigbar">
+      <input id="actor-filter" type="search" placeholder="name, alias, malware or technique, e.g. Fancy Bear" aria-label="Search groups: name, alias, malware or technique (e.g. Wicked Panda, Cobalt Strike, T1566)">
       <select id="actor-sector" aria-label="Sector"><option value="">All sectors</option></select>
     </div>
     <div id="actor-countries" class="chips" role="group" aria-label="Filter by country"></div>
 
     <p id="actor-count" class="hint" aria-live="polite"></p>
-    <div id="actor-list"></div>
+    <div id="actor-list" class="actor-grid"></div>
   </main>
 
   <footer class="site-footer" id="actor-source"></footer>

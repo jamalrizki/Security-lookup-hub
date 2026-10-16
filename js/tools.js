@@ -18,13 +18,16 @@ let tools = [];
 function render() {
   const q = $('tools-filter').value.trim().toLowerCase();
   const shown = q ? tools.filter((t) => `${t.tool} ${t.whatItDoes}`.toLowerCase().includes(q)) : tools;
-  $('tools-count').textContent = tools.length ? `${shown.length} of ${tools.length} tools` : '';
+  $('tools-count').textContent = `${shown.length} tools`;
   if (!tools.length) {
     $('tools-list').replaceChildren(el('p', { class: 'empty' }, 'No tools listed yet.'));
     return;
   }
   $('tools-list').replaceChildren(shown.length
-    ? el('dl', { class: 'glossary' }, ...shown.flatMap((t) => [el('dt', {}, t.tool), el('dd', {}, t.whatItDoes)]))
+    ? el('ul', { class: 'tool-grid' }, ...shown.map((t) => el('li', { class: 'tool-card' },
+      el('span', { class: 'tool-letter', 'aria-hidden': 'true' }, t.tool.trim()[0] || '?'),
+      el('h3', { class: 'tool-name' }, t.tool),
+      el('p', { class: 'tool-desc' }, t.whatItDoes))))
     : el('p', { class: 'empty' }, 'No tools match.'));
 }
 

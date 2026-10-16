@@ -86,12 +86,12 @@ function detailsBody(g) {
 
 function actorCard(g) {
   const summary = el('summary', {},
+    el('span', { class: 'actor-meta' },
+      el('span', { class: 'mono' }, g.id),
+      el('span', { class: 'country' }, g.countries.length ? g.countries.join(' \u00b7 ') : 'Not attributed')),
     el('span', { class: 'actor-name' }, g.name),
-    el('span', { class: 'mono hint' }, g.id),
-    ...(g.countries.length
-      ? g.countries.map((c) => el('span', { class: 'badge' }, c))
-      : [el('span', { class: 'badge muted' }, 'Not attributed')]),
-    g.aliases.length ? el('span', { class: 'aliases' }, g.aliases.join(' · ')) : null);
+    g.aliases.length ? el('span', { class: 'aliases' }, `aka ${g.aliases.join(' \u00b7 ')}`) : null,
+    el('span', { class: 'actor-cta' }, 'View techniques \u2192'));
   const card = el('details', { class: 'actor' }, summary);
   // Technique lists are long; build the body only when first opened.
   card.addEventListener('toggle', () => {

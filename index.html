@@ -7,18 +7,25 @@
   <meta name="referrer" content="no-referrer">
   <title>Lookup · Security Lookup Hub</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=e36b0a471d">
+  <script type="module" src="js/chrome.js?v=c86ba8df6f"></script>
+  <link rel="stylesheet" href="css/style.css?v=ab66ca3eb1">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/lookup.js"></script>
 </head>
-<body>
+<body data-page="lookup">
   <a class="skip" href="#main">Skip to content</a>
+  <div class="rain" aria-hidden="true"></div>
+  <div class="term" aria-hidden="true">
+    <span class="term-prompt">root@slh:~/lookup#</span>
+    <span class="term-line"><span class="term-cmd"></span><span class="term-cursor"></span></span>
+    <span class="term-out"></span>
+    <span class="term-pid">PID 0000 &middot; tty/0</span>
+  </div>
   <header class="site-header">
     <div class="inner">
-      <a class="brand" href="./">Security Lookup Hub</a>
+      <a class="brand" href="./" aria-label="Security Lookup Hub, home"><span class="brand-dot" aria-hidden="true"></span>SECURITY_LOOKUP_HUB</a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>
-        <span class="nav-toggle-bars" aria-hidden="true"></span>
-        <span class="visually-hidden">Menu</span>
+        <span class="when-closed">&#9776; MENU</span><span class="when-open">&#10005; CLOSE</span>
       </button>
       <nav class="site-nav" id="site-nav" aria-label="Main">
         <a href="./" aria-current="page">Lookup</a>
@@ -31,39 +38,50 @@
       </nav>
     </div>
   </header>
+  <div class="ticker" aria-hidden="true"><span class="ticker-track"></span></div>
 
   <main id="main">
-    <h1>Lookup</h1>
-    <p class="lede">Paste a hash, domain, IP address, URL or email. Defanged indicators like <code>hxxp://bad[.]example</code> work too.</p>
+    <section class="hero">
+      <div class="hero-text">
+        <h1 class="hero-title"><span class="hero-outline">Lookup</span><span class="hero-fill" aria-hidden="true">Lookup</span></h1>
+        <p class="lede">Paste a hash, domain, IP address, URL or email. Defanged indicators like <code>hxxp://bad[.]example</code> work too.</p>
+      </div>
+      <div class="radar-block" aria-hidden="true">
+        <div class="radar"><span class="radar-sweep"></span><span class="radar-ring"></span><span class="radar-blip"></span><span class="radar-dot"></span></div>
+        <p class="radar-caption">MODULE 01/07<br>STATUS: ARMED</p>
+      </div>
+    </section>
 
-    <section class="panel" aria-labelledby="search-h">
+    <section class="search-block" aria-labelledby="search-h">
       <h2 id="search-h" class="visually-hidden">Search</h2>
-      <form id="search-form" class="row" autocomplete="off">
-        <input id="search-input" class="big-input" type="text" spellcheck="false"
+      <form id="search-form" class="bigbar" autocomplete="off">
+        <input id="search-input" type="text" spellcheck="false"
                aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, or a SHA-256 hash">
-        <button type="submit">Look up</button>
-        <div id="dkim-row" class="dkim-row" hidden>
-          <label for="dkim-input">DKIM selector <span class="hint">(optional)</span></label>
-          <input id="dkim-input" type="text" spellcheck="false" maxlength="100" placeholder="e.g. selector1, google, s1">
-          <p class="hint">DKIM keys live at &lt;selector&gt;._domainkey.&lt;domain&gt;, and DNS can't list selectors, so DKIM can only be checked if you know one. Find it as <code>s=</code> in a DKIM-Signature header of a message from this domain.</p>
-        </div>
+        <button type="submit">Look up &rarr;</button>
       </form>
+      <div id="dkim-row" class="dkim-row" hidden>
+        <label for="dkim-input">DKIM selector (optional)</label>
+        <input id="dkim-input" type="text" spellcheck="false" maxlength="100" placeholder="e.g. selector1, google, s1">
+        <p class="hint">DKIM keys live at &lt;selector&gt;._domainkey.&lt;domain&gt;, and DNS can't list selectors, so DKIM can only be checked if you know one. Find it as <code>s=</code> in a DKIM-Signature header of a message from this domain.</p>
+      </div>
       <div id="search-result" class="result" aria-live="polite"></div>
     </section>
 
-    <section class="panel" aria-labelledby="pw-h">
-      <h2 id="pw-h">Check a password</h2>
-      <p class="hint">Your password never leaves this page. It is hashed with SHA-1 here, and only the first 5 characters of the hash are sent to Have I Been Pwned (<a href="https://haveibeenpwned.com/API/v3#SearchingPwnedPasswordsByRange" rel="noopener noreferrer" target="_blank">k-anonymity</a>).</p>
-      <form id="pw-form" class="row" autocomplete="off">
-        <input id="pw-input" type="password" aria-label="Password to check" autocomplete="off" spellcheck="false">
-        <button type="button" id="pw-toggle" class="secondary" aria-pressed="false">Show</button>
-        <button type="submit">Check</button>
-      </form>
-      <div id="pw-result" class="result" aria-live="polite"></div>
-    </section>
+    <div class="card-grid">
+      <section class="panel" aria-labelledby="pw-h">
+        <span class="num" aria-hidden="true">02</span>
+        <h2 id="pw-h">Check a password</h2>
+        <p class="hint">Your password never leaves this page. It is hashed with SHA-1 here, and only the first 5 characters of the hash are sent to Have I Been Pwned (<a href="https://haveibeenpwned.com/API/v3#SearchingPwnedPasswordsByRange" rel="noopener noreferrer" target="_blank">k-anonymity</a>).</p>
+        <form id="pw-form" class="row" autocomplete="off">
+          <input id="pw-input" type="password" aria-label="Password to check" autocomplete="off" spellcheck="false">
+          <button type="button" id="pw-toggle" class="secondary" aria-pressed="false">Show</button>
+          <button type="submit">Check</button>
+        </form>
+        <div id="pw-result" class="result" aria-live="polite"></div>
+      </section>
 
-    <div class="tools">
       <section class="panel" aria-labelledby="hid-h">
+        <span class="num" aria-hidden="true">03</span>
         <h2 id="hid-h">Hash identifier</h2>
         <label for="hid-input">Hash</label>
         <input id="hid-input" type="text" spellcheck="false" autocomplete="off" placeholder="$2b$12$… or 5f4dcc3b…">
@@ -71,6 +89,7 @@
       </section>
 
       <section class="panel" aria-labelledby="calc-h">
+        <span class="num" aria-hidden="true">04</span>
         <h2 id="calc-h">Hash calculator</h2>
         <label for="calc-input">Text (hashed as UTF-8)</label>
         <textarea id="calc-input" spellcheck="false"></textarea>
@@ -78,27 +97,30 @@
       </section>
     </div>
 
-    <section class="panel spaced" aria-labelledby="dec-h">
-      <h2 id="dec-h">Decoder</h2>
-      <div class="row">
-        <select id="dec-codec" aria-label="Encoding"></select>
-        <button type="button" id="dec-encode" class="secondary">Encode →</button>
-        <button type="button" id="dec-decode" class="secondary">Decode →</button>
-        <button type="button" id="dec-swap" class="secondary" title="Move output to input">⇅ Swap</button>
-      </div>
-      <div class="tools pair">
-        <div>
-          <label for="dec-input">Input</label>
-          <textarea id="dec-input" spellcheck="false"></textarea>
+    <div class="card-grid wide">
+      <section class="panel" aria-labelledby="dec-h">
+        <span class="num" aria-hidden="true">05</span>
+        <h2 id="dec-h">Decoder</h2>
+        <div class="row">
+          <select id="dec-codec" aria-label="Encoding"></select>
+          <button type="button" id="dec-encode">Encode &rarr;</button>
+          <button type="button" id="dec-decode" class="secondary">Decode &rarr;</button>
+          <button type="button" id="dec-swap" class="secondary" title="Move output to input">&#8645; Swap</button>
         </div>
-        <div>
-          <label for="dec-output">Output</label>
-          <textarea id="dec-output" spellcheck="false" readonly></textarea>
+        <div class="pair">
+          <div>
+            <label for="dec-input">Input</label>
+            <textarea id="dec-input" spellcheck="false"></textarea>
+          </div>
+          <div>
+            <label for="dec-output">Output</label>
+            <textarea id="dec-output" spellcheck="false" readonly></textarea>
+          </div>
         </div>
-      </div>
-      <div id="dec-error" class="result" aria-live="polite"></div>
-      <p class="hint">Need more operations? <a href="https://gchq.github.io/CyberChef/" rel="noopener noreferrer" target="_blank">CyberChef</a> does hundreds.</p>
-    </section>
+        <div id="dec-error" class="result" aria-live="polite"></div>
+        <p class="hint">Need more operations? <a href="https://gchq.github.io/CyberChef/" rel="noopener noreferrer" target="_blank">CyberChef</a> does hundreds.</p>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer">
