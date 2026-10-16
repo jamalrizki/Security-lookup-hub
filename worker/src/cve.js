@@ -37,9 +37,18 @@ export const nvdKey = (env = {}) => (UUID.test(env.NVD_API_KEY || '') ? env.NVD_
 // NVD allows 5 requests per rolling 30 s without a key, 50 with one.
 export const nvdPerMinute = (env) => (nvdKey(env) ? 80 : 8);
 
-function nvdFetch(url, env) {
+/**
+ * NVD answers an unknown CVE with 200 and no results, so a 404 always means a
+ * problem. An invalid or not-yet-activated key gets "404, message: Invalid
+ * apiKey."; then retry without the key so lookups keep working keyless.
+ */
+async function nvdFetch(url, env) {
   const key = nvdKey(env);
-  return getJson(url, { timeout: FETCH_TIMEOUT_MS, rateLimitStatuses: [403, 429], headers: key ? { apiKey: key } : {} });
+  const opts = { timeout: FETCH_TIMEOUT_MS, rateLimitStatuses: [403, 429] };
+  let r = await getJson(url, { ...opts, headers: key ? { apiKey: key } : {} });
+  if (r.status === 404 && key && /api ?key/i.test(r.message || '')) r = await getJson(url, opts);
+  if (r.status === 404) throw new Error(`NVD HTTP 404${r.message ? `: ${r.message}` : ''}`);
+  return r;
 }
 
 const busy = { status: 'skipped', message: 'NVD’s free rate limit is in use. Try again in a minute.' };

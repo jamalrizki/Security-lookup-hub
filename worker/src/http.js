@@ -22,7 +22,8 @@ export async function getJson(url, { accept = 'application/json', timeout = TIME
     redirect: 'follow',
     ...(cf ? { cf } : {}),
   });
-  if (res.status === 404) return { status: 404 };
+  // Some APIs explain a 404 in a header (NVD: "message: Invalid apiKey."); pass it on.
+  if (res.status === 404) return { status: 404, message: res.headers.get('message') };
   if (rateLimitStatuses.includes(res.status)) throw new QuotaError(Number(res.headers.get('retry-after')) || 60);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const text = await readCapped(res, maxBytes);

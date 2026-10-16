@@ -163,6 +163,23 @@ test('nvd names known CWEs, de-duplicates, leaves unknown names null, and puts v
   assert.equal(data.references[0].url, 'https://logging.apache.org/log4j/2.x/security.html');
 });
 
+test('an invalid NVD key falls back to keyless; any other NVD 404 is an error, not "no record"', async () => {
+  const uuid = '0a1b2c3d-1111-2222-3333-444455556666';
+  const calls = [];
+  globalThis.fetch = async (url, init = {}) => {
+    calls.push(init.headers?.apiKey);
+    return init.headers?.apiKey
+      ? new Response('', { status: 404, headers: { message: 'Invalid apiKey.' } })
+      : new Response(JSON.stringify(NVD_LOG4SHELL), { status: 200 });
+  };
+  const r = await run('nvd', 'CVE-2021-44228', { NVD_API_KEY: uuid });
+  assert.equal(r.status, 'ok');
+  assert.deepEqual(calls, [uuid, undefined], 'retried once without the key');
+
+  globalThis.fetch = async () => new Response('', { status: 404 });
+  await assert.rejects(run('nvd', 'CVE-2021-44228'), /NVD HTTP 404/);
+});
+
 test('nvd truncates long descriptions at 600 characters', async () => {
   const long = structuredClone(NVD_LOG4SHELL);
   long.vulnerabilities[0].cve.descriptions = [{ lang: 'en', value: 'x'.repeat(900) }];

@@ -22,8 +22,9 @@ import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
-// v2: the DNS result gained email-security fields (Phase 9); bump when a cached shape changes.
-const CACHE_VERSION = 'v2';
+// Bump to drop cached results: v2 when the DNS result gained email-security fields (Phase 9);
+// v3 to discard NVD "no record" answers cached while an invalid NVD key was set.
+const CACHE_VERSION = 'v3';
 
 function corsHeaders(origin) {
   return origin
