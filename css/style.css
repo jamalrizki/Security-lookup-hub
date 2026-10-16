@@ -365,3 +365,14 @@ pre.json, pre.strings { background: var(--bg); border: 1px solid var(--border); 
 .wts-hub { margin: 0 0 8px; }
 .small-drop { padding: 10px 14px; flex: 1 1 220px; margin: 0 auto 0 0; font-weight: 500; }
 .cve-links { margin-top: 4px; font-size: 0.85rem; }
+
+/* ---------- Tools glossary ---------- */
+
+.glossary { margin: 0; display: grid; grid-template-columns: minmax(0, 14em) minmax(0, 1fr); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.glossary dt, .glossary dd { margin: 0; padding: 10px 14px; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+.glossary dt:first-of-type, .glossary dd:first-of-type { border-top: 0; }
+.glossary dt { font-weight: 600; }
+@media (max-width: 520px) {
+  .glossary { grid-template-columns: 1fr; }
+  .glossary dd { border-top: 0; padding-top: 0; }
+}

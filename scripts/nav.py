@@ -12,8 +12,9 @@ NAV = [
     ('actors.html', 'actors.html', 'Threat actors'),
     ('reference.html', 'reference.html', 'Reference'),
 ]
-PAGES = ['index.html', 'cves.html', 'news.html', 'analyze.html', 'actors.html', 'reference.html']
-CURRENT = {}  # page -> nav entry to highlight, for pages not in the nav
+PAGES = ['index.html', 'cves.html', 'news.html', 'analyze.html', 'actors.html', 'reference.html', 'tools.html']
+# tools.html is reached from Reference, so it highlights Reference.
+CURRENT = {'tools.html': 'reference.html'}
 
 root = pathlib.Path(__file__).resolve().parent.parent
 existing = {p for p in PAGES if (root / p).exists()}

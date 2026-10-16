@@ -20,7 +20,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Built on `v2`, not deployed |
 | 12 | Analyze: certificate viewer and Nmap viewer | Built on `v2`, not deployed |
 
-**Dropped from v2:** the security tools guide (`tools.html` / `data/tools.json`) that Docs/spec-v2.md originally planned for Phase 11 was dropped on Oct 15, 2026 and removed from the spec. The Reference page has the "Where to start" section only.
+**Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (linked from Reference) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
 ## Run locally
 
@@ -231,7 +231,7 @@ The script prints the group count and the per-country totals. Check them against
 ## Layout
 
 ```
-index.html, cves.html, news.html, analyze.html, actors.html, reference.html   the pages
+index.html, cves.html, news.html, analyze.html, actors.html, reference.html, tools.html   the pages
 scripts/nav.py   rewrites the shared nav in every page (run after adding a page)
 favicon.svg
 css/style.css
@@ -247,12 +247,14 @@ js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
 js/cves.js       CVEs page (keyword search)
 js/news.js       News page
+js/tools.js      tools glossary page (renders data/tools.json)
 js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node
 js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, cert.js, nmap.js) plus ui.js and data.js; tool modules export their pure functions for tests and only wire up the page in a browser
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
 data/brands.json      brands for the lookalike check
+data/tools.json       tools glossary entries { tool, whatItDoes } (maintained separately)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
 worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js
 tests/           node:test unit tests; tests/fixtures/ holds feed samples
