@@ -20,13 +20,16 @@ const UA = 'SecurityLookupHub/1.0 (+https://github.com/jamalrizki/Security-looku
 export const FEEDS = [
   { id: 'kev', name: 'CISA KEV', filter: 'kev', kind: 'kev', urls: KEV_URLS, hosts: ['cisa.gov'] },
   { id: 'cisa', name: 'CISA', filter: 'advisories', kind: 'rss', urls: ['https://www.cisa.gov/cybersecurity-advisories/all.xml'], hosts: ['cisa.gov'], summary: true },
-  { id: 'bleepingcomputer', name: 'BleepingComputer', filter: 'news', kind: 'rss', urls: ['https://www.bleepingcomputer.com/feed/'], hosts: ['bleepingcomputer.com'] },
+  // BleepingComputer was the first news source, but it answers Cloudflare's network
+  // with 403, so it never updated. The Hacker News feed (advertised on thehackernews.com)
+  // answers Workers normally.
+  { id: 'thehackernews', name: 'The Hacker News', filter: 'news', kind: 'rss', urls: ['https://feeds.feedburner.com/TheHackersNews'], hosts: ['thehackernews.com'] },
 ];
 
 // The cron runs at :17, :37 and :57; each run refreshes one source so a run
 // stays inside the Free plan's 10 ms CPU budget. Any other minute (a manual
 // trigger) refreshes them all.
-export const CRON_MINUTES = { 17: 'kev', 37: 'cisa', 57: 'bleepingcomputer' };
+export const CRON_MINUTES = { 17: 'kev', 37: 'cisa', 57: 'thehackernews' };
 
 // ---------- Text helpers ----------
 
@@ -233,7 +236,8 @@ export async function fetchFeed(feed) {
  */
 export async function refreshNews(kv, ids = FEEDS.map((f) => f.id), now = new Date()) {
   const prev = (await kv.get(NEWS_KEY, 'json')) || { sources: {} };
-  const sources = { ...prev.sources };
+  // Keep only configured sources, so a removed feed doesn't linger as "stale".
+  const sources = Object.fromEntries(Object.entries(prev.sources).filter(([id]) => FEEDS.some((f) => f.id === id)));
   for (const feed of FEEDS.filter((f) => ids.includes(f.id))) {
     const old = sources[feed.id] || { items: [], fetchedAt: null };
     const base = { name: feed.name, filter: feed.filter, lastAttempt: now.toISOString() };

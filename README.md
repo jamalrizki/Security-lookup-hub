@@ -13,7 +13,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 5 | Result cards, polish, deploy | Done |
 | Extra | "Explain these results" AI summary (Groq free tier) | Done |
 | 6 | CVE lookups: CVE IDs in Lookup (NVD, CISA KEV, FIRST EPSS, priority rule), CVEs keyword search page | Built on `v2`, not deployed |
-| 7 | News page: CISA KEV, CISA advisories, BleepingComputer via a Cron Trigger into Workers KV | Built on `v2`, not deployed |
+| 7 | News page: CISA KEV, CISA advisories, The Hacker News via a Cron Trigger into Workers KV | Built on `v2`, not deployed |
 | 8 | Analyze page: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer (browser only) | Built on `v2`, not deployed |
 | 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Built on `v2`, not deployed |
 | 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Built on `v2`, not deployed |
@@ -98,15 +98,15 @@ npx wrangler secret put NVD_API_KEY
 
 ## News
 
-`news.html` shows headlines from three feeds. Visitors never cause feed fetches: a Cron Trigger refreshes the feeds into Workers KV (one key, `news:v1`), and `GET /api/news` only reads it, edge-cached for 5 minutes.
+`news.html` shows headlines from three feeds. A source that is removed from `FEEDS` is dropped from KV on the next run. Visitors never cause feed fetches: a Cron Trigger refreshes the feeds into Workers KV (one key, `news:v1`), and `GET /api/news` only reads it, edge-cached for 5 minutes.
 
 | Source | Filter | Feed |
 |---|---|---|
 | CISA KEV | Exploited vulnerabilities | The KEV JSON (GitHub mirror as fallback); the 25 most recently added entries |
 | CISA | Official advisories | `https://www.cisa.gov/cybersecurity-advisories/all.xml` (listed on cisa.gov's subscribe page; plain-text summaries up to 240 characters) |
-| BleepingComputer | News | `https://www.bleepingcomputer.com/feed/` (headlines only, no excerpts) |
+| The Hacker News | News | `https://feeds.feedburner.com/TheHackersNews` (the feed thehackernews.com advertises; headlines only, no excerpts). It replaced BleepingComputer, which answers Cloudflare's network with HTTP 403, so it never updated from the Worker |
 
-- **Schedule:** `17,37,57 * * * *` (UTC). That's one trigger out of the 5 the Free plan allows per account. Each run refreshes **one** source (:17 KEV, :37 CISA, :57 BleepingComputer), so every source still updates hourly. One run refreshing everything would parse about 3 MB (the CISA feed is 1.2 MB with full advisory text, KEV is 1.8 MB), which risks the Free plan's 10 ms CPU limit for cron runs. A manual trigger refreshes all three.
+- **Schedule:** `17,37,57 * * * *` (UTC). That's one trigger out of the 5 the Free plan allows per account. Each run refreshes **one** source (:17 KEV, :37 CISA, :57 The Hacker News), so every source still updates hourly. One run refreshing everything would parse about 3 MB (the CISA feed is 1.2 MB with full advisory text, KEV is 1.8 MB), which risks the Free plan's 10 ms CPU limit for cron runs. A manual trigger refreshes all three.
 - **Limits:** that's about 72 KV writes and a few hundred reads a day. Workers KV Free allows 1,000 writes, 100,000 reads, 1,000 deletes and 1,000 lists a day, and 1 GB stored; limits reset at 00:00 UTC (Cloudflare pricing page, checked Oct 2026).
 - **Safety:** each fetch has an 8-second timeout and a 2 MB cap. The parser keeps at most 30 items per feed, strips all tags from titles, caps them at 200 characters, and drops any item whose link isn't https on the publisher's own domain. A failed, HTML or empty fetch keeps that source's previous items and marks it stale.
 - **Before the first deploy,** create the KV namespace. Run this from `worker/`:
@@ -129,7 +129,7 @@ npx wrangler dev --test-scheduled --port 8787 --ip 127.0.0.1
 curl "http://127.0.0.1:8787/__scheduled"
 ```
 
-- **Adding a feed:** add an entry to `FEEDS` in `worker/src/news.js` with its id, display name, filter (`news`, `advisories` or `kev`), URL, and the publisher domain(s) its links may point to (`hosts`). Set `summary: true` only for government sources. Give it a cron minute in `CRON_MINUTES` and add that minute to the cron in `wrangler.toml`. Add a fixture test in `tests/news.test.mjs`. Planned next (Phase 7b, after a week): The Hacker News and UK NCSC, confirming each feed URL on the publisher's own site.
+- **Adding a feed:** add an entry to `FEEDS` in `worker/src/news.js` with its id, display name, filter (`news`, `advisories` or `kev`), URL, and the publisher domain(s) its links may point to (`hosts`). Set `summary: true` only for government sources. Give it a cron minute in `CRON_MINUTES` and add that minute to the cron in `wrangler.toml`. Add a fixture test in `tests/news.test.mjs`. Planned next: UK NCSC (its feed answered Cloudflare's network with 200 in Oct 2026). Test any new feed from Cloudflare's network (for example with `wrangler dev --remote`) before adding it: some publishers block Workers.
 
 ## Email security
 

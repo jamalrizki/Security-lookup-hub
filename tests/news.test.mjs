@@ -21,7 +21,7 @@ test('RSS: titles, links, 2-digit-year dates and CISA summaries', () => {
 });
 
 test('RSS: entities decoded, hostile markup stripped, no excerpts for news outlets', () => {
-  const items = parseFeed(fixture('rss-news.xml'), feed('bleepingcomputer'));
+  const items = parseFeed(fixture('rss-news.xml'), feed('thehackernews'));
   assert.deepEqual(items.map((i) => i.title), [
     'Hackers exploit "Example" flaw & backdoor servers — patch now',
     'Ransomware gang leaks data',
@@ -30,7 +30,7 @@ test('RSS: entities decoded, hostile markup stripped, no excerpts for news outle
   for (const i of items) {
     assert.ok(!/[<>]/.test(i.title), i.title);
     assert.equal(i.summary, undefined, 'commercial outlets get no excerpt');
-    assert.match(i.link, /^https:\/\/www\.bleepingcomputer\.com\//);
+    assert.match(i.link, /^https:\/\/thehackernews\.com\//);
   }
   assert.equal(items[0].date, '2026-10-15T20:25:04.000Z', 'timezone offset applied');
 });
@@ -46,7 +46,7 @@ test('Atom: alternate link, published date, summary', () => {
 });
 
 test('malformed input never throws and caps items and title length', () => {
-  assert.deepEqual(parseFeed(fixture('malformed.xml'), feed('bleepingcomputer')), []);
+  assert.deepEqual(parseFeed(fixture('malformed.xml'), feed('thehackernews')), []);
   assert.deepEqual(parseFeed('', feed('cisa')), []);
   const many = `<rss><channel>${Array.from({ length: 50 }, (_, i) => `<item><title>${'T'.repeat(500)} ${i}</title><link>https://www.cisa.gov/a/${i}</link></item>`).join('')}</channel></rss>`;
   const items = parseFeed(many, feed('cisa'));
@@ -110,13 +110,13 @@ test('refresh writes one KV key with all three sources', async () => {
   mockFetch([
     ['known_exploited', { text: KEV_JSON }],
     ['cisa.gov/cybersecurity-advisories', { text: fixture('rss-cisa.xml') }],
-    ['bleepingcomputer.com/feed', { text: fixture('rss-news.xml') }],
+    ['feedburner.com/TheHackersNews', { text: fixture('rss-news.xml') }],
   ]);
   const kv = new FakeKV();
   const v = await refreshNews(kv, undefined, new Date('2026-10-15T12:17:00Z'));
   assert.equal(kv.puts, 1);
   assert.ok(kv.store.has(NEWS_KEY));
-  assert.deepEqual(Object.keys(v.sources).sort(), ['bleepingcomputer', 'cisa', 'kev']);
+  assert.deepEqual(Object.keys(v.sources).sort(), ['cisa', 'kev', 'thehackernews']);
   for (const s of Object.values(v.sources)) assert.equal(s.ok, true);
   assert.equal(v.sources.kev.items[0].cve, 'CVE-2021-44228');
 });
@@ -125,7 +125,7 @@ test('a failing, HTML or empty feed keeps the previous items and is marked stale
   mockFetch([
     ['known_exploited', { text: KEV_JSON }],
     ['cisa.gov/cybersecurity-advisories', { text: fixture('rss-cisa.xml') }],
-    ['bleepingcomputer.com/feed', { text: fixture('rss-news.xml') }],
+    ['feedburner.com/TheHackersNews', { text: fixture('rss-news.xml') }],
   ]);
   const kv = new FakeKV();
   await refreshNews(kv, undefined, new Date('2026-10-15T12:00:00Z'));
@@ -133,10 +133,10 @@ test('a failing, HTML or empty feed keeps the previous items and is marked stale
   mockFetch([
     ['known_exploited', { status: 403, text: 'Forbidden' }],
     ['cisa.gov/cybersecurity-advisories', { text: fixture('html-challenge.html') }],
-    ['bleepingcomputer.com/feed', { text: '<rss><channel></channel></rss>' }],
+    ['feedburner.com/TheHackersNews', { text: '<rss><channel></channel></rss>' }],
   ]);
   const v = await refreshNews(kv, undefined, new Date('2026-10-15T13:00:00Z'));
-  for (const id of ['kev', 'cisa', 'bleepingcomputer']) {
+  for (const id of ['kev', 'cisa', 'thehackernews']) {
     assert.equal(v.sources[id].ok, false, id);
     assert.ok(v.sources[id].items.length > 0, `${id} kept its items`);
     assert.equal(v.sources[id].fetchedAt, '2026-10-15T12:00:00.000Z', `${id} keeps the last good time`);
@@ -148,13 +148,22 @@ test('a failing, HTML or empty feed keeps the previous items and is marked stale
 test('each cron run refreshes one source; other minutes refresh all', async () => {
   assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:17:00Z')), ['kev']);
   assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:37:00Z')), ['cisa']);
-  assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:57:00Z')), ['bleepingcomputer']);
-  assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:03:00Z')), ['kev', 'cisa', 'bleepingcomputer']);
+  assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:57:00Z')), ['thehackernews']);
+  assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:03:00Z')), ['kev', 'cisa', 'thehackernews']);
 
-  const calls = mockFetch([['bleepingcomputer.com/feed', { text: fixture('rss-news.xml') }]]);
+  const calls = mockFetch([['feedburner.com/TheHackersNews', { text: fixture('rss-news.xml') }]]);
   const kv = new FakeKV();
-  await refreshNews(kv, ['bleepingcomputer']);
+  await refreshNews(kv, ['thehackernews']);
   assert.equal(calls.length, 1, 'only the chosen source is fetched');
+});
+
+test('a source that is no longer configured is dropped from KV', async () => {
+  mockFetch([['feedburner.com/TheHackersNews', { text: fixture('rss-news.xml') }]]);
+  const kv = new FakeKV();
+  await kv.put(NEWS_KEY, JSON.stringify({ sources: { bleepingcomputer: { name: 'BleepingComputer', ok: false, items: [] }, kev: { name: 'CISA KEV', ok: true, items: [{ title: 'x' }] } } }));
+  const v = await refreshNews(kv, ['thehackernews']);
+  assert.deepEqual(Object.keys(v.sources).sort(), ['kev', 'thehackernews']);
+  assert.equal(v.sources.kev.items.length, 1, 'other sources keep their items');
 });
 
 test('KEV falls back to the GitHub mirror; oversized feeds are refused', async () => {
@@ -165,6 +174,6 @@ test('KEV falls back to the GitHub mirror; oversized feeds are refused', async (
   assert.equal((await fetchFeed(feed('kev'))).length, 1);
   assert.equal(calls.length, 2);
 
-  mockFetch([['bleepingcomputer.com/feed', { text: `<rss>${'x'.repeat(2_100_000)}</rss>` }]]);
-  await assert.rejects(fetchFeed(feed('bleepingcomputer')), /too large/);
+  mockFetch([['feedburner.com/TheHackersNews', { text: `<rss>${'x'.repeat(2_100_000)}</rss>` }]]);
+  await assert.rejects(fetchFeed(feed('thehackernews')), /too large/);
 });

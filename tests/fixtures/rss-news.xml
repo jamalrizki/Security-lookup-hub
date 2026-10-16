@@ -2,21 +2,21 @@
 <rss version="2.0">
 <channel>
   <title>Example Security News</title>
-  <link>https://www.bleepingcomputer.com/</link>
+  <link>https://thehackernews.com/</link>
   <item>
     <title>Hackers exploit &quot;Example&quot; flaw &amp; backdoor servers &#8212; patch now</title>
-    <link>https://www.bleepingcomputer.com/news/security/example-flaw-exploited/</link>
+    <link>https://thehackernews.com/2026/10/example-flaw-exploited/</link>
     <pubDate>Thu, 15 Oct 2026 16:25:04 -0400</pubDate>
     <description><![CDATA[<p>Commercial article excerpt that must not be stored.</p>]]></description>
   </item>
   <item>
     <title><![CDATA[<script>alert("x")</script>Ransomware gang <img src=x onerror=alert(1)> leaks data]]></title>
-    <link>https://www.bleepingcomputer.com/news/security/ransomware-gang-leaks-data/</link>
+    <link>https://thehackernews.com/2026/10/ransomware-gang-leaks-data/</link>
     <pubDate>Thu, 15 Oct 2026 23:55:11 GMT</pubDate>
   </item>
   <item>
     <title>Double-encoded &amp;lt;script&amp;gt;alert(2)&amp;lt;/script&amp;gt; headline</title>
-    <link>https://www.bleepingcomputer.com/news/security/double-encoded/</link>
+    <link>https://thehackernews.com/2026/10/double-encoded/</link>
     <pubDate>Thu, 15 Oct 2026 10:00:00 GMT</pubDate>
   </item>
   <item>
@@ -26,7 +26,7 @@
   </item>
   <item>
     <title></title>
-    <link>https://www.bleepingcomputer.com/news/security/empty-title/</link>
+    <link>https://thehackernews.com/2026/10/empty-title/</link>
   </item>
 </channel>
 </rss>
