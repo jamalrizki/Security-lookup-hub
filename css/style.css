@@ -376,3 +376,40 @@ pre.json, pre.strings { background: var(--bg); border: 1px solid var(--border); 
   .glossary { grid-template-columns: 1fr; }
   .glossary dd { border-top: 0; padding-top: 0; }
 }
+
+/* ---------- Phone menu ---------- */
+
+.nav-toggle { display: none; }
+@media (max-width: 640px) {
+  .js-nav .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    width: 44px;
+    height: 40px;
+    padding: 0;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .js-nav .nav-toggle[hidden] { display: none; }
+  .nav-toggle-bars, .nav-toggle-bars::before, .nav-toggle-bars::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    position: relative;
+  }
+  .nav-toggle-bars::before, .nav-toggle-bars::after { content: ""; position: absolute; left: 0; }
+  .nav-toggle-bars::before { top: -6px; }
+  .nav-toggle-bars::after { top: 6px; }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bars { background: transparent; }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bars::before { top: 0; transform: rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bars::after { top: 0; transform: rotate(-45deg); }
+  .site-header .inner { flex-wrap: wrap; }
+  .js-nav .site-nav { display: none; flex-basis: 100%; flex-direction: column; gap: 2px; padding-bottom: 4px; }
+  .js-nav .site-nav.open { display: flex; }
+  .js-nav .site-nav a { padding: 10px 12px; border-radius: 8px; }
+}

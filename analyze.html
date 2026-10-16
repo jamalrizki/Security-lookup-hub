@@ -8,6 +8,7 @@
   <title>Analyze · Security Lookup Hub</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/nav.js"></script>
   <script type="module" src="js/analyze/ioc.js"></script>
   <script type="module" src="js/analyze/link.js"></script>
   <script type="module" src="js/analyze/headers.js"></script>
@@ -22,11 +23,15 @@
   <header class="site-header">
     <div class="inner">
       <a class="brand" href="./">Security Lookup Hub</a>
-      <nav class="site-nav" aria-label="Main">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main">
         <a href="./">Lookup</a>
+        <a href="analyze.html" aria-current="page">Analyze</a>
         <a href="cves.html">CVEs</a>
         <a href="news.html">News</a>
-        <a href="analyze.html" aria-current="page">Analyze</a>
         <a href="actors.html">Threat actors</a>
         <a href="reference.html">Reference</a>
         <a href="tools.html">Tools</a>
