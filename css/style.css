@@ -153,7 +153,9 @@ strong { font-weight: 700; }
 /* ---------- Hex ticker ---------- */
 
 .ticker { position: relative; z-index: 2; overflow: hidden; white-space: nowrap; background: var(--panel); border-bottom: 1px solid var(--line); }
-.ticker-track { display: inline-block; padding: 8px 0; color: var(--accent); font-size: 12px; animation: ticker 22s linear infinite; }
+/* js/chrome.js sizes the strip to the screen and sets the duration, so phones get a
+   short layer (very wide animated layers flicker on mobile browsers). */
+.ticker-track { display: inline-block; padding: 8px 0; color: var(--accent); font-size: 12px; animation: ticker 22s linear infinite; will-change: transform; backface-visibility: hidden; }
 
 /* ---------- Page layout ---------- */
 
@@ -187,9 +189,13 @@ h3 { font-size: 15px; font-weight: 700; }
   letter-spacing: -1px;
   text-transform: uppercase;
 }
-.hero-title span { grid-area: 1 / 1; }
+/* Padding (cancelled by the negative margin) makes each span's box taller than the
+   tight line-height, so the clip-path below doesn't cut off the tops and bottoms of
+   round letters (S, O, C), which overshoot the line box. */
+.hero-title span { grid-area: 1 / 1; padding: 0.12em 0; margin: -0.12em 0; }
 .hero-outline { color: transparent; -webkit-text-stroke: 2px var(--text); }
-.hero-fill { color: var(--accent); animation: fillsweep 4s ease-in-out infinite; }
+/* Same stroke as the outline, in red, so the fill covers the white edge completely. */
+.hero-fill { color: var(--accent); -webkit-text-stroke: 2px var(--accent); animation: fillsweep 4s ease-in-out infinite; }
 .lede { margin: 0; max-width: 680px; color: var(--body); font-size: 15px; line-height: 1.6; }
 .lede code { color: var(--text); }
 

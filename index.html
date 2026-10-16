@@ -7,8 +7,8 @@
   <meta name="referrer" content="no-referrer">
   <title>Lookup · Security Lookup Hub</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <script type="module" src="js/chrome.js?v=c86ba8df6f"></script>
-  <link rel="stylesheet" href="css/style.css?v=ab66ca3eb1">
+  <script type="module" src="js/chrome.js?v=94bf07053c"></script>
+  <link rel="stylesheet" href="css/style.css?v=911a30d18f">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/lookup.js"></script>
 </head>
@@ -44,7 +44,7 @@
     <section class="hero">
       <div class="hero-text">
         <h1 class="hero-title"><span class="hero-outline">Lookup</span><span class="hero-fill" aria-hidden="true">Lookup</span></h1>
-        <p class="lede">Paste a hash, domain, IP address, URL or email. Defanged indicators like <code>hxxp://bad[.]example</code> work too.</p>
+        <p class="lede">Paste any of these: a file hash (MD5, SHA-1 or SHA-256), a domain, an IPv4 or IPv6 address, a URL, an email address, or a CVE ID such as <code>CVE-2021-44228</code>. Defanged indicators like <code>hxxp://bad[.]example</code> work too. For domains and emails you can also add a DKIM selector.</p>
       </div>
       <div class="radar-block" aria-hidden="true">
         <div class="radar"><span class="radar-sweep"></span><span class="radar-ring"></span><span class="radar-blip"></span><span class="radar-dot"></span></div>
@@ -56,7 +56,7 @@
       <h2 id="search-h" class="visually-hidden">Search</h2>
       <form id="search-form" class="bigbar" autocomplete="off">
         <input id="search-input" type="text" spellcheck="false"
-               aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, or a SHA-256 hash">
+               aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, a SHA-256 hash or CVE-2021-44228">
         <button type="submit">Look up &rarr;</button>
       </form>
       <div id="dkim-row" class="dkim-row" hidden>

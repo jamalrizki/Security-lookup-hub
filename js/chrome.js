@@ -50,9 +50,15 @@ function hexGroups(n) {
 function ticker() {
   const track = document.querySelector('.ticker-track');
   if (!track) return;
-  const s = hexGroups(60);
-  // Written twice so translateX(-50%) loops seamlessly.
+  // Just enough 4-digit groups to overfill the screen (each "abcd  " is ~37px at
+  // 12px, plus a margin), rather than a fixed 60: on phones a ~5,000px animated
+  // layer flickers. Wider screens get more groups so the loop never shows a gap.
+  const groups = Math.max(16, Math.ceil(window.innerWidth / 36) + 6);
+  const s = hexGroups(groups);
+  // Written twice so translateX(-50%) loops seamlessly; duration scales with
+  // length so the speed matches the design's 60 groups in 22s.
   track.textContent = `${s}  ${s}  `;
+  track.style.animationDuration = `${((22 * groups) / 60).toFixed(2)}s`;
 }
 
 function rain() {
