@@ -6,6 +6,17 @@ workers_dev = true
 [vars]
 ALLOWED_ORIGINS = "https://jamalrizki.github.io,http://localhost:8000,http://127.0.0.1:8000"
 
+# News feeds: refreshed by this Cron Trigger (UTC) into the NEWS KV namespace.
+# Each run refreshes one source (:17 KEV, :37 CISA, :57 BleepingComputer) so a
+# run stays inside the Free plan's 10 ms CPU budget. One trigger of the 5 the
+# Free plan allows per account.
+[triggers]
+crons = ["17,37,57 * * * *"]
+
+[[kv_namespaces]]
+binding = "NEWS"
+id = "00000000000000000000000000000000" # TODO: replace with the id from kv namespace create
+
 # Store nothing about visitors: no Workers Logs or traces.
 [observability]
 enabled = false

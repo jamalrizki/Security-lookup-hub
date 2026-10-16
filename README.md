@@ -13,6 +13,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 5 | Result cards, polish, deploy | Done |
 | Extra | "Explain these results" AI summary (Groq free tier) | Done |
 | 6 | CVE lookups: CVE IDs in Lookup (NVD, CISA KEV, FIRST EPSS, priority rule), CVEs keyword search page | Built on `v2`, not deployed |
+| 7 | News page: CISA KEV, CISA advisories, BleepingComputer via a Cron Trigger into Workers KV | Built on `v2`, not deployed |
 
 ## Run locally
 
@@ -88,6 +89,41 @@ npx wrangler secret put NVD_API_KEY
 - The CVEs page (`cves.html`) calls `GET /api/cve-search?q=&severity=`. Keywords are 2 to 60 letters, digits, spaces, dots, dashes or underscores. NVD lists matches oldest first and can't sort, so the Worker makes two requests (count, then the last page) and returns the 10 newest. Searches are cached for 6 hours.
 - Lookup links CVE results to [CVE Explainer](https://jamalrizki.github.io/cve-explainer/) for follow-up questions. The parsing code in `worker/src/cve.js` is copied from it, not shared.
 
+## News
+
+`news.html` shows headlines from three feeds. Visitors never cause feed fetches: a Cron Trigger refreshes the feeds into Workers KV (one key, `news:v1`), and `GET /api/news` only reads it, edge-cached for 5 minutes.
+
+| Source | Filter | Feed |
+|---|---|---|
+| CISA KEV | Exploited vulnerabilities | The KEV JSON (GitHub mirror as fallback); the 25 most recently added entries |
+| CISA | Official advisories | `https://www.cisa.gov/cybersecurity-advisories/all.xml` (listed on cisa.gov's subscribe page; plain-text summaries up to 240 characters) |
+| BleepingComputer | News | `https://www.bleepingcomputer.com/feed/` (headlines only, no excerpts) |
+
+- **Schedule:** `17,37,57 * * * *` (UTC). That's one trigger out of the 5 the Free plan allows per account. Each run refreshes **one** source (:17 KEV, :37 CISA, :57 BleepingComputer), so every source still updates hourly. One run refreshing everything would parse about 3 MB (the CISA feed is 1.2 MB with full advisory text, KEV is 1.8 MB), which risks the Free plan's 10 ms CPU limit for cron runs. A manual trigger refreshes all three.
+- **Limits:** that's about 72 KV writes and a few hundred reads a day. Workers KV Free allows 1,000 writes, 100,000 reads, 1,000 deletes and 1,000 lists a day, and 1 GB stored; limits reset at 00:00 UTC (Cloudflare pricing page, checked Oct 2026).
+- **Safety:** each fetch has an 8-second timeout and a 2 MB cap. The parser keeps at most 30 items per feed, strips all tags from titles, caps them at 200 characters, and drops any item whose link isn't https on the publisher's own domain. A failed, HTML or empty fetch keeps that source's previous items and marks it stale.
+- **Before the first deploy,** create the KV namespace. Run this from `worker/`:
+
+```sh
+npx wrangler kv namespace create NEWS
+```
+
+  Then paste the `id` it prints into `worker/wrangler.toml`, replacing the placeholder on the line marked `# TODO`.
+
+- **Testing locally:** `wrangler dev` keeps KV in a local store, so the placeholder id works. Run this from `worker/`:
+
+```sh
+npx wrangler dev --test-scheduled --port 8787 --ip 127.0.0.1
+```
+
+  Then trigger a run with:
+
+```sh
+curl "http://127.0.0.1:8787/__scheduled"
+```
+
+- **Adding a feed:** add an entry to `FEEDS` in `worker/src/news.js` with its id, display name, filter (`news`, `advisories` or `kev`), URL, and the publisher domain(s) its links may point to (`hosts`). Set `summary: true` only for government sources. Give it a cron minute in `CRON_MINUTES` and add that minute to the cron in `wrangler.toml`. Add a fixture test in `tests/news.test.mjs`. Planned next (Phase 7b, after a week): The Hacker News and UK NCSC, confirming each feed URL on the publisher's own site.
+
 ## AI explanations
 
 The "Explain these results" button calls `GET /api/explain?q=`. That route reuses the cached source results and asks `openai/gpt-oss-120b` on Groq's free tier (no payment method) for a short plain-English summary. The key is the Worker secret `GROQ_API_KEY`.
@@ -128,7 +164,7 @@ The script prints the group count and the per-country totals. Check them against
 ## Layout
 
 ```
-index.html, cves.html, actors.html, reference.html   the pages
+index.html, cves.html, news.html, actors.html, reference.html   the pages
 scripts/nav.py   rewrites the shared nav in every page (run after adding a page)
 favicon.svg
 css/style.css
@@ -143,11 +179,12 @@ js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
 js/cves.js       CVEs page (keyword search)
+js/news.js       News page
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
-worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/http.js
-tests/           node:test unit tests
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js
+tests/           node:test unit tests; tests/fixtures/ holds feed samples
 ```
 
 ## Security notes

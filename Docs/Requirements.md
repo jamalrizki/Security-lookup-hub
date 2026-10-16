@@ -57,6 +57,8 @@ A searchable list of APT groups from MITRE ATT&CK, filterable by country of attr
 The directory in the next section, rendered as a page: every site grouped by job, with one line on what it does, whether it needs an account, and a link.
 4. CVEs (v2)
 A CVE ID pasted into Lookup is detected like a hash or IP, and the Worker calls NVD, CISA KEV and FIRST EPSS directly; a rule-of-thumb patching priority is decided in code. The CVEs page searches NVD by product or keyword and shows the 10 newest matches.
+5. News (v2)
+Headlines from CISA KEV, CISA advisories and BleepingComputer, refreshed hourly by a scheduled Worker job into Workers KV, so visitors never cause feed fetches. Headline, publisher, date and link only; CISA items may show a short summary.
 Reference directory
 These are the sites the Reference page lists, grouped by job. "Account" means a free sign-up is needed to use the site or its API. Sites marked with ★ also feed the Lookup page.
 Files, hashes and malware

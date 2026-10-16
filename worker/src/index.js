@@ -3,6 +3,7 @@
 //   GET /api/lookup?q=<indicator>   fan out to the sources, one combined JSON result
 //   GET /api/explain?q=<indicator>  plain-English AI summary of the same results (Groq)
 //   GET /api/cve-search?q=&severity= newest NVD matches for a keyword
+//   GET /api/news                   feed snapshot kept in KV by the cron job (scheduled())
 //   GET /api/health
 //
 // Guardrails (see Docs/Requirements.md): input validated with the same rules as
@@ -17,6 +18,7 @@ import { SOURCES, plan } from './sources.js';
 import { QuotaError } from './http.js';
 import { explain, MODEL, verdict } from './explain.js';
 import { validateSearch, searchCves, CVE_TTL } from './cve.js';
+import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -175,6 +177,21 @@ async function cveSearchRoute(request, env, ctx, origin) {
   return json({ ...body, cached: false }, 200, origin);
 }
 
+// GET /api/news  The feed snapshot the cron job keeps in KV; edge-cached 5 minutes.
+// Visitors never trigger feed fetches.
+async function newsRoute(request, env, ctx, origin) {
+  if (!env.NEWS) return json({ error: 'News is not configured.' }, 503, origin);
+  const cache = caches.default;
+  const key = cacheUrl(`${CACHE_VERSION}/news`);
+  const hit = await cache.match(key);
+  if (hit) return json(await hit.json(), 200, origin);
+  const value = await env.NEWS.get(NEWS_KEY, 'json');
+  // Before the first cron run there is nothing yet; don't cache that.
+  if (!value) return json({ sources: {}, pending: true }, 200, origin);
+  ctx.waitUntil(cache.put(key, new Response(JSON.stringify(value), { headers: { 'cache-control': 'max-age=300' } })));
+  return json(value, 200, origin);
+}
+
 // The explanation is built from the same (cached) source results the page
 // shows, so asking for one doesn't call the threat feeds again.
 async function explainRoute(request, env, ctx, origin) {
@@ -227,6 +244,13 @@ export default {
     if (url.pathname === '/api/lookup') return lookup(request, env, ctx, origin);
     if (url.pathname === '/api/explain') return explainRoute(request, env, ctx, origin);
     if (url.pathname === '/api/cve-search') return cveSearchRoute(request, env, ctx, origin);
+    if (url.pathname === '/api/news') return newsRoute(request, env, ctx, origin);
     return json({ error: 'Not found.' }, 404, origin);
+  },
+
+  // Cron Trigger (wrangler.toml): refreshes the news feeds into KV.
+  async scheduled(controller, env, ctx) {
+    if (!env.NEWS) return;
+    ctx.waitUntil(refreshNews(env.NEWS, sourcesForRun(controller.scheduledTime)));
   },
 };

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' http://127.0.0.1:8787 https://security-lookup-hub.jamalrizki.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>News · Security Lookup Hub</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/news.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="./">Security Lookup Hub</a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Lookup</a>
+        <a href="cves.html">CVEs</a>
+        <a href="news.html" aria-current="page">News</a>
+        <a href="actors.html">Threat actors</a>
+        <a href="reference.html">Reference</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <h1>News</h1>
+    <p class="lede">Official advisories, newly exploited vulnerabilities and security news, refreshed hourly. Headlines link to the publisher.</p>
+
+    <div id="news-filters" class="chips" role="group" aria-label="Filter by type"></div>
+    <div id="news-list" aria-live="polite"><p class="hint">Loading…</p></div>
+  </main>
+
+  <footer class="site-footer" id="news-status"></footer>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Cybersecurity Advisories</title>
+    <link>https://www.cisa.gov/</link>
+    <item>
+      <title>Example ICS Vendor Controller Firmware</title>
+      <link>https://www.cisa.gov/news-events/ics-advisories/icsa-26-288-01</link>
+      <description>&lt;h2&gt;View CSAF&lt;/h2&gt;&lt;p&gt;Successful exploitation of these vulnerabilities could allow an attacker to &lt;strong&gt;execute code&lt;/strong&gt; on the controller.&lt;/p&gt;&lt;p&gt;Second paragraph that pushes the summary well past its two hundred and forty character limit so that the parser has to cut it off cleanly at a word boundary with an ellipsis.&lt;/p&gt;</description>
+      <pubDate>Thu, 15 Oct 26 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[CISA Adds Two Known Exploited Vulnerabilities to Catalog & More]]></title>
+      <link>https://www.cisa.gov/news-events/alerts/2026/10/14/cisa-adds-two-known-exploited-vulnerabilities-catalog</link>
+      <description><![CDATA[<p>CISA has added two new vulnerabilities to its <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">KEV catalog</a>.</p>]]></description>
+      <pubDate>Wed, 14 Oct 26 12:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Item linking off-domain</title>
+      <link>https://evil.example/cisa-lookalike</link>
+      <pubDate>Wed, 14 Oct 26 11:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Item with a lookalike host</title>
+      <link>https://cisa.gov.evil.example/advisory</link>
+      <pubDate>Wed, 14 Oct 26 10:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Plain http item</title>
+      <link>http://www.cisa.gov/news-events/alerts/plain-http</link>
+      <pubDate>Wed, 14 Oct 26 09:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
