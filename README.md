@@ -18,6 +18,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Built on `v2`, not deployed |
 | 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Built on `v2`, not deployed |
 | 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Built on `v2`, not deployed |
+| 12 | Analyze: certificate viewer and Nmap viewer | Built on `v2`, not deployed |
 
 **Dropped from v2:** the security tools guide (`tools.html` / `data/tools.json`) that Docs/spec-v2.md originally planned for Phase 11 was dropped on Oct 15, 2026 and removed from the spec. The Reference page has the "Where to start" section only.
 
@@ -173,6 +174,9 @@ The top of `reference.html` has one card per thing you might have: a hash, domai
 - **File analyzer** (`#file`): reads a dropped or chosen file locally (up to 50 MB). It computes MD5, SHA-1 and SHA-256 (with Look up links), and detects the real type from magic bytes: PE/MZ, ELF, Mach-O and fat Mach-O (told apart from Java class files), PDF, ZIP (Office, JAR and APK), OLE, PNG, JPEG, GIF, gzip, RAR, 7z and script shebangs. It flags extensions that don't match the content and double extensions such as `invoice.pdf.exe`. It also lists the first 5,000 ASCII and UTF-16LE strings of 6+ characters, with a filter and a button that sends them to the IOC extractor. The page warns that uploading to VirusTotal shares the file with its paid users, so search by hash first.
 - **Subnet calculator** (`#subnet`): for IPv4 it gives the network, netmask, wildcard, broadcast, first/last host and host counts. `/31` follows RFC 3021 (two usable hosts, no broadcast) and `/32` is a single host; dotted netmasks are accepted. For IPv6 it gives the network and first/last address, with BigInt address counts and RFC 5952 formatting. It also answers "Is this IP in this range?".
 
+- **Certificate viewer** (`#cert`): reads a pasted PEM (or a chain, up to 10) or a dropped `.cer`/`.crt`/`.der` file with a small DER/X.509 parser written here (the CSP allows no CDN libraries). It shows the subject, issuer, SANs (DNS, IP, email, URI), validity with expired / not-yet-valid flags, key type and size (RSA bits, EC curve, Ed25519/Ed448), signature algorithm (weak ones flagged), serial, the SHA-256 fingerprint with a crt.sh link, and self-signed and CA flags. Text containing `PRIVATE KEY` is refused without parsing and cleared, with advice to treat the key as exposed and replace it.
+- **Nmap viewer** (`#nmap`): reads Nmap XML (`-oX`, up to 20 MB) with the browser's `DOMParser`. XML that declares entities or an internal DTD subset is refused first, since real Nmap output never has them. It shows a host / port / state / service / version table, filterable by port, by service or product text, and to open ports only, with counts by service. CVE IDs in script output link to the hub's lookup. Private addresses are shown, but only public ones get a Look up link. Parsing is checked in Chrome (Node has no DOMParser); `tests/nmap.test.mjs` covers the helpers, and the fixture validates against Nmap's own DTD.
+
 **Refreshing the Public Suffix List.** The tools use a bundled copy, `data/public_suffix_list.dat`; the version is on its line 8. Download it only from publicsuffix.org (macOS/Linux):
 
 ```sh
@@ -244,7 +248,7 @@ js/results.js    result cards for Worker lookups
 js/cves.js       CVEs page (keyword search)
 js/news.js       News page
 js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node
-js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js) plus ui.js and data.js; tool modules export their pure functions for tests and only wire up the page in a browser
+js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, cert.js, nmap.js) plus ui.js and data.js; tool modules export their pure functions for tests and only wire up the page in a browser
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)

@@ -14,6 +14,8 @@
   <script type="module" src="js/analyze/jwt.js"></script>
   <script type="module" src="js/analyze/file.js"></script>
   <script type="module" src="js/analyze/subnet.js"></script>
+  <script type="module" src="js/analyze/cert.js"></script>
+  <script type="module" src="js/analyze/nmap.js"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -43,6 +45,8 @@
       <a href="#jwt">JWT decoder</a>
       <a href="#file">File analyzer</a>
       <a href="#subnet">Subnet calculator</a>
+      <a href="#cert">Certificate viewer</a>
+      <a href="#nmap">Nmap viewer</a>
     </nav>
 
     <section class="panel" id="ioc" aria-labelledby="ioc-h">
@@ -113,6 +117,30 @@
         <button type="submit">Calculate</button>
       </form>
       <div id="subnet-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="cert" aria-labelledby="cert-h">
+      <h2 id="cert-h">Certificate viewer</h2>
+      <p class="hint">Paste a PEM certificate (or a chain), or drop a .cer, .crt or .der file. It is read in your browser. Paste certificates only: never a private key.</p>
+      <form id="cert-form" autocomplete="off">
+        <label for="cert-input" class="visually-hidden">PEM certificate</label>
+        <textarea id="cert-input" spellcheck="false" placeholder="-----BEGIN CERTIFICATE-----"></textarea>
+        <div class="row tool-actions">
+          <label id="cert-drop" class="drop small-drop" for="cert-file"><span>Drop a file or <u>choose one</u></span><input id="cert-file" type="file" class="visually-hidden" accept=".cer,.crt,.der,.pem"></label>
+          <button type="submit">Read</button>
+        </div>
+      </form>
+      <div id="cert-result" class="result" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" id="nmap" aria-labelledby="nmap-h">
+      <h2 id="nmap-h">Nmap viewer</h2>
+      <p class="hint">Drop the XML from a scan you ran (saved with <code>-oX</code>, up to 20 MB) to get a filterable table. It is read in your browser; private addresses are shown, and only public ones get a Look up link.</p>
+      <label id="nmap-drop" class="drop" for="nmap-file">
+        <span>Drop Nmap XML here or <u>choose a file</u></span>
+        <input id="nmap-file" type="file" class="visually-hidden" accept=".xml">
+      </label>
+      <div id="nmap-result" class="result" aria-live="polite"></div>
     </section>
   </main>
 

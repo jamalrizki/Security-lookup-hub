@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Synthetic fixture in Nmap's -oX format. -->
+<nmaprun scanner="nmap" args="nmap -sV --script vulners -oX scan.xml 192.168.1.0/30 45.33.32.156" start="1760500000" startstr="Wed Oct 15 03:46:40 2026" version="7.95" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1760500001" endtime="1760500060"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.1.1" addrtype="ipv4"/><address addr="AA:BB:CC:DD:EE:01" addrtype="mac" vendor="Example Router Co"/>
+<hostnames><hostname name="router.lan" type="PTR"/></hostnames>
+<ports><extraports state="closed" count="996"><extrareasons reason="reset" count="996"/></extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="8.9p1" extrainfo="Ubuntu Linux; protocol 2.0" method="probed" conf="10"/>
+<script id="vulners" output="&#xa;  cpe:/a:openbsd:openssh:8.9p1: &#xa;    CVE-2023-38408  9.8  https://vulners.com/cve/CVE-2023-38408&#xa;    CVE-2024-6387   8.1  https://vulners.com/cve/CVE-2024-6387"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="lighttpd" version="1.4.59" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="443"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="https" method="table" conf="3"/></port>
+<port protocol="udp" portid="53"><state state="open|filtered" reason="no-response" reason_ttl="0"/><service name="domain" method="table" conf="3"/></port>
+</ports></host>
+<host starttime="1760500001" endtime="1760500061"><status state="down" reason="no-response" reason_ttl="0"/><address addr="192.168.1.2" addrtype="ipv4"/></host>
+<host starttime="1760500002" endtime="1760500090"><status state="up" reason="echo-reply" reason_ttl="52"/>
+<address addr="45.33.32.156" addrtype="ipv4"/>
+<hostnames><hostname name="scanme.nmap.org" type="user"/></hostnames>
+<ports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="52"/><service name="ssh" product="OpenSSH" version="6.6.1p1" extrainfo="Ubuntu 2ubuntu2.13" method="probed" conf="10"/>
+<script id="vulners" output="cve-2016-6210 5.9 / CVE-2015-5600 8.5"/></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="52"/><service name="http" product="&lt;script&gt;alert(1)&lt;/script&gt;Apache httpd" version="2.4.7" method="probed" conf="10"/></port>
+<port protocol="tcp" portid="9929"><state state="open" reason="syn-ack" reason_ttl="52"/><service name="nping-echo" product="Nping echo" method="probed" conf="10"/></port>
+</ports></host>
+<runstats><finished time="1760500090" timestr="Wed Oct 15 03:48:10 2026" summary="Nmap done: 5 IP addresses (2 hosts up) scanned in 90.00 seconds" elapsed="90.00" exit="success"/><hosts up="2" down="1" total="3"/></runstats>
+</nmaprun>
