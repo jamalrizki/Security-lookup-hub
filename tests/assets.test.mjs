@@ -20,3 +20,20 @@ test('pages reference the current CSS and nav script versions', () => {
     }
   }
 });
+
+test('every page has link-preview tags pointing at a real 1200x630 image, and icons', () => {
+  const png = readFileSync(new URL('images/og-image.png', root));
+  assert.equal(png.toString('ascii', 1, 4), 'PNG');
+  assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [1200, 630], 'og-image size');
+  for (const icon of ['favicon.svg', 'favicon-32.png', 'apple-touch-icon.png']) assert.ok(readFileSync(new URL(icon, root)).length > 0, icon);
+  for (const page of readdirSync(root).filter((f) => f.endsWith('.html'))) {
+    const html = readFileSync(new URL(page, root), 'utf8');
+    const meta = (prop) => new RegExp(`<meta (?:property|name)="${prop}" content="([^"]+)"`).exec(html)?.[1];
+    for (const prop of ['og:title', 'og:description', 'og:url', 'og:image', 'description', 'twitter:card']) assert.ok(meta(prop), `${page}: ${prop}`);
+    // Facebook and LinkedIn need absolute https URLs.
+    assert.match(meta('og:image'), /^https:\/\/jamalrizki\.github\.io\/Security-lookup-hub\/images\/og-image\.png$/, page);
+    assert.match(meta('og:url'), /^https:\/\/jamalrizki\.github\.io\/Security-lookup-hub\//, page);
+    assert.ok(meta('description').length <= 200, `${page}: description too long`);
+    assert.equal((html.match(/rel="icon"/g) || []).length, 2, `${page}: one SVG and one PNG icon`);
+  }
+});
