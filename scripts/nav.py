@@ -11,6 +11,7 @@ For every page it (re)writes:
     paragraph (kept as is), and the radar with "MODULE 0N/07"
   - link-preview (Open Graph / Twitter) tags and icons, from the page title
     and intro paragraph; preview image images/og-image.png (1200x630)
+  - Google Analytics 4 (loader + js/analytics.js) and its CSP entries
   - script/stylesheet tags with a content hash (?v=...), so browsers never
     pair a new page with an old cached file (tests/assets.test.mjs checks it)
 """
@@ -28,7 +29,7 @@ NAV = [
 PAGES = [file for _, file, _, _ in NAV]
 
 root = pathlib.Path(__file__).resolve().parent.parent
-ASSETS = ['css/style.css', 'js/nav.js', 'js/chrome.js']
+ASSETS = ['css/style.css', 'js/nav.js', 'js/chrome.js', 'js/analytics.js']
 VERSIONS = {a: hashlib.sha256((root / a).read_bytes()).hexdigest()[:10] for a in ASSETS}
 
 CHROME = '''  <div class="rain" aria-hidden="true"></div>
@@ -67,6 +68,7 @@ HERO = '''    <section class="hero">
 '''
 
 SITE = 'https://jamalrizki.github.io/Security-lookup-hub/'
+GA_LOADER = '<script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>'
 # The home page's intro is instructions, so it gets a description written for sharing.
 HOME_DESCRIPTION = ('One search box for hashes, domains, IPs, URLs, emails and CVEs. Free threat intel '
                     'from VirusTotal, AbuseIPDB, NVD, CISA KEV and more, using passive lookups only.')
@@ -150,6 +152,23 @@ for page in existing:
     description = HOME_DESCRIPTION if page == 'index.html' else plain(lede_now)
     html = html.replace('  <meta name="referrer" content="no-referrer">\n', '  <meta name="referrer" content="no-referrer">\n' + social(page_title, description, url), 1)
     assert 'og:image' in html, f'{page}: social tags not inserted'
+
+    # Google Analytics 4: Google's loader plus our copy of its inline snippet, and
+    # the CSP entries Google documents for GA4 (developers.google.com/tag-platform/security/guides/csp).
+    if GA_LOADER not in html:
+        html = html.replace('  <link rel="stylesheet" href="css/style.css', f'  {GA_LOADER}\n  <script src="js/analytics.js"></script>\n  <link rel="stylesheet" href="css/style.css', 1)
+    def add_csp(directive, sources):
+        csp_meta = re.search(r'(<meta http-equiv="Content-Security-Policy" content=")([^"]*)(")', html)
+        policy = csp_meta.group(2)
+        m = re.search(rf'(?:^|; ){directive} ([^;]*)', policy)
+        current = m.group(1).split()
+        missing = [x for x in sources if x not in current]
+        if missing:
+            policy = policy.replace(f'{directive} {m.group(1)}', f'{directive} {" ".join(current + missing)}', 1)
+        return html.replace(csp_meta.group(0), csp_meta.group(1) + policy + csp_meta.group(3), 1)
+    html = add_csp('script-src', ['https://www.googletagmanager.com'])
+    html = add_csp('img-src', ['https://www.googletagmanager.com', 'https://*.google-analytics.com'])
+    html = add_csp('connect-src', ['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://*.google.com'])
 
     # Scripts and stylesheet, with cache-busting versions.
     if 'src="js/nav.js' not in html:

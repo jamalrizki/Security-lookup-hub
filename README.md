@@ -274,6 +274,15 @@ worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, qu
 tests/           node:test unit tests; tests/fixtures/ holds feed samples
 ```
 
+## Analytics
+
+The pages load Google Analytics 4 (`G-26NLWZWCNN`). Google's inline snippet lives in `js/analytics.js`, because the CSP allows no inline scripts. The CSP adds only the domains Google documents for GA4: `script-src` www.googletagmanager.com; `img-src` www.googletagmanager.com and *.google-analytics.com; `connect-src` those plus *.google.com.
+
+- Page views are reported **without the URL fragment** (`page_location` is set to origin + path + query), because Lookup keeps the searched indicator, which can be an email address, in `#q=`.
+- **In the GA admin** (Admin, then Data streams, then the web stream, then Enhanced measurement), turn off **Outbound clicks**. It records the address of links you click, and the "Open in VirusTotal / AbuseIPDB / …" links contain the searched indicator. Leaving "Page changes based on browser history events" off is also safest.
+- GA sets cookies. For visitors in the EU or UK, that normally needs consent; there is no consent banner yet.
+- The Worker is unchanged: it still logs nothing and stores nothing about visitors or searches.
+
 ## Security notes
 
 - Each page sets a strict Content-Security-Policy: no inline script or style, and the only network calls allowed are same-origin, `api.pwnedpasswords.com` and the lookup Worker.

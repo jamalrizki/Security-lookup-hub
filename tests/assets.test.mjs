@@ -12,7 +12,7 @@ const hash = (p) => createHash('sha256').update(readFileSync(new URL(p, root))).
 test('pages reference the current CSS and nav script versions', () => {
   const pages = readdirSync(root).filter((f) => f.endsWith('.html'));
   assert.ok(pages.length >= 7);
-  for (const asset of ['css/style.css', 'js/nav.js', 'js/chrome.js']) {
+  for (const asset of ['css/style.css', 'js/nav.js', 'js/chrome.js', 'js/analytics.js']) {
     const want = `${asset}?v=${hash(asset)}`;
     for (const page of pages) {
       const html = readFileSync(new URL(page, root), 'utf8');
@@ -37,3 +37,17 @@ test('every page has link-preview tags pointing at a real 1200x630 image, and ic
     assert.equal((html.match(/rel="icon"/g) || []).length, 2, `${page}: one SVG and one PNG icon`);
   }
 });
+
+test('every page loads Google Analytics through a CSP that allows only its documented domains', () => {
+  for (const page of readdirSync(root).filter((f) => f.endsWith('.html'))) {
+    const html = readFileSync(new URL(page, root), 'utf8');
+    assert.ok(html.includes('src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"'), `${page}: GA loader`);
+    assert.ok(!/<script>(?!<\/script>)/.test(html), `${page}: no inline scripts`);
+    const csp = /Content-Security-Policy" content="([^"]+)"/.exec(html)[1];
+    assert.match(csp, /script-src 'self' https:\/\/www\.googletagmanager\.com;/, page);
+    assert.ok(!csp.includes('unsafe-inline'), `${page}: no unsafe-inline`);
+  }
+  const snippet = readFileSync(new URL('js/analytics.js', root), 'utf8');
+  assert.match(snippet, /page_location: location\.origin \+ location\.pathname \+ location\.search/, 'fragment (#q=...) is never sent');
+});
+
