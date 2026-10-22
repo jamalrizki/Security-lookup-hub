@@ -32,7 +32,7 @@ export async function getJson(url, { accept = 'application/json', timeout = TIME
 }
 
 // Reads at most maxBytes so one huge response can't blow the CPU or memory budget.
-async function readCapped(res, maxBytes) {
+export async function readCapped(res, maxBytes) {
   const reader = res.body.getReader();
   const chunks = [];
   let size = 0;

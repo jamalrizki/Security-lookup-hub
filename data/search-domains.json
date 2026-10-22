@@ -1,0 +1,9 @@
+{
+  "_about": "Sites Ask's web search may return (Tavily include_domains, re-checked in code). A subdomain of a listed domain is allowed too. An entry with a path (github.com/advisories) is sent to Tavily as the domain alone, and results must also have that path prefix. Edit freely; redeploy the Worker for changes to take effect. Tavily allows up to 300 domains.",
+  "groups": {
+    "government": ["nvd.nist.gov", "csrc.nist.gov", "cisa.gov", "cve.org", "first.org", "ncsc.gov.uk", "cyber.gov.au"],
+    "frameworks": ["attack.mitre.org", "cwe.mitre.org", "capec.mitre.org", "owasp.org"],
+    "vendors": ["github.com/advisories", "msrc.microsoft.com", "learn.microsoft.com", "sec.cloudapps.cisco.com", "fortiguard.com", "security.paloaltonetworks.com", "access.redhat.com", "ubuntu.com", "debian.org", "php.net", "apache.org", "oracle.com", "ibm.com"],
+    "news": ["thehackernews.com", "bleepingcomputer.com", "securityweek.com", "therecord.media", "krebsonsecurity.com", "darkreading.com"]
+  }
+}

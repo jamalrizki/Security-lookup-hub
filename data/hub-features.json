@@ -1,0 +1,21 @@
+{
+  "_about": "Places Ask may send a visitor. The model only writes an id in double brackets ([[jwt]]); the Worker and the page turn ids into links from this file. href is relative to the site root. about (60 characters max) goes into Ask's prompt. tests/ask-tools.test.mjs fails if an href points to a page or anchor that doesn't exist.",
+  "features": [
+    { "id": "lookup", "name": "Lookup", "href": "./", "about": "Reputation of a hash, domain, IP, URL, email or CVE ID" },
+    { "id": "cves", "name": "CVEs search", "href": "./cves.html", "about": "Search NVD for vulnerabilities by product or keyword" },
+    { "id": "news", "name": "News", "href": "./news.html", "about": "Advisories, newly exploited CVEs and security news" },
+    { "id": "analyze", "name": "Analyze tools", "href": "./analyze.html", "about": "Paste-and-check tools that run in the browser" },
+    { "id": "ioc", "name": "IOC extractor", "href": "./analyze.html#ioc", "about": "Pull IPs, domains, hashes and CVEs out of text or logs" },
+    { "id": "link", "name": "Suspicious-link inspector", "href": "./analyze.html#link", "about": "Check a URL for tricks and look-alike domains" },
+    { "id": "headers", "name": "Email-header analyzer", "href": "./analyze.html#headers", "about": "Read email headers: delivery path, SPF/DKIM/DMARC" },
+    { "id": "jwt", "name": "JWT decoder", "href": "./analyze.html#jwt", "about": "Decode a JSON Web Token's header and payload" },
+    { "id": "file", "name": "File analyzer", "href": "./analyze.html#file", "about": "Hashes, real file type and strings of a file" },
+    { "id": "subnet", "name": "Subnet calculator", "href": "./analyze.html#subnet", "about": "IPv4/IPv6 network ranges; is an IP in a range" },
+    { "id": "cert", "name": "Certificate viewer", "href": "./analyze.html#cert", "about": "Read a PEM or DER certificate: names, dates, key" },
+    { "id": "nmap", "name": "Nmap viewer", "href": "./analyze.html#nmap", "about": "Table of hosts, ports and services from Nmap XML" },
+    { "id": "actors", "name": "Threat actors", "href": "./actors.html", "about": "APT and criminal groups from MITRE ATT&CK" },
+    { "id": "reference", "name": "Reference", "href": "./reference.html", "about": "Directory of free security sites by what they do" },
+    { "id": "where-to-start", "name": "Where to start", "href": "./reference.html#where-to-start", "about": "Which tool or site to try for what you have" },
+    { "id": "tools", "name": "Tools glossary", "href": "./tools.html", "about": "What common security tools do, one line each" }
+  ]
+}

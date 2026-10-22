@@ -4,6 +4,7 @@
 //   GET /api/explain?q=<indicator>  plain-English AI summary of the same results (Groq)
 //   GET /api/cve-search?q=&severity= newest NVD matches for a keyword
 //   GET /api/news                   feed snapshot kept in KV by the cron job (scheduled())
+//   POST /api/ask                   Ask: AI answers with tools (ask.js); the only POST route
 //   GET /api/health
 //
 // Guardrails (see Docs/Requirements.md): input validated with the same rules as
@@ -19,6 +20,7 @@ import { QuotaError } from './http.js';
 import { explain, MODEL, verdict } from './explain.js';
 import { validateSearch, searchCves, CVE_TTL } from './cve.js';
 import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
+import { handleAsk } from './ask.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -26,20 +28,24 @@ const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
 // v3 to discard NVD "no record" answers cached while an invalid NVD key was set.
 const CACHE_VERSION = 'v3';
 
-function corsHeaders(origin) {
-  return origin
-    ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, OPTIONS', 'access-control-max-age': '86400', vary: 'Origin' }
-    : { vary: 'Origin' };
+const ASK_PATH = '/api/ask';
+
+// Every route is GET-only except Ask, which takes a JSON POST.
+function corsHeaders(origin, path = '') {
+  if (!origin) return { vary: 'Origin' };
+  return path === ASK_PATH
+    ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'Origin' }
+    : { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, OPTIONS', 'access-control-max-age': '86400', vary: 'Origin' };
 }
 
-function json(body, status, origin, extra = {}) {
+function json(body, status, origin, extra = {}, path = '') {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
       'x-content-type-options': 'nosniff',
-      ...corsHeaders(origin),
+      ...corsHeaders(origin, path),
       ...extra,
     },
   });
@@ -249,7 +255,13 @@ export default {
     const origin = allowedOrigin(request, env);
 
     if (!url.pathname.startsWith('/api/')) return json({ error: 'Not found.' }, 404, origin);
-    if (request.method === 'OPTIONS') return new Response(null, { status: origin ? 204 : 403, headers: corsHeaders(origin) });
+    if (request.method === 'OPTIONS') return new Response(null, { status: origin ? 204 : 403, headers: corsHeaders(origin, url.pathname) });
+    if (url.pathname === ASK_PATH) {
+      if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405, origin, { allow: 'POST, OPTIONS' }, ASK_PATH);
+      if (!origin) return json({ error: 'This API only serves the Security Lookup Hub site.' }, 403, null);
+      const r = await handleAsk(request, env, ctx, { quotaTools, runSource });
+      return json(r.body, r.status, origin, r.headers || {}, ASK_PATH);
+    }
     if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405, origin, { allow: 'GET, OPTIONS' });
     if (url.pathname === '/api/health') return json({ ok: true }, 200, origin);
     if (!origin) return json({ error: 'This API only serves the Security Lookup Hub site.' }, 403, null);

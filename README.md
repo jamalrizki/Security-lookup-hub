@@ -19,6 +19,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Built on `v2`, not deployed |
 | 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Built on `v2`, not deployed |
 | 12 | Analyze: certificate viewer and Nmap viewer | Built on `v2`, not deployed |
+| 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
 
 **Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
@@ -211,6 +212,34 @@ The "Explain these results" button calls `GET /api/explain?q=`. That route reuse
 - **Prompt injection.** Threat feeds contain attacker-written text, so the model only sees selected structured fields, truncated. It never sees TXT records, page titles, file names or URL lists. It's told the data is untrusted, it has no tools, and its output is shown as plain text with URLs defanged.
 - **Caching and limits.** Explanations are cached for 24 hours per indicator, except when a source was skipped. The Worker allows at most 20 Groq calls a minute (Groq's free limit is 30 a minute and 1,000 a day).
 
+## Ask (AI answers)
+
+`POST /api/ask` answers security questions with `openai/gpt-oss-120b` on Groq, using four tools it calls itself. The code is `worker/src/ask.js` (loop, prompt, output guards), `worker/src/ask-tools.js` (tool definitions and handlers), `worker/src/reference.js` (library search) and `worker/src/websearch.js` (Tavily). The spec is [Docs/spec-v3.md](Docs/spec-v3.md).
+
+| Tool | What it reads | Per question |
+|---|---|---|
+| `search_reference` | The reference library in Vectorize (`BOOKS`), via Workers AI embeddings and a reranker. Returns passage text only; the page's trace shows a count | 2 |
+| `web_search` | Tavily, limited to `data/search-domains.json` | 2 |
+| `recent_news` | The hub's own `news:v1` KV snapshot (no outbound fetch) | 1 |
+| `cve_lookup` | The hub's NVD, CISA KEV and EPSS sources through `runSource` (same cache, quotas and pauses), plus the code-decided priority | 3 |
+
+- **Request:** `{ "messages": [{ "role": "user", "content": "…" }, …] }`, at most 24 KB. Only `user` and `assistant` roles; questions up to 1,000 characters, earlier answers up to 3,000; the last message must be the user's; only the last 8 are kept. Same Origin allowlist as every route; this is the only route that takes `POST` (its CORS allows `POST, OPTIONS` and `content-type`).
+- **Response:** `{ reply, sources: [{ n, title, url, domain }], trace: [{ tool, args, ok, ms, summary, note? }], lookups: [{ type, value }], hub: [{ id, name, href }], model, provider }`.
+- **Loop:** at most 4 tool rounds; the 5th model call is forced to answer in text. Over a per-question cap, the tool returns an error ("limit reached, answer from what you have").
+- **Limits:** 6 questions a minute site-wide; every model call counts against the same 20-a-minute Groq quota as the Explain button. A Groq 429 that says "try again in 435ms" is waited out while the question's total wait stays within 20 s; otherwise the answer is "Ask is busy" with HTTP 429. Web search is capped at 25 a UTC day, counted in the `NEWS` KV namespace (`ask:websearch:<date>`, one write per search, expires after 2 days), because Tavily's free plan is 1,000 searches a month and the key may be shared with Jaizz.
+- **Fallback:** if the optional secret `OPENROUTER_API_KEY` is set, OpenRouter (`openrouter/free`) answers when Groq can't.
+- **CVE IDs are checked in code** (ported from CVE Explainer): `cve_lookup` only accepts an ID the visitor wrote or a tool returned during the question. A 1–2 character near-miss of exactly one known ID is corrected (the trace says so); anything else is refused.
+- **Output guards, all in code:**
+  - Sources are built from URLs the tools returned (web results, news links, NVD/KEV/EPSS links), de-duplicated, first 8. A listed URL in the reply is removed (the list shows it); any other URL is defanged.
+  - "(Source: …)", 【】 markers and tool names are removed.
+  - **Verbatim-overlap check:** if the reply shares 12 or more consecutive words with a library passage or web excerpt, the model is asked once to rewrite it; if the rewrite still overlaps, the overlapping sentences are deleted.
+  - `[[id]]` becomes the hub feature's name, and the feature goes into `hub` with its `href` from `data/hub-features.json`. Unknown ids vanish. At most 4.
+  - `lookups` lists the public indicators and CVE IDs in the visitor's last message, as `detect()` decides. Names ending in a common file extension (`setup.exe`, `config.json`) are skipped, since `detect()` would otherwise accept them as domains.
+- **Reference library sources are never named:** vectors carry only chunk text and an opaque book id; passage text goes to the model and nowhere else.
+- **Web search allowlist:** `data/search-domains.json`, grouped for readability (all groups are sent together; Tavily allows up to 300 domains, so the spec's split-by-question-type fallback isn't needed). A subdomain of a listed domain is allowed. An entry with a path, like `github.com/advisories`, sends the domain to Tavily, and results must also be under that path (so GitHub repos with exploit code don't qualify). Results are re-checked in code: `https:` only, no userinfo, allowlisted host. Queries containing an email address or a private/reserved IP are refused before any request. Edit the file and redeploy the Worker to change the list.
+- **Nothing is stored or logged.** Observability stays off. `DEBUG_ASK=1` in `worker/.dev.vars` (local only) prints the reference search's chunk ids and scores, never text, to the `wrangler dev` console.
+- **Secrets:** `GROQ_API_KEY` (already set), `TAVILY_API_KEY` (new; without it `web_search` reports "not configured" and Ask still answers), optional `OPENROUTER_API_KEY`.
+
 ## Tests
 
 Node 20 or later, no dependencies:
@@ -270,8 +299,11 @@ data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
 data/brands.json      brands for the lookalike check
 data/tools.json       tools glossary entries { tool, whatItDoes } (maintained separately)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
-worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js
-tests/           node:test unit tests; tests/fixtures/ holds feed samples
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js, src/ask.js (Ask loop, prompt, output guards), src/ask-tools.js (Ask tool definitions and handlers), src/reference.js (reference-library search), src/websearch.js (Tavily, allowlist), src/retry-wait.js (Groq 429 wait parser, copied from Jaizz)
+data/search-domains.json   Ask's web-search allowlist (edit freely)
+data/hub-features.json     hub pages and tools Ask may link to (ids -> links)
+security-books/  reference books for Ask, GITIGNORED: never committed (tests/books-ignored.test.mjs fails if anything under it is tracked)
+tests/           node:test unit tests; tests/fixtures/ holds feed samples; tests/helpers/ask-stubs.mjs stubs the model, Tavily, KV, cache, Workers AI and Vectorize for the Ask tests
 ```
 
 ## Analytics

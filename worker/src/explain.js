@@ -15,7 +15,7 @@ const cut = (s, n = 60) => (typeof s === 'string' ? s.slice(0, n) : s);
 const cutList = (a, n = 5, len = 40) => (a || []).slice(0, n).map((s) => cut(String(s), len));
 
 // Only these fields reach the model, per source.
-const PICK = {
+export const PICK = {
   vtFile: (d) => ({ malicious: d.malicious, engines: d.engines, verdict: d.verdict, threatLabel: cut(d.label), families: cutList(d.families), fileType: cut(d.fileType, 30), firstSeen: d.firstSeen }),
   vtDomain: (d) => ({ malicious: d.malicious, suspicious: d.suspicious, engines: d.engines, verdict: d.verdict, reputation: d.reputation, categories: cutList(d.categories) }),
   vtIp: (d) => ({ malicious: d.malicious, suspicious: d.suspicious, engines: d.engines, verdict: d.verdict, asOwner: cut(d.asOwner), country: d.country }),
