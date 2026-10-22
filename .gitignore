@@ -3,3 +3,10 @@ node_modules/
 .wrangler/
 .dev.vars
 *.bak
+
+# Reference books for Ask (v3). The repo is public: never commit these.
+security-books/
+*.pdf
+*.epub
+chunks.jsonl
+vectors.ndjson
