@@ -25,7 +25,7 @@ export const TOOL_DEFINITIONS = [
     { query: { type: 'string', description: '3-200 characters; no email addresses' } }),
   fn('recent_news', "Newest items from the hub's own news feed: security news, official advisories, or CISA KEV additions.",
     { filter: { type: 'string', enum: ['all', 'news', 'advisories', 'kev'] } }, []),
-  fn('cve_lookup', 'Facts for one CVE from NVD, CISA KEV and FIRST EPSS, with the patch priority. Use the exact ID.',
+  fn('cve_lookup', "Facts for one CVE from NVD, CISA KEV and FIRST EPSS, with the hub's patch priority. Use the exact ID.",
     { cve_id: { type: 'string', description: 'e.g. CVE-2021-44228' } }),
 ];
 
@@ -82,6 +82,7 @@ export function newState(visitorText) {
     counts: {},
     knownIds: cveIdsIn(visitorText),
     lookedUp: new Set(), // CVE IDs cve_lookup returned data for
+    inKev: new Set(), // looked-up CVE IDs that are in CISA KEV (the only confirmation of exploitation)
     texts: [], // reference passages and web excerpts, for the verbatim-overlap check
     sources: [], // { title, url, domain } in call order, for the Sources list
   };
@@ -182,7 +183,9 @@ async function cveLookupTool(args, { env, state, exec, quota, runSource }) {
   for (const s of sources) if (s.status === 'ok' || s.status === 'empty') addSource(state, s.link, `${s.name}: ${id}`);
   const result = {
     cve_id: id,
-    priority: priority.verdict,
+    // Named so the model can't pass it off as the vendor's rating.
+    hub_priority: priority.verdict,
+    hub_priority_note: "The hub's rule of thumb from KEV, EPSS and CVSS; not a vendor rating.",
     reasons: priority.reasons,
     nvd: sourceSummary(by.nvd, PICK.nvd),
     kev: sourceSummary(by.kev, PICK.kev),
@@ -195,6 +198,7 @@ async function cveLookupTool(args, { env, state, exec, quota, runSource }) {
   learnIds(state, result);
   state.knownIds.add(id);
   state.lookedUp.add(id);
+  if (by.kev.status === 'ok' && by.kev.data?.inKev) state.inKev.add(id);
   return {
     result,
     isError: false,

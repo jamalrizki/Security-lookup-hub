@@ -3,7 +3,7 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/src/index.js';
-import { askTiming, hasOverlap, removeOverlapping, findLookups, handleUrls, replaceHubIds, stripSourceTags, validateMessages } from '../worker/src/ask.js';
+import { askTiming, hasOverlap, removeOverlapping, findLookups, handleUrls, replaceHubIds, stripSourceTags, validateMessages, systemPrompt, EXPLOITED_CLAIM } from '../worker/src/ask.js';
 import { _resetKevCache } from '../worker/src/cve.js';
 import {
   ORIGIN, installCaches, exec, memoryKv, installFetch, modelScript, toolCall, say, libraryBindings, askRequest,
@@ -71,7 +71,9 @@ test('PHP vulnerability in the news: recent_news, then cve_lookup on that ID; fa
   assert.equal(cveResult.kev.inKev, true);
   assert.equal(cveResult.kev.knownRansomwareUse, true);
   assert.equal(cveResult.epss.probabilityPercent, 94.36);
-  assert.equal(cveResult.priority, 'Exploited in the wild: patch urgently');
+  assert.equal(cveResult.hub_priority, 'Exploited in the wild: patch urgently');
+  assert.match(cveResult.hub_priority_note, /not a vendor rating/);
+  assert.ok(!('priority' in cveResult), 'never a bare "priority" the model could call the vendor\'s');
   assert.equal(cveResult.references[0], 'https://github.com/php/php-src/security/advisories/GHSA-3qgc-jrrr-25jv', 'vendor reference first');
 
   const urls = body.sources.map((s) => s.url);
@@ -343,7 +345,7 @@ test('a draft calling an unlooked-up CVE "high priority" triggers a lookup in co
       assert.match(last.content, /^Here is the hub's data for the CVEs you mentioned\. Make every severity, priority, KEV, EPSS and affected-version statement match this data\. Remove any such statement this data doesn't support\./);
       const data = JSON.parse(last.content.split('\n')[1]);
       assert.equal(data[0].cve_id, PHP_CVE);
-      assert.equal(data[0].priority, 'Exploited in the wild: patch urgently');
+      assert.equal(data[0].hub_priority, 'Exploited in the wild: patch urgently');
       assert.equal(data[0].nvd.score, 9.8);
       assert.equal(body.messages[body.messages.length - 2].content, `${PHP_CVE} is high priority with a CVSS of 7.5.`, 'the draft is shown to the model');
       return say(`${PHP_CVE} is critical (CVSS 9.8) and in CISA KEV: patch urgently.`);
@@ -409,4 +411,88 @@ test('a CVE in the draft that nobody gave is refused by the known-ID rule and it
   assert.match(body.trace[0].note, /checked in code/);
   assert.ok(!calls.some((c) => c.url.includes('nvd')), 'refused before any request');
   assert.equal(body.reply, 'BlueKeep is a well-known RDP flaw; patch Remote Desktop Services.');
+});
+
+/* ---------- exploitation wording and the hub's priority ---------- */
+
+const EXPLOIT_REVISION = /only KEV confirms exploitation\. Rewrite each such statement as reported by its source \(e\.g\. "The Hacker News reports exploit attempts"\) and say it is not in CISA's Known Exploited Vulnerabilities list\.$/;
+const NOT_IN_KEV_CVE = 'CVE-2024-1001'; // the fixtures have no NVD record and no KEV entry for it
+
+test('"actively exploited" with no KEV hit among the looked-up CVEs gets rewritten as reported', async () => {
+  const model = modelScript([
+    toolCall(['cve_lookup', { cve_id: NOT_IN_KEV_CVE }]),
+    say(`${NOT_IN_KEV_CVE} is being actively exploited, so patch now.`),
+    (body) => {
+      assert.equal(body.tool_choice, 'none');
+      const last = body.messages[body.messages.length - 1].content;
+      assert.match(last, EXPLOIT_REVISION);
+      assert.ok(!last.includes("Here is the hub's data"), 'the CVE was already looked up');
+      return say(`The Hacker News reports exploit attempts against ${NOT_IN_KEV_CVE}; it is not in CISA's Known Exploited Vulnerabilities list. Patch now.`);
+    },
+  ]);
+  installFetch([[GROQ, model.handler], ...cveRoutes()]);
+  const { body } = await ask(user(`Is ${NOT_IN_KEV_CVE} being exploited?`), baseEnv());
+  assert.equal(model.remaining(), 0);
+  assert.match(body.reply, /^The Hacker News reports exploit attempts/);
+  assert.ok(!EXPLOITED_CLAIM.test(body.reply));
+});
+
+test('"actively exploited" is left alone when a looked-up CVE is in KEV', async () => {
+  const model = modelScript([toolCall(['cve_lookup', { cve_id: PHP_CVE }]), say(`${PHP_CVE} is actively exploited in the wild and in CISA KEV.`)]);
+  installFetch([[GROQ, model.handler], ...cveRoutes()]);
+  const { body } = await ask(user(`Is ${PHP_CVE} exploited?`), baseEnv());
+  assert.equal(model.bodies.length, 2, 'no revision call');
+  assert.equal(body.reply, `${PHP_CVE} is actively exploited in the wild and in CISA KEV.`);
+});
+
+test('a news claim of confirmed exploitation with no CVE ID gets rewritten', async () => {
+  const model = modelScript([
+    toolCall(['recent_news', { filter: 'news' }]),
+    say('A Laravel auth bypass is confirmed to be exploited by attackers.'),
+    (body) => {
+      assert.match(body.messages[body.messages.length - 1].content, EXPLOIT_REVISION);
+      return say("The Hacker News reports attacks using a Laravel auth bypass; it is not in CISA's Known Exploited Vulnerabilities list.");
+    },
+  ]);
+  installFetch([[GROQ, model.handler]]);
+  const { body } = await ask(user("What's in the news?"), baseEnv({ NEWS: memoryKv({ 'news:v1': NEWS_SNAPSHOT }) }));
+  assert.equal(model.remaining(), 0);
+  assert.match(body.reply, /reports attacks/);
+});
+
+test('unchecked CVE facts and exploitation wording share the single revision call', async () => {
+  const model = modelScript([
+    say(`${NOT_IN_KEV_CVE} is high priority and exploited in the wild.`),
+    (body) => {
+      const last = body.messages[body.messages.length - 1].content;
+      assert.match(last, /^Here is the hub's data for the CVEs you mentioned\./);
+      assert.match(last, EXPLOIT_REVISION);
+      return say(`${NOT_IN_KEV_CVE} has no score yet in the hub's data; it is not in CISA's Known Exploited Vulnerabilities list.`);
+    },
+  ]);
+  installFetch([[GROQ, model.handler], ...cveRoutes()]);
+  const { body } = await ask(user(`Tell me about ${NOT_IN_KEV_CVE}`), baseEnv());
+  assert.equal(model.bodies.length, 2, 'draft + one revision, never a second');
+  assert.equal(body.trace.length, 1);
+  assert.match(body.trace[0].note, /checked in code/);
+});
+
+test("the priority is the hub's, never the vendor's", async () => {
+  const prompt = systemPrompt();
+  assert.match(prompt, /Call hub_priority "the hub's priority", never the vendor's\./);
+  const model = modelScript([toolCall(['cve_lookup', { cve_id: PHP_CVE }]), say('ok.')]);
+  installFetch([[GROQ, model.handler], ...cveRoutes()]);
+  await ask(user(`Tell me about ${PHP_CVE}`), baseEnv());
+  const result = JSON.parse(model.bodies[1].messages.find((m) => m.role === 'tool').content);
+  assert.equal(result.hub_priority_note, "The hub's rule of thumb from KEV, EPSS and CVSS; not a vendor rating.");
+  assert.ok(!('priority' in result));
+});
+
+test('exploitation wording patterns', () => {
+  for (const s of ['It is actively exploited.', 'widely exploited by gangs', 'Attacks confirm the flaw is being exploited.', 'exploited in the wild', 'seen in the wild being exploited', 'active exploitation was reported', 'This confirms active exploitation in the wild.']) {
+    assert.ok(EXPLOITED_CLAIM.test(s), s);
+  }
+  for (const s of ['Ask declines exploit code.', 'It could be exploited remotely.', 'EPSS estimates the chance of exploitation.', 'Exploited in the wild: patch urgently'.replace('Exploited in the wild', 'Patch soon')]) {
+    assert.ok(!EXPLOITED_CLAIM.test(s), s);
+  }
 });
