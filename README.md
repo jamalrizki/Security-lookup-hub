@@ -20,6 +20,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Built on `v2`, not deployed |
 | 12 | Analyze: certificate viewer and Nmap viewer | Built on `v2`, not deployed |
 | 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
+| 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
 
 **Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
@@ -237,6 +238,9 @@ The "Explain these results" button calls `GET /api/explain?q=`. That route reuse
   - `lookups` lists the public indicators and CVE IDs in the visitor's last message, as `detect()` decides. Names ending in a common file extension (`setup.exe`, `config.json`) are skipped, since `detect()` would otherwise accept them as domains.
 - **Reference library sources are never named:** vectors carry only chunk text and an opaque book id; passage text goes to the model and nowhere else.
 - **Web search allowlist:** `data/search-domains.json`, grouped for readability (all groups are sent together; Tavily allows up to 300 domains, so the spec's split-by-question-type fallback isn't needed). A subdomain of a listed domain is allowed. An entry with a path, like `github.com/advisories`, sends the domain to Tavily, and results must also be under that path (so GitHub repos with exploit code don't qualify). Results are re-checked in code: `https:` only, no userinfo, allowlisted host. Queries containing an email address or a private/reserved IP are refused before any request. Edit the file and redeploy the Worker to change the list.
+- **The page (`js/ask.js`, `js/render-answer.js`):** the Ask box sits under the Lookup box and its results (so a lookup's results stay next to the search bar). Example chips fill the box without sending; Ctrl/Cmd+Enter sends. The 1,000-character limit is a counter that disables Send, not a `maxlength`, so a pasted key or certificate is seen whole by the pre-send check instead of being cut off. Follow-ups send the last 8 messages. The thread lives in a JS variable only: never in browser storage or the URL, so Analytics never sees a question. Answers are a small Markdown subset (paragraphs, `- ` lists, `**bold**`, `` `code` ``) built with text nodes; no `innerHTML` (a test greps for it). Under each answer: **In the hub** (re-checked against `data/hub-features.json`), **Look up** buttons (fill the Lookup box and run it), **Sources** (`https:` only, re-checked, new tab, `noopener noreferrer`) and a collapsed **How this was answered** trace. 429/502/network errors show the Worker's message with Retry.
+- **Pre-send check (in the browser, before any request):** text containing `PRIVATE KEY` is blocked and cleared. A JWT (checked with the JWT decoder's own `decodeJwt`), raw headers (two or more `Received:` lines or an `Authentication-Results:` line, via `parseHeaders`) or a PEM certificate (via the certificate viewer's `readCertificates`) gets "This would be sent to the AI…" with **Open [tool]** (focused) or **Send anyway**. Open hands just the token, header block or PEM to `analyze.html` through `sessionStorage` (this tab only; `js/analyze/handoff.js` reads it, deletes it at once, pastes it and runs the tool), so it never goes in the URL.
+- **"Ask about this CVE"** sits in the CVE result header next to the ID. It fills the Ask box with "Explain <CVE-ID>: what is it, is it being exploited, and what should I do?" and scrolls to it; the "Try CVE Explainer →" link stays.
 - **Nothing is stored or logged.** Observability stays off. `DEBUG_ASK=1` in `worker/.dev.vars` (local only) prints the reference search's chunk ids and scores, never text, to the `wrangler dev` console.
 - **Secrets:** `GROQ_API_KEY` (already set), `TAVILY_API_KEY` (new; without it `web_search` reports "not configured" and Ask still answers), optional `OPENROUTER_API_KEY`.
 
@@ -284,6 +288,8 @@ js/md5.js        MD5 (WebCrypto has none)
 js/encoding.js   Base64 / URL / hex codecs
 js/pwned.js      Pwned Passwords k-anonymity check
 js/lookup.js     Lookup page wiring
+js/ask.js        Ask box: pre-send check, thread, hub/look-up/sources/trace under each answer
+js/render-answer.js   safe Markdown subset -> DOM nodes (text nodes only)
 js/reference.js  Reference page rendering
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
@@ -292,7 +298,7 @@ js/cves.js       CVEs page (keyword search)
 js/news.js       News page
 js/tools.js      tools glossary page (renders data/tools.json)
 js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node
-js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, cert.js, nmap.js) plus ui.js and data.js; tool modules export their pure functions for tests and only wire up the page in a browser
+js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, cert.js, nmap.js) plus ui.js, data.js and handoff.js (receives text the Ask box hands over); tool modules export their pure functions for tests and only wire up the page in a browser
 data/reference.json   the site directory
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)

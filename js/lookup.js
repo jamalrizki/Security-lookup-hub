@@ -8,6 +8,7 @@ import { CODECS } from './encoding.js';
 import { checkPassword } from './pwned.js';
 import { API_BASE } from './config.js';
 import { sourceCard, priorityStrip } from './results.js';
+import { cvePrompt } from './ask.js';
 
 const $ = (id) => document.getElementById(id);
 const TYPE_LABELS = { cve: 'CVE ID', ipv4: 'IPv4 address', ipv6: 'IPv6 address', domain: 'Domain', url: 'URL', email: 'Email address' };
@@ -114,6 +115,19 @@ function explainPanel(d) {
   return panel;
 }
 
+// Fills the Ask box (doesn't send) and scrolls to it.
+function askAboutButton(id) {
+  const b = el('button', { type: 'button', class: 'secondary small' }, 'Ask about this CVE');
+  b.addEventListener('click', () => {
+    const input = $('ask-input');
+    input.value = cvePrompt(id);
+    input.dispatchEvent(new Event('input'));
+    $('ask').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    input.focus({ preventScroll: true });
+  });
+  return b;
+}
+
 function renderSearch(raw) {
   const out = $('search-result');
   const d = detect(raw);
@@ -130,7 +144,8 @@ function renderSearch(raw) {
   const shown = d.type === 'url' || d.type === 'domain' ? defang(d.value) : d.value;
   out.append(el('div', { class: 'detected' },
     el('span', { class: 'badge' }, d.label || TYPE_LABELS[d.type] || d.type),
-    el('span', { class: 'mono' }, shown)));
+    el('span', { class: 'mono' }, shown),
+    d.type === 'cve' && !d.error ? askAboutButton(d.value) : null));
 
   if (d.error) {
     out.append(notice('warn', d.error));
