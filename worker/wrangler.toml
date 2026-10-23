@@ -17,6 +17,19 @@ crons = ["17,37,57 * * * *"]
 binding = "NEWS"
 id = "5325f3f20acc4b50a1c03613d6cf9096" # from: npx wrangler kv namespace create NEWS
 
+# Ask's reference library: Workers AI (embeddings + reranker) and the Vectorize index
+# that rag/ + worker/scripts/embed-books.mjs fill. Create the index before deploying:
+#   npx wrangler vectorize create security-books --dimensions=384 --metric=cosine
+# Without the index's data, search_reference finds nothing and Ask still works.
+# remote = true: `wrangler dev` has no local Vectorize, so dev queries the real index.
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "BOOKS"
+index_name = "security-books"
+remote = true
+
 # Store nothing about visitors: no Workers Logs or traces.
 [observability]
 enabled = false

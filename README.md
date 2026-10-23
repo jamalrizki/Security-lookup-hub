@@ -21,6 +21,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 12 | Analyze: certificate viewer and Nmap viewer | Built on `v2`, not deployed |
 | 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
 | 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
+| 15 | Reference-library pipeline: manifest, OCR, ingest and embedding scripts (books stay in the gitignored `security-books/`) | Built on `v3`; index not built yet |
 
 **Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
@@ -244,6 +245,70 @@ The "Explain these results" button calls `GET /api/explain?q=`. That route reuse
 - **Nothing is stored or logged.** Observability stays off. `DEBUG_ASK=1` in `worker/.dev.vars` (local only) prints the reference search's chunk ids and scores, never text, to the `wrangler dev` console.
 - **Secrets:** `GROQ_API_KEY` (already set), `TAVILY_API_KEY` (new; without it `web_search` reports "not configured" and Ask still answers), optional `OPENROUTER_API_KEY`.
 
+## Reference library
+
+Ask's `search_reference` tool searches books Jamal keeps in `security-books/` at the repo root. **That folder is gitignored and must never be committed: the repo is public.** `tests/books-ignored.test.mjs` fails if anything under it (or any PDF or EPUB anywhere) is tracked, so never run `git add -A` or `git add .`. GitHub Pages only serves committed files, so the books are never published either.
+
+Everything the pipeline generates goes to `security-books/.rag/` (manifest, OCR page text, `chunks.jsonl`, `vectors.ndjson`, `report.txt`); the scripts write nowhere else in the repo. They resolve paths from the repo root and refuse to run anywhere else. Book titles, authors and file names stay in that folder: chunks and vectors carry only an opaque id (`s` + 8 hex digits of the file's SHA-256), and Vectorize metadata is just the chunk text and that id.
+
+**Prerequisites (macOS, Homebrew):** poppler and tesseract.
+
+```sh
+brew install poppler tesseract
+```
+
+**Building the index.** Each step is resumable. Run steps 1 to 5 from the repo root.
+
+1. Scan the folder. This writes `.rag/manifest.json`: one entry per readable PDF or EPUB, with a page count and whether it needs OCR (decided in code: under 50 words per page from `pdftotext` means scanned). Encrypted, DRM-protected or damaged files are skipped and listed.
+
+```sh
+python3 rag/build_manifest.py
+```
+
+2. OCR the scanned books. This is slow (a few seconds a page, 4 pages at a time; `JOBS=8` for more). Stop it any time; finished pages are kept.
+
+```sh
+bash rag/ocr_books.sh
+```
+
+3. Chunk the text: 300-word target, 400 maximum, 50-word overlap (same as Jaizz). Books that aren't in English are skipped. Check `security-books/.rag/report.txt` afterwards.
+
+```sh
+python3 rag/ingest_books.py
+```
+
+4. Check the budget before embedding. This prints the index total, any books that don't fit and the neuron estimate, and embeds nothing.
+
+```sh
+node worker/scripts/embed-books.mjs --dry-run
+```
+
+5. Embed with Workers AI. It needs your account ID (Cloudflare dashboard, Workers & Pages, right-hand side) and an API token with Workers AI access. The command below borrows the token from `npx wrangler login` without printing it (`tail -n 1` drops the banner wrangler prints first; the token expires after about an hour, so rerun the command if a long run fails with 401). Never paste a token into a chat or a file in this repo.
+
+```sh
+CLOUDFLARE_ACCOUNT_ID=<your account id> CLOUDFLARE_API_TOKEN="$(npx --prefix worker wrangler auth token | tail -n 1)" node worker/scripts/embed-books.mjs
+```
+
+6. Create the Vectorize index (once). Run this from `worker/`:
+
+```sh
+npx wrangler vectorize create security-books --dimensions=384 --metric=cosine
+```
+
+7. Upload the vectors. Run this from `worker/`. `insert` skips ids already in the index:
+
+```sh
+npx wrangler vectorize insert security-books --file="../security-books/.rag/vectors.ndjson"
+```
+
+**Budget guard (in code).** Vectorize's free plan stores 5 million vector dimensions per account, and Jaizz's index already uses about 1.14 million (2,968 × 384). `embed-books.mjs` refuses to put more than **9,000 vectors** (about 3.46 million dimensions) in this index. It takes whole books in order and lists the ones that don't fit; you decide what to drop (move the file out of `security-books/` and rerun steps 1, 3 and 4). Queries are also free up to 30 million queried dimensions a month, counted as (vectors in the index + queries) × 384, which leaves room for tens of thousands of questions.
+
+**Neurons.** Embedding Jaizz's 2,968 chunks cost about 2,550 Workers AI neurons (free: 10,000 a day, shared with Ask's live embedding and reranking). The script stops cleanly at about 8,000 neurons' worth per run and resumes the next day. At that rate the whole 9,000-vector cap is about 7,700 neurons, so one run normally finishes. Run it early in the UTC day.
+
+**Adding books later:** drop the files into `security-books/` and run the same steps again. Ids come from file contents, so existing books keep theirs; already-embedded vectors are skipped, and `vectorize insert` skips ids the index already has.
+
+**Debugging retrieval:** `DEBUG_ASK=1` in `worker/.dev.vars` prints the chosen chunk ids and scores (never text) to the `wrangler dev` console. Look the ids up in `security-books/.rag/chunks.jsonl`.
+
 ## Tests
 
 Node 20 or later, no dependencies:
@@ -308,7 +373,9 @@ scripts/build-actors.js, attribution.js, attribution-overrides.json   builds dat
 worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js, src/ask.js (Ask loop, prompt, output guards), src/ask-tools.js (Ask tool definitions and handlers), src/reference.js (reference-library search), src/websearch.js (Tavily, allowlist), src/retry-wait.js (Groq 429 wait parser, copied from Jaizz)
 data/search-domains.json   Ask's web-search allowlist (edit freely)
 data/hub-features.json     hub pages and tools Ask may link to (ids -> links)
-security-books/  reference books for Ask, GITIGNORED: never committed (tests/books-ignored.test.mjs fails if anything under it is tracked)
+security-books/  reference books for Ask, GITIGNORED: never committed (tests/books-ignored.test.mjs fails if anything under it is tracked); generated files in security-books/.rag/
+rag/             reference-library pipeline scripts (build_manifest.py, ocr_books.sh, ingest_books.py); no book data ever lives here
+worker/scripts/embed-books.mjs   embeds chunks with Workers AI into Vectorize NDJSON, with the 9,000-vector budget guard
 tests/           node:test unit tests; tests/fixtures/ holds feed samples; tests/helpers/ask-stubs.mjs stubs the model, Tavily, KV, cache, Workers AI and Vectorize for the Ask tests
 ```
 
