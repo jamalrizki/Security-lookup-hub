@@ -12,13 +12,13 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 4 | Keyed lookups: VirusTotal, AbuseIPDB, MalwareBazaar, URLhaus | Done |
 | 5 | Result cards, polish, deploy | Done |
 | Extra | "Explain these results" AI summary (Groq free tier) | Done |
-| 6 | CVE lookups: CVE IDs in Lookup (NVD, CISA KEV, FIRST EPSS, priority rule), CVEs keyword search page | Built on `v2`, not deployed |
-| 7 | News page: CISA KEV, CISA advisories, The Hacker News via a Cron Trigger into Workers KV | Built on `v2`, not deployed |
-| 8 | Analyze page: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer (browser only) | Built on `v2`, not deployed |
-| 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Built on `v2`, not deployed |
-| 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Built on `v2`, not deployed |
-| 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Built on `v2`, not deployed |
-| 12 | Analyze: certificate viewer and Nmap viewer | Built on `v2`, not deployed |
+| 6 | CVE lookups: CVE IDs in Lookup (NVD, CISA KEV, FIRST EPSS, priority rule), CVEs keyword search page | Done |
+| 7 | News page: CISA KEV, CISA advisories, The Hacker News via a Cron Trigger into Workers KV | Done |
+| 8 | Analyze page: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer (browser only) | Done |
+| 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Done |
+| 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Done |
+| 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Done |
+| 12 | Analyze: certificate viewer and Nmap viewer | Done |
 | 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
 | 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
 | 15 | Reference-library pipeline: manifest, OCR, ingest and embedding scripts (books stay in the gitignored `security-books/`) | Built on `v3`; index not built yet |
@@ -49,7 +49,7 @@ Then open http://localhost:8000. Lookups can be deep-linked as `/#q=8.8.8.8`. Th
 
 ## Lookup API (Cloudflare Worker)
 
-The Worker in `worker/` is deployed at https://security-lookup-hub.jamalrizki.workers.dev. It only answers requests whose `Origin` is in `ALLOWED_ORIGINS` (`worker/wrangler.toml`).
+The Worker in `worker/` is deployed at https://security-lookup-hub.jamal-598.workers.dev. It only answers requests whose `Origin` is in `ALLOWED_ORIGINS` (`worker/wrangler.toml`).
 
 | Indicator | Sources |
 |---|---|

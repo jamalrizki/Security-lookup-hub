@@ -2,6 +2,7 @@ name = "security-lookup-hub"
 main = "src/index.js"
 compatibility_date = "2025-09-01"
 workers_dev = true
+preview_urls = false
 
 [vars]
 ALLOWED_ORIGINS = "https://jamalrizki.github.io,http://localhost:8000,http://127.0.0.1:8000"
@@ -15,7 +16,7 @@ crons = ["17,37,57 * * * *"]
 
 [[kv_namespaces]]
 binding = "NEWS"
-id = "5325f3f20acc4b50a1c03613d6cf9096" # from: npx wrangler kv namespace create NEWS
+id = "117d6c53e6dd411591340fea41e51be4" # from: npx wrangler kv namespace create NEWS
 
 # Ask's reference library: Workers AI (embeddings + reranker) and the Vectorize index
 # that rag/ + worker/scripts/embed-books.mjs fill. Create the index before deploying:

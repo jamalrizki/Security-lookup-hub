@@ -25,7 +25,7 @@ If ../cve-explainer isn't there, clone it read-only into a temp folder: git clon
 
 	
 Live site	https://jamalrizki.github.io/Security-lookup-hub/ (GitHub Pages, branch main, root)
-Worker	https://security-lookup-hub.jamalrizki.workers.dev
+Worker	https://security-lookup-hub.jamal-598.workers.dev
 Repo	github.com/jamalrizki/Security-lookup-hub
 CVE Explainer (link target only)	https://jamalrizki.github.io/cve-explainer/
 

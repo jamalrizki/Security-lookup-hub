@@ -31,7 +31,7 @@ If a read-only repo isn't on disk, clone it into a temp folder: `git clone --dep
 | | |
 |---|---|
 | Live site | https://jamalrizki.github.io/Security-lookup-hub/ |
-| Worker | https://security-lookup-hub.jamalrizki.workers.dev |
+| Worker | https://security-lookup-hub.jamal-598.workers.dev |
 | Repo | github.com/jamalrizki/Security-lookup-hub (public) |
 
 **Files this spec adds (★) or changes (✎).**

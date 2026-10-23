@@ -5,4 +5,4 @@ const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
 
 export const API_BASE = LOCAL
   ? 'http://127.0.0.1:8787'
-  : 'https://security-lookup-hub.jamalrizki.workers.dev';
+  : 'https://security-lookup-hub.jamal-598.workers.dev';

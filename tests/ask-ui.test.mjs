@@ -84,7 +84,7 @@ test('the page has the Ask box, its script, and keeps the existing CVE Explainer
   assert.ok(html.includes('<script type="module" src="js/ask.js"></script>'));
   assert.ok(html.includes('Your questions go to the AI model (Groq) and, for web searches, to Tavily. Nothing is stored.'));
   const csp = /Content-Security-Policy" content="([^"]+)"/.exec(html)[1];
-  assert.ok(csp.includes('https://security-lookup-hub.jamalrizki.workers.dev'));
+  assert.ok(csp.includes('https://security-lookup-hub.jamal-598.workers.dev'));
   const lookup = readFileSync(new URL('js/lookup.js', root), 'utf8');
   assert.ok(lookup.includes('Try CVE Explainer'));
   assert.ok(lookup.includes('Ask about this CVE'));
