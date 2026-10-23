@@ -90,4 +90,6 @@ if (globalThis.document?.getElementById('jwt-form')) {
   };
   $('jwt-form').addEventListener('submit', (ev) => { ev.preventDefault(); show(); });
   $('jwt-input').addEventListener('input', show);
+  const { receiveHandoff } = await import('./handoff.js');
+  receiveHandoff('jwt', show);
 }

@@ -11,15 +11,18 @@ import { KEV_URLS } from './cve.js';
 export const NEWS_KEY = 'news:v1';
 const FETCH_TIMEOUT_MS = 8000;
 const MAX_FEED_BYTES = 2_000_000;
-const MAX_ITEMS = 30;
+const MAX_ITEMS = 50;
 const KEV_ITEMS = 25;
 const TITLE_MAX = 200;
 const SUMMARY_MAX = 240;
+const SUMMARY_SOURCE_MAX = 6000; // raw characters of a description read for its summary
 const UA = 'SecurityLookupHub/1.0 (+https://github.com/jamalrizki/Security-lookup-hub)';
 
 export const FEEDS = [
   { id: 'kev', name: 'CISA KEV', filter: 'kev', kind: 'kev', urls: KEV_URLS, hosts: ['cisa.gov'] },
-  { id: 'cisa', name: 'CISA', filter: 'advisories', kind: 'rss', urls: ['https://www.cisa.gov/cybersecurity-advisories/all.xml'], hosts: ['cisa.gov'], summary: true },
+  // CISA's feed carries full advisory text and grew to 5.7 MB by Oct 2026. It lists
+  // newest first, so only the start is read (15 of its 30 items fit in 1.5 MB).
+  { id: 'cisa', name: 'CISA', filter: 'advisories', kind: 'rss', urls: ['https://www.cisa.gov/cybersecurity-advisories/all.xml'], hosts: ['cisa.gov'], summary: true, readBytes: 1_500_000 },
   // BleepingComputer was the first news source, but it answers Cloudflare's network
   // with 403, so it never updated. The Hacker News feed (advertised on thehackernews.com)
   // answers Workers normally.
@@ -146,7 +149,10 @@ export function parseFeed(xml, feed) {
     };
     if (feed.summary) {
       // CISA advisory pages start with "View CSAF" / "Summary" headings; skip that boilerplate.
-      const text = plainText(field(block, ['description', 'summary', 'content']) || '').replace(/^(View CSAF\s*)?(Summary\s*)?/i, '');
+      // Only the start is cleaned: a summary is 240 characters, and CISA advisories carry up
+      // to ~100 KB of encoded HTML each, which would blow the cron run's 10 ms CPU budget.
+      const raw = (field(block, ['description', 'summary', 'content']) || '').slice(0, SUMMARY_SOURCE_MAX);
+      const text = plainText(raw).replace(/^(View CSAF\s*)?(Summary\s*)?/i, '');
       const summary = plainText(text, SUMMARY_MAX);
       if (summary) item.summary = summary;
     }
@@ -179,20 +185,41 @@ export function kevItems(catalog) {
 
 // ---------- Fetching ----------
 
-async function fetchText(url) {
+/** Keeps only complete items: everything up to the last </item> or </entry>. */
+export function cutAtLastItem(xml) {
+  const end = Math.max(xml.lastIndexOf('</item'), xml.lastIndexOf('</entry'));
+  if (end === -1) return '';
+  const close = xml.indexOf('>', end);
+  // The cut can land inside the closing tag itself; then that item is incomplete too.
+  return close === -1 ? cutAtLastItem(xml.slice(0, end)) : xml.slice(0, close + 1);
+}
+
+/**
+ * Fetches a feed as text. Normally a feed over MAX_FEED_BYTES is an error; with
+ * readBytes, only that much of the start is read and cut at the last complete item.
+ */
+async function fetchText(url, { readBytes } = {}) {
   const res = await fetch(url, {
     headers: { 'user-agent': UA, accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml, application/json;q=0.9, */*;q=0.1' },
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     redirect: 'follow',
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  if (Number(res.headers.get('content-length')) > MAX_FEED_BYTES) throw new Error('feed too large');
+  if (!readBytes && Number(res.headers.get('content-length')) > MAX_FEED_BYTES) throw new Error('feed too large');
   const reader = res.body.getReader();
   const chunks = [];
   let size = 0;
+  let truncated = false;
   for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
+    if (readBytes && size + value.byteLength >= readBytes) {
+      chunks.push(value.subarray(0, readBytes - size));
+      size = readBytes;
+      truncated = true;
+      await reader.cancel();
+      break;
+    }
     size += value.byteLength;
     if (size > MAX_FEED_BYTES) {
       await reader.cancel();
@@ -206,14 +233,15 @@ async function fetchText(url) {
     all.set(c, off);
     off += c.byteLength;
   }
-  return new TextDecoder().decode(all);
+  const text = new TextDecoder().decode(all);
+  return truncated ? cutAtLastItem(text) : text;
 }
 
 export async function fetchFeed(feed) {
   let lastError;
   for (const url of feed.urls) {
     try {
-      const text = await fetchText(url);
+      const text = await fetchText(url, { readBytes: feed.readBytes });
       if (feed.kind === 'kev') {
         // KEV entries can't be off-domain: links are built here, on cisa.gov.
         return kevItems(JSON.parse(text));

@@ -4,6 +4,7 @@
 import { parseHeaders, MAX_HEADERS } from '../extract.js';
 import { ready } from './data.js';
 import { el, $, notice, rows, lookUpLink, defang } from './ui.js';
+import { receiveHandoff } from './handoff.js';
 
 const RESULT_KIND = { pass: 'ok', fail: 'bad', softfail: 'warn', neutral: 'warn', none: 'warn', temperror: 'warn', permerror: 'bad', policy: 'warn' };
 
@@ -102,3 +103,4 @@ $('headers-form').addEventListener('submit', (ev) => {
   ev.preventDefault();
   analyze();
 });
+receiveHandoff('headers', analyze);

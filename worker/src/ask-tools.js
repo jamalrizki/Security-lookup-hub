@@ -81,6 +81,7 @@ export function newState(visitorText) {
   return {
     counts: {},
     knownIds: cveIdsIn(visitorText),
+    lookedUp: new Set(), // CVE IDs cve_lookup returned data for
     texts: [], // reference passages and web excerpts, for the verbatim-overlap check
     sources: [], // { title, url, domain } in call order, for the Sources list
   };
@@ -193,6 +194,7 @@ async function cveLookupTool(args, { env, state, exec, quota, runSource }) {
   };
   learnIds(state, result);
   state.knownIds.add(id);
+  state.lookedUp.add(id);
   return {
     result,
     isError: false,

@@ -91,3 +91,22 @@ test('the page has the Ask box, its script, and keeps the existing CVE Explainer
   const ask = readFileSync(new URL('js/ask.js', root), 'utf8');
   assert.ok(!/localStorage|location\.hash\s*=|history\.(push|replace)State/.test(ask), 'questions never stored or put in the URL');
 });
+
+test('Analyze handoff: taken once, by the right tool, and ignored after a minute', async () => {
+  const store = new Map();
+  globalThis.sessionStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
+  const { takeHandoff, HANDOFF_KEY } = await import('../js/analyze/handoff.js');
+  const { HANDOFF_KEY: askKey } = await import('../js/ask.js');
+  assert.equal(HANDOFF_KEY, askKey, 'the Ask box and the Analyze page use the same key');
+  const put = (h) => store.set(HANDOFF_KEY, JSON.stringify(h));
+  put({ tool: 'jwt', text: 'eyJ.x.y', at: 1000 });
+  assert.equal(takeHandoff('cert', 1500), null, 'another tool leaves it alone');
+  assert.equal(takeHandoff('jwt', 1500), 'eyJ.x.y');
+  assert.equal(takeHandoff('jwt', 1600), null, 'removed after the first read');
+  put({ tool: 'jwt', text: 'old', at: 1000 });
+  assert.equal(takeHandoff('jwt', 1000 + 61_000), null, 'stale');
+  assert.equal(store.size, 0, 'a stale handoff is still removed');
+  put({ tool: 'jwt', text: 'from an older cached ask.js' });
+  assert.equal(takeHandoff('jwt', 5_000_000), 'from an older cached ask.js', 'no timestamp: accepted');
+  delete globalThis.sessionStorage;
+});

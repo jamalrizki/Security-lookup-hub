@@ -172,6 +172,8 @@ function searchFromHash() {
   if (q) {
     $('search-input').value = q;
     renderSearch(q);
+    // The Ask box sits above Lookup, so bring the search and its results into view.
+    $('search-input').scrollIntoView({ block: 'start' });
   }
 }
 window.addEventListener('hashchange', searchFromHash);

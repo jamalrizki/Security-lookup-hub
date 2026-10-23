@@ -27,7 +27,7 @@
   <script type="module" src="js/chrome.js?v=94bf07053c"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=87034f2ef5">
+  <link rel="stylesheet" href="css/style.css?v=1fc2afadb7">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/lookup.js"></script>
   <script type="module" src="js/ask.js"></script>
@@ -64,29 +64,13 @@
     <section class="hero">
       <div class="hero-text">
         <h1 class="hero-title"><span class="hero-outline">Lookup</span><span class="hero-fill" aria-hidden="true">Lookup</span></h1>
-        <p class="lede">Paste any of these: a file hash (MD5, SHA-1 or SHA-256), a domain, an IPv4 or IPv6 address, a URL, an email address, or a CVE ID such as <code>CVE-2021-44228</code>. Defanged indicators like <code>hxxp://bad[.]example</code> work too. For domains and emails you can also add a DKIM selector. Have a security question instead? Use the <a href="#ask">Ask</a> box below.</p>
+        <p class="lede">Ask a security question in the <a href="#ask">Ask</a> box, or use the Lookup box under it. Lookup takes a file hash (MD5, SHA-1 or SHA-256), a domain, an IPv4 or IPv6 address, a URL, an email address, or a CVE ID such as <code>CVE-2021-44228</code>. Defanged indicators like <code>hxxp://bad[.]example</code> work too. For domains and emails you can also add a DKIM selector.</p>
       </div>
       <div class="radar-block" aria-hidden="true">
         <div class="radar"><span class="radar-sweep"></span><span class="radar-ring"></span><span class="radar-blip"></span><span class="radar-dot"></span></div>
         <p class="radar-caption">MODULE 01/07<br>STATUS: ARMED</p>
       </div>
     </section>
-
-    <section class="search-block" aria-labelledby="search-h">
-      <h2 id="search-h" class="visually-hidden">Search</h2>
-      <form id="search-form" class="bigbar" autocomplete="off">
-        <input id="search-input" type="text" spellcheck="false"
-               aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, a SHA-256 hash or CVE-2021-44228">
-        <button type="submit">Look up &rarr;</button>
-      </form>
-      <div id="dkim-row" class="dkim-row" hidden>
-        <label for="dkim-input">DKIM selector (optional)</label>
-        <input id="dkim-input" type="text" spellcheck="false" maxlength="100" placeholder="e.g. selector1, google, s1">
-        <p class="hint">DKIM keys live at &lt;selector&gt;._domainkey.&lt;domain&gt;, and DNS can't list selectors, so DKIM can only be checked if you know one. Find it as <code>s=</code> in a DKIM-Signature header of a message from this domain.</p>
-      </div>
-      <div id="search-result" class="result" aria-live="polite"></div>
-    </section>
-
     <section class="ask-block" id="ask" aria-labelledby="ask-h">
       <h2 id="ask-h" class="ask-title">Ask</h2>
       <p class="hint">Ask a security question. Answers draw on a reference library, current security news and the hub's CVE data, and can be wrong.</p>
@@ -108,6 +92,22 @@
       <div id="ask-notice" aria-live="polite"></div>
       <div id="ask-thread" class="ask-thread" aria-live="polite"></div>
     </section>
+
+    <section class="search-block" aria-labelledby="search-h">
+      <h2 id="search-h" class="visually-hidden">Search</h2>
+      <form id="search-form" class="bigbar" autocomplete="off">
+        <input id="search-input" type="text" spellcheck="false"
+               aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, a SHA-256 hash or CVE-2021-44228">
+        <button type="submit">Look up &rarr;</button>
+      </form>
+      <div id="dkim-row" class="dkim-row" hidden>
+        <label for="dkim-input">DKIM selector (optional)</label>
+        <input id="dkim-input" type="text" spellcheck="false" maxlength="100" placeholder="e.g. selector1, google, s1">
+        <p class="hint">DKIM keys live at &lt;selector&gt;._domainkey.&lt;domain&gt;, and DNS can't list selectors, so DKIM can only be checked if you know one. Find it as <code>s=</code> in a DKIM-Signature header of a message from this domain.</p>
+      </div>
+      <div id="search-result" class="result" aria-live="polite"></div>
+    </section>
+
 
     <div class="card-grid">
       <section class="panel" aria-labelledby="pw-h">

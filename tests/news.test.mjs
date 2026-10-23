@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseFeed, parseDate, kevItems, refreshNews, sourcesForRun, fetchFeed, FEEDS, NEWS_KEY, allowedLink } from '../worker/src/news.js';
+import { parseFeed, parseDate, kevItems, refreshNews, sourcesForRun, fetchFeed, FEEDS, NEWS_KEY, allowedLink, cutAtLastItem } from '../worker/src/news.js';
 
 const fixture = (name) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
 const feed = (id) => FEEDS.find((f) => f.id === id);
@@ -48,9 +48,9 @@ test('Atom: alternate link, published date, summary', () => {
 test('malformed input never throws and caps items and title length', () => {
   assert.deepEqual(parseFeed(fixture('malformed.xml'), feed('thehackernews')), []);
   assert.deepEqual(parseFeed('', feed('cisa')), []);
-  const many = `<rss><channel>${Array.from({ length: 50 }, (_, i) => `<item><title>${'T'.repeat(500)} ${i}</title><link>https://www.cisa.gov/a/${i}</link></item>`).join('')}</channel></rss>`;
+  const many = `<rss><channel>${Array.from({ length: 70 }, (_, i) => `<item><title>${'T'.repeat(500)} ${i}</title><link>https://www.cisa.gov/a/${i}</link></item>`).join('')}</channel></rss>`;
   const items = parseFeed(many, feed('cisa'));
-  assert.equal(items.length, 30);
+  assert.equal(items.length, 50, "at most 50 items per feed");
   assert.ok(items.every((i) => i.title.length <= 200));
 });
 
@@ -176,4 +176,26 @@ test('KEV falls back to the GitHub mirror; oversized feeds are refused', async (
 
   mockFetch([['feedburner.com/TheHackersNews', { text: `<rss>${'x'.repeat(2_100_000)}</rss>` }]]);
   await assert.rejects(fetchFeed(feed('thehackernews')), /too large/);
+});
+
+test('CISA: a 5.7 MB feed is read only to ~1.5 MB and cut at the last complete item', async () => {
+  // Newest first, like the real feed; each advisory carries ~190 KB of text.
+  const item = (i) => `<item><title>Advisory ${i}</title><link>https://www.cisa.gov/news-events/ics-advisories/icsa-26-${i}</link>`
+    + `<pubDate>Thu, ${String(30 - i).padStart(2, '0')} Oct 26 12:00:00 +0000</pubDate><description>${'Details. '.repeat(21_000)}</description></item>`;
+  const xml = `<?xml version="1.0"?><rss version="2.0"><channel><title>CISA</title>${Array.from({ length: 30 }, (_, i) => item(i)).join('')}</channel></rss>`;
+  assert.ok(xml.length > 5_500_000);
+  mockFetch([['cisa.gov/cybersecurity-advisories', { text: xml }]]);
+  const items = await fetchFeed(feed('cisa'));
+  assert.equal(items.length, 7, 'the 7 complete items in the first 1.5 MB');
+  assert.equal(items[0].title, 'Advisory 0', 'newest first');
+  assert.equal(items[6].title, 'Advisory 6');
+  assert.equal(feed('thehackernews').readBytes, undefined, 'other feeds keep the 2 MB "too large" rule');
+});
+
+test('cutAtLastItem keeps only complete items', () => {
+  assert.equal(cutAtLastItem('<rss><item>a</item><item>b</item><item>par'), '<rss><item>a</item><item>b</item>');
+  assert.equal(cutAtLastItem('<feed><entry>a</entry ><entry>b'), '<feed><entry>a</entry >');
+  assert.equal(cutAtLastItem('<rss><item>only part'), '');
+  assert.equal(cutAtLastItem('<rss><item>a</item><item>b</ite'), '<rss><item>a</item>', 'cut inside a closing tag');
+  assert.equal(cutAtLastItem('<rss><item>a</item><item>b</item'), '<rss><item>a</item>', 'cut just before the closing ">"');
 });

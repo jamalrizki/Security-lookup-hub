@@ -329,3 +329,84 @@ test('removeOverlapping deletes only the copying sentences', () => {
   assert.ok(hasOverlap('x one two three four five six seven eight nine ten eleven twelve', src));
   assert.ok(!hasOverlap('one two three four five six seven eight nine ten eleven', src), '11 words is fine');
 });
+
+/* ---------- CVE facts in the draft are checked against cve_lookup ---------- */
+
+test('a draft calling an unlooked-up CVE "high priority" triggers a lookup in code and one revision', async () => {
+  const model = modelScript([
+    toolCall(['web_search', { query: 'PHP CGI argument injection' }]),
+    say(`${PHP_CVE} is high priority with a CVSS of 7.5.`),
+    (body) => {
+      assert.equal(body.tool_choice, 'none', 'revision has tools off');
+      const last = body.messages[body.messages.length - 1];
+      assert.equal(last.role, 'system');
+      assert.match(last.content, /^Here is the hub's data for the CVEs you mentioned\. Make every severity, priority, KEV, EPSS and affected-version statement match this data\. Remove any such statement this data doesn't support\./);
+      const data = JSON.parse(last.content.split('\n')[1]);
+      assert.equal(data[0].cve_id, PHP_CVE);
+      assert.equal(data[0].priority, 'Exploited in the wild: patch urgently');
+      assert.equal(data[0].nvd.score, 9.8);
+      assert.equal(body.messages[body.messages.length - 2].content, `${PHP_CVE} is high priority with a CVSS of 7.5.`, 'the draft is shown to the model');
+      return say(`${PHP_CVE} is critical (CVSS 9.8) and in CISA KEV: patch urgently.`);
+    },
+  ]);
+  installFetch([
+    [GROQ, model.handler],
+    ['api.tavily.com', () => ({ results: [{ title: 'PHP flaw', url: 'https://www.cisa.gov/news-events/alerts/php', content: `${PHP_CVE} is being exploited.` }] })],
+    ...cveRoutes(),
+  ]);
+  const { body } = await ask(user('Is the PHP CGI bug serious?'), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
+  assert.equal(model.remaining(), 0);
+  assert.equal(body.reply, `${PHP_CVE} is critical (CVSS 9.8) and in CISA KEV: patch urgently.`);
+  const extra = body.trace.find((t) => t.tool === 'cve_lookup');
+  assert.equal(extra.ok, true);
+  assert.equal(extra.summary, `${PHP_CVE}: Exploited in the wild: patch urgently`);
+  assert.match(extra.note, /checked in code: the draft answer mentioned it/);
+  assert.ok(body.sources.some((s) => s.url === `https://nvd.nist.gov/vuln/detail/${PHP_CVE}`), 'the extra lookup adds its sources');
+});
+
+test('a draft whose CVEs were all looked up makes no extra call', async () => {
+  const model = modelScript([toolCall(['cve_lookup', { cve_id: PHP_CVE }]), say(`${PHP_CVE} is in KEV.`)]);
+  const calls = installFetch([[GROQ, model.handler], ...cveRoutes()]);
+  const { body } = await ask(user(`Tell me about ${PHP_CVE}`), baseEnv());
+  assert.equal(model.bodies.length, 2, 'no revision call');
+  assert.equal(calls.filter((c) => c.url.includes('nvd.nist.gov')).length, 1, 'no extra lookup');
+  assert.equal(body.trace.length, 1);
+  assert.equal(body.reply, `${PHP_CVE} is in KEV.`);
+});
+
+test('over the cve_lookup cap, the revision asks to remove claims about the unlooked-up CVE', async () => {
+  const ids = ['CVE-2024-1001', 'CVE-2024-1002', 'CVE-2024-1003'];
+  const model = modelScript([
+    toolCall(...ids.map((id) => ['cve_lookup', { cve_id: id }])),
+    say(`Those are low. ${PHP_CVE} is critical and affects PHP 8.3.`),
+    (body) => {
+      const last = body.messages[body.messages.length - 1].content;
+      assert.ok(!last.startsWith("Here is the hub's data"), 'no data to give');
+      assert.equal(last, `These CVEs were not looked up: ${PHP_CVE}. Remove every severity, priority, KEV, EPSS and affected-version statement about them.`);
+      return say(`Those are low. ${PHP_CVE} is another PHP issue; look it up for details.`);
+    },
+  ]);
+  const calls = installFetch([[GROQ, model.handler], ...cveRoutes()]);
+  const { body } = await ask(user(`Compare ${ids.join(', ')} and ${PHP_CVE}`), baseEnv());
+  assert.equal(model.remaining(), 0);
+  assert.ok(!calls.some((c) => c.url.includes(PHP_CVE)), 'the cap allowed no lookup');
+  assert.equal(body.trace.length, 3);
+  assert.match(body.reply, /look it up for details/);
+});
+
+test('a CVE in the draft that nobody gave is refused by the known-ID rule and its claims removed', async () => {
+  const model = modelScript([
+    say('CVE-2019-0708 (BlueKeep) is critical and in KEV.'),
+    (body) => {
+      assert.match(body.messages[body.messages.length - 1].content, /^These CVEs were not looked up: CVE-2019-0708\./);
+      return say('BlueKeep is a well-known RDP flaw; patch Remote Desktop Services.');
+    },
+  ]);
+  const calls = installFetch([[GROQ, model.handler], ...cveRoutes()]);
+  const { body } = await ask(user('Tell me about BlueKeep'), baseEnv());
+  assert.equal(body.trace[0].ok, false);
+  assert.match(body.trace[0].summary, /Refused CVE-2019-0708/);
+  assert.match(body.trace[0].note, /checked in code/);
+  assert.ok(!calls.some((c) => c.url.includes('nvd')), 'refused before any request');
+  assert.equal(body.reply, 'BlueKeep is a well-known RDP flaw; patch Remote Desktop Services.');
+});

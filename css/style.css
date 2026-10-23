@@ -582,6 +582,7 @@ pre.json, pre.strings { margin: 0; padding: 12px; border: 1px solid var(--line);
 /* ---------- Page-specific additions ---------- */
 
 .search-block > * + * { margin-top: 14px; }
+#search-input { scroll-margin-top: 90px; }
 .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 12px; }
 fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 .tool-grid { list-style: none; margin: 0; padding: 0; }
@@ -591,7 +592,7 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 
 /* ---------- Ask (Lookup page) ---------- */
 
-.ask-block { scroll-margin-top: 90px; margin-top: 34px; padding: 22px; border: 2px solid var(--text); background: var(--overlay); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.ask-block { scroll-margin-top: 90px; margin: 34px 0; padding: 22px; border: 2px solid var(--text); background: var(--overlay); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .ask-block > * { margin-top: 0; margin-bottom: 0; }
 .ask-title { font: 400 34px/1 var(--display); letter-spacing: 1px; color: var(--text); }
 .ask-title::before { content: "> "; color: var(--accent); }

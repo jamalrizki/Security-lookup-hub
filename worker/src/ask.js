@@ -18,7 +18,7 @@ import { detect } from '../../js/detect.js';
 import { readCapped } from './http.js';
 import { MODEL, defangText } from './explain.js';
 import { parseRetryWaitSeconds } from './retry-wait.js';
-import { TOOL_DEFINITIONS, runTool, newState, featureById, featuresPrompt } from './ask-tools.js';
+import { TOOL_DEFINITIONS, TOOL_CAPS, runTool, newState, featureById, featuresPrompt, cveIdsIn } from './ask-tools.js';
 
 export const MAX_BODY = 24 * 1024;
 const MAX_MESSAGES = 8;
@@ -66,6 +66,8 @@ ${featuresPrompt()}
 
 const FINAL_ROUND = 'Tool budget used up. Answer the visitor now in plain text using only the tool results above. Do not call or write out any tool calls.';
 const PLAIN_AGAIN = 'Your last reply contained raw tool-call markup. Reply again in plain text only, using the tool results above.';
+const CVE_DATA = "Here is the hub's data for the CVEs you mentioned. Make every severity, priority, KEV, EPSS and affected-version statement match this data. Remove any such statement this data doesn't support.";
+const CVE_UNCHECKED = (ids) => `These CVEs were not looked up: ${ids.join(', ')}. Remove every severity, priority, KEV, EPSS and affected-version statement about them.`;
 const REWRITE = 'Your last answer copied wording from the tool results. Rewrite it completely in your own words, with the same meaning. Do not quote any passage or excerpt.';
 
 // ---------- Validation ----------
@@ -320,6 +322,41 @@ async function chat(messages, toolChoice, run) {
 
 // ---------- The loop ----------
 
+/**
+ * Specifics about a CVE must come from cve_lookup. Finds CVE IDs in the draft that
+ * cve_lookup didn't return data for, looks them up in code (same cap, same known-ID
+ * rule), and asks for one revision with tools off. Returns the revised call, or null
+ * when every CVE in the draft was already looked up.
+ */
+async function checkCveFacts(reply, convo, state, trace, run) {
+  const unchecked = [...cveIdsIn(reply)].filter((id) => !state.lookedUp.has(id));
+  if (!unchecked.length) return null;
+  const data = [];
+  const missing = [];
+  for (const id of unchecked) {
+    if ((state.counts.cve_lookup || 0) >= TOOL_CAPS.cve_lookup) {
+      missing.push(id);
+      continue;
+    }
+    const started = Date.now();
+    const out = await runTool('cve_lookup', { cve_id: id }, { env: run.env, state, exec: run.exec, quota: run.quota, runSource: run.runSource });
+    trace.push({
+      tool: 'cve_lookup',
+      args: { cve_id: id },
+      ok: !out.isError,
+      ms: Date.now() - started,
+      summary: out.summary,
+      note: `checked in code: the draft answer mentioned it${out.note ? `; ${out.note}` : ''}`,
+    });
+    if (out.isError) missing.push(id);
+    else data.push(out.result);
+  }
+  const parts = [];
+  if (data.length) parts.push(`${CVE_DATA}\n${JSON.stringify(data)}`);
+  if (missing.length) parts.push(CVE_UNCHECKED(missing));
+  return chat([...convo, { role: 'assistant', content: reply }, { role: 'system', content: parts.join('\n\n') }], 'none', run);
+}
+
 const shortArgs = (args) => Object.fromEntries(Object.entries(args || {}).map(([k, v]) => [k, typeof v === 'string' ? v.slice(0, 80) : v]));
 
 export async function runConversation(messages, run) {
@@ -367,6 +404,15 @@ export async function runConversation(messages, run) {
   if (LEAKED_TOOL_MARKUP.test(reply)) {
     used = await chat([...convo, { role: 'system', content: PLAIN_AGAIN }], 'none', run);
     reply = stripToolMarkup((used.message.content || '').trim());
+  }
+
+  const revised = await checkCveFacts(reply, convo, state, trace, run);
+  if (revised) {
+    const text = stripToolMarkup((revised.message.content || '').trim());
+    if (text) {
+      reply = text;
+      used = revised;
+    }
   }
 
   // Public answers must not reproduce the books or news they draw on.

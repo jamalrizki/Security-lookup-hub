@@ -12,7 +12,7 @@ import { defang } from './detect.js';
 export const MAX_QUESTION = 1000;
 const MAX_ANSWER = 3000; // the Worker rejects longer earlier answers
 export const MAX_HISTORY = 8;
-export const HANDOFF_KEY = 'slh-analyze-handoff';
+export const HANDOFF_KEY = 'slh-analyze-handoff'; // read by js/analyze/handoff.js
 
 const TOOLS = {
   jwt: 'JWT decoder',
@@ -108,7 +108,9 @@ if (globalThis.document?.getElementById('ask-form')) {
     const n = input.value.length;
     count.textContent = `${n.toLocaleString('en-US')} / ${MAX_QUESTION.toLocaleString('en-US')}`;
     count.classList.toggle('over', n > MAX_QUESTION);
-    send.disabled = busy || n > MAX_QUESTION;
+    // Send stays clickable over the limit, so the pre-send check still runs on a pasted
+    // key or certificate (both are longer than 1,000 characters) and can warn about it.
+    send.disabled = busy;
   };
   input.addEventListener('input', updateCount);
 
@@ -139,7 +141,7 @@ if (globalThis.document?.getElementById('ask-form')) {
 
   const openTool = (check) => {
     try {
-      sessionStorage.setItem(HANDOFF_KEY, JSON.stringify({ tool: check.tool, text: check.payload }));
+      sessionStorage.setItem(HANDOFF_KEY, JSON.stringify({ tool: check.tool, text: check.payload, at: Date.now() }));
     } catch { /* the tool opens empty */ }
     location.href = `./analyze.html#${check.tool}`;
   };
@@ -233,6 +235,10 @@ if (globalThis.document?.getElementById('ask-form')) {
         return;
       }
     }
+    if (question.length > MAX_QUESTION) {
+      status.replaceChildren(notice('warn', `Questions are limited to ${MAX_QUESTION.toLocaleString('en-US')} characters. Shorten it and try again.`));
+      return;
+    }
     status.replaceChildren();
     thread.append(el('div', { class: 'ask-msg ask-q' }, el('p', { class: 'ask-who' }, 'You'), el('p', { class: 'ask-q-text' }, question)));
     input.value = '';
@@ -243,7 +249,7 @@ if (globalThis.document?.getElementById('ask-form')) {
   $('ask-form').addEventListener('submit', (ev) => {
     ev.preventDefault();
     const question = input.value.trim();
-    if (!question || busy || question.length > MAX_QUESTION) return;
+    if (!question || busy) return;
     submit(question);
   });
 

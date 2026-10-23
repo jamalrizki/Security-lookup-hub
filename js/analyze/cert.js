@@ -280,6 +280,8 @@ if (globalThis.document?.getElementById('cert-form')) {
   const drop = $('cert-drop');
   drop.addEventListener('dragover', (ev) => { ev.preventDefault(); drop.classList.add('over'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  const { receiveHandoff } = await import('./handoff.js');
+  receiveHandoff('cert', show);
   drop.addEventListener('drop', async (ev) => {
     ev.preventDefault();
     drop.classList.remove('over');
