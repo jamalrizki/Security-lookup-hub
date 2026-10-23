@@ -179,32 +179,34 @@ test('pipeline scripts refuse to run outside the repo root', { skip: !hasPython 
 
 const fakeChunks = (book, n) => Array.from({ length: n }, (_, i) => ({ id: `${book}-${String(i).padStart(4, '0')}`, book_id: book, text: SENTENCES[i % SENTENCES.length].repeat(3) }));
 
-test('budget guard: whole books up to 9,000 vectors; books that do not fit are listed', () => {
-  const chunks = [...fakeChunks('sa', 5000), ...fakeChunks('sb', 3000), ...fakeChunks('sc', 2000), ...fakeChunks('sd', 900)];
+test('budget guard: whole books up to 12,000 vectors; books that do not fit are listed', () => {
+  const chunks = [...fakeChunks('sa', 6000), ...fakeChunks('sb', 4000), ...fakeChunks('sc', 3000), ...fakeChunks('sd', 1900)];
   const plan = planEmbedding(chunks, new Set(), { maxNeurons: Infinity });
-  assert.equal(MAX_VECTORS, 9000);
-  assert.deepEqual(plan.notFit, [{ book_id: 'sc', chunks: 2000 }]);
-  assert.equal(plan.total, 8900, 'sd still fits after sc is left out');
-  assert.equal(plan.todo.length, 8900);
+  assert.equal(MAX_VECTORS, 12000);
+  assert.ok(MAX_VECTORS * 384 < 5_000_000, 'under the free plan\'s 5 M stored dimensions');
+  assert.deepEqual(plan.notFit, [{ book_id: 'sc', chunks: 3000 }]);
+  assert.equal(plan.total, 11900, 'sd still fits after sc is left out');
+  assert.equal(plan.todo.length, 11900);
   assert.ok(plan.total <= MAX_VECTORS);
 
   // Already-embedded vectors count toward the cap and are not redone.
-  const done = new Set(chunks.slice(0, 5000).map((c) => c.id));
+  const done = new Set(chunks.slice(0, 6000).map((c) => c.id));
   const next = planEmbedding(chunks, done, { maxNeurons: Infinity });
-  assert.equal(next.todo.length, 3900);
+  assert.equal(next.todo.length, 5900);
   assert.ok(next.todo.every((c) => !done.has(c.id)));
 });
 
-test('neuron guard: a run stops at its neuron budget and the rest is deferred', () => {
-  // At Jaizz's rate the whole 9,000-vector cap is ~7,730 neurons, so the default 8,000
-  // budget fits in one run; a smaller budget shows the stop.
-  const full = planEmbedding(fakeChunks('sa', 9000), new Set());
-  assert.equal(full.deferred, 0);
-  assert.ok(full.todo.length * (2550 / 2968) <= 8000);
-  const plan = planEmbedding(fakeChunks('sa', 9000), new Set(), { maxNeurons: 1000 });
-  assert.ok(plan.todo.length * (2550 / 2968) <= 1000, `${plan.todo.length} chunks`);
+test('neuron guard: a run stops at about 8,000 neurons and the rest is deferred', () => {
+  // At Jaizz's rate the whole 12,000-vector cap is ~10,300 neurons: two runs.
+  const plan = planEmbedding(fakeChunks('sa', 12000), new Set());
+  assert.ok(plan.todo.length * (2550 / 2968) <= 8000, `${plan.todo.length} chunks`);
   assert.equal(plan.todo.length % BATCH, 0);
-  assert.equal(plan.deferred, 9000 - plan.todo.length);
+  assert.ok(plan.deferred > 0);
+  assert.equal(plan.deferred, 12000 - plan.todo.length);
+  // The next day's run picks up the rest.
+  const next = planEmbedding(fakeChunks('sa', 12000), new Set(plan.todo.map((c) => c.id)));
+  assert.equal(next.todo.length, plan.deferred);
+  assert.equal(next.deferred, 0);
 });
 
 test('vector metadata is the chunk text and the book id only', () => {

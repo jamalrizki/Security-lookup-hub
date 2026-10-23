@@ -304,9 +304,9 @@ npx wrangler vectorize create security-books --dimensions=384 --metric=cosine
 npx wrangler vectorize insert security-books --file="../security-books/.rag/vectors.ndjson"
 ```
 
-**Budget guard (in code).** Vectorize's free plan stores 5 million vector dimensions per account, and Jaizz's index already uses about 1.14 million (2,968 × 384). `embed-books.mjs` refuses to put more than **9,000 vectors** (about 3.46 million dimensions) in this index. It takes whole books in order and lists the ones that don't fit; you decide what to drop (move the file out of `security-books/` and rerun steps 1, 3 and 4). Queries are also free up to 30 million queried dimensions a month, counted as (vectors in the index + queries) × 384, which leaves room for tens of thousands of questions.
+**Budget guard (in code).** Vectorize's free plan stores 5 million vector dimensions per account, and this index has the hub's Cloudflare account to itself (Jaizz's index is on a different account). `embed-books.mjs` refuses to put more than **12,000 vectors** (about 4.61 million dimensions) in this index, leaving some headroom under the limit. It takes whole books in order and lists the ones that don't fit; you decide what to drop (move the file out of `security-books/` and rerun steps 1, 3 and 4). Queries are also free up to 30 million queried dimensions a month, counted as (vectors in the index + queries) × 384, which leaves room for tens of thousands of questions.
 
-**Neurons.** Embedding Jaizz's 2,968 chunks cost about 2,550 Workers AI neurons (free: 10,000 a day, shared with Ask's live embedding and reranking). The script stops cleanly at about 8,000 neurons' worth per run and resumes the next day. At that rate the whole 9,000-vector cap is about 7,700 neurons, so one run normally finishes. Run it early in the UTC day.
+**Neurons.** Embedding Jaizz's 2,968 chunks cost about 2,550 Workers AI neurons (free: 10,000 a day, shared with Ask's live embedding and reranking). The script stops cleanly at about 8,000 neurons' worth per run (about 9,300 chunks) and resumes the next day. At that rate the whole 12,000-vector cap is about 10,300 neurons, so a full library takes two runs on two days: run step 5 again the next day, then step 7. Run it early in the UTC day.
 
 **Adding books later:** drop the files into `security-books/` and run the same steps again. Ids come from file contents, so existing books keep theirs; already-embedded vectors are skipped, and `vectorize insert` skips ids the index already has.
 
@@ -380,7 +380,7 @@ data/search-domains.json   Ask's web-search allowlist (edit freely)
 data/hub-features.json     hub pages and tools Ask may link to (ids -> links)
 security-books/  reference books for Ask, GITIGNORED: never committed (tests/books-ignored.test.mjs fails if anything under it is tracked); generated files in security-books/.rag/
 rag/             reference-library pipeline scripts (build_manifest.py, ocr_books.sh, ingest_books.py); no book data ever lives here
-worker/scripts/embed-books.mjs   embeds chunks with Workers AI into Vectorize NDJSON, with the 9,000-vector budget guard
+worker/scripts/embed-books.mjs   embeds chunks with Workers AI into Vectorize NDJSON, with the 12,000-vector budget guard
 tests/           node:test unit tests; tests/fixtures/ holds feed samples; tests/helpers/ask-stubs.mjs stubs the model, Tavily, KV, cache, Workers AI and Vectorize for the Ask tests
 ```
 

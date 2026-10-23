@@ -12,8 +12,8 @@
  * - Vector id "<book id>-<chunk number>"; metadata is the chunk text and the book id ONLY:
  *   no titles, authors or file names ever reach Cloudflare.
  * - Budget guard: at most MAX_VECTORS vectors in all for this index. Vectorize's free plan
- *   stores 5 million dimensions per account and Jaizz's index already uses ~1.14 M
- *   (2,968 x 384); 9,000 x 384 = ~3.46 M. Whole books that don't fit are listed and left out.
+ *   stores 5 million dimensions per account, and this index has the hub's account to itself:
+ *   12,000 x 384 = ~4.61 M. Whole books that don't fit are listed and left out.
  * - Neurons: Workers AI's free allowance is 10,000 a day. A run stops cleanly at about
  *   MAX_NEURONS_PER_RUN (estimated at Jaizz's measured rate) and the next run resumes.
  * - The token needs the "Workers AI" permission. It is read from the environment only:
@@ -27,7 +27,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 export const MODEL = '@cf/baai/bge-small-en-v1.5'; // must match EMBED_MODEL in worker/src/reference.js
 export const DIMS = 384;
 export const BATCH = 20;
-export const MAX_VECTORS = 9000;
+export const MAX_VECTORS = 12000;
 export const MAX_NEURONS_PER_RUN = 8000;
 // Jaizz: embedding 2,968 chunks cost about 2,550 neurons.
 export const NEURONS_PER_CHUNK = 2550 / 2968;
