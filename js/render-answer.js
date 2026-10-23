@@ -1,4 +1,4 @@
-// Renders an Ask answer: a small Markdown subset (paragraphs, "- " lists,
+// Renders an Ask answer: a small Markdown subset (paragraphs, "- " and "1." lists,
 // **bold**, `code`) turned into DOM nodes. Every string goes in as a text node,
 // so model output is never parsed as HTML: "<script>" shows as those characters.
 
@@ -17,10 +17,13 @@ export function parseInline(line) {
   return out;
 }
 
-const BULLET = /^\s*(?:[-*•]|\d{1,2}[.)])\s+/;
+const BULLET = /^\s*[-*•]\s+/;
+const NUMBERED = /^\s*(\d{1,2})[.)]\s+/;
 
 /**
- * Text -> blocks: [{ type: 'p', lines: [inline[]] }, { type: 'ul', items: [inline[]] }].
+ * Text -> blocks: [{ type: 'p', lines: [inline[]] }, { type: 'ul', items: [inline[]] },
+ * { type: 'ol', start, items: [inline[]] }]. A blank line between list items doesn't end
+ * the list; a numbered list interrupted by sub-bullets resumes at its own number.
  * Headings ("## x") become bold paragraphs; tables and HTML are just text.
  */
 export function parseAnswer(text) {
@@ -30,11 +33,16 @@ export function parseAnswer(text) {
   const close = () => { para = null; list = null; };
   for (const raw of String(text).replace(/\r\n?/g, '\n').split('\n')) {
     const line = raw.trimEnd();
-    if (!line.trim()) { close(); continue; }
-    if (BULLET.test(line)) {
+    if (!line.trim()) { para = null; continue; }
+    const num = NUMBERED.exec(line);
+    if (num || BULLET.test(line)) {
       para = null;
-      if (!list) { list = { type: 'ul', items: [] }; blocks.push(list); }
-      list.items.push(parseInline(line.replace(BULLET, '')));
+      const type = num ? 'ol' : 'ul';
+      if (!list || list.type !== type) {
+        list = num ? { type, start: Number(num[1]), items: [] } : { type, items: [] };
+        blocks.push(list);
+      }
+      list.items.push(parseInline(line.replace(num ? NUMBERED : BULLET, '')));
       continue;
     }
     const heading = /^\s*#{1,6}\s+(.*)$/.exec(line);
@@ -59,17 +67,18 @@ function inlineNodes(doc, parts) {
   });
 }
 
-/** Returns an array of <p>/<ul> elements for the answer text. */
+/** Returns an array of <p>/<ul>/<ol> elements for the answer text. */
 export function renderAnswer(text, doc = globalThis.document) {
   return parseAnswer(text).map((b) => {
-    if (b.type === 'ul') {
-      const ul = doc.createElement('ul');
+    if (b.type === 'ul' || b.type === 'ol') {
+      const list = doc.createElement(b.type);
+      if (b.type === 'ol' && b.start !== 1) list.setAttribute('start', String(b.start));
       for (const item of b.items) {
         const li = doc.createElement('li');
         li.append(...inlineNodes(doc, item));
-        ul.append(li);
+        list.append(li);
       }
-      return ul;
+      return list;
     }
     const p = doc.createElement('p');
     b.lines.forEach((line, i) => {
