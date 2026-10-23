@@ -21,9 +21,10 @@ Non-goals
 • No website security-header checker: the Worker would fetch arbitrary user-supplied sites (active, and an SSRF surface). (Added in v2.)
 • No WiGLE lookup: locating people's Wi-Fi networks is a privacy and stalking risk. (Added in v2.)
 • No password generator or text diff (low value here), and no running or connecting offensive tools. (Added in v2.)
-• No chat or MCP endpoint in the hub; CVE Explainer stays a separate app. (Added in v2.)
+• No MCP endpoint in the hub; CVE Explainer stays a separate app. (Added in v2. Chat was moved out of the non-goals in v3: see Ask below.)
+• Ask is defensive only: it declines exploit code, payloads, step-by-step attack instructions, malware, phishing kits and credential theft, and offers the defensive angle instead. It stores no questions or answers, and never calls the keyed reputation sources (those stay one click per indicator in Lookup). (Added in v3.)
 Core features
-The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze.
+The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze. Version 3 (Docs/spec-v3.md) adds Ask to the Lookup page.
 1. Lookup: one box, type detected automatically
 The input type is detected in code (regex and length), then only the matching lookups run. Each result card shows the verdict, the key numbers, and a "view full report" link to the source.
 You paste
@@ -62,6 +63,8 @@ A CVE ID pasted into Lookup is detected like a hash or IP, and the Worker calls 
 Headlines from CISA KEV, CISA advisories and BleepingComputer, refreshed hourly by a scheduled Worker job into Workers KV, so visitors never cause feed fetches. Headline, publisher, date and link only; CISA items may show a short summary.
 6. Analyze (v2)
 Paste/drop tools that run entirely in the browser: IOC extractor, suspicious-link inspector with lookalike detection, email-header analyzer, JWT decoder, file analyzer, subnet calculator, certificate viewer and Nmap viewer. Nothing pasted is sent anywhere; only an explicit "Look up" click on one extracted indicator calls the Worker.
+7. Ask (v3)
+An Ask box under the Lookup box answers security questions with an AI model (gpt-oss-120b on Groq's free tier) that can search a private reference library (Vectorize; the books are never named or committed), search an allowlist of official and established security sites (Tavily, data/search-domains.json), read the hub's own news snapshot, and look up CVEs through the hub's NVD/KEV/EPSS sources. Follow-ups are allowed; the thread lives only in the page. Deterministic work stays in code: tool caps, CVE-ID checks, the Sources list (built from URLs the tools returned), URL defanging, a 12-word verbatim-overlap check, hub links (ids from data/hub-features.json) and rate limits. Private keys are blocked before sending, and JWTs, email headers and certificates are steered to the Analyze tools so they don't leave the browser.
 Reference directory
 These are the sites the Reference page lists, grouped by job. "Account" means a free sign-up is needed to use the site or its API. Sites marked with ★ also feed the Lookup page.
 Files, hashes and malware

@@ -22,6 +22,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
 | 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
 | 15 | Reference-library pipeline: manifest, OCR, ingest and embedding scripts (books stay in the gitignored `security-books/`) | Built on `v3`; index not built yet |
+| 16 | Docs, Requirements, search allowlist check, wrap-up | Built on `v3`, not deployed |
 
 **Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
@@ -65,6 +66,8 @@ npx wrangler secret put VT_API_KEY
 ```
 
 A source whose key is missing shows as "Skipped", and the rest still work.
+
+Ask (v3) uses `GROQ_API_KEY` (the same key as the Explain button) and adds `TAVILY_API_KEY` for web search (free plan, no card; without it Ask answers without web search). `OPENROUTER_API_KEY` is optional: with it, OpenRouter's free router answers when Groq can't. Set them the same way, from `worker/`.
 
 - Results are cached at the edge for 24 hours (1 hour for "nothing found"), per data centre.
 - VirusTotal's free tier allows 4 requests a minute and 500 a day. The Worker allows at most 4 VirusTotal calls a minute site-wide, and a URL search makes only one VirusTotal call. If any source answers 429, the Worker pauses that source for at least a minute. The card shows "Skipped" instead of failing.
@@ -238,7 +241,7 @@ The "Explain these results" button calls `GET /api/explain?q=`. That route reuse
   - `[[id]]` becomes the hub feature's name, and the feature goes into `hub` with its `href` from `data/hub-features.json`. Unknown ids vanish. At most 4.
   - `lookups` lists the public indicators and CVE IDs in the visitor's last message, as `detect()` decides. Names ending in a common file extension (`setup.exe`, `config.json`) are skipped, since `detect()` would otherwise accept them as domains.
 - **Reference library sources are never named:** vectors carry only chunk text and an opaque book id; passage text goes to the model and nowhere else.
-- **Web search allowlist:** `data/search-domains.json`, grouped for readability (all groups are sent together; Tavily allows up to 300 domains, so the spec's split-by-question-type fallback isn't needed). A subdomain of a listed domain is allowed. An entry with a path, like `github.com/advisories`, sends the domain to Tavily, and results must also be under that path (so GitHub repos with exploit code don't qualify). Results are re-checked in code: `https:` only, no userinfo, allowlisted host. Queries containing an email address or a private/reserved IP are refused before any request. Edit the file and redeploy the Worker to change the list.
+- **Web search allowlist:** `data/search-domains.json`, grouped for readability. Every domain was checked on Oct 22, 2026 to be the organisation's official site (msrc.microsoft.com's home page now redirects to microsoft.com/msrc, but its advisory pages, the Security Update Guide, are still on msrc.microsoft.com, so it stays). All groups are sent together: Tavily allows up to 300 domains, so the spec's split-by-question-type fallback isn't needed. A subdomain of a listed domain is allowed. An entry with a path, like `github.com/advisories`, sends the domain to Tavily, and results must also be under that path (so GitHub repos with exploit code don't qualify). Results are re-checked in code: `https:` only, no userinfo, allowlisted host. Queries containing an email address or a private/reserved IP are refused before any request. Edit the file and redeploy the Worker to change the list.
 - **The page (`js/ask.js`, `js/render-answer.js`):** the Ask box sits under the Lookup box and its results (so a lookup's results stay next to the search bar). Example chips fill the box without sending; Ctrl/Cmd+Enter sends. The 1,000-character limit is a counter that disables Send, not a `maxlength`, so a pasted key or certificate is seen whole by the pre-send check instead of being cut off. Follow-ups send the last 8 messages. The thread lives in a JS variable only: never in browser storage or the URL, so Analytics never sees a question. Answers are a small Markdown subset (paragraphs, `- ` lists, `**bold**`, `` `code` ``) built with text nodes; no `innerHTML` (a test greps for it). Under each answer: **In the hub** (re-checked against `data/hub-features.json`), **Look up** buttons (fill the Lookup box and run it), **Sources** (`https:` only, re-checked, new tab, `noopener noreferrer`) and a collapsed **How this was answered** trace. 429/502/network errors show the Worker's message with Retry.
 - **Pre-send check (in the browser, before any request):** text containing `PRIVATE KEY` is blocked and cleared. A JWT (checked with the JWT decoder's own `decodeJwt`), raw headers (two or more `Received:` lines or an `Authentication-Results:` line, via `parseHeaders`) or a PEM certificate (via the certificate viewer's `readCertificates`) gets "This would be sent to the AI…" with **Open [tool]** (focused) or **Send anyway**. Open hands just the token, header block or PEM to `analyze.html` through `sessionStorage` (this tab only; `js/analyze/handoff.js` reads it, deletes it at once, pastes it and runs the tool), so it never goes in the URL.
 - **"Ask about this CVE"** sits in the CVE result header next to the ID. It fills the Ask box with "Explain <CVE-ID>: what is it, is it being exploited, and what should I do?" and scrolls to it; the "Try CVE Explainer →" link stays.
@@ -311,11 +314,13 @@ npx wrangler vectorize insert security-books --file="../security-books/.rag/vect
 
 ## Tests
 
-Node 20 or later, no dependencies:
+Node 20 or later, no dependencies (the reference-library tests also need `python3` and `git`; they skip without them, and they bring their own stand-ins for poppler and tesseract):
 
 ```sh
 npm test
 ```
+
+171 tests as of Phase 16 (Oct 22, 2026). The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
