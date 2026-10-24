@@ -58,7 +58,7 @@ A searchable list of APT groups from MITRE ATT&CK, filterable by country of attr
 The directory in the next section, rendered as a page: every site grouped by job, with one line on what it does, whether it needs an account, and a link.
 Email security (v2): domain and email lookups also report SPF, DMARC, null MX and (with a selector) DKIM, and a spoofing grade decided in code: Protected, Partly protected or Easy to spoof.
 4. CVEs (v2)
-A CVE ID pasted into Lookup is detected like a hash or IP, and the Worker calls NVD, CISA KEV and FIRST EPSS directly; a rule-of-thumb patching priority is decided in code. The CVEs page searches NVD by product or keyword and shows the 10 newest matches.
+A CVE ID pasted into Lookup is detected like a hash or IP, and the Worker calls NVD, CISA KEV and FIRST EPSS directly; a rule-of-thumb patching priority is decided in code. The CVEs page searches NVD by product or keyword and shows the 10 newest matches. Its patch priority list takes up to 8 pasted CVE IDs (or text containing them), runs each through the same lookup, and ranks them in code: the hub's priority verdict (KEV first), then ransomware use, EPSS, CVSS; the ranked list downloads as CSV.
 5. News (v2)
 Headlines from CISA KEV, CISA advisories and BleepingComputer, refreshed hourly by a scheduled Worker job into Workers KV, so visitors never cause feed fetches. Headline, publisher, date and link only; CISA items may show a short summary.
 6. Analyze (v2)
