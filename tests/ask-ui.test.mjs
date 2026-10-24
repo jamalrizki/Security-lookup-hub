@@ -82,7 +82,9 @@ test('the page has the Ask box, its script, and keeps the existing CVE Explainer
   const html = readFileSync(new URL('index.html', root), 'utf8');
   for (const id of ['ask', 'ask-form', 'ask-input', 'ask-send', 'ask-new', 'ask-count', 'ask-thread', 'ask-examples']) assert.ok(html.includes(`id="${id}"`), id);
   assert.ok(html.includes('<script type="module" src="js/ask.js"></script>'));
-  assert.ok(html.includes('Your questions go to the AI model (Groq) and, for web searches, to Tavily. Nothing is stored.'));
+  const askSection = html.slice(html.indexOf('<section class="ask-block'), html.indexOf('</section>', html.indexOf('<section class="ask-block')));
+  const hints = [...askSection.matchAll(/<p class="hint">([^<]*)<\/p>/g)].map((m) => m[1]);
+  assert.deepEqual(hints, ['Ask a security question. Answers draw on a reference library, current security news and the hub’s data, and can be wrong.'], 'the Ask intro is exactly this one line');
   const csp = /Content-Security-Policy" content="([^"]+)"/.exec(html)[1];
   assert.ok(csp.includes('https://security-lookup-hub.jamal-598.workers.dev'));
   const lookup = readFileSync(new URL('js/lookup.js', root), 'utf8');
@@ -121,4 +123,42 @@ test('"Answered by" names the model that answered, and every step that changed i
   assert.equal(answeredBy({ model: 'meta-llama/llama-4-maverick:free', fallback: { reason: 'daily limit', from: 'anthropic:claude-haiku-5-5' }, relay: { from: 'groq', to: 'openrouter' } }),
     "Answered by meta-llama/llama-4-maverick:free (today's AI limit (switched to the free model); Groq is busy, answered by OpenRouter). AI can be wrong: check the sources.");
   assert.equal(answeredBy({}), 'Answered by the AI model. AI can be wrong: check the sources.');
+});
+
+test('section numbers come from page order: empty placeholders, a CSS counter, Ask 01 and Lookup 02 first', () => {
+  const css = readFileSync(new URL('css/style.css', root), 'utf8');
+  assert.match(css, /main \{ counter-reset: section; \}/);
+  assert.match(css, /\.num::before \{ counter-increment: section; content: counter\(section, decimal-leading-zero\); \}/);
+  for (const page of ['index.html', 'analyze.html']) {
+    const html = readFileSync(new URL(page, root), 'utf8');
+    const nums = [...html.matchAll(/<span class="num"[^>]*>([^<]*)<\/span>/g)].map((m) => m[1]);
+    assert.ok(nums.length >= 6, page);
+    assert.ok(nums.every((n) => n === ''), `${page}: no hard-coded numbers, so they can't drift`);
+  }
+  // In page order, the numbered sections on Lookup are Ask, Lookup, then the panels.
+  const html = readFileSync(new URL('index.html', root), 'utf8');
+  const order = [...html.matchAll(/<span class="num"[^>]*><\/span>\s*<h2 id="([a-z-]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ['ask-h', 'search-h', 'pw-h', 'hid-h', 'calc-h', 'dec-h']);
+  assert.match(html, /<h2 id="search-h" class="block-title">Lookup<\/h2>/);
+  assert.match(html, /<h2 id="ask-h" class="block-title">Ask<\/h2>/);
+});
+
+test('phones: form fields are 16px (no iOS zoom), pinch-zoom stays enabled, chips wrap', () => {
+  const css = readFileSync(new URL('css/style.css', root), 'utf8');
+  const mobile = css.slice(css.lastIndexOf('@media (max-width: 720px)'));
+  assert.match(mobile, /select, textarea,\s*\.ask-form textarea, \.row > input, \.dkim-row input \{ font-size: 16px; \}/);
+  assert.match(css, /\.chip \{ max-width: 100%; overflow-wrap: anywhere;/);
+  assert.ok(!/body\s*\{[^}]*overflow-x:\s*hidden/.test(css), 'not hidden on body');
+  for (const page of ['index.html', 'analyze.html', 'cves.html', 'news.html']) {
+    const html = readFileSync(new URL(page, root), 'utf8');
+    const vp = /<meta name="viewport" content="([^"]+)"/.exec(html)[1];
+    assert.ok(!/maximum-scale|user-scalable/.test(vp), `${page}: pinch-zoom allowed`);
+  }
+});
+
+test('Analyze: every tool has a fixed "What does this mean?" note right after its result, no AI', () => {
+  const html = readFileSync(new URL('analyze.html', root), 'utf8');
+  for (const tool of ['ioc', 'link', 'headers', 'jwt', 'file', 'subnet', 'cert', 'nmap']) {
+    assert.match(html, new RegExp(`<div id="${tool}-result" class="result" aria-live="polite"></div>\\s*<details class="meaning"><summary>What does this mean\\?</summary><p>[^<]{60,}</p></details>`), tool);
+  }
 });

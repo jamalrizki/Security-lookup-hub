@@ -20,7 +20,7 @@ import { QuotaError } from './http.js';
 import { explain, MODEL, verdict } from './explain.js';
 import { validateSearch, searchCves, CVE_TTL } from './cve.js';
 import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
-import { handleAsk } from './ask.js';
+import { handleAsk, handleSimplify } from './ask.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -29,11 +29,13 @@ const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
 const CACHE_VERSION = 'v3';
 
 const ASK_PATH = '/api/ask';
+const SIMPLIFY_PATH = '/api/ask/simplify';
+const isAskPath = (path) => path === ASK_PATH || path === SIMPLIFY_PATH;
 
 // Every route is GET-only except Ask, which takes a JSON POST.
 function corsHeaders(origin, path = '') {
   if (!origin) return { vary: 'Origin' };
-  return path === ASK_PATH
+  return isAskPath(path)
     ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'Origin' }
     : { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, OPTIONS', 'access-control-max-age': '86400', vary: 'Origin' };
 }
@@ -221,15 +223,17 @@ async function explainRoute(request, env, ctx, origin) {
 
   const cache = caches.default;
   const sel = (new URL(request.url).searchParams.get('dkim') || '').trim();
+  // style=plain: "In plain English", cached separately from the normal explanation.
+  const style = new URL(request.url).searchParams.get('style') === 'plain' ? 'plain' : 'normal';
   const subject = `${body.type === 'email' ? `email:${body.value.split('@').pop()}` : body.value}${sel && ['domain', 'email'].includes(body.type) ? `/dkim=${sel}` : ''}`;
-  const key = cacheUrl(`${CACHE_VERSION}/explain3/${encodeURIComponent(MODEL)}/${encodeURIComponent(subject)}`);
+  const key = cacheUrl(`${CACHE_VERSION}/explain3/${style === 'plain' ? 'plain/' : ''}${encodeURIComponent(MODEL)}/${encodeURIComponent(subject)}`);
   const hit = await cache.match(key);
   if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);
 
   // No hub-side Groq limit or pause: Groq's own rate limit applies, and its 429 is passed on.
   let text;
   try {
-    text = await explain(body, env.GROQ_API_KEY);
+    text = await explain(body, env.GROQ_API_KEY, { style });
   } catch (err) {
     if (err instanceof QuotaError) {
       return json({ error: 'The AI explainer is busy (Groq free tier). Try again in a minute.' }, 429, origin, { 'retry-after': '60' });
@@ -238,7 +242,7 @@ async function explainRoute(request, env, ctx, origin) {
   }
   // Explanations of partial results (a source skipped or errored) are not cached,
   // so a later request can explain the full picture.
-  const result = { explanation: text, model: MODEL, generatedAt: new Date().toISOString() };
+  const result = { explanation: text, style, model: MODEL, generatedAt: new Date().toISOString() };
   if (!body.sources.some((s) => s.status === 'skipped' || s.status === 'error')) {
     ctx.waitUntil(cache.put(key, new Response(JSON.stringify(result), { headers: { 'cache-control': `max-age=${CACHE_TTL}` } })));
   }
@@ -252,11 +256,12 @@ export default {
 
     if (!url.pathname.startsWith('/api/')) return json({ error: 'Not found.' }, 404, origin);
     if (request.method === 'OPTIONS') return new Response(null, { status: origin ? 204 : 403, headers: corsHeaders(origin, url.pathname) });
-    if (url.pathname === ASK_PATH) {
-      if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405, origin, { allow: 'POST, OPTIONS' }, ASK_PATH);
+    if (isAskPath(url.pathname)) {
+      if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405, origin, { allow: 'POST, OPTIONS' }, url.pathname);
       if (!origin) return json({ error: 'This API only serves the Security Lookup Hub site.' }, 403, null);
-      const r = await handleAsk(request, env, ctx, { quotaTools, runSource });
-      return json(r.body, r.status, origin, r.headers || {}, ASK_PATH);
+      const handler = url.pathname === SIMPLIFY_PATH ? handleSimplify : handleAsk;
+      const r = await handler(request, env, ctx, { quotaTools, runSource });
+      return json(r.body, r.status, origin, r.headers || {}, url.pathname);
     }
     if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405, origin, { allow: 'GET, OPTIONS' });
     if (url.pathname === '/api/health') return json({ ok: true }, 200, origin);

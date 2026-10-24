@@ -27,7 +27,7 @@
   <script type="module" src="js/chrome.js?v=94bf07053c"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=1fc2afadb7">
+  <link rel="stylesheet" href="css/style.css?v=960741ce7e">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/lookup.js"></script>
   <script type="module" src="js/ask.js"></script>
@@ -71,10 +71,10 @@
         <p class="radar-caption">MODULE 01/07<br>STATUS: ARMED</p>
       </div>
     </section>
-    <section class="ask-block" id="ask" aria-labelledby="ask-h">
-      <h2 id="ask-h" class="ask-title">Ask</h2>
-      <p class="hint">Ask a security question. Answers draw on a reference library, current security news and the hub's CVE data, and can be wrong.</p>
-      <p class="hint">Your questions go to the AI model (Groq) and, for web searches, to Tavily. Nothing is stored.</p>
+    <section class="ask-block block" id="ask" aria-labelledby="ask-h">
+      <span class="num" aria-hidden="true"></span>
+      <h2 id="ask-h" class="block-title">Ask</h2>
+      <p class="hint">Ask a security question. Answers draw on a reference library, current security news and the hub’s data, and can be wrong.</p>
       <div id="ask-examples" class="chips" aria-label="Example questions">
         <button type="button" class="chip">How does Kerberoasting work and how do I detect it?</button>
         <button type="button" class="chip">What's the latest exploited vulnerability in the news?</button>
@@ -93,8 +93,9 @@
       <div id="ask-thread" class="ask-thread" aria-live="polite"></div>
     </section>
 
-    <section class="search-block" aria-labelledby="search-h">
-      <h2 id="search-h" class="visually-hidden">Search</h2>
+    <section class="search-block block" id="lookup" aria-labelledby="search-h">
+      <span class="num" aria-hidden="true"></span>
+      <h2 id="search-h" class="block-title">Lookup</h2>
       <form id="search-form" class="bigbar" autocomplete="off">
         <input id="search-input" type="text" spellcheck="false"
                aria-label="Indicator to look up" placeholder="e.g. 8.8.8.8, example.com, a SHA-256 hash or CVE-2021-44228">
@@ -111,7 +112,7 @@
 
     <div class="card-grid">
       <section class="panel" aria-labelledby="pw-h">
-        <span class="num" aria-hidden="true">02</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="pw-h">Check a password</h2>
         <p class="hint">Your password never leaves this page. It is hashed with SHA-1 here, and only the first 5 characters of the hash are sent to Have I Been Pwned (<a href="https://haveibeenpwned.com/API/v3#SearchingPwnedPasswordsByRange" rel="noopener noreferrer" target="_blank">k-anonymity</a>).</p>
         <form id="pw-form" class="row" autocomplete="off">
@@ -123,7 +124,7 @@
       </section>
 
       <section class="panel" aria-labelledby="hid-h">
-        <span class="num" aria-hidden="true">03</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="hid-h">Hash identifier</h2>
         <label for="hid-input">Hash</label>
         <input id="hid-input" type="text" spellcheck="false" autocomplete="off" placeholder="$2b$12$… or 5f4dcc3b…">
@@ -131,7 +132,7 @@
       </section>
 
       <section class="panel" aria-labelledby="calc-h">
-        <span class="num" aria-hidden="true">04</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="calc-h">Hash calculator</h2>
         <label for="calc-input">Text (hashed as UTF-8)</label>
         <textarea id="calc-input" spellcheck="false"></textarea>
@@ -141,7 +142,7 @@
 
     <div class="card-grid wide">
       <section class="panel" aria-labelledby="dec-h">
-        <span class="num" aria-hidden="true">05</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="dec-h">Decoder</h2>
         <div class="row">
           <select id="dec-codec" aria-label="Encoding"></select>

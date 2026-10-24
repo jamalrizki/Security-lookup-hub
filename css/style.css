@@ -43,7 +43,6 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
   background: var(--bg);
   color: var(--text);
   font: 14px/1.6 var(--mono);
@@ -249,7 +248,11 @@ footer.site-footer:empty { display: none; }
 }
 .card-grid > .panel { border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; }
 .card-grid.wide { grid-template-columns: 1fr; }
+/* Section numbers come from page order (a CSS counter), so they can't drift: the
+   markup has empty <span class="num"> placeholders. */
+main { counter-reset: section; }
 .num { font: 400 44px/1 var(--display); color: var(--accent); }
+.num::before { counter-increment: section; content: counter(section, decimal-leading-zero); }
 .panel h2 { font-size: 18px; }
 
 .hint { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
@@ -592,10 +595,12 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 
 /* ---------- Ask (Lookup page) ---------- */
 
-.ask-block { scroll-margin-top: 90px; margin: 34px 0; padding: 22px; border: 2px solid var(--text); background: var(--overlay); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.ask-block > * { margin-top: 0; margin-bottom: 0; }
-.ask-title { font: 400 34px/1 var(--display); letter-spacing: 1px; color: var(--text); }
-.ask-title::before { content: "> "; color: var(--accent); }
+/* The Ask and Lookup sections share a boxed layout and title style. */
+.block { scroll-margin-top: 90px; margin: 34px 0; padding: 22px; border: 2px solid var(--text); background: var(--overlay); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.block > * { margin-top: 0; margin-bottom: 0; }
+.search-block.block > * + * { margin-top: 0; }
+.block-title { font: 400 34px/1 var(--display); letter-spacing: 1px; color: var(--text); text-transform: uppercase; }
+.block-title::before { content: "> "; color: var(--accent); }
 .ask-form { display: flex; flex-direction: column; border: 1px solid var(--input-line); }
 .ask-form:focus-within { border-color: var(--accent); }
 .ask-form textarea { border: 0; min-height: 90px; font-size: 14px; }
@@ -631,11 +636,43 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 
 @media (max-width: 720px) {
   .ask-block { padding: 16px; }
-  .ask-title { font-size: 28px; }
+  .block-title { font-size: 28px; }
+  .block { padding: 16px; }
   .ask-bar > button { flex: 1 1 auto; }
   .ask-count { flex: 1 1 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ask-dots::after { animation: none; width: 3ch; }
+}
+
+/* ---------- Long values wrap instead of widening the page ---------- */
+
+/* Look up chips can carry a long URL or a 64-character hash; buttons don't break
+   unbroken strings on their own. */
+.chip { max-width: 100%; overflow-wrap: anywhere; text-align: left; }
+.chips > * { min-width: 0; }
+.ask-msg, .ask-section, .ask-sources, .ask-trace, .ask-simpler { min-width: 0; overflow-wrap: anywhere; }
+.ask-text code { overflow-wrap: anywhere; word-break: break-word; }
+.explain-text { min-width: 0; }
+
+/* ---------- Plain-language extras ---------- */
+
+.ask-simpler:empty { display: none; }
+.ask-simpler { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px dashed var(--input-line); }
+.ask-simpler h4 { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+.explain-out:empty { display: none; }
+/* Analyze: a fixed "What does this mean?" note, shown once a tool has a result. */
+.meaning { margin-top: 12px; font-size: 13px; color: var(--body); }
+.meaning summary { cursor: pointer; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.meaning p { margin: 8px 0 0; line-height: 1.6; }
+.result:empty + .meaning { display: none; }
+
+/* ---------- Phones: no zoom on focus ---------- */
+
+/* iOS zooms into any form field whose text is under 16px, and the zoomed page then
+   scrolls sideways. Pinch-zoom stays enabled (no maximum-scale). */
+@media (max-width: 720px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea,
+  .ask-form textarea, .row > input, .dkim-row input { font-size: 16px; }
 }

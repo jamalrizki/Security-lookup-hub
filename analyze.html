@@ -27,7 +27,7 @@
   <script type="module" src="js/chrome.js?v=94bf07053c"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=1fc2afadb7">
+  <link rel="stylesheet" href="css/style.css?v=960741ce7e">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/analyze/ioc.js"></script>
   <script type="module" src="js/analyze/link.js"></script>
@@ -91,7 +91,7 @@
 
     <div class="card-grid">
       <section class="panel" id="ioc" aria-labelledby="ioc-h">
-        <span class="num" aria-hidden="true">01</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="ioc-h">IOC extractor</h2>
         <p class="hint">Paste an email, report or log (up to 500 KB). Defanged indicators are refanged first. Private IPs and internal names are left out, with a count of what was dropped.</p>
         <form id="ioc-form" autocomplete="off">
@@ -108,10 +108,11 @@
           </div>
         </form>
         <div id="ioc-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>These are things in your text that could identify an attacker: web addresses, IP addresses, file fingerprints (hashes) and vulnerability IDs. Finding one doesn't mean it's bad. Look up the ones you don't recognise, one at a time.</p></details>
       </section>
 
       <section class="panel" id="link" aria-labelledby="link-h">
-        <span class="num" aria-hidden="true">02</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="link-h">Suspicious-link inspector</h2>
         <p class="hint">Paste one URL. This page never opens or fetches it; it only reads the text: the real host, tricks like <code>paypal.com@evil.example</code>, look-alike brand names, encodings and redirects.</p>
         <form id="link-form" class="row" autocomplete="off">
@@ -119,10 +120,11 @@
           <button type="submit">Inspect</button>
         </form>
         <div id="link-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>The verdict comes only from reading the link's text; the link was never opened. “Suspicious” means it uses a trick scammers use, like a look-alike brand name or a hidden real address. If you weren't expecting it, don't click it: type the site's address yourself instead.</p></details>
       </section>
 
       <section class="panel" id="headers" aria-labelledby="headers-h">
-        <span class="num" aria-hidden="true">03</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="headers-h">Email-header analyzer</h2>
         <p class="hint">Paste the raw headers of a message (Gmail: ⋮ → Show original; Outlook: View → View message source). Headers include your own address; they are read here and never leave the page.</p>
         <form id="headers-form" autocomplete="off">
@@ -131,10 +133,11 @@
           <div class="row tool-actions"><button type="submit">Analyze &rarr;</button></div>
         </form>
         <div id="headers-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>Email headers record which servers handled a message. SPF, DKIM and DMARC check that the sender is allowed to send for that domain: “pass” is good, “fail” means the message may be forged. Replies or bounces going to a different domain than the sender is a common phishing sign.</p></details>
       </section>
 
       <section class="panel" id="jwt" aria-labelledby="jwt-h">
-        <span class="num" aria-hidden="true">04</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="jwt-h">JWT decoder</h2>
         <p class="hint">Decodes a JSON Web Token's header and payload in your browser. It does not verify the signature, and the token is not sent anywhere. Treat live tokens like passwords.</p>
         <form id="jwt-form" autocomplete="off">
@@ -142,10 +145,11 @@
           <textarea id="jwt-input" spellcheck="false" placeholder="eyJhbGciOi…"></textarea>
         </form>
         <div id="jwt-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>A JWT is a login token. This shows what's written inside it, not whether it's genuine: the signature isn't checked. Treat a real token like a password: anyone who has it may be able to act as you until it expires.</p></details>
       </section>
 
       <section class="panel" id="file" aria-labelledby="file-h">
-        <span class="num" aria-hidden="true">05</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="file-h">File analyzer</h2>
         <p class="hint">Hashes, real file type and readable strings, worked out in your browser. The file is never uploaded. Up to 50 MB.</p>
         <label id="file-drop" class="drop" for="file-input">
@@ -153,10 +157,11 @@
           <input id="file-input" type="file" class="visually-hidden">
         </label>
         <div id="file-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>The hashes are the file's fingerprints: use Look up to see if the file is already known as malware, without uploading it. A warning about the file type means its name doesn't match what's really inside, a common trick to get you to open it.</p></details>
       </section>
 
       <section class="panel" id="subnet" aria-labelledby="subnet-h">
-        <span class="num" aria-hidden="true">06</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="subnet-h">Subnet calculator</h2>
         <form id="subnet-form" class="row" autocomplete="off">
           <input id="subnet-input" type="text" class="mono-input" spellcheck="false" aria-label="Address and prefix" placeholder="192.168.1.0/24 or 2001:db8::/48">
@@ -164,10 +169,11 @@
           <button type="submit">Calculate</button>
         </form>
         <div id="subnet-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>A subnet is a block of network addresses. The first (network) and last (broadcast) addresses are reserved; the usable range is what devices can actually be given.</p></details>
       </section>
 
       <section class="panel" id="cert" aria-labelledby="cert-h">
-        <span class="num" aria-hidden="true">07</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="cert-h">Certificate viewer</h2>
         <p class="hint">Paste a PEM certificate (or a chain), or drop a .cer, .crt or .der file. It is read in your browser. Paste certificates only: never a private key.</p>
         <form id="cert-form" autocomplete="off">
@@ -179,10 +185,11 @@
           </div>
         </form>
         <div id="cert-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>A certificate proves a website's identity. Check that it's in date and issued to the name you expect. “Self-signed” means no trusted authority vouches for it, which is normal for internal test systems but not for public websites.</p></details>
       </section>
 
       <section class="panel" id="nmap" aria-labelledby="nmap-h">
-        <span class="num" aria-hidden="true">08</span>
+        <span class="num" aria-hidden="true"></span>
         <h2 id="nmap-h">Nmap viewer</h2>
         <p class="hint">Drop the XML from a scan you ran (saved with <code>-oX</code>, up to 20 MB) to get a filterable table. It is read in your browser; private addresses are shown, and only public ones get a Look up link.</p>
         <label id="nmap-drop" class="drop" for="nmap-file">
@@ -190,6 +197,7 @@
           <input id="nmap-file" type="file" class="visually-hidden" accept=".xml">
         </label>
         <div id="nmap-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>Each open port is a door into that machine where a program is listening. Close or firewall anything that doesn't need to be reachable, and keep the listed software up to date.</p></details>
       </section>
     </div>
   </main>

@@ -163,7 +163,43 @@ if (globalThis.document?.getElementById('ask-form')) {
     $('search-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  function answerNode(body) {
+  // "Make it simpler": the same answer in plain language (tools off, no new facts),
+  // shown under the original with its own "Answered by" line.
+  function simplerButton(question, answer) {
+    const box = el('div', { class: 'ask-simpler', 'aria-live': 'polite' });
+    const button = el('button', { type: 'button', class: 'secondary small' }, 'Make it simpler');
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      button.textContent = 'Simplifying\u2026';
+      let res;
+      let r;
+      try {
+        res = await fetch(`${API_BASE}/api/ask/simplify`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ question, answer: answer.slice(0, MAX_ANSWER) }),
+          referrerPolicy: 'no-referrer',
+        });
+        r = await res.json();
+      } catch {
+        r = { error: 'Ask could not be reached. Try again.' };
+      }
+      if (!res?.ok || r.error) {
+        button.disabled = false;
+        button.textContent = 'Make it simpler';
+        box.replaceChildren(notice('warn', String(r.error || 'Ask could not simplify this. Try again.')));
+        return;
+      }
+      button.remove();
+      box.replaceChildren(
+        el('h4', {}, 'In plain words'),
+        el('div', { class: 'ask-text' }, ...renderAnswer(String(r.reply || ''))),
+        el('p', { class: 'hint' }, answeredBy(r)));
+    });
+    return [button, box];
+  }
+
+  function answerNode(body, question) {
     const hub = checkedHub(body.hub, features);
     const sources = checkedSources(body.sources);
     const lookups = (Array.isArray(body.lookups) ? body.lookups : []).filter((l) => typeof l?.value === 'string').slice(0, 6);
@@ -188,7 +224,8 @@ if (globalThis.document?.getElementById('ask-form')) {
           el('span', { class: `flag ${t.ok ? 'ok' : 'warn'}` }, t.ok ? 'ok' : 'failed'),
           ` ${Number(t.ms) || 0} ms · ${String(t.summary || '')}`,
           t.note ? ` · ${String(t.note)}` : '')))) : null,
-      el('p', { class: 'hint' }, answeredBy(body)));
+      el('p', { class: 'hint' }, answeredBy(body)),
+      ...simplerButton(question, String(body.reply || '')));
   }
 
   async function ask(question) {
@@ -222,7 +259,7 @@ if (globalThis.document?.getElementById('ask-form')) {
     }
     history.push({ role: 'user', content: question }, { role: 'assistant', content: String(body.reply || '') });
     history = history.slice(-MAX_HISTORY);
-    thread.append(answerNode(body));
+    thread.append(answerNode(body, question));
   }
 
   function submit(question, { skipCheck = false } = {}) {
