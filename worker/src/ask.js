@@ -86,6 +86,9 @@ export const SEARCH_DEFERRAL = new RegExp([
 ].join('|'), 'i');
 const DO_IT_YOURSELF = "Your draft tells the visitor to search or look something up. Don't: do that search yourself now with the tools (web_search, cve_lookup, recent_news, search_reference), then answer. If the tools have nothing more, say what you couldn't find.";
 const REWRITE = 'Your last answer copied wording from the tool results. Rewrite it completely in your own words, with the same meaning. Do not quote any passage or excerpt.';
+// Every revision must come back as the answer itself: the visitor never sees the draft,
+// so a reply about the check ("Here is the hub's data…", "my earlier answer…") is useless.
+const AS_ANSWER = "Reply with the complete revised answer to the visitor's question, written as a fresh answer. Output only that answer: don't mention this instruction, the check, your earlier draft or what you changed.";
 
 // ---------- Validation ----------
 
@@ -241,9 +244,10 @@ export function findLookups(text) {
 // A news headline is listed only if it shares a distinctive word (a product, vendor or
 // CVE ID) with the question or answer. Generic words, including generic security words
 // and the names of the hub's own data sources, don't count.
-const STOP = new Set(`about after again also among been being between both cannot could does doing during each from have having here into just like made make many more most much must news only other over said same should since some such than that their them then there these they this those through under until very were what when where which while with would your week today latest recent
-known exploited exploitation exploit exploits catalog critical vulnerability vulnerabilities adds added flaw flaws attack attacks attacker attackers security update updates patch patches patched issue issues report reports advisory advisories warns warning urgent active actively cisa nvd`.split(/\s+/));
-const meaningfulWords = (text) => new Set((String(text).toLowerCase().match(/[a-z0-9][a-z0-9-]{3,}/g) || []).filter((w) => !STOP.has(w)));
+const STOP = new Set(`a about above across after again against all almost along already also although always am among an and another any anyone anything are around as at away back be became because become been before being below between both but by came can cannot could day days did do does doing done down during each early either else enough even ever every few first for found four from full further get gets give given go goes going gone got great had has have having he her here high his how however i if in into is it its just know last late later least less like little long made main make makes making many may me might more most much must my near need needs never new next no not now of off often old on once one only or other others our out over own part past per put rather really said same say says see seen set several she should show shows since six so some still such take taken than that the their them then there these they thing things think this those though three through time times to today too took top toward two under until up upon us use used uses using very via was way we week weeks well were what when where whether which while who whole why will with within without would year years yet you your
+known exploited exploitation exploit exploits catalog critical vulnerability vulnerabilities vulnerable adds added flaw flaws attack attacks attacker attackers hacker hackers security update updates patch patches patched issue issues report reports advisory advisories warns warning urgent active actively risk risks bug bugs threat threats cisa nvd kev news latest recent another major`.split(/\s+/));
+// Three-letter names count (PHP, IBM, SAP, IIS); common English and generic security words don't.
+const meaningfulWords = (text) => new Set((String(text).toLowerCase().match(/[a-z0-9][a-z0-9-]{2,}/g) || []).filter((w) => !STOP.has(w) && !/^\d+$/.test(w)));
 
 /**
  * The Sources list: de-duplicated, at most SOURCE_CAPS per tool in call order
@@ -319,7 +323,7 @@ async function checkFacts(reply, convo, state, trace, run) {
   // Checked after the lookups above, which may have found a KEV entry.
   if (!state.inKev.size && EXPLOITED_CLAIM.test(reply)) parts.push(EXPLOITATION);
   if (!parts.length) return null;
-  return chat([...convo, { role: 'assistant', content: reply }, { role: 'system', content: parts.join('\n\n') }], 'none', run);
+  return chat([...convo, { role: 'assistant', content: reply }, { role: 'system', content: [...parts, AS_ANSWER].join('\n\n') }], 'none', run);
 }
 
 const shortArgs = (args) => Object.fromEntries(Object.entries(args || {}).map(([k, v]) => [k, typeof v === 'string' ? v.slice(0, 80) : v]));
@@ -391,7 +395,7 @@ export async function runConversation(messages, run) {
 
   // Public answers must not reproduce the books or news they draw on.
   if (hasOverlap(reply, state.texts)) {
-    const again = await chat([...convo, { role: 'assistant', content: reply }, { role: 'system', content: REWRITE }], 'none', run);
+    const again = await chat([...convo, { role: 'assistant', content: reply }, { role: 'system', content: `${REWRITE}\n\n${AS_ANSWER}` }], 'none', run);
     const rewritten = stripToolMarkup((again.message.content || '').trim());
     if (rewritten) {
       reply = rewritten;

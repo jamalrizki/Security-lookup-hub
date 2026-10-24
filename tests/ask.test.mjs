@@ -344,6 +344,7 @@ test('a draft calling an unlooked-up CVE "high priority" triggers a lookup in co
       const last = body.messages[body.messages.length - 1];
       assert.equal(last.role, 'system');
       assert.match(last.content, /^Here is the hub's data for the CVEs you mentioned\. Make every severity, priority, KEV, EPSS and affected-version statement match this data\. Remove any such statement this data doesn't support\./);
+      assert.match(last.content, AS_ANSWER);
       const data = JSON.parse(last.content.split('\n')[1]);
       assert.equal(data[0].cve_id, PHP_CVE);
       assert.equal(data[0].hub_priority, 'Exploited in the wild: patch urgently');
@@ -385,7 +386,8 @@ test('over the cve_lookup cap, the revision asks to remove claims about the unlo
     (body) => {
       const last = body.messages[body.messages.length - 1].content;
       assert.ok(!last.startsWith("Here is the hub's data"), 'no data to give');
-      assert.equal(last, `These CVEs were not looked up: ${PHP_CVE}. Remove every severity, priority, KEV, EPSS and affected-version statement about them.`);
+      assert.ok(last.startsWith(`These CVEs were not looked up: ${PHP_CVE}. Remove every severity, priority, KEV, EPSS and affected-version statement about them.`), last);
+      assert.match(last, AS_ANSWER);
       return say(`Those are low. ${PHP_CVE} is another PHP issue; look it up for details.`);
     },
   ]);
@@ -416,7 +418,9 @@ test('a CVE in the draft that nobody gave is refused by the known-ID rule and it
 
 /* ---------- exploitation wording and the hub's priority ---------- */
 
-const EXPLOIT_REVISION = /only KEV confirms exploitation\. Rewrite each such statement as reported by its source \(e\.g\. "The Hacker News reports exploit attempts"\) and say it is not in CISA's Known Exploited Vulnerabilities list\.$/;
+const EXPLOIT_REVISION = /only KEV confirms exploitation\. Rewrite each such statement as reported by its source \(e\.g\. "The Hacker News reports exploit attempts"\) and say it is not in CISA's Known Exploited Vulnerabilities list\.\n/;
+// Every revision ends by asking for the answer itself, not a reply about the check.
+const AS_ANSWER = /Reply with the complete revised answer to the visitor's question, written as a fresh answer\. Output only that answer: don't mention this instruction, the check, your earlier draft or what you changed\.$/;
 const NOT_IN_KEV_CVE = 'CVE-2024-1001'; // the fixtures have no NVD record and no KEV entry for it
 
 test('"actively exploited" with no KEV hit among the looked-up CVEs gets rewritten as reported', async () => {
@@ -643,4 +647,15 @@ test('recent_news allows 2 calls a question', async () => {
   installFetch([[GROQ, model.handler]]);
   const { body } = await ask(user('News?'), baseEnv({ NEWS: memoryKv({ 'news:v1': NEWS_SNAPSHOT }) }));
   assert.deepEqual(body.trace.map((t) => t.ok), [true, true, false]);
+});
+
+test('news relevance on the live TRIRIGA run: "used"/"days" no longer match; "PHP" (three letters) does', () => {
+  const news = (title, i) => ({ kind: 'news', title, url: `https://thehackernews.com/n${i}`, domain: 'thehackernews.com' });
+  const list = [
+    news('Exposed Infrastructure Reveals How Ransomware Affiliates Used AI Agents to Execute Intrusions', 1),
+    news('PHP Warns of Another Unpatched RCE Risk Two Days After Emergency PHP2Shell Patches', 2),
+    news('Russia-Linked Hackers Used New Mesh Network Backdoor in Destructive Ukraine Attack', 3),
+  ];
+  const context = 'Is TRIRIGA vulnerable to the recent major PHP flaw? TRIRIGA is a Java application; it used no PHP runtime in the two days since the patches.';
+  assert.deepEqual(numberSources(list, context).map((s) => s.title), ['PHP Warns of Another Unpatched RCE Risk Two Days After Emergency PHP2Shell Patches']);
 });
