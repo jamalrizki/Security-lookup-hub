@@ -24,6 +24,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
 | 15 | Reference-library pipeline: manifest, OCR, ingest and embedding scripts (books stay in the gitignored `security-books/`) | Built on `v3`; index not built yet |
 | 16 | Docs, Requirements, search allowlist check, wrap-up | Built on `v3`, not deployed |
+| Extra | CVEs page: patch priority list (paste up to 8 CVE IDs, ranked in code: KEV, then EPSS, then CVSS; CSV download) | Done (Oct 24, 2026) |
 
 **Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
@@ -114,6 +115,7 @@ npx wrangler secret put NVD_API_KEY
 ```
 
 - The CVEs page (`cves.html`) calls `GET /api/cve-search?q=&severity=`. Keywords are 2 to 60 letters, digits, spaces, dots, dashes or underscores. NVD lists matches oldest first and can't sort, so the Worker makes two requests (count, then the last page) and returns the 10 newest. Searches are cached for 6 hours.
+- **Patch priority list** (`cves.html#priority`): paste CVE IDs, or a scan report, advisory or email that contains them (up to 50,000 characters). Up to 8 unique IDs are taken in order of appearance (NVD allows the whole site 8 keyless calls a minute) and each goes through the normal `GET /api/lookup`, one at a time, so the same cache, quotas and priority rule apply; no Worker change. `js/patch-priority.js` ranks them in code: the hub's priority verdict first (so KEV entries lead), then known ransomware use, higher EPSS, higher CVSS, then the ID. A source that was skipped or failed is named on its row, and a row with no data says "Not enough data" rather than guessing. "Download CSV" builds the ranked list in the browser (formula-safe cells, via `toCsv`). Ask can link to it as `[[patch-list]]`.
 - Lookup links CVE results to [CVE Explainer](https://jamalrizki.github.io/cve-explainer/) for follow-up questions. The parsing code in `worker/src/cve.js` is copied from it, not shared.
 
 ## News
@@ -359,13 +361,16 @@ npx wrangler vectorize insert security-books --file="../security-books/.rag/vect
 
 ## Tests
 
-Node 20 or later, no dependencies (the reference-library tests also need `python3` and `git`; they skip without them, and they bring their own stand-ins for poppler and tesseract):
+Node 20 or later. The root has no dependencies, but the Ask tests import the Worker's `@anthropic-ai/sdk`, so install the Worker's packages once first (the reference-library tests also need `python3` and `git`; they skip without them, and they bring their own stand-ins for poppler and tesseract). From the repo root:
 
 ```sh
+(cd worker && npm install)
 npm test
 ```
 
-171 tests as of Phase 16 (Oct 22, 2026). The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
+
+219 tests as of Oct 24, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -410,7 +415,8 @@ js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
-js/cves.js       CVEs page (keyword search)
+js/cves.js       CVEs page (keyword search, patch priority list)
+js/patch-priority.js   patch priority list: CVE IDs from pasted text, ranking and CSV (DOM-free, tested in Node)
 js/news.js       News page
 js/tools.js      tools glossary page (renders data/tools.json)
 js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node

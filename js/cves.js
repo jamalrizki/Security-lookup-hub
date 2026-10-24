@@ -3,6 +3,8 @@
 
 import { validateCveSearch } from './detect.js';
 import { API_BASE } from './config.js';
+import { cveIdsFromText, priorityRow, sortRows, factsLine, rowsToCsv, MAX_CVES } from './patch-priority.js';
+import { download } from './analyze/ui.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -91,3 +93,73 @@ $('cve-form').addEventListener('submit', (ev) => {
 });
 window.addEventListener('hashchange', fromHash);
 fromHash();
+
+// ---------- Patch priority list ----------
+// Paste CVE IDs (or any text containing them); each one goes through the normal
+// /api/lookup, one at a time, and the list is ranked in code (js/patch-priority.js).
+
+const VERDICT_CLASS = {
+  'Exploited in the wild: patch urgently': 'sev-critical',
+  'High priority': 'sev-critical',
+  'Patch soon': 'sev-high',
+  'Patch on your normal cycle': 'sev-medium',
+  'Low priority': 'sev-low',
+};
+
+function prioRow(r, i) {
+  const sev = (r.cvss?.severity || '').toLowerCase();
+  // The facts line already shows KEV, EPSS and CVSS; only "High priority" has a reason it doesn't (EPSS 10%+, or remote no-login no-click).
+  const reasons = r.verdict === 'High priority' && r.reasons.length ? ` — ${r.reasons.join('; ')}` : '';
+  const gaps = r.error ? ` (${r.error})` : r.missing.length ? ` (unavailable right now: ${r.missing.join(', ')})` : '';
+  return el('li', { class: 'cve-row' },
+    el('span', { class: `cve-score sev-${sev || 'none'}` }, r.cvss ? String(r.cvss.score) : '—'),
+    el('div', { class: 'cve-id' },
+      el('strong', { class: 'mono' }, `${i + 1}. ${r.id}`),
+      el('span', { class: VERDICT_CLASS[r.verdict] || 'sev-none' }, r.verdict)),
+    el('p', { class: 'cve-desc' }, `${factsLine(r)}${reasons}${gaps}`),
+    el('a', { class: 'cve-go', href: `./#q=${encodeURIComponent(r.id)}` }, 'Look up →'));
+}
+
+async function lookupCve(id) {
+  try {
+    const res = await fetch(`${API_BASE}/api/lookup?q=${encodeURIComponent(id)}`, { referrerPolicy: 'no-referrer' });
+    return await res.json();
+  } catch {
+    return { error: 'The lookup service could not be reached.' };
+  }
+}
+
+let prioRun = 0;
+async function rank(text) {
+  const out = $('prio-results');
+  const { ids, extra, invalid } = cveIdsFromText(text);
+  if (!ids.length) {
+    out.replaceChildren(notice('warn', invalid.length
+      ? `No valid CVE IDs found (${invalid.slice(0, 3).join(', ')} ${invalid.length === 1 ? "isn't" : "aren't"} valid). CVE IDs look like CVE-2021-44228.`
+      : 'No CVE IDs found. Paste IDs like CVE-2021-44228, or text that contains them.'));
+    return;
+  }
+  const mine = ++prioRun;
+  const rows = [];
+  for (const [i, id] of ids.entries()) {
+    out.replaceChildren(el('p', { class: 'hint' }, `Checking ${id} (${i + 1} of ${ids.length})…`));
+    const body = await lookupCve(id);
+    if (mine !== prioRun) return;
+    rows.push(priorityRow(id, body));
+  }
+  const sorted = sortRows(rows);
+  const csvButton = el('button', { type: 'button', class: 'secondary' }, 'Download CSV');
+  csvButton.addEventListener('click', () => download('patch-priority.csv', rowsToCsv(sorted)));
+  out.replaceChildren(...[
+    extra ? notice('warn', `Only the first ${MAX_CVES} CVE IDs were checked; ${extra} more ${extra === 1 ? 'was' : 'were'} left out. Run them as a second list in a minute.`) : null,
+    invalid.length ? el('p', { class: 'hint' }, `Skipped ${invalid.length} invalid ID${invalid.length === 1 ? '' : 's'}: ${invalid.slice(0, 5).join(', ')}.`) : null,
+    el('p', { class: 'hint' }, 'Most urgent first. The order is the hub’s rule of thumb, decided in code: CISA KEV first, then EPSS, then CVSS. It is not a vendor rating, and it doesn’t know which products you run.'),
+    el('ul', { class: 'rows' }, ...sorted.map(prioRow)),
+    el('div', { class: 'row' }, csvButton),
+  ].filter(Boolean)); // replaceChildren would print a null as the text "null"
+}
+
+$('prio-form').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  rank($('prio-text').value);
+});
