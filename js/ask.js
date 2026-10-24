@@ -75,6 +75,16 @@ export function checkedHub(hub, features) {
   return out;
 }
 
+/** The "Answered by" line: the model that actually answered, and any fallback. */
+export function answeredBy(body) {
+  const model = String(body?.model || 'the AI model');
+  const from = typeof body?.fallback?.from === 'string' ? body.fallback.from.replace(/^[a-z]+:/, '') : '';
+  const why = body?.fallback?.reason === 'no API key' ? 'not configured' : 'unavailable';
+  return from
+    ? `Answered by ${model} (free fallback: ${from} was ${why}). AI can be wrong: check the sources.`
+    : `Answered by ${model}. AI can be wrong: check the sources.`;
+}
+
 /** Sources with https URLs only (re-checked here; the Worker already filters). */
 export function checkedSources(sources) {
   return (Array.isArray(sources) ? sources : [])
@@ -177,7 +187,7 @@ if (globalThis.document?.getElementById('ask-form')) {
           el('span', { class: `flag ${t.ok ? 'ok' : 'warn'}` }, t.ok ? 'ok' : 'failed'),
           ` ${Number(t.ms) || 0} ms · ${String(t.summary || '')}`,
           t.note ? ` · ${String(t.note)}` : '')))) : null,
-      el('p', { class: 'hint' }, `Answered by ${String(body.model || 'the AI model')}. AI can be wrong: check the sources.`));
+      el('p', { class: 'hint' }, answeredBy(body)));
   }
 
   async function ask(question) {

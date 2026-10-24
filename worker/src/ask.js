@@ -16,41 +16,42 @@
 
 import { detect } from '../../js/detect.js';
 import { readCapped } from './http.js';
-import { MODEL, defangText } from './explain.js';
-import { parseRetryWaitSeconds } from './retry-wait.js';
-import { TOOL_DEFINITIONS, TOOL_CAPS, runTool, newState, featureById, featuresPrompt, cveIdsIn } from './ask-tools.js';
+import { defangText } from './explain.js';
+import { TOOL_CAPS, runTool, newState, featureById, featuresPrompt, cveIdsIn } from './ask-tools.js';
+import { chat, askModel, askTiming, BusyError, BUSY } from './ask-models.js';
+
+export { askTiming, BusyError };
 
 export const MAX_BODY = 24 * 1024;
 const MAX_MESSAGES = 8;
 const MAX_USER_CHARS = 1000;
 const MAX_ASSISTANT_CHARS = 3000;
 const MAX_TOOL_ROUNDS = 4; // the 5th model call must answer in text
-const MAX_RATE_LIMIT_WAIT_S = 20; // total Groq 429 waiting per question
-const UPSTREAM_TIMEOUT_MS = 25000;
-const MAX_SOURCES = 8;
+const MAX_REPLY_CHARS = 3000; // answer-length guard, separate from the model's token limit
+// Sources per tool, in call order; news only when it shares a word with the question or answer.
+const SOURCE_CAPS = { news: 3, web: 4, cve: 3 };
 const MAX_HUB_LINKS = 4;
 const MAX_LOOKUPS = 6;
 const OVERLAP_WORDS = 12;
 const ASK_PER_MINUTE = 6; // questions a minute, site-wide
-const GROQ_PER_MINUTE = 20; // shared with the Explain button
-const OPENROUTER_MODEL = 'openrouter/free';
-
-const BUSY = 'Ask is busy (free tier limit). Try again in a minute.';
-
-// Tests replace sleep so a "try again in 435ms" retry doesn't really wait.
-export const askTiming = { sleep: (ms) => new Promise((r) => setTimeout(r, ms)) };
-
-export class BusyError extends Error {}
 
 // ---------- Prompt ----------
 
 export function systemPrompt() {
   return `You are Ask, part of Security Lookup Hub. You answer security questions for defenders, IT staff and learners.
 
-Tools:
-- Use search_reference first for concepts, techniques, defences and how things work.
-- Use recent_news for current events. Use web_search for anything recent or specific that the library or the news doesn't cover.
-- Answer well-known basics directly.
+How to answer:
+1. Route by question type:
+   - Concepts, techniques, defences, how something works: search_reference. Answer well-known basics directly.
+   - Current events, "in the news", "latest": recent_news, then web_search for the details.
+   - A CVE ID: cve_lookup.
+   - "Is product X affected by Y?": find Y and its CVE IDs (recent_news or web_search), cve_lookup each CVE, then web_search what X is built on and X's vendor security bulletin for Y. Then answer: affected, not affected, or not known, with the evidence.
+   - Anything else recent or specific: web_search.
+2. If a tool finds nothing or not enough, try the next fitting tool before answering.
+3. Never tell the visitor to search, look something up or check a site: do it yourself with the tools. If they still don't have it, say what you couldn't find.
+4. If a product or name looks misspelled, search for the likely intended name.
+
+Facts:
 - Any CVE severity, score, exploitation status (KEV), EPSS or affected version must come from cve_lookup in this conversation. If you can't get it, say so.
 - Call hub_priority "the hub's priority", never the vendor's.
 - Attribute severity and exploitation claims from news or web results to their source, never as fact. If a story names a product but no CVE, try web_search once for its CVE ID.
@@ -74,6 +75,16 @@ const CVE_UNCHECKED = (ids) => `These CVEs were not looked up: ${ids.join(', ')}
 // exploited" or "in the wild" claims must be attributed to whoever reported them.
 export const EXPLOITED_CLAIM = /\b(?:confirm(?:s|ed|ing)?\b[^.\n]{0,60}\bexploit\w*|(?:actively|widely)[\s-]+exploit\w*|active(?:ly)?[\s-]+(?:being[\s-]+)?exploit\w*|exploit\w*[^.\n]{0,40}\bin[\s-]+the[\s-]+wild|in[\s-]+the[\s-]+wild\b[^.\n]{0,40}\bexploit\w*)/i;
 const EXPLOITATION = "Your answer says exploitation is confirmed, active, widespread or in the wild, but no CVE looked up here is in CISA's Known Exploited Vulnerabilities (KEV) list, and only KEV confirms exploitation. Rewrite each such statement as reported by its source (e.g. \"The Hacker News reports exploit attempts\") and say it is not in CISA's Known Exploited Vulnerabilities list.";
+// A draft that sends the visitor off to search gets one more tool round (while caps allow).
+export const SEARCH_DEFERRAL = new RegExp([
+  String.raw`\byou(?:'|’)?(?:ll)? (?:can|could|should|may|might|will need to|need to|want to)? ?(?:search|look (?:it |this |them )?up|check|consult|look for|visit|google|use the hub(?:'|’)s)\b`,
+  String.raw`(?:^|[.!?:]\s+|\n)\s*(?:[-*•]|\d+[.)])?\s*(?:search|google|look up (?=the |it\b|this\b|them\b|cve|on\b|in\b))`,
+  String.raw`\b(?:check|consult|see|visit) (?:the )?(?:\w+(?:'|’)s )?(?:\w+ )?(?:vendor|nvd|official|support|security|product)\b[^.\n]{0,30}\b(?:site|website|advisor(?:y|ies)|bulletin|page|portal)`,
+  String.raw`\b(?:try|run|do|perform) (?:a |an )?(?:search|lookup|look-up)\b|\btry (?:searching|looking)\b`,
+  String.raw`\b(?:i (?:would )?recommend|i suggest) (?:searching|checking|looking|consulting)\b`,
+  String.raw`\buse the hub(?:'|’)s \w+(?: \w+)? (?:search|lookup|look-up|feature)\b`,
+].join('|'), 'i');
+const DO_IT_YOURSELF = "Your draft tells the visitor to search or look something up. Don't: do that search yourself now with the tools (web_search, cve_lookup, recent_news, search_reference), then answer. If the tools have nothing more, say what you couldn't find.";
 const REWRITE = 'Your last answer copied wording from the tool results. Rewrite it completely in your own words, with the same meaning. Do not quote any passage or excerpt.';
 
 // ---------- Validation ----------
@@ -227,103 +238,42 @@ export function findLookups(text) {
   return out;
 }
 
-/** De-duplicated, first MAX_SOURCES in call order, numbered. */
-export function numberSources(list) {
-  const seen = new Set();
-  const out = [];
-  for (const s of list) {
-    const key = urlKey(s.url);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push({ n: out.length + 1, title: s.title, url: s.url, domain: s.domain });
-    if (out.length >= MAX_SOURCES) break;
-  }
-  return out;
-}
-
-// ---------- Providers ----------
-
-function providerList(env) {
-  const list = [];
-  if (env.GROQ_API_KEY) {
-    list.push({
-      name: 'groq',
-      url: 'https://api.groq.com/openai/v1/chat/completions',
-      key: env.GROQ_API_KEY,
-      model: MODEL,
-      quota: 'GROQ_API_KEY',
-      extra: { reasoning_effort: 'low', include_reasoning: false, max_completion_tokens: 900 },
-    });
-  }
-  if (env.OPENROUTER_API_KEY) {
-    list.push({
-      name: 'openrouter',
-      url: 'https://openrouter.ai/api/v1/chat/completions',
-      key: env.OPENROUTER_API_KEY,
-      model: OPENROUTER_MODEL,
-      headers: { 'X-Title': 'Security Lookup Hub' },
-      extra: { max_tokens: 900 },
-    });
-  }
-  return list;
-}
-
-class ProviderError extends Error {
-  constructor(status, detail) {
-    super(`HTTP ${status}: ${detail}`);
-    this.status = status;
-  }
-}
-
-async function callProvider(p, messages, toolChoice) {
-  const res = await fetch(p.url, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', authorization: `Bearer ${p.key}`, ...p.headers },
-    body: JSON.stringify({
-      model: p.model,
-      messages,
-      tools: TOOL_DEFINITIONS,
-      tool_choice: toolChoice,
-      temperature: 0.2,
-      ...p.extra,
-    }),
-    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
-  });
-  if (!res.ok) throw new ProviderError(res.status, (await res.text()).slice(0, 300));
-  const data = await res.json();
-  const message = data?.choices?.[0]?.message;
-  if (!message) throw new Error('no message in model response');
-  return { message, provider: p.name, model: data.model || p.model };
-}
+const STOP = new Set('about after again also among been being between both cannot could does doing during each from have having here into just like made make many more most much must news only other over said same should since some such than that their them then there these they this those through under until very were what when where which while with would your week this today latest recent vulnerability vulnerabilities flaw flaws security issue issues attack attacks update updates report reports'.split(' '));
+const meaningfulWords = (text) => new Set((String(text).toLowerCase().match(/[a-z0-9][a-z0-9-]{3,}/g) || []).filter((w) => !STOP.has(w)));
 
 /**
- * One model call. Groq first: each attempt counts against the site-wide Groq
- * quota, and a 429 with a short wait is retried while the question's total wait
- * stays within MAX_RATE_LIMIT_WAIT_S. If Groq can't answer and an OpenRouter key
- * is set, OpenRouter takes the same conversation.
+ * The Sources list: de-duplicated, at most SOURCE_CAPS per tool in call order
+ * (CVE links NVD first, so several CVEs each get their NVD record before any
+ * KEV/EPSS link), and news only when its title shares a meaningful word with the
+ * question or the answer. Numbered.
  */
-async function chat(messages, toolChoice, run) {
-  const providers = providerList(run.env);
-  let lastError = new BusyError(BUSY);
-  for (const p of providers) {
-    try {
-      for (;;) {
-        if (p.quota && ((await run.quota.paused(p.quota)) || !(await run.quota.allow(p.quota, GROQ_PER_MINUTE)))) throw new BusyError(BUSY);
-        try {
-          return await callProvider(p, messages, toolChoice);
-        } catch (err) {
-          if (err.status !== 429) throw err;
-          const wait = parseRetryWaitSeconds(err.message);
-          if (!(wait > 0) || run.waited + wait > MAX_RATE_LIMIT_WAIT_S) throw new BusyError(BUSY);
-          run.waited += wait;
-          await askTiming.sleep(Math.ceil(wait * 1000) + 250);
-        }
-      }
-    } catch (err) {
-      lastError = err;
-    }
+export function numberSources(list, context = '') {
+  const words = meaningfulWords(context);
+  const relevant = (s) => s.kind !== 'news' || [...meaningfulWords(s.title)].some((w) => words.has(w));
+  const ordered = [...list.filter((s) => s.kind !== 'cve'), ...list.filter((s) => s.kind === 'cve').sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0))];
+  const seen = new Set();
+  const used = {};
+  const picked = [];
+  for (const s of ordered) {
+    const key = urlKey(s.url);
+    if (seen.has(key) || !relevant(s)) continue;
+    const kind = s.kind || 'web';
+    if ((used[kind] || 0) >= (SOURCE_CAPS[kind] ?? 0)) continue;
+    seen.add(key);
+    used[kind] = (used[kind] || 0) + 1;
+    picked.push(s);
   }
-  throw lastError;
+  // Keep call order for numbering.
+  picked.sort((a, b) => list.indexOf(a) - list.indexOf(b));
+  return picked.map((s, i) => ({ n: i + 1, title: s.title, url: s.url, domain: s.domain }));
+}
+
+/** The answer-length guard: cut at a paragraph or sentence end under MAX_REPLY_CHARS. */
+export function capReply(text, max = MAX_REPLY_CHARS) {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const at = Math.max(cut.lastIndexOf('\n\n'), cut.search(/[.!?](?=[^.!?]*$)/) + 1);
+  return `${(at > max * 0.5 ? cut.slice(0, at) : cut).trimEnd()} \u2026`;
 }
 
 // ---------- The loop ----------
@@ -377,6 +327,8 @@ export async function runConversation(messages, run) {
   const trace = [];
   let reply = '';
   let used;
+  let nudged = false;
+  const toolsLeft = () => Object.entries(TOOL_CAPS).some(([name, cap]) => (state.counts[name] || 0) < cap);
 
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
     const finalRound = round === MAX_TOOL_ROUNDS;
@@ -385,10 +337,17 @@ export async function runConversation(messages, run) {
     const calls = Array.isArray(used.message.tool_calls) ? used.message.tool_calls : [];
     if (!calls.length || finalRound) {
       reply = (used.message.content || '').trim();
+      // Sent the visitor off to search? Once, while caps allow, make it search instead.
+      if (!finalRound && !nudged && SEARCH_DEFERRAL.test(reply) && toolsLeft()) {
+        nudged = true;
+        convo.push({ role: 'assistant', content: reply, ...(used.message.claude ? { claude: used.message.claude } : {}) }, { role: 'system', content: DO_IT_YOURSELF });
+        continue;
+      }
       break;
     }
-    // The follow-up call must show the model its own tool_calls, or the results have nothing to attach to.
-    convo.push({ role: 'assistant', content: used.message.content || null, tool_calls: calls });
+    // The follow-up call must show the model its own tool_calls, or the results have
+    // nothing to attach to. Claude's turn is replayed as-is (its thinking blocks included).
+    convo.push({ role: 'assistant', content: used.message.content || null, tool_calls: calls, ...(used.message.claude ? { claude: used.message.claude } : {}) });
     for (const call of calls) {
       const name = call.function?.name;
       const started = Date.now();
@@ -437,15 +396,18 @@ export async function runConversation(messages, run) {
     if (hasOverlap(reply, state.texts)) reply = removeOverlapping(reply, state.texts);
   }
 
-  const sources = numberSources(state.sources);
+  const sources = numberSources(state.sources, `${messages.filter((m) => m.role === 'user').map((m) => m.content).join(' ')} ${reply}`);
   const { text, hub } = replaceHubIds(stripSourceTags(reply));
-  reply = tidy(handleUrls(text, sources));
+  reply = capReply(tidy(handleUrls(text, sources)));
   if (reply.length < 2) {
     reply = trace.length
       ? 'Sorry, I gathered some data but couldn’t put an answer together. See "How this was answered" below, or ask again.'
       : 'Sorry, something went wrong putting an answer together. Please ask again.';
   }
-  return { reply, sources, trace, lookups: findLookups(lastUser), hub, model: used.model, provider: used.provider };
+  return {
+    reply, sources, trace, lookups: findLookups(lastUser), hub, model: used.model, provider: used.provider,
+    ...(run.fallback ? { fallback: run.fallback } : {}),
+  };
 }
 
 // ---------- Route ----------
@@ -455,7 +417,7 @@ export async function runConversation(messages, run) {
  * Returns { status, body, headers? }.
  */
 export async function handleAsk(request, env, exec, deps) {
-  if (!env.GROQ_API_KEY && !env.OPENROUTER_API_KEY) return { status: 503, body: { error: 'Ask is not configured.' } };
+  if (!env.ANTHROPIC_API_KEY && !env.GROQ_API_KEY && !env.OPENAI_API_KEY && !env.OPENROUTER_API_KEY) return { status: 503, body: { error: 'Ask is not configured.' } };
   const tooLarge = { status: 413, body: { error: `Requests are limited to ${MAX_BODY / 1024} KB.` } };
   if (Number(request.headers.get('content-length')) > MAX_BODY) return tooLarge;
   const raw = request.body ? await readCapped(request, MAX_BODY) : '';

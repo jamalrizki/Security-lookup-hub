@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { preSendCheck, historyForSend, checkedHub, checkedSources, cvePrompt, PRIVATE_KEY_MESSAGE, MAX_HISTORY } from '../js/ask.js';
+import { preSendCheck, historyForSend, checkedHub, checkedSources, cvePrompt, answeredBy, PRIVATE_KEY_MESSAGE, MAX_HISTORY } from '../js/ask.js';
 
 const root = new URL('../', import.meta.url);
 const b64url = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
@@ -109,4 +109,12 @@ test('Analyze handoff: taken once, by the right tool, and ignored after a minute
   put({ tool: 'jwt', text: 'from an older cached ask.js' });
   assert.equal(takeHandoff('jwt', 5_000_000), 'from an older cached ask.js', 'no timestamp: accepted');
   delete globalThis.sessionStorage;
+});
+
+test('"Answered by" names the model that answered, and the fallback when one was used', () => {
+  assert.equal(answeredBy({ model: 'claude-haiku-5-5' }), 'Answered by claude-haiku-5-5. AI can be wrong: check the sources.');
+  assert.equal(answeredBy({ model: 'openai/gpt-oss-120b', fallback: { from: 'anthropic:claude-haiku-5-5', reason: 'credit or billing' } }),
+    'Answered by openai/gpt-oss-120b (free fallback: claude-haiku-5-5 was unavailable). AI can be wrong: check the sources.');
+  assert.match(answeredBy({ model: 'openai/gpt-oss-120b', fallback: { from: 'anthropic:claude-haiku-5-5', reason: 'no API key' } }), /was not configured/);
+  assert.equal(answeredBy({}), 'Answered by the AI model. AI can be wrong: check the sources.');
 });

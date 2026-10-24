@@ -88,11 +88,12 @@ export function newState(visitorText) {
   };
 }
 
-function addSource(state, url, title) {
+// kind: 'web' | 'news' | 'cve' (the Sources list caps each); rank orders CVE links (NVD first).
+function addSource(state, url, title, kind, rank = 0) {
   try {
     const u = new URL(url);
     if (u.protocol !== 'https:') return;
-    state.sources.push({ title: String(title || u.hostname).slice(0, 150), url: u.href, domain: u.hostname.replace(/^www\./, '') });
+    state.sources.push({ title: String(title || u.hostname).slice(0, 150), url: u.href, domain: u.hostname.replace(/^www\./, ''), kind, rank });
   } catch { /* not a URL */ }
 }
 
@@ -120,7 +121,7 @@ async function webSearchTool(args, { env, state }) {
   if (r.error) return fail(r.error);
   for (const x of r.results) {
     state.texts.push(x.excerpt);
-    addSource(state, x.url, x.title);
+    addSource(state, x.url, x.title, 'web');
   }
   learnIds(state, r.results);
   const domains = [...new Set(r.results.map((x) => x.domain))];
@@ -153,7 +154,7 @@ async function recentNewsTool(args, { env, state }) {
       link: i.link,
       ...(i.cve ? { cve: i.cve, vendor: i.vendor, product: i.product } : {}),
     }));
-  for (const i of items) addSource(state, i.link, i.title);
+  for (const i of items) addSource(state, i.link, i.title, 'news');
   learnIds(state, items);
   return {
     result: {
@@ -180,7 +181,7 @@ async function cveLookupTool(args, { env, state, exec, quota, runSource }) {
   const by = Object.fromEntries(sources.map((s) => [s.id, s]));
   const nvd = by.nvd.status === 'ok' ? by.nvd.data : null;
   const priority = verdict(sources);
-  for (const s of sources) if (s.status === 'ok' || s.status === 'empty') addSource(state, s.link, `${s.name}: ${id}`);
+  for (const [rank, s] of sources.entries()) if (s.status === 'ok' || s.status === 'empty') addSource(state, s.link, `${s.name}: ${id}`, 'cve', rank);
   const result = {
     cve_id: id,
     // Named so the model can't pass it off as the vendor's rating.

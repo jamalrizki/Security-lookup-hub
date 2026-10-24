@@ -3,7 +3,7 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/src/index.js';
-import { askTiming, hasOverlap, removeOverlapping, findLookups, handleUrls, replaceHubIds, stripSourceTags, validateMessages, systemPrompt, EXPLOITED_CLAIM } from '../worker/src/ask.js';
+import { askTiming, hasOverlap, removeOverlapping, findLookups, handleUrls, replaceHubIds, stripSourceTags, validateMessages, systemPrompt, EXPLOITED_CLAIM, SEARCH_DEFERRAL, numberSources, capReply } from '../worker/src/ask.js';
 import { _resetKevCache } from '../worker/src/cve.js';
 import {
   ORIGIN, installCaches, exec, memoryKv, installFetch, modelScript, toolCall, say, libraryBindings, askRequest,
@@ -11,7 +11,8 @@ import {
 } from './helpers/ask-stubs.mjs';
 
 const GROQ = 'api.groq.com';
-const baseEnv = (extra = {}) => ({ ALLOWED_ORIGINS: ORIGIN, GROQ_API_KEY: 'test-key', NEWS: memoryKv(), ...extra });
+// The original Ask tests run on the free Groq model; the Anthropic default has its own tests.
+const baseEnv = (extra = {}) => ({ ALLOWED_ORIGINS: ORIGIN, ASK_MODEL: 'groq:openai/gpt-oss-120b', GROQ_API_KEY: 'test-key', NEWS: memoryKv(), ...extra });
 const user = (content) => [{ role: 'user', content }];
 
 async function ask(messages, env, opts) {
@@ -280,9 +281,9 @@ test('Groq request uses the hub model and the spec parameters; Ask is capped at 
   assert.equal(statuses.filter((s) => s === 429).length >= 1, true, statuses.join());
   const b = model.bodies[0];
   assert.equal(b.model, 'openai/gpt-oss-120b');
-  assert.equal(b.reasoning_effort, 'low');
+  assert.equal(b.reasoning_effort, undefined, "Groq's default (medium) reasoning: 'low' skipped tools");
   assert.equal(b.include_reasoning, false);
-  assert.equal(b.max_completion_tokens, 900);
+  assert.equal(b.max_completion_tokens, 1500);
   assert.equal(b.temperature, 0.2);
   assert.equal(b.messages[0].role, 'system');
   assert.match(b.messages[0].content, /jwt: Decode a JSON Web Token/);
@@ -495,4 +496,99 @@ test('exploitation wording patterns', () => {
   for (const s of ['Ask declines exploit code.', 'It could be exploited remotely.', 'EPSS estimates the chance of exploitation.', 'Exploited in the wild: patch urgently'.replace('Exploited in the wild', 'Patch soon')]) {
     assert.ok(!EXPLOITED_CLAIM.test(s), s);
   }
+});
+
+/* ---------- tool-choice root cause: the TRIRIGA case ---------- */
+
+test('TRIRIGA: "is product X affected by Y" looks up the CVEs and the product, and never tells the visitor to search', async () => {
+  const tavily = (url, init, body) => (/tririga/i.test(body.query)
+    ? { results: [{ title: 'IBM TRIRIGA Application Platform overview', url: 'https://www.ibm.com/docs/en/tri/overview', content: 'IBM TRIRIGA runs on a Java application server (WebSphere Liberty) with a relational database. It does not use PHP.' }] }
+    : { results: [{ title: 'PHP2Shell: critical PHP-CGI argument injection', url: 'https://thehackernews.com/2026/10/php2shell.html', content: `The flaw, tracked as ${PHP_CVE}, affects PHP-CGI on Windows.` }] });
+  const model = modelScript([
+    // The old failure: an answer that sends the visitor off to search.
+    say("I couldn't find TRIRIGA-specific details. You can search IBM's security bulletins for more information."),
+    (body) => {
+      assert.match(body.messages.at(-1).content, /^Your draft tells the visitor to search/);
+      assert.equal(body.tool_choice, 'auto', 'tools stay available after the nudge');
+      return toolCall(['web_search', { query: 'major PHP vulnerability CVE October 2026' }]);
+    },
+    toolCall(['cve_lookup', { cve_id: PHP_CVE }], ['web_search', { query: 'IBM TRIRIGA technology stack PHP' }]),
+    say(`TRIRIGA isn't affected by ${PHP_CVE}: it runs on a Java application server and doesn't use PHP. The PHP flaw is in CISA KEV, and the hub's priority for it is to patch urgently, so patch any PHP-CGI servers you run.`),
+  ]);
+  installFetch([[GROQ, model.handler], ['api.tavily.com', tavily], ...cveRoutes()]);
+  const { status, body } = await ask(user('Is TRIRIGA vulnerable to the recent major PHP flaw?'), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
+  assert.equal(status, 200);
+  assert.equal(model.remaining(), 0);
+  assert.deepEqual(body.trace.map((t) => t.tool), ['web_search', 'cve_lookup', 'web_search']);
+  assert.ok(body.trace.find((t) => t.tool === 'cve_lookup').ok, 'cve_lookup was called');
+  assert.ok(!SEARCH_DEFERRAL.test(body.reply), body.reply);
+  assert.match(body.reply, /isn't affected/);
+  assert.ok(body.sources.some((s) => s.domain === 'ibm.com'));
+});
+
+test('the prompt is a decision procedure: route by question type, try the next tool, never send the visitor to search', () => {
+  const p = systemPrompt();
+  assert.match(p, /1\. Route by question type:/);
+  assert.match(p, /"Is product X affected by Y\?": find Y and its CVE IDs \(recent_news or web_search\), cve_lookup each CVE, then web_search what X is built on and X's vendor security bulletin for Y/);
+  assert.match(p, /If a tool finds nothing or not enough, try the next fitting tool before answering\./);
+  assert.match(p, /Never tell the visitor to search, look something up or check a site/);
+  assert.match(p, /misspelled, search for the likely intended name/);
+});
+
+test('the search nudge happens once, and not when the tool caps are used up', async () => {
+  const deferral = say('You can search NVD for more.');
+  let model = modelScript([deferral, say('You should check the vendor advisory page.')]);
+  installFetch([[GROQ, model.handler]]);
+  let r = await ask(user('Tell me more'), baseEnv());
+  assert.equal(model.bodies.length, 2, 'one nudge, then the answer stands');
+
+  // All four tools at their caps: a nudge could do nothing, so none is sent.
+  const ids = ['CVE-2024-1001', 'CVE-2024-1002', 'CVE-2024-1003'];
+  model = modelScript([
+    toolCall(['search_reference', { query: 'aaa bbb' }], ['search_reference', { query: 'ccc ddd' }], ['recent_news', {}]),
+    toolCall(['web_search', { query: 'eee fff' }], ['web_search', { query: 'ggg hhh' }], ...ids.map((id) => ['cve_lookup', { cve_id: id }])),
+    deferral,
+  ]);
+  installFetch([[GROQ, model.handler], ['api.tavily.com', () => ({ results: [] })], ...cveRoutes()]);
+  r = await ask(user(`About ${ids.join(' ')}`), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
+  assert.equal(model.remaining(), 0);
+  assert.equal(r.body.reply, 'You can search NVD for more.');
+});
+
+test('search-deferral patterns', () => {
+  for (const s of ['You can search the vendor site for details.', 'Search NVD for it.', '- Check the IBM security bulletin.', 'I recommend checking the advisory.', 'Try a search on cisa.gov.', "use the hub's CVE lookup feature: CVEs search", 'You’ll need to look it up on NVD.', "For details, check IBM's support portal.", '- Visit the vendor advisory page.']) {
+    assert.ok(SEARCH_DEFERRAL.test(s), s);
+  }
+  for (const s of ["I can't search for personal data.", 'Attackers search for exposed servers.', 'Use [[lookup]] for the IP.', '- Check your web logs for unusual POST requests.', 'IBM has not published a bulletin for this.']) {
+    assert.ok(!SEARCH_DEFERRAL.test(s), s);
+  }
+});
+
+/* ---------- Sources caps and the answer-length guard ---------- */
+
+test('Sources: news 3, web 4, CVE 3 (NVD links first); news only when it shares a word with the question or answer', () => {
+  const src = (kind, i, extra = {}) => ({ kind, title: `${kind} ${i}`, url: `https://${kind}.example/${i}`, domain: `${kind}.example`, ...extra });
+  const list = [
+    ...[1, 2, 3, 4, 5].map((i) => src('news', i, { title: `Laravel auth bypass story ${i}` })),
+    src('news', 9, { title: 'Ransomware hits hospital' }),
+    ...[1, 2, 3, 4, 5].map((i) => src('web', i)),
+    ...['CVE-1', 'CVE-2'].flatMap((id) => [0, 1, 2].map((rank) => src('cve', `${id}-${rank}`, { rank }))),
+  ];
+  const out = numberSources(list, 'Is the Laravel flaw exploited?');
+  const kinds = out.map((s) => s.domain.split('.')[0]);
+  assert.equal(kinds.filter((k) => k === 'news').length, 3);
+  assert.equal(kinds.filter((k) => k === 'web').length, 4);
+  assert.equal(kinds.filter((k) => k === 'cve').length, 3);
+  assert.ok(!out.some((s) => s.title === 'Ransomware hits hospital'), 'unrelated headline left out');
+  assert.deepEqual(out.filter((s) => s.domain === 'cve.example').map((s) => s.title), ['cve CVE-1-0', 'cve CVE-1-1', 'cve CVE-2-0'], 'both NVD records before the second KEV link');
+  assert.deepEqual(out.map((s) => s.n), out.map((_, i) => i + 1));
+  assert.deepEqual(numberSources([src('news', 1, { title: 'Weekly recap' })], 'What is SPF?'), [], 'no shared word, no news source');
+});
+
+test('answer-length guard: cut at a sentence end under 3,000 characters', () => {
+  const long = Array.from({ length: 80 }, (_, i) => `Sentence number ${i} explains one more detail.`).join(' ');
+  const out = capReply(long);
+  assert.ok(out.length <= 3002, String(out.length));
+  assert.match(out, /detail\. …$/);
+  assert.equal(capReply('short.'), 'short.');
 });
