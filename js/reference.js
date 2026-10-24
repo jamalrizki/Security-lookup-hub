@@ -1,5 +1,7 @@
 // Reference page: renders data/reference.json with a text filter and toggles.
 
+import { guidanceUrl, isHubHref } from './what-now.js';
+
 const $ = (id) => document.getElementById(id);
 
 function el(tag, attrs = {}, ...children) {
@@ -69,8 +71,8 @@ export function siteByName(json, name) {
 }
 
 function renderWhereToStart() {
-  $('wts-list').replaceChildren(...(data.whereToStart || []).map((row, i) => el('section', { class: 'panel wts-card' },
-    el('span', { class: 'num', 'aria-hidden': 'true' }, String(i + 1).padStart(2, '0')),
+  $('wts-list').replaceChildren(...(data.whereToStart || []).map((row) => el('section', { class: 'panel wts-card' },
+    el('span', { class: 'num', 'aria-hidden': 'true' }), // number comes from the CSS counter
     el('h3', {}, row.have),
     el('p', { class: 'wts-hub' }, el('span', { class: 'hint' }, 'Try it here first: '),
       ...row.hub.flatMap((h, i) => [i ? ' \u00b7 ' : null, el('a', { href: h.href }, h.label)])),
@@ -80,6 +82,36 @@ function renderWhereToStart() {
       return el('li', {}, el('strong', {}, name), ` \u2014 ${ref.when}`);
     })))));
 }
+
+// "Already happened? What to do now": fixed first steps from data/what-now.json.
+// Links are re-checked here too, so a bad edit never renders as a link.
+function renderWhatNow(items) {
+  $('wn-list').replaceChildren(...items.map((item) => {
+    const links = item.guidance.map((g) => [g, guidanceUrl(g.url)]).filter(([, href]) => href);
+    const hub = item.hub.filter((h) => isHubHref(h.href));
+    return el('section', { class: 'panel wts-card', id: `what-now-${item.id}`, 'aria-labelledby': `wn-${item.id}-h` },
+      el('span', { class: 'num', 'aria-hidden': 'true' }), // number comes from the CSS counter
+      el('h3', { id: `wn-${item.id}-h` }, item.title),
+      el('ol', { class: 'plain-list' }, ...item.steps.map((s) => el('li', {}, s))),
+      hub.length ? el('p', { class: 'wts-hub' }, el('span', { class: 'hint' }, 'On this site: '),
+        ...hub.flatMap((h, j) => [j ? ' \u00b7 ' : null, el('a', { href: h.href }, h.label)])) : null,
+      links.length ? el('p', { class: 'small' }, el('span', { class: 'hint' }, 'Official guidance: '),
+        ...links.flatMap(([g, href], j) => [j ? ' \u00b7 ' : null,
+          el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, g.title), ` (${g.by})`])) : null);
+  }));
+}
+
+async function loadWhatNow() {
+  try {
+    const res = await fetch('data/what-now.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    renderWhatNow((await res.json()).items || []);
+  } catch (err) {
+    $('wn-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the checklists: ${err.message}`));
+  }
+}
+
+loadWhatNow();
 
 try {
   const res = await fetch('data/reference.json');

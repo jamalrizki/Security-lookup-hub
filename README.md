@@ -18,6 +18,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 9 | Email-security assessment on domain/email lookups: null MX, SPF, DMARC, optional DKIM selector, spoofing grade | Done |
 | 10 | More Analyze tools: JWT decoder, file analyzer (hashes, magic bytes, strings), subnet calculator | Done |
 | 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Done |
+| Extra | Reference: "Already happened? What to do now" checklists (clicked a link, typed a password, opened a file, remote access, paid a scammer, hacked account, data breach) | Built, not deployed |
 | 12 | Analyze: certificate viewer and Nmap viewer | Done |
 | 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
 | 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
@@ -169,6 +170,15 @@ Domain and email lookups grade how easily someone could send mail pretending to 
 ## Reference: where to start
 
 The top of `reference.html` has one card per thing you might have: a hash, domain, IP, URL, email address, email headers, CVE, suspicious file or threat actor name. Each card links first to the hub feature to try, then to 2–3 outside sites with one line on when to use each. The data is `whereToStart` in `data/reference.json`. Outside sites are named, not linked: the page takes each URL from the directory entry of the same name, so it can only point at sites the directory already lists. `tests/reference.test.mjs` fails if a name isn't in the directory.
+
+## Reference: already happened? What to do now
+
+Below "Where to start", `reference.html#what-now` has one card per thing that already went wrong: clicked a link, typed a password into a fake page, opened an attachment or installed something, let someone remote into the computer, paid a scammer, had an account taken over, or had details in a data breach. Each card is 3–7 short steps in plain language, links to the hub tool that helps (link inspector, file analyzer, password check), and links to the official guidance the steps follow: FTC (consumer.ftc.gov, IdentityTheft.gov, ReportFraud.ftc.gov) and the UK's NCSC. The guidance is linked, not copied.
+
+- The data is `data/what-now.json`; the cards are fixed text, with no AI. Each card has an anchor, e.g. `reference.html#what-now-typed-password`.
+- Official links must be https on an allowlist of government hosts (`GUIDANCE_HOSTS` in `js/what-now.js`). The page re-checks every link before rendering it, and `tests/what-now.test.mjs` fails on any other host, a hub link to a missing page or anchor, or a step that points at a card that doesn't exist.
+- Ask can send visitors here with `[[what-now]]`, and to the password check on the Lookup page (`./#password`) with `[[password]]` (`data/hub-features.json`).
+- Guidance links were checked on Oct 24, 2026. Government pages move, so re-check them when you touch this file.
 
 ## Analyze tools
 
@@ -396,6 +406,7 @@ js/lookup.js     Lookup page wiring
 js/ask.js        Ask box: pre-send check, thread, hub/look-up/sources/trace under each answer
 js/render-answer.js   safe Markdown subset -> DOM nodes (text nodes only)
 js/reference.js  Reference page rendering
+js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
@@ -405,6 +416,7 @@ js/tools.js      tools glossary page (renders data/tools.json)
 js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node
 js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, cert.js, nmap.js) plus ui.js, data.js and handoff.js (receives text the Ask box hands over); tool modules export their pure functions for tests and only wire up the page in a browser
 data/reference.json   the site directory
+data/what-now.json    "Already happened? What to do now" checklists
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
 data/brands.json      brands for the lookalike check
