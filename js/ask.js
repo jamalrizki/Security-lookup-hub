@@ -192,7 +192,7 @@ if (globalThis.document?.getElementById('ask-form')) {
       }
       button.remove();
       box.replaceChildren(
-        el('h4', {}, 'In plain words'),
+        el('h4', {}, 'The simple version'),
         el('div', { class: 'ask-text' }, ...renderAnswer(String(r.reply || ''))),
         el('p', { class: 'hint' }, answeredBy(r)));
     });

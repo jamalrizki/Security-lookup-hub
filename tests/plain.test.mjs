@@ -114,5 +114,15 @@ test('simplify: validation, CORS, and the daily paid cap and fallback notes appl
 
 test('prompt sizes', () => {
   assert.ok(PLAIN_SYSTEM.length < 1000, String(PLAIN_SYSTEM.length));
-  assert.ok(SIMPLIFY_SYSTEM.length < 700, String(SIMPLIFY_SYSTEM.length));
+  assert.ok(SIMPLIFY_SYSTEM.length < 1200, String(SIMPLIFY_SYSTEM.length));
+  assert.match(SIMPLIFY_SYSTEM, /busy executive, or a five-year-old/);
+  assert.match(SIMPLIFY_SYSTEM, /No jargon, acronyms, CVE IDs, scores, percentages or version numbers/);
+  assert.match(SIMPLIFY_SYSTEM, /"What to do:"/);
+});
+
+test('the simple version is capped at 1,200 characters in code', async () => {
+  const long = Array.from({ length: 40 }, (_, i) => `Sentence ${i} keeps going about the same thing.`).join(' ');
+  installFetch([[GROQ, modelScript([say(long)]).handler]]);
+  const { body } = await simplify({ question: 'q', answer: long });
+  assert.ok(body.reply.length <= 1202, String(body.reply.length));
 });
