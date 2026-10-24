@@ -111,10 +111,14 @@ test('Analyze handoff: taken once, by the right tool, and ignored after a minute
   delete globalThis.sessionStorage;
 });
 
-test('"Answered by" names the model that answered, and the fallback when one was used', () => {
+test('"Answered by" names the model that answered, and every step that changed it', () => {
   assert.equal(answeredBy({ model: 'claude-haiku-5-5' }), 'Answered by claude-haiku-5-5. AI can be wrong: check the sources.');
   assert.equal(answeredBy({ model: 'openai/gpt-oss-120b', fallback: { from: 'anthropic:claude-haiku-5-5', reason: 'credit or billing' } }),
     'Answered by openai/gpt-oss-120b (free fallback: claude-haiku-5-5 was unavailable). AI can be wrong: check the sources.');
   assert.match(answeredBy({ model: 'openai/gpt-oss-120b', fallback: { from: 'anthropic:claude-haiku-5-5', reason: 'no API key' } }), /was not configured/);
+  assert.equal(answeredBy({ model: 'openai/gpt-oss-120b', fallback: { from: 'anthropic:claude-haiku-5-5', reason: 'daily limit' } }),
+    "Answered by openai/gpt-oss-120b (today's AI limit (switched to the free model)). AI can be wrong: check the sources.");
+  assert.equal(answeredBy({ model: 'meta-llama/llama-4-maverick:free', fallback: { reason: 'daily limit', from: 'anthropic:claude-haiku-5-5' }, relay: { from: 'groq', to: 'openrouter' } }),
+    "Answered by meta-llama/llama-4-maverick:free (today's AI limit (switched to the free model); Groq is busy, answered by OpenRouter). AI can be wrong: check the sources.");
   assert.equal(answeredBy({}), 'Answered by the AI model. AI can be wrong: check the sources.');
 });

@@ -9,7 +9,7 @@ ALLOWED_ORIGINS = "https://jamalrizki.github.io,http://localhost:8000,http://127
 # Ask's model, "provider:model" (README: Switching Ask's model). Options:
 #   anthropic:claude-haiku-5-5 (default)  anthropic:claude-sonnet-5-5
 #   groq:openai/gpt-oss-120b (free)       openai:<model> (needs OPENAI_API_KEY)
-# A credit/billing failure falls back to free Groq for that question.
+# Chain: paid model (100 questions/day, KV-counted) -> free Groq -> OpenRouter free models.
 ASK_MODEL = "anthropic:claude-haiku-5-5"
 # ASK_EFFORT = "medium"   # Claude only; unset = the model's default
 

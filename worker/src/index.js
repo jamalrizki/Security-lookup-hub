@@ -226,17 +226,13 @@ async function explainRoute(request, env, ctx, origin) {
   const hit = await cache.match(key);
   if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);
 
-  const tools = quotaTools(env, ctx);
-  if ((await tools.paused('GROQ_API_KEY')) || !(await tools.allow('GROQ_API_KEY', 20))) {
-    return json({ error: 'The AI explainer is busy (free tier limit). Try again in a minute.' }, 429, origin, { 'retry-after': '60' });
-  }
+  // No hub-side Groq limit or pause: Groq's own rate limit applies, and its 429 is passed on.
   let text;
   try {
     text = await explain(body, env.GROQ_API_KEY);
   } catch (err) {
     if (err instanceof QuotaError) {
-      tools.pause('GROQ_API_KEY', Math.min(Math.max(err.retryAfter, 60), 3600));
-      return json({ error: 'The AI explainer has hit its free limit. Try again later.' }, 429, origin, { 'retry-after': '60' });
+      return json({ error: 'The AI explainer is busy (Groq free tier). Try again in a minute.' }, 429, origin, { 'retry-after': '60' });
     }
     return json({ error: err.name === 'TimeoutError' ? 'The AI explainer took too long. Try again.' : 'The AI explainer failed. Try again later.' }, 502, origin);
   }

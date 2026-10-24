@@ -75,14 +75,15 @@ export function checkedHub(hub, features) {
   return out;
 }
 
-/** The "Answered by" line: the model that actually answered, and any fallback. */
+/** The "Answered by" line: the model that actually answered, and how it got there. */
 export function answeredBy(body) {
   const model = String(body?.model || 'the AI model');
-  const from = typeof body?.fallback?.from === 'string' ? body.fallback.from.replace(/^[a-z]+:/, '') : '';
-  const why = body?.fallback?.reason === 'no API key' ? 'not configured' : 'unavailable';
-  return from
-    ? `Answered by ${model} (free fallback: ${from} was ${why}). AI can be wrong: check the sources.`
-    : `Answered by ${model}. AI can be wrong: check the sources.`;
+  const notes = [];
+  const fb = body?.fallback;
+  if (fb?.reason === 'daily limit') notes.push("today's AI limit (switched to the free model)");
+  else if (typeof fb?.from === 'string') notes.push(`free fallback: ${fb.from.replace(/^[a-z]+:/, '')} was ${fb.reason === 'no API key' ? 'not configured' : 'unavailable'}`);
+  if (body?.relay?.to === 'openrouter') notes.push('Groq is busy, answered by OpenRouter');
+  return `Answered by ${model}${notes.length ? ` (${notes.join('; ')})` : ''}. AI can be wrong: check the sources.`;
 }
 
 /** Sources with https URLs only (re-checked here; the Worker already filters). */

@@ -3,7 +3,7 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/src/index.js';
 import { askTiming } from '../worker/src/ask.js';
-import { askModel, isBillingError, toAnthropic, fromAnthropic, DEFAULT_ASK_MODEL } from '../worker/src/ask-models.js';
+import { askModel, isBillingError, toAnthropic, fromAnthropic, DEFAULT_ASK_MODEL, DAILY_PAID_QUESTIONS, ALL_BUSY, takePaidQuestion } from '../worker/src/ask-models.js';
 import { _resetKevCache } from '../worker/src/cve.js';
 import { ORIGIN, installCaches, exec, memoryKv, installFetch, modelScript, say, askRequest, cveRoutes, PHP_CVE } from './helpers/ask-stubs.mjs';
 
@@ -198,4 +198,93 @@ test('the fallback holds for the rest of the question: once on Groq, later calls
   assert.equal(groq.bodies.length, 2);
   assert.equal(body.fallback.reason, 'credit or billing');
   assert.ok(!JSON.stringify(groq.bodies[1].messages).includes('"claude"'), 'Claude-only fields are not sent to Groq');
+});
+
+/* ---------- the daily paid cap and the free chain ---------- */
+
+const OPENROUTER = 'openrouter.ai';
+const today = () => new Date().toISOString().slice(0, 10);
+
+test('daily paid cap: 100 questions a day go to the paid model, counted in KV; then free Groq with a note', async () => {
+  assert.equal(DAILY_PAID_QUESTIONS, 100);
+  const news = memoryKv({ [`ask:paid:${today()}`]: '99' });
+  const claude = claudeScript([[text('Answer from Claude.')]]);
+  installFetch([[ANTHROPIC, claude.handler]]);
+  let r = await ask('What is SPF?', env({ NEWS: news }));
+  assert.equal(r.body.provider, 'anthropic', 'the 100th question still goes to the paid model');
+  assert.equal(news.map.get(`ask:paid:${today()}`), '100');
+  assert.deepEqual(news.puts.at(-1).opts, { expirationTtl: 172800 });
+
+  const groq = modelScript([say('Answer from Groq.')]);
+  const calls = installFetch([[ANTHROPIC, claudeScript([]).handler], [GROQ, groq.handler]]);
+  r = await ask('What is SPF?', env({ NEWS: news }));
+  assert.equal(r.body.provider, 'groq');
+  assert.deepEqual(r.body.fallback, { from: 'anthropic:claude-haiku-5-5', reason: 'daily limit' });
+  assert.ok(!calls.some((c) => c.url.includes('anthropic')), 'the paid model is not called after the cap');
+  assert.equal(news.map.get(`ask:paid:${today()}`), '100', 'no write once the cap is reached');
+});
+
+test('the daily cap counts per UTC day, and only for a paid model', async () => {
+  const store = new Map();
+  const kv = { get: async (k) => store.get(k) ?? null, put: async (k, v) => { store.set(k, v); } };
+  store.set('ask:paid:2026-10-23', '100');
+  assert.equal(await takePaidQuestion(kv, new Date('2026-10-23T23:59:59Z')), false);
+  assert.equal(await takePaidQuestion(kv, new Date('2026-10-24T00:00:01Z')), true, 'resets at midnight UTC');
+  const news = memoryKv();
+  installFetch([[GROQ, modelScript([say('ok.')]).handler]]);
+  await ask('What is SPF?', env({ ASK_MODEL: 'groq:openai/gpt-oss-120b', NEWS: news }));
+  assert.equal(news.puts.length, 0, 'the free model is not counted');
+});
+
+test('free chain: Groq busy -> OpenRouter answers, and the response says so', async () => {
+  const groq = modelScript([{ httpStatus: 429, text: '{"error":{"message":"Rate limit reached. Please try again in 45s."}}' }]);
+  const or = modelScript([(body) => { assert.equal(body.model, 'openrouter/free'); return say('Answer from OpenRouter.'); }]);
+  installFetch([[GROQ, groq.handler], [OPENROUTER, (u, i, b) => ({ ...or.handler(u, i, b), model: 'meta-llama/llama-4-maverick:free' })]]);
+  const { status, body } = await ask('What is SPF?', env({ ASK_MODEL: 'groq:openai/gpt-oss-120b', OPENROUTER_API_KEY: 'or-key' }));
+  assert.equal(status, 200);
+  assert.equal(body.provider, 'openrouter');
+  assert.equal(body.model, 'meta-llama/llama-4-maverick:free', 'the model that actually answered');
+  assert.deepEqual(body.relay, { from: 'groq', to: 'openrouter', reason: 'busy' });
+});
+
+test('free chain: a Groq timeout or 5xx also goes to OpenRouter; once there, the question stays there', async () => {
+  const or = modelScript([
+    { role: 'assistant', content: null, tool_calls: [{ id: 'c1', type: 'function', function: { name: 'cve_lookup', arguments: JSON.stringify({ cve_id: PHP_CVE }) } }] },
+    say('done.'),
+  ]);
+  let groqCalls = 0;
+  installFetch([[GROQ, () => { groqCalls++; return { httpStatus: 503, text: 'unavailable' }; }], [OPENROUTER, or.handler], ...cveRoutes()]);
+  const { body } = await ask(`About ${PHP_CVE}`, env({ ASK_MODEL: 'groq:openai/gpt-oss-120b', OPENROUTER_API_KEY: 'or-key' }));
+  assert.equal(groqCalls, 1, 'Groq is not retried for the rest of the question');
+  assert.equal(or.bodies.length, 2);
+  assert.equal(body.relay.reason, 'unavailable');
+
+  const slow = modelScript([say('from OpenRouter after a timeout.')]);
+  installFetch([[GROQ, () => { throw Object.assign(new Error('timed out'), { name: 'TimeoutError' }); }], [OPENROUTER, slow.handler]]);
+  const r = await ask('What is SPF?', env({ ASK_MODEL: 'groq:openai/gpt-oss-120b', OPENROUTER_API_KEY: 'or-key' }));
+  assert.equal(r.body.relay.reason, 'timeout');
+});
+
+test('paid cap reached + Groq busy -> OpenRouter, with both notes; everything busy -> "all free AI providers are busy"', async () => {
+  const news = memoryKv({ [`ask:paid:${today()}`]: '100' });
+  installFetch([[GROQ, () => ({ httpStatus: 429, text: 'try again in 30s' })], [OPENROUTER, modelScript([say('ok.')]).handler]]);
+  let r = await ask('What is SPF?', env({ NEWS: news, OPENROUTER_API_KEY: 'or-key' }));
+  assert.equal(r.body.fallback.reason, 'daily limit');
+  assert.equal(r.body.relay.to, 'openrouter');
+
+  installFetch([[GROQ, () => ({ httpStatus: 429, text: 'try again in 30s' })], [OPENROUTER, () => ({ httpStatus: 429, text: 'rate limited' })]]);
+  r = await ask('What is SPF?', env({ NEWS: news, OPENROUTER_API_KEY: 'or-key' }));
+  assert.equal(r.status, 429);
+  assert.equal(r.body.error, ALL_BUSY);
+  assert.equal(ALL_BUSY, 'All free AI providers are busy. Try again in a minute.');
+});
+
+test('no hub-side Groq guards: no per-minute counter, no pause after a 429 (Ask and Explain)', async () => {
+  const cache = installCaches();
+  installFetch([[GROQ, () => ({ httpStatus: 429, text: 'try again in 30s' })]]);
+  await ask('What is SPF?', env({ ASK_MODEL: 'groq:openai/gpt-oss-120b' }));
+  assert.ok(![...cache.keys()].some((k) => /quota\/(ask|GROQ_API_KEY)|pause\/GROQ_API_KEY/.test(k)), [...cache.keys()].join());
+  const src = (await import('node:fs')).readFileSync(new URL('../worker/src/index.js', import.meta.url), 'utf8');
+  const explainRoute = src.slice(src.indexOf('async function explainRoute'), src.indexOf('export default'));
+  assert.ok(!/allow\('GROQ_API_KEY'|paused\('GROQ_API_KEY'|pause\('GROQ_API_KEY'/.test(explainRoute), 'Explain has no Groq guard either');
 });

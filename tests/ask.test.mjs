@@ -189,21 +189,22 @@ test('a URL the tools did not return comes back defanged', async () => {
 test('over-cap tool calls return isError, and the 5th round forces a text answer', async () => {
   const q = (n) => ['web_search', { query: `query number ${n}` }];
   const model = modelScript([
-    toolCall(q(1), q(2), q(3)),
+    toolCall(q(1), q(2), q(3), q(4)),
     toolCall(['recent_news', {}]),
     toolCall(['recent_news', {}]),
-    toolCall(['search_reference', { query: 'something here' }]),
+    toolCall(['recent_news', {}]),
     (body) => {
       assert.equal(body.tool_choice, 'none');
       assert.match(body.messages[body.messages.length - 1].content, /Tool budget used up/);
       return say('Here is what I found.');
     },
   ]);
-  installFetch([[GROQ, model.handler], ['api.tavily.com', () => ({ results: [] })]]);
+  const hit = { results: [{ title: 'Advisory', url: 'https://www.cisa.gov/a', content: 'text' }] };
+  installFetch([[GROQ, model.handler], ['api.tavily.com', () => hit]]);
   const { body } = await ask(user('Keep searching'), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
   assert.equal(model.remaining(), 0, 'exactly 5 model calls');
-  assert.deepEqual(body.trace.map((t) => t.ok), [true, true, false, true, false, true]);
-  assert.equal(body.trace[2].summary, 'Limit reached for this question');
+  assert.deepEqual(body.trace.map((t) => t.ok), [true, true, true, false, true, true, false], 'web_search 3, recent_news 2');
+  assert.equal(body.trace[3].summary, 'Limit reached for this question');
   assert.equal(body.reply, 'Here is what I found.');
 });
 
@@ -259,7 +260,7 @@ test('Groq 429 "try again in 435ms" waits and retries; "try again in 45s" answer
   installFetch([[GROQ, model.handler]]);
   r = await ask(user('What is SPF?'), baseEnv());
   assert.equal(r.status, 429);
-  assert.equal(r.body.error, 'Ask is busy (free tier limit). Try again in a minute.');
+  assert.equal(r.body.error, 'All free AI providers are busy. Try again in a minute.', 'no OpenRouter key: nothing else to try');
 });
 
 test('OpenRouter takes over when Groq fails and a key is set', async () => {
@@ -272,13 +273,12 @@ test('OpenRouter takes over when Groq fails and a key is set', async () => {
   assert.equal(or.bodies[0].model, 'openrouter/free');
 });
 
-test('Groq request uses the hub model and the spec parameters; Ask is capped at 6 questions a minute', async () => {
-  const model = modelScript(Array.from({ length: 7 }, () => say('ok.')));
+test('Groq request uses the hub model and the spec parameters; no per-minute limit of our own', async () => {
+  const model = modelScript(Array.from({ length: 40 }, () => say('ok.')));
   installFetch([[GROQ, model.handler]]);
   const statuses = [];
-  for (let i = 0; i < 7; i++) statuses.push((await ask(user('What is SPF?'), baseEnv())).status);
-  await new Promise((r) => setTimeout(r, 0));
-  assert.equal(statuses.filter((s) => s === 429).length >= 1, true, statuses.join());
+  for (let i = 0; i < 40; i++) statuses.push((await ask(user('What is SPF?'), baseEnv())).status);
+  assert.ok(statuses.every((s) => s === 200), statuses.join());
   const b = model.bodies[0];
   assert.equal(b.model, 'openai/gpt-oss-120b');
   assert.equal(b.reasoning_effort, undefined, "Groq's default (medium) reasoning: 'low' skipped tools");
@@ -545,11 +545,11 @@ test('the search nudge happens once, and not when the tool caps are used up', as
   // All four tools at their caps: a nudge could do nothing, so none is sent.
   const ids = ['CVE-2024-1001', 'CVE-2024-1002', 'CVE-2024-1003'];
   model = modelScript([
-    toolCall(['search_reference', { query: 'aaa bbb' }], ['search_reference', { query: 'ccc ddd' }], ['recent_news', {}]),
-    toolCall(['web_search', { query: 'eee fff' }], ['web_search', { query: 'ggg hhh' }], ...ids.map((id) => ['cve_lookup', { cve_id: id }])),
+    toolCall(['search_reference', { query: 'aaa bbb' }], ['search_reference', { query: 'ccc ddd' }], ['recent_news', {}], ['recent_news', {}]),
+    toolCall(['web_search', { query: 'eee fff' }], ['web_search', { query: 'ggg hhh' }], ['web_search', { query: 'iii jjj' }], ...ids.map((id) => ['cve_lookup', { cve_id: id }])),
     deferral,
   ]);
-  installFetch([[GROQ, model.handler], ['api.tavily.com', () => ({ results: [] })], ...cveRoutes()]);
+  installFetch([[GROQ, model.handler], ['api.tavily.com', () => ({ results: [{ title: 'x', url: 'https://www.cisa.gov/x', content: 'x' }] })], ...cveRoutes()]);
   r = await ask(user(`About ${ids.join(' ')}`), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
   assert.equal(model.remaining(), 0);
   assert.equal(r.body.reply, 'You can search NVD for more.');
@@ -591,4 +591,56 @@ test('answer-length guard: cut at a sentence end under 3,000 characters', () => 
   assert.ok(out.length <= 3002, String(out.length));
   assert.match(out, /detail\. …$/);
   assert.equal(capReply('short.'), 'short.');
+});
+
+/* ---------- date, caps, vendor rule, news relevance ---------- */
+
+test("today's date is in the prompt, from the Worker's clock", () => {
+  assert.match(systemPrompt(new Date('2026-10-23T05:00:00Z')), /\nToday is 2026-10-23\. Use the current year in searches about recent events\.\n/);
+  assert.match(systemPrompt(), new RegExp(`Today is ${new Date().toISOString().slice(0, 10)}`));
+});
+
+test('a web search with no results does not use up the per-question cap, but counts toward the daily 25', async () => {
+  const day = new Date().toISOString().slice(0, 10);
+  const news = memoryKv();
+  const empty = (n) => ['web_search', { query: `empty query ${n}` }];
+  const full = (n) => ['web_search', { query: `good query ${n}` }];
+  const model = modelScript([toolCall(empty(1), empty(2), full(1), full(2), full(3), full(4)), say('done.')]);
+  installFetch([[GROQ, model.handler], ['api.tavily.com', (u, i, b) => (b.query.startsWith('empty') ? { results: [] } : { results: [{ title: 't', url: 'https://www.cisa.gov/t', content: 'c' }] })]]);
+  const { body } = await ask(user('Search a lot'), baseEnv({ TAVILY_API_KEY: 'tvly-test', NEWS: news }));
+  assert.deepEqual(body.trace.map((t) => t.ok), [true, true, true, true, true, false], 'two empty searches, then 3 counted ones; the 4th is over the cap');
+  assert.equal(body.trace[0].summary, 'No results from the allowed sites');
+  assert.equal(news.map.get(`ask:websearch:${day}`), '5', 'every search that reached Tavily counted toward the day');
+});
+
+test('empty web searches are still bounded (6 attempts a question)', async () => {
+  const model = modelScript([toolCall(...Array.from({ length: 8 }, (_, n) => ['web_search', { query: `empty query ${n}` }])), say('nothing.')]);
+  installFetch([[GROQ, model.handler], ['api.tavily.com', () => ({ results: [] })]]);
+  const { body } = await ask(user('Search a lot'), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
+  assert.deepEqual(body.trace.map((t) => t.ok), [true, true, true, true, true, true, false, false]);
+});
+
+test('vendor advice: allowed only after searching for the bulletin (prompt rule); the deferral check is unchanged', () => {
+  assert.match(systemPrompt(), /Suggest confirming with a vendor only after you have run web_search for that vendor's security bulletin\./);
+  assert.ok(!SEARCH_DEFERRAL.test("I couldn't verify that, so check IBM's advisory for TRIRIGA directly."), 'not widened');
+  assert.ok(SEARCH_DEFERRAL.test('You can search the web for more.'));
+});
+
+test('news relevance: generic security words never make a headline relevant; a product, vendor or CVE ID does', () => {
+  const news = (title, i) => ({ kind: 'news', title, url: `https://www.cisa.gov/n${i}`, domain: 'cisa.gov' });
+  const list = [
+    news('CISA Adds One Known Exploited Vulnerability to Catalog', 1),
+    news('Critical Security Update: Patch This Flaw Now', 2),
+    news('Siemens SIMATIC S7 Webserver API', 3),
+    news(`PHP2Shell flaws ${PHP_CVE} under attack`, 4),
+  ];
+  const answer = `${PHP_CVE} isn't in CISA's Known Exploited Vulnerabilities catalog. It is a critical security flaw; patch the update. Siemens RUGGEDCOM is affected.`;
+  assert.deepEqual(numberSources(list, `Is TRIRIGA affected? ${answer}`).map((s) => s.title), ['Siemens SIMATIC S7 Webserver API', `PHP2Shell flaws ${PHP_CVE} under attack`]);
+});
+
+test('recent_news allows 2 calls a question', async () => {
+  const model = modelScript([toolCall(['recent_news', { filter: 'news' }], ['recent_news', { filter: 'kev' }], ['recent_news', {}]), say('ok.')]);
+  installFetch([[GROQ, model.handler]]);
+  const { body } = await ask(user('News?'), baseEnv({ NEWS: memoryKv({ 'news:v1': NEWS_SNAPSHOT }) }));
+  assert.deepEqual(body.trace.map((t) => t.ok), [true, true, false]);
 });

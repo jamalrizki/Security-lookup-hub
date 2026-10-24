@@ -18,7 +18,7 @@ import { detect } from '../../js/detect.js';
 import { readCapped } from './http.js';
 import { defangText } from './explain.js';
 import { TOOL_CAPS, runTool, newState, featureById, featuresPrompt, cveIdsIn } from './ask-tools.js';
-import { chat, askModel, askTiming, BusyError, BUSY } from './ask-models.js';
+import { chat, askModel, askTiming, BusyError, ALL_BUSY, takePaidQuestion } from './ask-models.js';
 
 export { askTiming, BusyError };
 
@@ -33,12 +33,12 @@ const SOURCE_CAPS = { news: 3, web: 4, cve: 3 };
 const MAX_HUB_LINKS = 4;
 const MAX_LOOKUPS = 6;
 const OVERLAP_WORDS = 12;
-const ASK_PER_MINUTE = 6; // questions a minute, site-wide
 
 // ---------- Prompt ----------
 
-export function systemPrompt() {
+export function systemPrompt(now = new Date()) {
   return `You are Ask, part of Security Lookup Hub. You answer security questions for defenders, IT staff and learners.
+Today is ${now.toISOString().slice(0, 10)}. Use the current year in searches about recent events.
 
 How to answer:
 1. Route by question type:
@@ -48,7 +48,7 @@ How to answer:
    - "Is product X affected by Y?": find Y and its CVE IDs (recent_news or web_search), cve_lookup each CVE, then web_search what X is built on and X's vendor security bulletin for Y. Then answer: affected, not affected, or not known, with the evidence.
    - Anything else recent or specific: web_search.
 2. If a tool finds nothing or not enough, try the next fitting tool before answering.
-3. Never tell the visitor to search, look something up or check a site: do it yourself with the tools. If they still don't have it, say what you couldn't find.
+3. Never tell the visitor to search, look something up or check a site: do it yourself with the tools. If they still don't have it, say what you couldn't find. Suggest confirming with a vendor only after you have run web_search for that vendor's security bulletin.
 4. If a product or name looks misspelled, search for the likely intended name.
 
 Facts:
@@ -238,7 +238,11 @@ export function findLookups(text) {
   return out;
 }
 
-const STOP = new Set('about after again also among been being between both cannot could does doing during each from have having here into just like made make many more most much must news only other over said same should since some such than that their them then there these they this those through under until very were what when where which while with would your week this today latest recent vulnerability vulnerabilities flaw flaws security issue issues attack attacks update updates report reports'.split(' '));
+// A news headline is listed only if it shares a distinctive word (a product, vendor or
+// CVE ID) with the question or answer. Generic words, including generic security words
+// and the names of the hub's own data sources, don't count.
+const STOP = new Set(`about after again also among been being between both cannot could does doing during each from have having here into just like made make many more most much must news only other over said same should since some such than that their them then there these they this those through under until very were what when where which while with would your week today latest recent
+known exploited exploitation exploit exploits catalog critical vulnerability vulnerabilities adds added flaw flaws attack attacks attacker attackers security update updates patch patches patched issue issues report reports advisory advisories warns warning urgent active actively cisa nvd`.split(/\s+/));
 const meaningfulWords = (text) => new Set((String(text).toLowerCase().match(/[a-z0-9][a-z0-9-]{3,}/g) || []).filter((w) => !STOP.has(w)));
 
 /**
@@ -407,6 +411,7 @@ export async function runConversation(messages, run) {
   return {
     reply, sources, trace, lookups: findLookups(lastUser), hub, model: used.model, provider: used.provider,
     ...(run.fallback ? { fallback: run.fallback } : {}),
+    ...(run.relay ? { relay: run.relay } : {}),
   };
 }
 
@@ -431,14 +436,19 @@ export async function handleAsk(request, env, exec, deps) {
   const v = validateMessages(body?.messages);
   if (v.error) return { status: 400, body: { error: v.error } };
 
+  // No per-minute limit of our own: the providers' limits apply. quota is for the
+  // threat-intel sources cve_lookup calls (NVD's limit and pauses).
   const quota = deps.quotaTools(env, exec);
-  const busy = { status: 429, body: { error: BUSY }, headers: { 'retry-after': '60' } };
-  if (!(await quota.allow('ask', ASK_PER_MINUTE))) return busy;
+  const run = { env, exec, quota, runSource: deps.runSource, waited: 0, selected: askModel(env) };
+  // The paid model answers at most DAILY_PAID_QUESTIONS a day; then the free models until midnight UTC.
+  if (run.selected.provider !== 'groq' && !(await takePaidQuestion(env.NEWS))) {
+    run.fallback = { from: `${run.selected.provider}:${run.selected.model}`, reason: 'daily limit' };
+  }
   try {
-    const result = await runConversation(v.messages, { env, exec, quota, runSource: deps.runSource, waited: 0 });
+    const result = await runConversation(v.messages, run);
     return { status: 200, body: result };
   } catch (err) {
-    if (err instanceof BusyError) return busy;
+    if (err instanceof BusyError) return { status: 429, body: { error: ALL_BUSY }, headers: { 'retry-after': '60' } };
     return { status: 502, body: { error: err.name === 'TimeoutError' ? 'Ask took too long. Try again.' : 'Ask is unavailable right now. Try again in a minute.' } };
   }
 }

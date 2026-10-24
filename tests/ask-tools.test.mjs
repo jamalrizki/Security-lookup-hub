@@ -12,7 +12,7 @@ test('all four tool definitions together stay under 2,400 characters (they ride 
 });
 
 test('caps match the spec', () => {
-  assert.deepEqual(TOOL_CAPS, { search_reference: 2, web_search: 2, cve_lookup: 3, recent_news: 1 });
+  assert.deepEqual(TOOL_CAPS, { search_reference: 2, web_search: 3, cve_lookup: 3, recent_news: 2 });
 });
 
 test('every hub feature href points to a page and anchor that exist; ids are unique; about is at most 60 characters', () => {

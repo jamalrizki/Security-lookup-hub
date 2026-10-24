@@ -9,9 +9,12 @@
 //     groq:openai/gpt-oss-120b     free tier
 //     openai:<model>               needs OPENAI_API_KEY
 //
-// If the selected provider can't be used for credit or billing reasons (or its
-// key isn't set), the rest of the question goes to free Groq, and the response
-// says so. The Explain button is separate and always uses Groq (explain.js).
+// Chain: the selected (paid) model -> free Groq -> OpenRouter's free models.
+// The paid model is skipped after DAILY_PAID_QUESTIONS a day, or if it fails for
+// credit, billing or key reasons; OpenRouter takes over when Groq is busy or times
+// out. There are no hub-side limits on the free models: their own rate limits and
+// our request timeout are enough. The response says which model answered and why.
+// The Explain button is separate and always uses Groq (explain.js).
 
 import Anthropic from '@anthropic-ai/sdk';
 import { MODEL as GROQ_MODEL } from './explain.js';
@@ -22,21 +25,42 @@ export const DEFAULT_ASK_MODEL = 'anthropic:claude-haiku-5-5';
 const PROVIDERS = ['anthropic', 'groq', 'openai'];
 const KEYS = { anthropic: 'ANTHROPIC_API_KEY', groq: 'GROQ_API_KEY', openai: 'OPENAI_API_KEY' };
 const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'];
-const MAX_RATE_LIMIT_WAIT_S = 20; // total Groq 429 waiting per question
+// A Groq 429 asking for a short wait is waited out (total per question); a longer
+// one hands the question to OpenRouter.
+const GROQ_SHORT_WAIT_S = 5;
 const UPSTREAM_TIMEOUT_MS = 30000;
-const GROQ_PER_MINUTE = 20; // shared with the Explain button
+// Questions a day the paid model answers; after that, the free models until midnight
+// UTC. The only limit on models.
+export const DAILY_PAID_QUESTIONS = 100;
 // Claude's adaptive thinking counts toward max_tokens (and is billed as output), so
 // Claude calls get room for it; the answer's own length is guarded in ask.js.
 const CLAUDE_MAX_TOKENS = 4000;
 const OPENAI_STYLE_MAX_TOKENS = 1500;
 const OPENROUTER_MODEL = 'openrouter/free';
 
-export const BUSY = 'Ask is busy (free tier limit). Try again in a minute.';
+// What happened, in the visitor's words (js/ask.js shows the notes after "Answered by").
+export const ALL_BUSY = 'All free AI providers are busy. Try again in a minute.';
 
 // Tests replace sleep so a "try again in 435ms" retry doesn't really wait.
 export const askTiming = { sleep: (ms) => new Promise((r) => setTimeout(r, ms)) };
 
 export class BusyError extends Error {}
+
+const utcDay = (now) => now.toISOString().slice(0, 10);
+
+/**
+ * Counts one question against the paid model's daily cap, in KV (one write per
+ * question, expires after 2 days). Returns false when today's cap is used up.
+ * Without a KV binding (local tests) there is no cap.
+ */
+export async function takePaidQuestion(kv, now = new Date()) {
+  if (!kv) return true;
+  const key = `ask:paid:${utcDay(now)}`;
+  const used = Number(await kv.get(key)) || 0;
+  if (used >= DAILY_PAID_QUESTIONS) return false;
+  await kv.put(key, String(used + 1), { expirationTtl: 2 * 86400 });
+  return true;
+}
 
 /** The selected model from ASK_MODEL: { provider, model }. Anything malformed means the default. */
 export function askModel(env = {}) {
@@ -80,7 +104,7 @@ function toOpenAI(messages) {
 function openAIStyle(provider, model, env) {
   if (provider === 'groq') {
     return {
-      name: 'groq', model, key: env.GROQ_API_KEY, quota: 'GROQ_API_KEY',
+      name: 'groq', model, key: env.GROQ_API_KEY,
       url: 'https://api.groq.com/openai/v1/chat/completions',
       // Default (medium) reasoning: 'low' skipped tools it needed (the TRIRIGA answer).
       extra: { include_reasoning: false, max_completion_tokens: OPENAI_STYLE_MAX_TOKENS, temperature: 0.2 },
@@ -110,17 +134,16 @@ async function callOpenAIStyle(p, messages, toolChoice) {
   return { message, provider: p.name, model: data.model || p.model };
 }
 
-// Groq: site-wide quota (shared with Explain), and short 429 waits are retried
-// while the question's total wait stays within MAX_RATE_LIMIT_WAIT_S.
+// Groq: a 429 that asks for a short wait is waited out (at most GROQ_SHORT_WAIT_S per
+// question); a longer one is "busy" and goes to OpenRouter.
 async function callGroq(p, messages, toolChoice, run) {
   for (;;) {
-    if ((await run.quota.paused(p.quota)) || !(await run.quota.allow(p.quota, GROQ_PER_MINUTE))) throw new BusyError(BUSY);
     try {
       return await callOpenAIStyle(p, messages, toolChoice);
     } catch (err) {
       if (err.status !== 429) throw err;
       const wait = parseRetryWaitSeconds(err.message);
-      if (!(wait > 0) || run.waited + wait > MAX_RATE_LIMIT_WAIT_S) throw new BusyError(BUSY);
+      if (!(wait > 0) || run.waited + wait > GROQ_SHORT_WAIT_S) throw new BusyError('groq busy');
       run.waited += wait;
       await askTiming.sleep(Math.ceil(wait * 1000) + 250);
     }
@@ -207,42 +230,47 @@ async function callAnthropic(model, messages, toolChoice, env) {
 
 // ---------- One model call ----------
 
-async function callSelected(sel, messages, toolChoice, run) {
-  const { env } = run;
-  if (!env[KEYS[sel.provider]]) throw Object.assign(new Error(`${KEYS[sel.provider]} is not set`), { noKey: true });
-  if (sel.provider === 'anthropic') return callAnthropic(sel.model, messages, toolChoice, env);
-  const p = openAIStyle(sel.provider, sel.model, env);
-  return sel.provider === 'groq' ? callGroq(p, messages, toolChoice, run) : callOpenAIStyle(p, messages, toolChoice);
-}
+const busyOrDown = (err) => err instanceof BusyError || err?.name === 'TimeoutError' || err?.status >= 500 || Boolean(err?.noKey);
 
-// OpenRouter, if its key is set, is the last resort when the provider in use fails.
-async function lastResort(err, messages, toolChoice, env) {
-  if (!env.OPENROUTER_API_KEY) throw err;
+/** Free Groq, then OpenRouter's free models when Groq is busy, times out or is down. */
+async function callFree(messages, toolChoice, run) {
+  const { env } = run;
+  if (!run.relay) {
+    try {
+      if (!env.GROQ_API_KEY) throw Object.assign(new Error('GROQ_API_KEY is not set'), { noKey: true });
+      return await callGroq(openAIStyle('groq', GROQ_MODEL, env), messages, toolChoice, run);
+    } catch (err) {
+      if (!busyOrDown(err)) throw err;
+      if (!env.OPENROUTER_API_KEY) throw new BusyError(ALL_BUSY);
+      run.relay = { from: 'groq', to: 'openrouter', reason: err instanceof BusyError ? 'busy' : err?.name === 'TimeoutError' ? 'timeout' : 'unavailable' };
+    }
+  }
   try {
     return await callOpenAIStyle(openAIStyle('openrouter', null, env), messages, toolChoice);
-  } catch {
+  } catch (err) {
+    if (busyOrDown(err) || err.status === 429) throw new BusyError(ALL_BUSY);
     throw err;
   }
 }
 
 /**
- * One model call for the loop. Uses the selected model; after a credit, billing
- * or missing-key failure it switches the rest of the question to free Groq
- * (run.fallback records why).
+ * One model call for the loop: the selected model, unless today's paid cap or a
+ * credit/billing/key failure moved the question to the free chain (run.fallback
+ * records why; it holds for the rest of the question, as does run.relay).
  */
 export async function chat(messages, toolChoice, run) {
   if (!run.selected) run.selected = askModel(run.env);
+  const sel = run.selected;
+  if (sel.provider === 'groq') return callFree(messages, toolChoice, run);
   if (!run.fallback) {
     try {
-      return await callSelected(run.selected, messages, toolChoice, run);
+      if (!run.env[KEYS[sel.provider]]) throw Object.assign(new Error(`${KEYS[sel.provider]} is not set`), { noKey: true });
+      if (sel.provider === 'anthropic') return await callAnthropic(sel.model, messages, toolChoice, run.env);
+      return await callOpenAIStyle(openAIStyle(sel.provider, sel.model, run.env), messages, toolChoice);
     } catch (err) {
-      if (run.selected.provider === 'groq' || !isBillingError(err)) return lastResort(err, messages, toolChoice, run.env);
-      run.fallback = { from: `${run.selected.provider}:${run.selected.model}`, reason: err.noKey ? 'no API key' : 'credit or billing' };
+      if (!isBillingError(err)) throw err;
+      run.fallback = { from: `${sel.provider}:${sel.model}`, reason: err.noKey ? 'no API key' : 'credit or billing' };
     }
   }
-  try {
-    return await callSelected({ provider: 'groq', model: GROQ_MODEL }, messages, toolChoice, run);
-  } catch (err) {
-    return lastResort(err, messages, toolChoice, run.env);
-  }
+  return callFree(messages, toolChoice, run);
 }
