@@ -1,0 +1,121 @@
+{
+  "_about": "Reference page, \"Already happened? What to do now\": plain-language first steps for people who clicked, typed a password, opened a file or paid. Steps are written for this hub and point to the official guidance they follow (linked, not copied). guidance URLs must be https on the hosts allowed in tests/what-now.test.mjs; hub hrefs must exist.",
+  "items": [
+    {
+      "id": "clicked-link",
+      "title": "I clicked a link in a suspicious message",
+      "steps": [
+        "Close the page. Don't type anything into it, and don't open anything it downloaded.",
+        "If it downloaded a file or asked you to install something, run a full scan with your antivirus (Windows includes Microsoft Defender) and remove whatever it finds.",
+        "If you typed a password into the page, follow \"I typed my password into a fake page\".",
+        "If it happened on a work computer, phone or account, tell your IT team now. Acting fast matters more than feeling embarrassed.",
+        "Report it: forward scam emails to reportphishing@apwg.org (US) or report@phishing.gov.uk (UK), and forward scam texts to 7726."
+      ],
+      "hub": [{ "label": "Suspicious-link inspector (never opens the link)", "href": "./analyze.html#link" }],
+      "guidance": [
+        { "by": "FTC (US)", "title": "How to recognize and avoid phishing scams", "url": "https://consumer.ftc.gov/articles/how-recognize-avoid-phishing-scams" },
+        { "by": "NCSC (UK)", "title": "Phishing scams: if you've shared sensitive information", "url": "https://www.ncsc.gov.uk/collection/phishing-scams/what-to-do" },
+        { "by": "NCSC (UK)", "title": "Report a scam email", "url": "https://www.ncsc.gov.uk/collection/phishing-scams/report-scam-email" }
+      ]
+    },
+    {
+      "id": "typed-password",
+      "title": "I typed my password into a fake page",
+      "steps": [
+        "Change that password now. Go to the real site by typing its address yourself, not through the link in the message.",
+        "Change it on every other account where you used the same password.",
+        "Turn on two-step verification (or use a passkey, if the site offers one).",
+        "In the account's security settings, sign out all other devices and look for recent sign-ins you don't recognise.",
+        "For an email account, delete any forwarding rules or filters you didn't create.",
+        "Can't sign in any more? Follow \"Someone got into my account\"."
+      ],
+      "hub": [{ "label": "Check a password against known breaches", "href": "./#password" }],
+      "guidance": [
+        { "by": "FTC (US)", "title": "What to do if you were scammed", "url": "https://consumer.ftc.gov/articles/what-do-if-you-were-scammed" },
+        { "by": "NCSC (UK)", "title": "Phishing scams: if you've shared sensitive information", "url": "https://www.ncsc.gov.uk/collection/phishing-scams/what-to-do" }
+      ]
+    },
+    {
+      "id": "opened-file",
+      "title": "I opened an attachment or installed something",
+      "steps": [
+        "Don't open the file again, and don't type anything into what it shows you.",
+        "Update your security software and run a full scan. Remove anything it flags, then restart.",
+        "If someone on the phone told you to install it, follow \"Someone remotely controlled my computer\".",
+        "If it happened on a work computer, phone or account, tell your IT team now. Acting fast matters more than feeling embarrassed.",
+        "Still have the file? The file analyzer shows its real type and its hashes without uploading it, and Lookup checks a hash."
+      ],
+      "hub": [{ "label": "File analyzer (stays in your browser)", "href": "./analyze.html#file" }, { "label": "Lookup", "href": "./" }],
+      "guidance": [
+        { "by": "FTC (US)", "title": "How to recognize and avoid phishing scams", "url": "https://consumer.ftc.gov/articles/how-recognize-avoid-phishing-scams" },
+        { "by": "NCSC (UK)", "title": "Phishing scams: if you've shared sensitive information", "url": "https://www.ncsc.gov.uk/collection/phishing-scams/what-to-do" }
+      ]
+    },
+    {
+      "id": "remote-access",
+      "title": "Someone remotely controlled my computer",
+      "steps": [
+        "Hang up and disconnect. Uninstall any remote-control app they asked you to install.",
+        "Update your security software (or install some), run a full scan and delete anything it flags.",
+        "Change your passwords, starting with email and banking, and turn on two-step verification.",
+        "Check your bank and card statements. If you paid or see charges you don't recognise, call your bank or card company on the number on your card.",
+        "Need help removing malware? Ask the device maker, a tech shop you trust or a knowledgeable friend. Never call a number from a pop-up."
+      ],
+      "hub": [],
+      "guidance": [
+        { "by": "FTC (US)", "title": "What to do if you were scammed", "url": "https://consumer.ftc.gov/articles/what-do-if-you-were-scammed" },
+        { "by": "FTC (US)", "title": "How to spot, avoid and report tech support scams", "url": "https://consumer.ftc.gov/articles/how-spot-avoid-and-report-tech-support-scams" }
+      ]
+    },
+    {
+      "id": "paid-scammer",
+      "title": "I paid a scammer or gave my card or bank details",
+      "steps": [
+        "Call your bank or card company now, on the number on the back of your card or in their app. Say it was fraud and ask them to stop or reverse the payment.",
+        "Paid with a gift card? Contact the gift card's company on the number on the card, and keep the card and receipt.",
+        "Paid with cryptocurrency? Contact the exchange or crypto ATM operator straight away and report the transaction as fraud.",
+        "Report it: ReportFraud.ftc.gov in the US; your bank and Report Fraud in the UK.",
+        "Be wary of anyone who later offers to get your money back for a fee. That is usually a second scam."
+      ],
+      "hub": [],
+      "guidance": [
+        { "by": "FTC (US)", "title": "What to do if you were scammed", "url": "https://consumer.ftc.gov/articles/what-do-if-you-were-scammed" },
+        { "by": "FTC (US)", "title": "Report a scam to the FTC", "url": "https://reportfraud.ftc.gov/" },
+        { "by": "NCSC (UK)", "title": "Phishing scams: if you've shared sensitive information", "url": "https://www.ncsc.gov.uk/collection/phishing-scams/what-to-do" }
+      ]
+    },
+    {
+      "id": "account-hacked",
+      "title": "Someone got into my account",
+      "steps": [
+        "Use the provider's official account-recovery page. Find it yourself; don't use links in messages.",
+        "Once you're back in: change the password, sign out all devices and turn on two-step verification.",
+        "Check that the recovery email and phone number are still yours, and delete forwarding rules you didn't create.",
+        "Look through sent messages and posts. Warn your contacts not to click links or send money in messages \"from you\".",
+        "Check your bank and shopping accounts for activity you don't recognise.",
+        "Change the password anywhere else you used the same one."
+      ],
+      "hub": [{ "label": "Check a password against known breaches", "href": "./#password" }],
+      "guidance": [
+        { "by": "FTC (US)", "title": "How to recover your hacked email or social media account", "url": "https://consumer.ftc.gov/articles/how-recover-your-hacked-email-or-social-media-account" },
+        { "by": "NCSC (UK)", "title": "Recovering a hacked account", "url": "https://www.ncsc.gov.uk/guidance/recovering-a-hacked-account" }
+      ]
+    },
+    {
+      "id": "data-exposed",
+      "title": "My details were in a data breach",
+      "steps": [
+        "Confirm it with the company through its official website, not through a link or number in a message.",
+        "Expect scam messages that mention the breach or pretend to be the company.",
+        "If a password was exposed, change it there and anywhere you reused it.",
+        "In the US, if your Social Security number was exposed, IdentityTheft.gov lists what to do, including a free credit freeze.",
+        "Watch your accounts and statements for activity you don't recognise."
+      ],
+      "hub": [{ "label": "Check a password against known breaches", "href": "./#password" }],
+      "guidance": [
+        { "by": "FTC (US)", "title": "IdentityTheft.gov: when information is lost or exposed", "url": "https://www.identitytheft.gov/Info-Lost-or-Stolen" },
+        { "by": "NCSC (UK)", "title": "Data breaches: guidance for individuals and families", "url": "https://www.ncsc.gov.uk/guidance/data-breaches" }
+      ]
+    }
+  ]
+}

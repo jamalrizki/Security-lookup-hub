@@ -55,7 +55,7 @@ Extra tools on the same page, done entirely in the browser with no API:
 2. Threat actors
 A searchable list of APT groups from MITRE ATT&CK, filterable by country of attribution, with aliases (for example APT41 / Double Dragon / Wicked Panda), targeted sectors, and their known techniques linked to the ATT&CK site. Data is a static file refreshed from MITRE's published JSON, so it needs no API.
 3. Reference
-The directory in the next section, rendered as a page: every site grouped by job, with one line on what it does, whether it needs an account, and a link.
+The directory in the next section, rendered as a page: every site grouped by job, with one line on what it does, whether it needs an account, and a link. An "Already happened? What to do now" section gives fixed, plain-language first steps for people who clicked a link, typed a password, opened a file, allowed remote access, paid a scammer, lost an account or were in a data breach, each linked to the official FTC or NCSC guidance it follows.
 Email security (v2): domain and email lookups also report SPF, DMARC, null MX and (with a selector) DKIM, and a spoofing grade decided in code: Protected, Partly protected or Easy to spoof.
 4. CVEs (v2)
 A CVE ID pasted into Lookup is detected like a hash or IP, and the Worker calls NVD, CISA KEV and FIRST EPSS directly; a rule-of-thumb patching priority is decided in code. The CVEs page searches NVD by product or keyword and shows the 10 newest matches.
