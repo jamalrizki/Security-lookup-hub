@@ -87,6 +87,16 @@
       <div id="cve-results" class="result" aria-live="polite"></div>
     </section>
 
+    <section class="search-block" id="kev" aria-labelledby="kev-h">
+      <h2 id="kev-h">Exploited in my products</h2>
+      <p class="hint">Type a vendor or product (Fortinet, Ivanti Connect Secure, Citrix) to list every CVE CISA's Known Exploited Vulnerabilities catalog has for it, newest first, with CISA's due date and known ransomware use. Matching uses CISA's own vendor and product names.</p>
+      <form id="kev-form" class="bigbar" autocomplete="off">
+        <input id="kev-q" type="search" maxlength="60" spellcheck="false" aria-label="Vendor or product" placeholder="vendor or product, e.g. ivanti">
+        <button type="submit">List &rarr;</button>
+      </form>
+      <div id="kev-results" class="result" aria-live="polite"></div>
+    </section>
+
     <section class="search-block" id="priority" aria-labelledby="priority-h">
       <h2 id="priority-h">Patch priority list</h2>
       <p class="hint">Which of these do I patch first? Paste up to 8 CVE IDs, or a scan report, advisory or email that contains them. Each one is checked against NVD, CISA KEV and FIRST EPSS, then ranked in code: exploited in the wild (KEV) first, then EPSS, then CVSS.</p>

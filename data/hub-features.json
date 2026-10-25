@@ -3,6 +3,7 @@
   "features": [
     { "id": "lookup", "name": "Lookup", "href": "./", "about": "Reputation of a hash, domain, IP, URL, email or CVE ID" },
     { "id": "cves", "name": "CVEs search", "href": "./cves.html", "about": "Search NVD for vulnerabilities by product or keyword" },
+    { "id": "kev-product", "name": "Exploited in my products", "href": "./cves.html#kev", "about": "Exploited CVEs (CISA KEV) for a vendor or product" },
     { "id": "patch-list", "name": "Patch priority list", "href": "./cves.html#priority", "about": "Rank pasted CVE IDs: which to patch first" },
     { "id": "news", "name": "News", "href": "./news.html", "about": "Advisories, newly exploited CVEs and security news" },
     { "id": "analyze", "name": "Analyze tools", "href": "./analyze.html", "about": "Paste-and-check tools that run in the browser" },
