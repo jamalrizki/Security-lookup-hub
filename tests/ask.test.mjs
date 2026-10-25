@@ -502,32 +502,32 @@ test('exploitation wording patterns', () => {
   }
 });
 
-/* ---------- tool-choice root cause: the TRIRIGA case ---------- */
+/* ---------- tool-choice root cause: "is product X affected by flaw Y" ---------- */
 
-test('TRIRIGA: "is product X affected by Y" looks up the CVEs and the product, and never tells the visitor to search', async () => {
-  const tavily = (url, init, body) => (/tririga/i.test(body.query)
-    ? { results: [{ title: 'IBM TRIRIGA Application Platform overview', url: 'https://www.ibm.com/docs/en/tri/overview', content: 'IBM TRIRIGA runs on a Java application server (WebSphere Liberty) with a relational database. It does not use PHP.' }] }
+test('"is product X affected by Y" looks up the CVEs and the product, and never tells the visitor to search', async () => {
+  const tavily = (url, init, body) => (/facilityhub/i.test(body.query)
+    ? { results: [{ title: 'Contoso FacilityHub architecture overview', url: 'https://learn.microsoft.com/en-us/contoso/facilityhub/overview', content: 'Contoso FacilityHub runs on a Java application server (WebSphere Liberty) with a relational database. It does not use PHP.' }] }
     : { results: [{ title: 'PHP2Shell: critical PHP-CGI argument injection', url: 'https://thehackernews.com/2026/10/php2shell.html', content: `The flaw, tracked as ${PHP_CVE}, affects PHP-CGI on Windows.` }] });
   const model = modelScript([
     // The old failure: an answer that sends the visitor off to search.
-    say("I couldn't find TRIRIGA-specific details. You can search IBM's security bulletins for more information."),
+    say("I couldn't find FacilityHub-specific details. You can search Contoso's security bulletins for more information."),
     (body) => {
       assert.match(body.messages.at(-1).content, /^Your draft tells the visitor to search/);
       assert.equal(body.tool_choice, 'auto', 'tools stay available after the nudge');
       return toolCall(['web_search', { query: 'major PHP vulnerability CVE October 2026' }]);
     },
-    toolCall(['cve_lookup', { cve_id: PHP_CVE }], ['web_search', { query: 'IBM TRIRIGA technology stack PHP' }]),
-    say(`TRIRIGA isn't affected by ${PHP_CVE}: it runs on a Java application server and doesn't use PHP. The PHP flaw is in CISA KEV, and the hub's priority for it is to patch urgently, so patch any PHP-CGI servers you run.`),
+    toolCall(['cve_lookup', { cve_id: PHP_CVE }], ['web_search', { query: 'Contoso FacilityHub technology stack PHP' }]),
+    say(`FacilityHub isn't affected by ${PHP_CVE}: it runs on a Java application server and doesn't use PHP. The PHP flaw is in CISA KEV, and the hub's priority for it is to patch urgently, so patch any PHP-CGI servers you run.`),
   ]);
   installFetch([[GROQ, model.handler], ['api.tavily.com', tavily], ...cveRoutes()]);
-  const { status, body } = await ask(user('Is TRIRIGA vulnerable to the recent major PHP flaw?'), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
+  const { status, body } = await ask(user('Is Contoso FacilityHub vulnerable to the recent major PHP flaw?'), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
   assert.equal(status, 200);
   assert.equal(model.remaining(), 0);
   assert.deepEqual(body.trace.map((t) => t.tool), ['web_search', 'cve_lookup', 'web_search']);
   assert.ok(body.trace.find((t) => t.tool === 'cve_lookup').ok, 'cve_lookup was called');
   assert.ok(!SEARCH_DEFERRAL.test(body.reply), body.reply);
   assert.match(body.reply, /isn't affected/);
-  assert.ok(body.sources.some((s) => s.domain === 'ibm.com'));
+  assert.ok(body.sources.some((s) => s.domain === 'learn.microsoft.com'));
 });
 
 test('the prompt is a decision procedure: route by question type, try the next tool, never send the visitor to search', () => {
@@ -626,7 +626,7 @@ test('empty web searches are still bounded (6 attempts a question)', async () =>
 
 test('vendor advice: allowed only after searching for the bulletin (prompt rule); the deferral check is unchanged', () => {
   assert.match(systemPrompt(), /Suggest confirming with a vendor only after you have run web_search for that vendor's security bulletin\./);
-  assert.ok(!SEARCH_DEFERRAL.test("I couldn't verify that, so check IBM's advisory for TRIRIGA directly."), 'not widened');
+  assert.ok(!SEARCH_DEFERRAL.test("I couldn't verify that, so check Contoso's advisory for FacilityHub directly."), 'not widened');
   assert.ok(SEARCH_DEFERRAL.test('You can search the web for more.'));
 });
 
@@ -639,7 +639,7 @@ test('news relevance: generic security words never make a headline relevant; a p
     news(`PHP2Shell flaws ${PHP_CVE} under attack`, 4),
   ];
   const answer = `${PHP_CVE} isn't in CISA's Known Exploited Vulnerabilities catalog. It is a critical security flaw; patch the update. Siemens RUGGEDCOM is affected.`;
-  assert.deepEqual(numberSources(list, `Is TRIRIGA affected? ${answer}`).map((s) => s.title), ['Siemens SIMATIC S7 Webserver API', `PHP2Shell flaws ${PHP_CVE} under attack`]);
+  assert.deepEqual(numberSources(list, `Is Contoso FacilityHub affected? ${answer}`).map((s) => s.title), ['Siemens SIMATIC S7 Webserver API', `PHP2Shell flaws ${PHP_CVE} under attack`]);
 });
 
 test('recent_news allows 2 calls a question', async () => {
@@ -649,13 +649,13 @@ test('recent_news allows 2 calls a question', async () => {
   assert.deepEqual(body.trace.map((t) => t.ok), [true, true, false]);
 });
 
-test('news relevance on the live TRIRIGA run: "used"/"days" no longer match; "PHP" (three letters) does', () => {
+test('news relevance on a live product-affected run: "used"/"days" no longer match; "PHP" (three letters) does', () => {
   const news = (title, i) => ({ kind: 'news', title, url: `https://thehackernews.com/n${i}`, domain: 'thehackernews.com' });
   const list = [
     news('Exposed Infrastructure Reveals How Ransomware Affiliates Used AI Agents to Execute Intrusions', 1),
     news('PHP Warns of Another Unpatched RCE Risk Two Days After Emergency PHP2Shell Patches', 2),
     news('Russia-Linked Hackers Used New Mesh Network Backdoor in Destructive Ukraine Attack', 3),
   ];
-  const context = 'Is TRIRIGA vulnerable to the recent major PHP flaw? TRIRIGA is a Java application; it used no PHP runtime in the two days since the patches.';
+  const context = 'Is Contoso FacilityHub vulnerable to the recent major PHP flaw? FacilityHub is a Java application; it used no PHP runtime in the two days since the patches.';
   assert.deepEqual(numberSources(list, context).map((s) => s.title), ['PHP Warns of Another Unpatched RCE Risk Two Days After Emergency PHP2Shell Patches']);
 });

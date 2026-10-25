@@ -106,7 +106,7 @@ function openAIStyle(provider, model, env) {
     return {
       name: 'groq', model, key: env.GROQ_API_KEY,
       url: 'https://api.groq.com/openai/v1/chat/completions',
-      // Default (medium) reasoning: 'low' skipped tools it needed (the TRIRIGA answer).
+      // Default (medium) reasoning: 'low' skipped tools it needed (asked whether a product was affected by a flaw, it told the visitor to search).
       extra: { include_reasoning: false, max_completion_tokens: OPENAI_STYLE_MAX_TOKENS, temperature: 0.2 },
     };
   }
