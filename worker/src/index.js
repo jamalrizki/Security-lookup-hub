@@ -3,6 +3,7 @@
 //   GET /api/lookup?q=<indicator>   fan out to the sources, one combined JSON result
 //   GET /api/explain?q=<indicator>  plain-English AI summary of the same results (Groq)
 //   GET /api/cve-search?q=&severity= newest NVD matches for a keyword
+//   GET /api/kev-search?q=          CISA KEV entries for a vendor or product
 //   GET /api/news                   feed snapshot kept in KV by the cron job (scheduled())
 //   POST /api/ask                   Ask: AI answers with tools (ask.js); the only POST route
 //   GET /api/health
@@ -18,12 +19,13 @@ import { detect } from '../../js/detect.js';
 import { SOURCES, plan, validSelector } from './sources.js';
 import { QuotaError } from './http.js';
 import { explain, MODEL, verdict } from './explain.js';
-import { validateSearch, searchCves, CVE_TTL } from './cve.js';
+import { validateSearch, searchCves, CVE_TTL, loadKev, kevSearch } from './cve.js';
 import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 import { handleAsk, handleSimplify } from './ask.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
+const KEV_SEARCH_TTL = 3_600; // matches the KEV file's in-memory refresh
 // Bump to drop cached results: v2 when the DNS result gained email-security fields (Phase 9);
 // v3 to discard NVD "no record" answers cached while an invalid NVD key was set.
 const CACHE_VERSION = 'v3';
@@ -196,6 +198,28 @@ async function cveSearchRoute(request, env, ctx, origin) {
   return json({ ...body, cached: false }, 200, origin);
 }
 
+// GET /api/kev-search?q=  CISA KEV entries whose vendor or product matches.
+// Uses the KEV file CVE lookups already load (in memory for an hour); no new source.
+async function kevSearchRoute(request, env, ctx, origin) {
+  const v = validateSearch(new URL(request.url).searchParams.get('q'));
+  if (v.error) return json({ error: v.error }, 400, origin);
+
+  const cache = caches.default;
+  const key = cacheUrl(`${CACHE_VERSION}/kev-search/${encodeURIComponent(v.keyword.toLowerCase())}`);
+  const hit = await cache.match(key);
+  if (hit) return json({ ...(await hit.json()), cached: true }, 200, origin);
+
+  let kev;
+  try {
+    kev = await loadKev();
+  } catch {
+    return json({ error: 'The CISA KEV catalog could not be loaded. Try again later.' }, 502, origin);
+  }
+  const body = { ...kevSearch(kev.entries, kev.released, v.keyword), checkedAt: new Date().toISOString() };
+  ctx.waitUntil(cache.put(key, new Response(JSON.stringify(body), { headers: { 'cache-control': `max-age=${KEV_SEARCH_TTL}` } })));
+  return json({ ...body, cached: false }, 200, origin);
+}
+
 // GET /api/news  The feed snapshot the cron job keeps in KV; edge-cached 5 minutes.
 // Visitors never trigger feed fetches.
 async function newsRoute(request, env, ctx, origin) {
@@ -269,6 +293,7 @@ export default {
     if (url.pathname === '/api/lookup') return lookup(request, env, ctx, origin);
     if (url.pathname === '/api/explain') return explainRoute(request, env, ctx, origin);
     if (url.pathname === '/api/cve-search') return cveSearchRoute(request, env, ctx, origin);
+    if (url.pathname === '/api/kev-search') return kevSearchRoute(request, env, ctx, origin);
     if (url.pathname === '/api/news') return newsRoute(request, env, ctx, origin);
     return json({ error: 'Not found.' }, 404, origin);
   },

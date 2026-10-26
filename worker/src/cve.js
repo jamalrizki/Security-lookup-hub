@@ -318,6 +318,49 @@ async function kev(id) {
   return { status: 'ok', data: kevEntry(entries.get(id), released) };
 }
 
+// ---------- KEV search by vendor or product ----------
+
+export const KEV_SEARCH_LIMIT = 50;
+export const KEV_RECENT_DAYS = 90;
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const day = (s) => (typeof s === 'string' && DATE.test(s) ? s : null);
+
+/**
+ * Every KEV entry whose vendor or product (CISA's names) contains the keyword,
+ * case-insensitively; "ivanti connect" matches vendor Ivanti + product Connect
+ * Secure. Newest added first. Counts are over all matches, rows are capped.
+ * keyword must already be validated (validateCveSearch).
+ */
+export function kevSearch(entries, released, keyword, now = new Date()) {
+  const q = keyword.toLowerCase().replace(/\s+/g, ' ').trim();
+  const since = new Date(now.getTime() - KEV_RECENT_DAYS * 86_400_000).toISOString().slice(0, 10);
+  const matches = [];
+  for (const e of entries.values()) {
+    const hay = `${e.vendorProject || ''} ${e.product || ''}`.toLowerCase().replace(/\s+/g, ' ');
+    if (hay.includes(q)) matches.push(e);
+  }
+  matches.sort((a, b) => (day(b.dateAdded) || '').localeCompare(day(a.dateAdded) || '') || String(b.cveID).localeCompare(String(a.cveID)));
+  return {
+    keyword,
+    catalogReleased: released,
+    total: matches.length,
+    recent: matches.filter((e) => (day(e.dateAdded) || '') >= since).length,
+    recentDays: KEV_RECENT_DAYS,
+    ransomware: matches.filter((e) => e.knownRansomwareCampaignUse === 'Known').length,
+    results: matches.slice(0, KEV_SEARCH_LIMIT).map((e) => ({
+      id: String(e.cveID || ''),
+      vendorProject: String(e.vendorProject || ''),
+      product: String(e.product || ''),
+      name: clip(String(e.vulnerabilityName || '').trim(), 160),
+      dateAdded: day(e.dateAdded),
+      dueDate: day(e.dueDate),
+      ransomware: e.knownRansomwareCampaignUse === 'Known',
+      description: clip(String(e.shortDescription || '').trim(), 300),
+      requiredAction: clip(String(e.requiredAction || '').trim(), 160),
+    })),
+  };
+}
+
 // ---------- FIRST EPSS ----------
 
 export function formatPercent(fraction) {

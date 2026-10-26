@@ -25,6 +25,7 @@ One search box for a hash, domain, IP, URL or email, plus a password breach chec
 | 15 | Reference-library pipeline: manifest, OCR, ingest and embedding scripts (books stay in the gitignored `security-books/`) | Built on `v3`; index not built yet |
 | 16 | Docs, Requirements, search allowlist check, wrap-up | Built on `v3`, not deployed |
 | Extra | CVEs page: patch priority list (paste up to 8 CVE IDs, ranked in code: KEV, then EPSS, then CVSS; CSV download) | Done (Oct 24, 2026) |
+| Extra | CVEs page: "Exploited in my products" (CISA KEV entries for a vendor or product, `GET /api/kev-search`; "Rank these" hands them to the patch priority list) | Built, not deployed |
 
 **Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
@@ -116,6 +117,7 @@ npx wrangler secret put NVD_API_KEY
 
 - The CVEs page (`cves.html`) calls `GET /api/cve-search?q=&severity=`. Keywords are 2 to 60 letters, digits, spaces, dots, dashes or underscores. NVD lists matches oldest first and can't sort, so the Worker makes two requests (count, then the last page) and returns the 10 newest. Searches are cached for 6 hours.
 - **Patch priority list** (`cves.html#priority`): paste CVE IDs, or a scan report, advisory or email that contains them (up to 50,000 characters). Up to 8 unique IDs are taken in order of appearance (NVD allows the whole site 8 keyless calls a minute) and each goes through the normal `GET /api/lookup`, one at a time, so the same cache, quotas and priority rule apply; no Worker change. `js/patch-priority.js` ranks them in code: the hub's priority verdict first (so KEV entries lead), then known ransomware use, higher EPSS, higher CVSS, then the ID. A source that was skipped or failed is named on its row, and a row with no data says "Not enough data" rather than guessing. "Download CSV" builds the ranked list in the browser (formula-safe cells, via `toCsv`). Ask can link to it as `[[patch-list]]`.
+- **Exploited in my products** (`cves.html#kev`): type a vendor or product and get every CISA KEV entry for it, newest first, with CISA's due date, ransomware flag, short description and required action. The page calls `GET /api/kev-search?q=` (same keyword rules as the NVD search). The Worker filters the KEV file it already holds for CVE lookups (`kevSearch()` in `worker/src/cve.js`): a case-insensitive substring match on CISA's `vendorProject` + `product`, so "ivanti connect secure" works. Counts (total, added in the last 90 days, ransomware-linked) are computed over all matches; rows are capped at 50. Results are edge-cached for 1 hour, matching the KEV refresh. No new source and no cron or KV use; a cold isolate parses the ~1.8 MB KEV file, the same cost a CVE lookup already pays. The page says that not being listed doesn't make a product safe, and suggests the vendor name alone or the parent company when nothing matches. "Rank these" puts the 8 newest IDs into the patch priority list and ranks them. Ask can link to it as `[[kev-product]]`.
 - Lookup links CVE results to [CVE Explainer](https://jamalrizki.github.io/cve-explainer/) for follow-up questions. The parsing code in `worker/src/cve.js` is copied from it, not shared.
 
 ## News
@@ -370,7 +372,7 @@ npm test
 
 Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
 
-219 tests as of Oct 24, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+242 tests as of Oct 25, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -415,7 +417,8 @@ js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
-js/cves.js       CVEs page (keyword search, patch priority list)
+js/cves.js       CVEs page (keyword search, exploited in my products, patch priority list)
+js/kev-search.js text for "Exploited in my products" results (DOM-free, tested in Node)
 js/patch-priority.js   patch priority list: CVE IDs from pasted text, ranking and CSV (DOM-free, tested in Node)
 js/news.js       News page
 js/tools.js      tools glossary page (renders data/tools.json)

@@ -5,6 +5,7 @@ import { validateCveSearch } from './detect.js';
 import { API_BASE } from './config.js';
 import { cveIdsFromText, priorityRow, sortRows, factsLine, rowsToCsv, MAX_CVES } from './patch-priority.js';
 import { download } from './analyze/ui.js';
+import { summaryLine, rowDetail, rowLabel, NOT_LISTED_NOTE } from './kev-search.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -162,4 +163,62 @@ async function rank(text) {
 $('prio-form').addEventListener('submit', (ev) => {
   ev.preventDefault();
   rank($('prio-text').value);
+});
+
+// ---------- Exploited in my products (CISA KEV by vendor or product) ----------
+// GET /api/kev-search filters the KEV file the Worker already holds; counts and
+// order are decided there in code. "Rank these" hands the newest IDs to the
+// patch priority list above.
+
+function kevRow(r) {
+  return el('li', { class: 'cve-row' },
+    el('span', { class: 'cve-score sev-critical' }, 'KEV'),
+    el('div', { class: 'cve-id' },
+      el('strong', { class: 'mono' }, r.id),
+      el('span', { class: r.ransomware ? 'sev-critical' : 'sev-high' }, rowLabel(r))),
+    el('p', { class: 'cve-desc' }, rowDetail(r)),
+    el('a', { class: 'cve-go', href: `./#q=${encodeURIComponent(r.id)}` }, 'Look up →'));
+}
+
+let kevRun = 0;
+async function kevList(q) {
+  const out = $('kev-results');
+  const v = validateCveSearch(q);
+  if (v.error) {
+    out.replaceChildren(notice('warn', v.error));
+    return;
+  }
+  const mine = ++kevRun;
+  out.replaceChildren(el('p', { class: 'hint' }, 'Checking the CISA KEV catalog…'));
+  let body;
+  try {
+    const res = await fetch(`${API_BASE}/api/kev-search?${new URLSearchParams({ q: v.keyword })}`, { referrerPolicy: 'no-referrer' });
+    body = await res.json();
+  } catch {
+    body = { error: 'The search service could not be reached.' };
+  }
+  if (mine !== kevRun) return;
+  if (body.error || !Array.isArray(body.results)) {
+    out.replaceChildren(notice('warn', body.error || 'The search failed. Try again later.'));
+    return;
+  }
+  const parts = [el('p', {}, summaryLine(body)), el('p', { class: 'hint' }, NOT_LISTED_NOTE)];
+  if (body.results.length) {
+    const ids = body.results.map((r) => r.id).slice(0, MAX_CVES);
+    const rankButton = el('button', { type: 'button', class: 'secondary' },
+      body.results.length > MAX_CVES ? `Rank the ${MAX_CVES} newest →` : 'Rank these →');
+    rankButton.addEventListener('click', () => {
+      $('prio-text').value = ids.join(', ');
+      document.getElementById('priority').scrollIntoView();
+      rank($('prio-text').value);
+    });
+    // Button above the list: up to 50 rows would push it off screen.
+    parts.push(el('div', { class: 'row' }, rankButton), el('ul', { class: 'rows' }, ...body.results.map(kevRow)));
+  }
+  out.replaceChildren(...parts);
+}
+
+$('kev-form').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  kevList($('kev-q').value);
 });
