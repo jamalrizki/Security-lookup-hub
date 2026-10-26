@@ -12,6 +12,7 @@
     { "id": "jwt", "name": "JWT decoder", "href": "./analyze.html#jwt", "about": "Decode a JSON Web Token's header and payload" },
     { "id": "file", "name": "File analyzer", "href": "./analyze.html#file", "about": "Hashes, real file type and strings of a file" },
     { "id": "subnet", "name": "Subnet calculator", "href": "./analyze.html#subnet", "about": "IPv4/IPv6 network ranges; is an IP in a range" },
+    { "id": "subnet-practice", "name": "Subnetting practice", "href": "./analyze.html#subnet-practice", "about": "Subnetting practice questions, checked in code" },
     { "id": "cert", "name": "Certificate viewer", "href": "./analyze.html#cert", "about": "Read a PEM or DER certificate: names, dates, key" },
     { "id": "nmap", "name": "Nmap viewer", "href": "./analyze.html#nmap", "about": "Table of hosts, ports and services from Nmap XML" },
     { "id": "actors", "name": "Threat actors", "href": "./actors.html", "about": "APT and criminal groups from MITRE ATT&CK" },
