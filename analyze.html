@@ -27,7 +27,7 @@
   <script type="module" src="js/chrome.js?v=57c2740bfb"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=f3c683b1c1">
+  <link rel="stylesheet" href="css/style.css?v=2a5912b5e5">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/analyze/ioc.js"></script>
   <script type="module" src="js/analyze/link.js"></script>
@@ -35,6 +35,7 @@
   <script type="module" src="js/analyze/jwt.js"></script>
   <script type="module" src="js/analyze/file.js"></script>
   <script type="module" src="js/analyze/subnet.js"></script>
+  <script type="module" src="js/analyze/subnet-drill.js"></script>
   <script type="module" src="js/analyze/cert.js"></script>
   <script type="module" src="js/analyze/nmap.js"></script>
 </head>
@@ -171,6 +172,22 @@
         </form>
         <div id="subnet-result" class="result" aria-live="polite"></div>
         <details class="meaning"><summary>What does this mean?</summary><p>A subnet is a block of network addresses. The first (network) and last (broadcast) addresses are reserved; the usable range is what devices can actually be given.</p></details>
+        <div id="subnet-practice" class="panel-sub">
+          <h3>Practice</h3>
+          <p class="hint">Random subnetting questions for Network+ and Security+, checked by the same code as the calculator above. Private and documentation addresses only. Your score is not saved anywhere.</p>
+          <p id="drill-question" class="mono" aria-live="polite"></p>
+          <form id="drill-form" class="row" autocomplete="off">
+            <input id="drill-answer" type="text" class="mono-input" spellcheck="false" maxlength="40" aria-label="Your answer" placeholder="Your answer">
+            <button type="submit">Check</button>
+          </form>
+          <div class="row">
+            <button type="button" id="drill-reveal" class="secondary small">Show answer</button>
+            <button type="button" id="drill-next" class="secondary small">Next question</button>
+            <button type="button" id="drill-open" class="secondary small">Open in calculator</button>
+          </div>
+          <div id="drill-result" class="result" aria-live="polite"></div>
+          <p id="drill-score" class="hint" aria-live="polite"></p>
+        </div>
       </section>
 
       <section class="panel" id="cert" aria-labelledby="cert-h">

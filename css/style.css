@@ -237,6 +237,9 @@ footer.site-footer:empty { display: none; }
 
 .panel { background: var(--overlay); border: 1px solid var(--line); padding: 22px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .panel > * { margin-top: 0; margin-bottom: 0; }
+/* A sub-tool inside a panel (e.g. subnet practice under the calculator). */
+.panel-sub { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 16px; min-width: 0; }
+.panel-sub > * { margin-top: 0; margin-bottom: 0; }
 
 /* Brutalist grid: container draws top/left lines, cells draw right/bottom, so lines never double. */
 .card-grid {
