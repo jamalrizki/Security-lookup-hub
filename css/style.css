@@ -13,10 +13,10 @@
   --overlay: rgba(0, 8, 2, 0.88);
   --text: #f2f2f2;
   --body: #bbb;
-  --muted: #6fbf80;
-  --muted-2: #5fae70;
-  --muted-3: #4f9a5e;
-  --muted-4: #2f6b3c;
+  --muted: #999;
+  --muted-2: #777;
+  --muted-3: #666;
+  --muted-4: #444;
   --line: #0f3d1a;
   --input-line: #1f7a35;
   --accent: #00ff41;
