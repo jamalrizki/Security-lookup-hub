@@ -208,7 +208,7 @@ test('phones: form fields are 16px (no iOS zoom), pinch-zoom stays enabled, chip
 
 test('Analyze: every tool has a fixed "What does this mean?" note right after its result, no AI', () => {
   const html = readFileSync(new URL('analyze.html', root), 'utf8');
-  for (const tool of ['ioc', 'link', 'headers', 'jwt', 'file', 'subnet', 'cert', 'nmap']) {
+  for (const tool of ['ioc', 'link', 'headers', 'jwt', 'file', 'subnet', 'cert', 'nmap', 'dmarc']) {
     assert.match(html, new RegExp(`<div id="${tool}-result" class="result" aria-live="polite"></div>\\s*<details class="meaning"><summary>What does this mean\\?</summary><p>[^<]{60,}</p></details>`), tool);
   }
 });

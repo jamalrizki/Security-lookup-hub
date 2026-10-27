@@ -27,7 +27,7 @@ test('every hub feature href points to a page and anchor that exist; ids are uni
     assert.ok(existsSync(new URL(page, root)), `${f.id}: ${page} missing`);
     if (anchor) assert.ok(readFileSync(new URL(page, root), 'utf8').includes(`id="${anchor}"`), `${f.id}: #${anchor} missing in ${page}`);
   }
-  for (const id of ['lookup', 'cves', 'news', 'analyze', 'ioc', 'link', 'headers', 'jwt', 'file', 'subnet', 'cert', 'nmap', 'actors', 'reference', 'where-to-start', 'tools']) {
+  for (const id of ['lookup', 'cves', 'news', 'analyze', 'ioc', 'link', 'headers', 'jwt', 'file', 'subnet', 'cert', 'nmap', 'dmarc', 'actors', 'reference', 'where-to-start', 'tools']) {
     assert.ok(ids.has(id), `missing ${id}`);
   }
   assert.match(featuresPrompt(), /^lookup: /);

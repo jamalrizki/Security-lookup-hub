@@ -38,6 +38,7 @@
   <script type="module" src="js/analyze/subnet-drill.js"></script>
   <script type="module" src="js/analyze/cert.js"></script>
   <script type="module" src="js/analyze/nmap.js"></script>
+  <script type="module" src="js/analyze/dmarc.js"></script>
 </head>
 <body data-page="analyze">
   <a class="skip" href="#main">Skip to content</a>
@@ -89,6 +90,7 @@
       <a href="#subnet"><span>06</span>Subnet calculator</a>
       <a href="#cert"><span>07</span>Certificate viewer</a>
       <a href="#nmap"><span>08</span>Nmap viewer</a>
+      <a href="#dmarc"><span>09</span>DMARC reports</a>
     </nav>
 
     <div class="card-grid">
@@ -216,6 +218,22 @@
         </label>
         <div id="nmap-result" class="result" aria-live="polite"></div>
         <details class="meaning"><summary>What does this mean?</summary><p>Each open port is a door into that machine where a program is listening. Close or firewall anything that doesn't need to be reachable, and keep the listed software up to date.</p></details>
+      </section>
+      <section class="panel" id="dmarc" aria-labelledby="dmarc-h">
+        <span class="num" aria-hidden="true"></span>
+        <h2 id="dmarc-h">DMARC report viewer</h2>
+        <p class="hint">Drop or paste a DMARC aggregate report: the XML that Google, Microsoft, Yahoo and others mail to your domain's <code>rua=</code> address (unzip it first, up to 10 MB). It is read in your browser and never uploaded. Shows who sends mail as your domain, whether it passes SPF and DKIM, and whether you're ready for a stricter policy.</p>
+        <label id="dmarc-drop" class="drop" for="dmarc-file">
+          <span>Drop a DMARC report (.xml) here or <u>choose a file</u></span>
+          <input id="dmarc-file" type="file" class="visually-hidden" accept=".xml,text/xml,application/xml">
+        </label>
+        <form id="dmarc-form" autocomplete="off">
+          <label for="dmarc-input" class="visually-hidden">DMARC report XML</label>
+          <textarea id="dmarc-input" spellcheck="false" placeholder="&lt;feedback&gt; …"></textarea>
+          <div class="row tool-actions"><button type="submit">Read report &rarr;</button></div>
+        </form>
+        <div id="dmarc-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>Each row is a server that sent mail claiming to be from your domain. The coloured pass or fail under SPF and DKIM is the aligned result DMARC uses: the check passed for your own domain, not just for some domain. A message passes DMARC if either one passes. The "raw" line under it is the plain check and the domain it checked. Sources that fail are either a service you use that still needs SPF or DKIM set up, or someone pretending to be you. The readiness line counts a failing source as "real volume" once it sends at least 1% of the report's messages; fix or identify those before tightening the policy (none, then quarantine, then reject).</p></details>
       </section>
     </div>
   </main>

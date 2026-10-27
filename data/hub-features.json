@@ -16,6 +16,7 @@
     { "id": "subnet-practice", "name": "Subnetting practice", "href": "./analyze.html#subnet-practice", "about": "Subnetting practice questions, checked in code" },
     { "id": "cert", "name": "Certificate viewer", "href": "./analyze.html#cert", "about": "Read a PEM or DER certificate: names, dates, key" },
     { "id": "nmap", "name": "Nmap viewer", "href": "./analyze.html#nmap", "about": "Table of hosts, ports and services from Nmap XML" },
+    { "id": "dmarc", "name": "DMARC report viewer", "href": "./analyze.html#dmarc", "about": "Read DMARC aggregate reports: who sends as you" },
     { "id": "actors", "name": "Threat actors", "href": "./actors.html", "about": "APT and criminal groups from MITRE ATT&CK" },
     { "id": "reference", "name": "Reference", "href": "./reference.html", "about": "Directory of free security sites by what they do" },
     { "id": "where-to-start", "name": "Where to start", "href": "./reference.html#where-to-start", "about": "Which tool or site to try for what you have" },

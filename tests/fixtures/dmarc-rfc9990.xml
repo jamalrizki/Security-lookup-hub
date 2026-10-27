@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand-written sample in the RFC 9990 format (dmarc-2.0 namespace). Not a real report. -->
+<feedback xmlns="urn:ietf:params:xml:ns:dmarc-2.0">
+  <version>1.0</version>
+  <report_metadata>
+    <org_name>Example Mail &amp; Co</org_name>
+    <email>dmarc-reports@example.net</email>
+    <report_id>sample-9990-0002</report_id>
+    <date_range>
+      <begin>1761436800</begin>
+      <end>1761523200</end>
+    </date_range>
+  </report_metadata>
+  <policy_published>
+    <domain>example.org</domain>
+    <discovery_method>treewalk</discovery_method>
+    <p>quarantine</p>
+    <sp>quarantine</sp>
+    <np>reject</np>
+    <adkim>s</adkim>
+    <aspf>r</aspf>
+    <testing>n</testing>
+  </policy_published>
+  <record>
+    <row>
+      <source_ip>209.85.220.41</source_ip>
+      <count>398</count>
+      <policy_evaluated><disposition>none</disposition><dkim>pass</dkim><spf>pass</spf></policy_evaluated>
+    </row>
+    <identifiers><header_from>example.org</header_from><envelope_from>example.org</envelope_from></identifiers>
+    <auth_results>
+      <dkim><domain>example.org</domain><selector>s1</selector><result>pass</result></dkim>
+      <spf><domain>example.org</domain><scope>mfrom</scope><result>pass</result></spf>
+    </auth_results>
+  </record>
+  <record>
+    <row>
+      <source_ip>192.0.2.200</source_ip>
+      <count>2</count>
+      <policy_evaluated><disposition>quarantine</disposition><dkim>fail</dkim><spf>fail</spf></policy_evaluated>
+    </row>
+    <identifiers><header_from>example.org</header_from></identifiers>
+    <auth_results>
+      <spf><domain>example.org</domain><scope>mfrom</scope><result>fail</result></spf>
+    </auth_results>
+  </record>
+</feedback>

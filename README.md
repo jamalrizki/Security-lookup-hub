@@ -27,6 +27,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | CVEs page: patch priority list (paste up to 8 CVE IDs, ranked in code: KEV, then EPSS, then CVSS; CSV download) | Done (Oct 24, 2026) |
 | Extra | CVEs page: "Exploited in my products" (CISA KEV entries for a vendor or product, `GET /api/kev-search`; "Rank these" hands them to the patch priority list) | Built, not deployed |
 | Extra | Analyze: subnetting practice under the subnet calculator (random IPv4 questions graded by the calculator's own code, with the working) | Built (Oct 26, 2026), not deployed |
+| Extra | Analyze: DMARC report viewer (read an aggregate report's XML in the browser: sources, SPF/DKIM alignment, totals and a readiness line decided in code) | Built (Oct 27, 2026), not deployed |
 | 17 | v4 ([spec](Docs/spec-v4.md)): Ask becomes the home page (chat layout, composer pinned to the bottom); Lookup and the panels move to `lookup.html`; old `./#q=` links forwarded; `#ask=` fill links; bare indicators offered to Lookup | Built on `v4`, not deployed |
 | 18 | Stop button (Send becomes Stop, Esc stops; "Stopped." with Retry and Edit), elapsed time while Ask works; the Worker stops calling models and tools when the visitor's request is cancelled | Built on `v4`, not deployed |
 | 19 | Voice input in Ask: the browser records up to 60 s, `POST /api/transcribe` transcribes with Whisper on Workers AI (vocabulary hint, spoken CVE IDs fixed in code), the text lands at the cursor and never sends itself | Built on `v4`, not deployed |
@@ -222,6 +223,7 @@ Each tool has a short fixed "What does this mean?" note under its result (static
 
 - **Certificate viewer** (`#cert`): reads a pasted PEM (or a chain, up to 10) or a dropped `.cer`/`.crt`/`.der` file with a small DER/X.509 parser written here (the CSP allows no CDN libraries). It shows the subject, issuer, SANs (DNS, IP, email, URI), validity with expired / not-yet-valid flags, key type and size (RSA bits, EC curve, Ed25519/Ed448), signature algorithm (weak ones flagged), serial, the SHA-256 fingerprint with a crt.sh link, and self-signed and CA flags. Text containing `PRIVATE KEY` is refused without parsing and cleared, with advice to treat the key as exposed and replace it.
 - **Nmap viewer** (`#nmap`): reads Nmap XML (`-oX`, up to 20 MB) with the browser's `DOMParser`. XML that declares entities or an internal DTD subset is refused first, since real Nmap output never has them. It shows a host / port / state / service / version table, filterable by port, by service or product text, and to open ports only, with counts by service. CVE IDs in script output link to the hub's lookup. Private addresses are shown, but only public ones get a Look up link. Parsing is checked in Chrome (Node has no DOMParser); `tests/nmap.test.mjs` covers the helpers, and the fixture validates against Nmap's own DTD.
+- **DMARC report viewer** (`#dmarc`): reads a DMARC aggregate report (the XML that mailbox providers send to a domain's `rua=` address), dropped as a `.xml` file or pasted, up to 10 MB, with the browser's `DOMParser`. Nothing is uploaded. Both the RFC 7489 format and RFC 9990's `urn:ietf:params:xml:ns:dmarc-2.0` namespace are read, and missing optional fields are tolerated. XML that declares entities or a DTD subset is refused, and gzip/ZIP files get "unzip it first". It shows the reporter, date range and published policy; a table of source IP / messages / SPF / DKIM (the aligned pass or fail that DMARC uses, with the raw result and domain under it) / applied disposition, largest first (500 rows shown, all counted); totals with the DMARC pass rate; and failing sources grouped by IP. The readiness line is decided in code: a failing source is "real volume" at 1% or more of the report's messages (`REAL_VOLUME`), and the next step follows the ladder none → quarantine → reject (raising `pct` to 100 first when it is lower). Counts must be whole non-negative numbers (other rows are left out and counted), results and dispositions are checked against the known values, text is length-capped, and only public source IPs get a Look up link. Code: `js/analyze/dmarc.js`; `tests/dmarc.test.mjs` runs it on two hand-written sample reports through a small XML stand-in (`tests/helpers/xml.mjs`), and the page was checked in headless Chrome at 390px.
 
 **Refreshing the Public Suffix List.** The tools use a bundled copy, `data/public_suffix_list.dat`; the version is on its line 8. Download it only from publicsuffix.org (macOS/Linux):
 
@@ -410,7 +412,7 @@ npm test
 
 Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
 
-313 tests as of Oct 26, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+322 tests as of Oct 27, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -464,7 +466,7 @@ js/patch-priority.js   patch priority list: CVE IDs from pasted text, ranking an
 js/news.js       News page
 js/tools.js      tools glossary page (renders data/tools.json)
 js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header parsing); DOM-free, tested in Node
-js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, subnet-drill.js, cert.js, nmap.js) plus ui.js, data.js and handoff.js (receives text the Ask box hands over); tool modules export their pure functions for tests and only wire up the page in a browser
+js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, subnet-drill.js, cert.js, nmap.js, dmarc.js) plus ui.js, data.js and handoff.js (receives text the Ask box hands over); tool modules export their pure functions for tests and only wire up the page in a browser
 data/reference.json   the site directory
 data/what-now.json    "Already happened? What to do now" checklists
 data/actors.json      generated threat-actor extract (do not edit by hand)
@@ -479,7 +481,7 @@ data/hub-features.json     hub pages and tools Ask may link to (ids -> links)
 security-books/  reference books for Ask, GITIGNORED: never committed (tests/books-ignored.test.mjs fails if anything under it is tracked); generated files in security-books/.rag/
 rag/             reference-library pipeline scripts (build_manifest.py, ocr_books.sh, ingest_books.py); no book data ever lives here
 worker/scripts/embed-books.mjs   embeds chunks with Workers AI into Vectorize NDJSON, with the 12,000-vector budget guard
-tests/           node:test unit tests; tests/fixtures/ holds feed samples; tests/helpers/dom.mjs is a small DOM stand-in for the Ask page tests; tests/helpers/ask-stubs.mjs stubs the model, Tavily, KV, cache, Workers AI and Vectorize for the Ask tests
+tests/           node:test unit tests; tests/fixtures/ holds feed samples; tests/helpers/dom.mjs is a small DOM stand-in for the Ask page tests; tests/helpers/xml.mjs is a small XML DOMParser stand-in for the DMARC viewer tests; tests/helpers/ask-stubs.mjs stubs the model, Tavily, KV, cache, Workers AI and Vectorize for the Ask tests
 ```
 
 ## Analytics
