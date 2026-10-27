@@ -104,7 +104,7 @@ def social(title, description, url):
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Security Lookup Hub: one search box for hashes, domains, IPs, URLs, emails and CVEs.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#050a06">
+  <meta name="theme-color" content="#000000">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
