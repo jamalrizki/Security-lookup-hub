@@ -34,7 +34,13 @@ async function loadPage({ url, api = () => ANSWER, touch = false, navigator } = 
   return { doc: dom.document, calls, $ };
 }
 
-afterEach(() => {
+afterEach(async () => {
+  // Stop anything still running, so its timer doesn't keep the test process alive.
+  const button = dom?.document.getElementById('ask-send');
+  if (button?.classList.contains('stop')) {
+    button.click();
+    await settle();
+  }
   dom?.restore();
   dom = null;
   delete globalThis.fetch;
@@ -130,4 +136,133 @@ test('example chips fill the box without sending', async () => {
   doc.querySelectorAll('#ask-examples .chip')[2].click();
   assert.equal($('ask-input').value, 'SPF vs DKIM vs DMARC: what does each one stop?');
   assert.equal(calls.length, 0);
+});
+
+/* ---------- Phase 18: Stop and elapsed time ---------- */
+
+/** An api handler that never answers until released, and rejects when the page aborts. */
+function hanging() {
+  const h = { calls: 0 };
+  h.api = (url, body, init) => {
+    h.calls++;
+    return new Promise((resolve, reject) => {
+      h.release = (r = ANSWER) => resolve(r);
+      init.signal?.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })));
+    });
+  };
+  return h;
+}
+
+test('Stop: Send becomes Stop; stopping leaves "Stopped." with Retry and Edit and no partial answer', async () => {
+  const h = hanging();
+  const { $, calls } = await loadPage({ api: h.api });
+  await send($, 'What is Kerberoasting?');
+  const button = $('ask-send');
+  assert.ok(button.classList.contains('stop'));
+  assert.equal(button.textContent, 'Stop', 'the word is there for screen readers');
+  assert.ok(button.querySelector('.stop-icon'), 'square icon');
+  assert.ok(calls[0].init.signal, 'the fetch carries an AbortController signal');
+  button.click();
+  await settle();
+  assert.equal(calls[0].init.signal.aborted, true);
+  assert.equal(button.textContent, 'Send');
+  const thread = $('ask-thread');
+  assert.equal(thread.querySelector('.ask-q').textContent, 'YouWhat is Kerberoasting?', "the visitor's message stays");
+  assert.equal(thread.querySelector('.ask-stopped p').textContent, 'Stopped.');
+  assert.deepEqual(thread.querySelector('.ask-stopped').querySelectorAll('button').map((b) => b.textContent), ['Retry', 'Edit']);
+  assert.equal(thread.querySelector('.ask-a'), null, 'no partial answer');
+  assert.equal(thread.querySelector('.ask-thinking'), null);
+});
+
+test('Stop: Retry resends the same messages; a stopped turn never joins the history', async () => {
+  const h = hanging();
+  const { $, calls } = await loadPage({ api: h.api });
+  await send($, 'First question');
+  $('ask-send').click();
+  await settle();
+  const retry = $('ask-thread').querySelector('.ask-stopped').querySelectorAll('button')[0];
+  retry.click();
+  await settle();
+  assert.equal(calls.length, 2);
+  assert.deepEqual(calls[1].body, calls[0].body, 'same messages');
+  assert.equal($('ask-thread').querySelector('.ask-stopped'), null);
+  // Stop again, then ask something else: the stopped question is not in the history.
+  $('ask-send').click();
+  await settle();
+  await send($, 'Second question');
+  assert.deepEqual(calls[2].body.messages, [{ role: 'user', content: 'Second question' }]);
+  h.release();
+  await settle();
+  assert.ok($('ask-thread').querySelector('.ask-a'));
+});
+
+test('Stop: Edit puts the question back in the box and removes it from the thread; Esc also stops', async () => {
+  const h = hanging();
+  const { $, doc } = await loadPage({ api: h.api });
+  await send($, 'How does DMARC work?');
+  doc.dispatchEvent(new Event('keydown', { key: 'Escape' }));
+  await settle();
+  const edit = $('ask-thread').querySelector('.ask-stopped').querySelectorAll('button')[1];
+  edit.click();
+  assert.equal($('ask-input').value, 'How does DMARC work?');
+  assert.equal($('ask-thread').childElementCount, 0);
+  assert.equal($('ask-empty').hidden, false, 'back to the empty state');
+});
+
+test('Enter while a question runs neither sends nor stops', async () => {
+  const h = hanging();
+  const { $, calls } = await loadPage({ api: h.api });
+  await send($, 'What is MFA?');
+  type($('ask-input'), 'next one');
+  $('ask-input').dispatchEvent(new Event('keydown', { key: 'Enter' }));
+  await settle();
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].init.signal.aborted, false);
+});
+
+test('the thinking line counts seconds and offers Stop after 40 s', async (t) => {
+  t.mock.timers.enable({ apis: ['setInterval', 'Date'], now: 1_000_000 });
+  const h = hanging();
+  const { $ } = await loadPage({ api: h.api });
+  await send($, 'What is SIEM?');
+  const line = () => $('ask-thread').querySelector('.ask-thinking');
+  assert.match(line().textContent, /^Thinking 0 s$/);
+  t.mock.timers.tick(12_000);
+  assert.match(line().textContent, /^Thinking 12 s$/);
+  assert.equal(line().querySelector('.ask-elapsed').getAttribute('aria-hidden'), 'true', 'the ticking number is not read out every second');
+  t.mock.timers.tick(29_000);
+  assert.match(line().textContent, /^Thinking 41 s Still working\. You can stop it\.$/);
+  h.release();
+  await settle();
+  assert.equal(line(), null);
+});
+
+test('Make it simpler can be stopped too', async () => {
+  let simplify;
+  const { $, calls } = await loadPage({
+    api: (url, body, init) => {
+      if (!url.endsWith('/simplify')) return ANSWER;
+      return new Promise((resolve, reject) => {
+        simplify = init.signal;
+        init.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })));
+      });
+    },
+  });
+  await send($, 'is 8.8.8.8 safe to use as DNS?');
+  const button = [...$('ask-thread').querySelectorAll('button')].find((b) => b.textContent === 'Make it simpler');
+  button.click();
+  await settle();
+  assert.ok($('ask-send').classList.contains('stop'));
+  $('ask-send').click();
+  await settle();
+  assert.equal(simplify.aborted, true);
+  assert.equal(calls.length, 2);
+  assert.equal(button.textContent, 'Make it simpler');
+  assert.equal(button.disabled, false);
+  assert.equal($('ask-thread').querySelector('.ask-simpler').childElementCount, 0, 'nothing partial');
+});
+
+test('reduced motion: the dots stop, the timer still counts (CSS)', () => {
+  const css = readFileSync(new URL('css/style.css', root), 'utf8');
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.ask-dots::after \{ animation: none;/);
 });

@@ -92,8 +92,8 @@ export function cleanResults(data) {
   return out;
 }
 
-/** Returns { results } or { error }. */
-export async function webSearch(query, env, now = new Date()) {
+/** Returns { results } or { error }. signal: the visitor's Stop, when the platform passes it on. */
+export async function webSearch(query, env, now = new Date(), signal = null) {
   const bad = checkQuery(query);
   if (bad) return { error: bad };
   if (!env.TAVILY_API_KEY) return { error: 'web search is not configured' };
@@ -102,7 +102,7 @@ export async function webSearch(query, env, now = new Date()) {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${env.TAVILY_API_KEY}` },
     body: JSON.stringify({ query: query.trim(), search_depth: 'basic', max_results: MAX_RESULTS, include_domains: INCLUDE_DOMAINS }),
-    signal: AbortSignal.timeout(TIMEOUT_MS),
+    signal: signal && AbortSignal.any ? AbortSignal.any([AbortSignal.timeout(TIMEOUT_MS), signal]) : AbortSignal.timeout(TIMEOUT_MS),
   });
   if (!res.ok) return { error: `web search failed (HTTP ${res.status})` };
   return { results: cleanResults(await res.json()) };

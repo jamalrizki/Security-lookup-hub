@@ -119,8 +119,8 @@ async function searchReferenceTool(args, { env, state }) {
   return { result: r, isError: false, summary: `${r.passages.length} passages from the reference library (text not shown)` };
 }
 
-async function webSearchTool(args, { env, state }) {
-  const r = await webSearch(args.query, env);
+async function webSearchTool(args, { env, state, signal }) {
+  const r = await webSearch(args.query, env, new Date(), signal);
   if (r.error) return fail(r.error);
   for (const x of r.results) {
     state.texts.push(x.excerpt);
@@ -220,7 +220,7 @@ const HANDLERS = {
 };
 
 /**
- * Runs one tool call. ctx: { env, state, exec, quota, runSource }.
+ * Runs one tool call. ctx: { env, state, exec, quota, runSource, signal? }.
  * Returns { result, isError, summary, note? }.
  */
 export async function runTool(name, args, ctx) {

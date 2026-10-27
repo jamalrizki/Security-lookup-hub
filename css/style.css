@@ -661,6 +661,14 @@ body[data-page="ask"] { min-height: 100vh; min-height: 100dvh; }
   gap: 8px;
 }
 #ask-notice:empty { display: none; }
+/* While something runs, Send is Stop: a square (the word is for screen readers). */
+#ask-send { min-width: 76px; }
+#ask-send.stop { background: var(--text); border-color: var(--text); }
+.stop-icon { display: inline-block; width: 11px; height: 11px; background: var(--on-accent); vertical-align: middle; }
+.ask-elapsed { font-variant-numeric: tabular-nums; }
+.ask-still { text-transform: none; letter-spacing: 0; }
+.ask-stopped { display: flex; flex-direction: column; gap: 8px; }
+.ask-stopped p { margin: 0; }
 
 @media (max-width: 720px) {
   .chat-empty { padding: 16px; }

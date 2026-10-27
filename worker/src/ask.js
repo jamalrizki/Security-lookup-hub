@@ -18,10 +18,10 @@ import { detect, FILE_EXT } from '../../js/detect.js';
 import { readCapped } from './http.js';
 import { defangText } from './explain.js';
 import { TOOL_CAPS, runTool, newState, featureById, featuresPrompt, cveIdsIn } from './ask-tools.js';
-import { chat, askModel, askTiming, BusyError, ALL_BUSY, takePaidQuestion } from './ask-models.js';
+import { chat, askModel, askTiming, BusyError, ALL_BUSY, takePaidQuestion, StoppedError, isStopped } from './ask-models.js';
 import { keepSourceFacts } from './plain.js';
 
-export { askTiming, BusyError };
+export { askTiming, BusyError, StoppedError };
 
 export const MAX_BODY = 24 * 1024;
 const MAX_MESSAGES = 8;
@@ -304,7 +304,8 @@ async function checkFacts(reply, convo, state, trace, run) {
       continue;
     }
     const started = Date.now();
-    const out = await runTool('cve_lookup', { cve_id: id }, { env: run.env, state, exec: run.exec, quota: run.quota, runSource: run.runSource });
+    if (run.signal?.aborted) throw new StoppedError('stopped');
+    const out = await runTool('cve_lookup', { cve_id: id }, toolCtx(run, state));
     trace.push({
       tool: 'cve_lookup',
       args: { cve_id: id },
@@ -324,6 +325,8 @@ async function checkFacts(reply, convo, state, trace, run) {
   if (!parts.length) return null;
   return chat([...convo, { role: 'assistant', content: reply }, { role: 'system', content: [...parts, AS_ANSWER].join('\n\n') }], 'none', run);
 }
+
+const toolCtx = (run, state) => ({ env: run.env, state, exec: run.exec, quota: run.quota, runSource: run.runSource, signal: run.signal });
 
 const shortArgs = (args) => Object.fromEntries(Object.entries(args || {}).map(([k, v]) => [k, typeof v === 'string' ? v.slice(0, 80) : v]));
 
@@ -356,13 +359,15 @@ export async function runConversation(messages, run) {
     // nothing to attach to. Claude's turn is replayed as-is (its thinking blocks included).
     convo.push({ role: 'assistant', content: used.message.content || null, tool_calls: calls, ...(used.message.claude ? { claude: used.message.claude } : {}) });
     for (const call of calls) {
+      // Stopped between tool calls or rounds: no more tools, and chat() won't call the model again.
+      if (run.signal?.aborted) throw new StoppedError('stopped');
       const name = call.function?.name;
       const started = Date.now();
       let args = {};
       let outcome;
       try {
         args = JSON.parse(call.function?.arguments || '{}');
-        outcome = await runTool(name, args, { env: run.env, state, exec: run.exec, quota: run.quota, runSource: run.runSource });
+        outcome = await runTool(name, args, toolCtx(run, state));
       } catch {
         outcome = { result: { error: 'Tool arguments were not valid JSON.' }, isError: true, summary: 'Invalid arguments' };
       }
@@ -420,6 +425,17 @@ export async function runConversation(messages, run) {
 
 // ---------- Route ----------
 
+// The visitor pressed Stop. Nobody reads this response; 499 is "client closed request".
+const STOPPED = { status: 499, body: { error: 'Stopped.' } };
+
+// DEBUG_ASK=1 (worker/.dev.vars, local only) logs when the platform passes the
+// visitor's Stop on as request.signal (needs the enable_request_signal flag). No content.
+function watchStop(request, env) {
+  if (env.DEBUG_ASK === '1' && request.signal) {
+    request.signal.addEventListener('abort', () => console.log('[ask] request.signal fired: the visitor stopped the question'));
+  }
+}
+
 /**
  * Handles POST /api/ask. deps: { quotaTools, runSource } from index.js.
  * Returns { status, body, headers? }.
@@ -442,8 +458,10 @@ export async function handleAsk(request, env, exec, deps) {
   // No per-minute limit of our own: the providers' limits apply. quota is for the
   // threat-intel sources cve_lookup calls (NVD's limit and pauses).
   const quota = deps.quotaTools(env, exec);
-  const run = { env, exec, quota, runSource: deps.runSource, waited: 0, selected: askModel(env) };
-  // The paid model answers at most DAILY_PAID_QUESTIONS a day; then the free models until midnight UTC.
+  const run = { env, exec, quota, runSource: deps.runSource, waited: 0, selected: askModel(env), signal: request.signal };
+  watchStop(request, env);
+  // The paid model answers at most DAILY_PAID_QUESTIONS a day (a stopped question still
+  // counts: it's taken here, at the start); then the free models until midnight UTC.
   if (run.selected.provider !== 'groq' && !(await takePaidQuestion(env.NEWS))) {
     run.fallback = { from: `${run.selected.provider}:${run.selected.model}`, reason: 'daily limit' };
   }
@@ -451,6 +469,7 @@ export async function handleAsk(request, env, exec, deps) {
     const result = await runConversation(v.messages, run);
     return { status: 200, body: result };
   } catch (err) {
+    if (isStopped(err, run)) return STOPPED;
     if (err instanceof BusyError) return { status: 429, body: { error: ALL_BUSY }, headers: { 'retry-after': '60' } };
     return { status: 502, body: { error: err.name === 'TimeoutError' ? 'Ask took too long. Try again.' : 'Ask is unavailable right now. Try again in a minute.' } };
   }
@@ -496,7 +515,8 @@ export async function handleSimplify(request, env, exec, deps) {
   if (!question || question.length > MAX_USER_CHARS) return { status: 400, body: { error: `The question must be 1 to ${MAX_USER_CHARS.toLocaleString('en-US')} characters.` } };
   if (!answer || answer.length > MAX_ASSISTANT_CHARS) return { status: 400, body: { error: `The answer must be 1 to ${MAX_ASSISTANT_CHARS.toLocaleString('en-US')} characters.` } };
 
-  const run = { env, exec, quota: deps.quotaTools(env, exec), runSource: deps.runSource, waited: 0, selected: askModel(env) };
+  const run = { env, exec, quota: deps.quotaTools(env, exec), runSource: deps.runSource, waited: 0, selected: askModel(env), signal: request.signal };
+  watchStop(request, env);
   // A rewrite is a paid-model call too, so it counts toward the daily cap.
   if (run.selected.provider !== 'groq' && !(await takePaidQuestion(env.NEWS))) {
     run.fallback = { from: `${run.selected.provider}:${run.selected.model}`, reason: 'daily limit' };
@@ -519,6 +539,7 @@ export async function handleSimplify(request, env, exec, deps) {
       },
     };
   } catch (err) {
+    if (isStopped(err, run)) return STOPPED;
     if (err instanceof BusyError) return { status: 429, body: { error: ALL_BUSY }, headers: { 'retry-after': '60' } };
     return { status: 502, body: { error: err.name === 'TimeoutError' ? 'Ask took too long. Try again.' : 'Ask is unavailable right now. Try again in a minute.' } };
   }

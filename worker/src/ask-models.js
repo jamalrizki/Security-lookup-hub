@@ -45,6 +45,17 @@ export const ALL_BUSY = 'All free AI providers are busy. Try again in a minute.'
 export const askTiming = { sleep: (ms) => new Promise((r) => setTimeout(r, ms)) };
 
 export class BusyError extends Error {}
+/** The visitor pressed Stop (the request's signal fired): no more model or tool calls. */
+export class StoppedError extends Error {}
+
+/** True if this error is the visitor's Stop rather than a provider failure. */
+export const isStopped = (err, run) => err instanceof StoppedError || err?.name === 'AbortError' || err?.constructor?.name === 'APIUserAbortError' || Boolean(run?.signal?.aborted);
+
+/** The upstream timeout, plus the visitor's Stop when the platform passes it on. */
+function upstreamSignal(run) {
+  const timeout = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
+  return run?.signal && AbortSignal.any ? AbortSignal.any([timeout, run.signal]) : timeout;
+}
 
 const utcDay = (now) => now.toISOString().slice(0, 10);
 
@@ -120,12 +131,12 @@ function openAIStyle(provider, model, env) {
   };
 }
 
-async function callOpenAIStyle(p, messages, toolChoice) {
+async function callOpenAIStyle(p, messages, toolChoice, run) {
   const res = await fetch(p.url, {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${p.key}`, ...p.headers },
     body: JSON.stringify({ model: p.model, messages: toOpenAI(messages), tools: TOOL_DEFINITIONS, tool_choice: toolChoice, ...p.extra }),
-    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+    signal: upstreamSignal(run),
   });
   if (!res.ok) throw new ProviderError(res.status, (await res.text()).slice(0, 300));
   const data = await res.json();
@@ -139,7 +150,7 @@ async function callOpenAIStyle(p, messages, toolChoice) {
 async function callGroq(p, messages, toolChoice, run) {
   for (;;) {
     try {
-      return await callOpenAIStyle(p, messages, toolChoice);
+      return await callOpenAIStyle(p, messages, toolChoice, run);
     } catch (err) {
       if (err.status !== 429) throw err;
       const wait = parseRetryWaitSeconds(err.message);
@@ -205,7 +216,7 @@ export function fromAnthropic(response) {
   return { role: 'assistant', content: text, ...(calls.length ? { tool_calls: calls } : {}), claude: blocks };
 }
 
-async function callAnthropic(model, messages, toolChoice, env) {
+async function callAnthropic(model, messages, toolChoice, env, run) {
   const client = new Anthropic({
     apiKey: env.ANTHROPIC_API_KEY,
     maxRetries: 1,
@@ -224,7 +235,7 @@ async function callAnthropic(model, messages, toolChoice, env) {
     tool_choice: { type: toolChoice === 'none' ? 'none' : 'auto' },
     messages: msgs,
     ...(effort ? { output_config: { effort } } : {}),
-  });
+  }, run?.signal ? { signal: run.signal } : undefined);
   return { message: fromAnthropic(response), provider: 'anthropic', model: response.model || model };
 }
 
@@ -240,14 +251,15 @@ async function callFree(messages, toolChoice, run) {
       if (!env.GROQ_API_KEY) throw Object.assign(new Error('GROQ_API_KEY is not set'), { noKey: true });
       return await callGroq(openAIStyle('groq', GROQ_MODEL, env), messages, toolChoice, run);
     } catch (err) {
-      if (!busyOrDown(err)) throw err;
+      if (isStopped(err, run) || !busyOrDown(err)) throw err;
       if (!env.OPENROUTER_API_KEY) throw new BusyError(ALL_BUSY);
       run.relay = { from: 'groq', to: 'openrouter', reason: err instanceof BusyError ? 'busy' : err?.name === 'TimeoutError' ? 'timeout' : 'unavailable' };
     }
   }
   try {
-    return await callOpenAIStyle(openAIStyle('openrouter', null, env), messages, toolChoice);
+    return await callOpenAIStyle(openAIStyle('openrouter', null, env), messages, toolChoice, run);
   } catch (err) {
+    if (isStopped(err, run)) throw err;
     if (busyOrDown(err) || err.status === 429) throw new BusyError(ALL_BUSY);
     throw err;
   }
@@ -259,16 +271,17 @@ async function callFree(messages, toolChoice, run) {
  * records why; it holds for the rest of the question, as does run.relay).
  */
 export async function chat(messages, toolChoice, run) {
+  if (run.signal?.aborted) throw new StoppedError('stopped');
   if (!run.selected) run.selected = askModel(run.env);
   const sel = run.selected;
   if (sel.provider === 'groq') return callFree(messages, toolChoice, run);
   if (!run.fallback) {
     try {
       if (!run.env[KEYS[sel.provider]]) throw Object.assign(new Error(`${KEYS[sel.provider]} is not set`), { noKey: true });
-      if (sel.provider === 'anthropic') return await callAnthropic(sel.model, messages, toolChoice, run.env);
-      return await callOpenAIStyle(openAIStyle(sel.provider, sel.model, run.env), messages, toolChoice);
+      if (sel.provider === 'anthropic') return await callAnthropic(sel.model, messages, toolChoice, run.env, run);
+      return await callOpenAIStyle(openAIStyle(sel.provider, sel.model, run.env), messages, toolChoice, run);
     } catch (err) {
-      if (!isBillingError(err)) throw err;
+      if (isStopped(err, run) || !isBillingError(err)) throw err;
       run.fallback = { from: `${sel.provider}:${sel.model}`, reason: err.noKey ? 'no API key' : 'credit or billing' };
     }
   }

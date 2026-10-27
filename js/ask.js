@@ -159,7 +159,9 @@ if (globalThis.document?.getElementById('ask-form')) {
   const touch = globalThis.matchMedia?.('(pointer: coarse)').matches || false;
   const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
   let history = []; // [{ role, content }], this page view only
-  let busy = false;
+  // The one thing running (a question, "Make it simpler", ...). While set, Send is
+  // Stop and Esc stops it. A stopped request shows nothing partial.
+  let active = null; // { controller, kind }
 
   // The box grows with its text up to about 6 lines (CSS max-height), then scrolls.
   const grow = () => {
@@ -172,9 +174,35 @@ if (globalThis.document?.getElementById('ask-form')) {
     count.classList.toggle('over', n > MAX_QUESTION);
     // Send stays clickable over the limit, so the pre-send check still runs on a pasted
     // key or certificate (both are longer than 1,000 characters) and can warn about it.
-    send.disabled = busy;
     grow();
   };
+
+  // Send turns into Stop (a square; the word is for screen readers) while something runs.
+  const begin = (kind) => {
+    const controller = new AbortController();
+    active = { controller, kind };
+    send.classList.add('stop');
+    send.replaceChildren(el('span', { class: 'stop-icon', 'aria-hidden': 'true' }), el('span', { class: 'visually-hidden' }, 'Stop'));
+    return controller;
+  };
+  const end = (controller) => {
+    if (active?.controller !== controller) return;
+    active = null;
+    send.classList.remove('stop');
+    send.replaceChildren('Send');
+  };
+  const stop = () => active?.controller.abort();
+  send.addEventListener('click', (ev) => {
+    if (!active) return;
+    ev.preventDefault(); // Stop, not submit
+    stop();
+  });
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && active) {
+      ev.preventDefault();
+      stop();
+    }
+  });
   input.addEventListener('input', updateCount);
 
   // The intro and examples show until the first question; "New chat" from then on.
@@ -205,7 +233,7 @@ if (globalThis.document?.getElementById('ask-form')) {
   input.addEventListener('keydown', (ev) => {
     if (enterSends(ev, touch)) {
       ev.preventDefault();
-      $('ask-form').requestSubmit();
+      if (!active) $('ask-form').requestSubmit();
     }
   });
 
@@ -241,8 +269,10 @@ if (globalThis.document?.getElementById('ask-form')) {
     const box = el('div', { class: 'ask-simpler', 'aria-live': 'polite' });
     const button = el('button', { type: 'button', class: 'secondary small' }, 'Make it simpler');
     button.addEventListener('click', async () => {
+      if (active) return;
+      const controller = begin('simplify');
       button.disabled = true;
-      button.textContent = 'Simplifying…';
+      button.textContent = 'Simplifying\u2026';
       let res;
       let r;
       try {
@@ -251,10 +281,18 @@ if (globalThis.document?.getElementById('ask-form')) {
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ question, answer: answer.slice(0, MAX_ANSWER) }),
           referrerPolicy: 'no-referrer',
+          signal: controller.signal,
         });
         r = await res.json();
       } catch {
         r = { error: 'Ask could not be reached. Try again.' };
+      }
+      end(controller);
+      if (controller.signal.aborted) {
+        button.disabled = false;
+        button.textContent = 'Make it simpler';
+        box.replaceChildren();
+        return;
       }
       if (!res?.ok || r.error) {
         button.disabled = false;
@@ -297,13 +335,49 @@ if (globalThis.document?.getElementById('ask-form')) {
       ...simplerButton(question, String(body.reply || '')));
   }
 
-  async function ask(question) {
-    busy = true;
-    updateCount();
+  // "Stopped." with Retry (the same messages again) and Edit (back into the box, out of
+  // the thread). A stopped question never joins the history sent with later questions.
+  function stoppedNode(question, asked) {
+    const retry = el('button', { type: 'button', class: 'secondary small' }, 'Retry');
+    const edit = el('button', { type: 'button', class: 'secondary small' }, 'Edit');
+    const box = el('div', { class: 'notice warn ask-stopped' }, el('p', {}, 'Stopped.'), el('div', { class: 'row' }, retry, edit));
+    retry.addEventListener('click', () => {
+      if (active) return;
+      box.remove();
+      ask(question, asked);
+    });
+    edit.addEventListener('click', () => {
+      if (active) return;
+      box.remove();
+      asked.remove();
+      updateEmpty();
+      fill(question);
+    });
+    return box;
+  }
+
+  // "Thinking… 12 s", once a second; after 40 s, a nudge that Stop is there.
+  function thinkingLine() {
+    const started = Date.now();
+    const elapsed = el('span', { class: 'ask-elapsed', 'aria-hidden': 'true' });
+    const still = el('span', { class: 'ask-still' });
+    const line = el('p', { class: 'ask-thinking', role: 'status' }, 'Thinking', el('span', { class: 'ask-dots', 'aria-hidden': 'true' }), ' ', elapsed, still);
+    const tick = () => {
+      const secs = Math.floor((Date.now() - started) / 1000);
+      elapsed.textContent = `${secs} s`;
+      if (secs >= 40 && !still.textContent) still.textContent = ' Still working. You can stop it.';
+    };
+    tick();
+    const timer = setInterval(tick, 1000);
+    return { line, done: () => { clearInterval(timer); line.remove(); } };
+  }
+
+  async function ask(question, asked) {
+    const controller = begin('ask');
     status.replaceChildren();
-    const thinking = el('p', { class: 'ask-thinking', role: 'status' }, 'Thinking', el('span', { class: 'ask-dots', 'aria-hidden': 'true' }));
-    thread.append(thinking);
-    thinking.scrollIntoView?.({ block: 'nearest' });
+    const thinking = thinkingLine();
+    thread.append(thinking.line);
+    thinking.line.scrollIntoView?.({ block: 'nearest' });
     markScroll();
     let res;
     let body;
@@ -313,18 +387,26 @@ if (globalThis.document?.getElementById('ask-form')) {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ messages: historyForSend(history, question) }),
         referrerPolicy: 'no-referrer',
+        signal: controller.signal,
       });
       body = await res.json();
     } catch {
       body = { error: 'Ask could not be reached. Check your connection and try again.' };
     }
-    thinking.remove();
-    busy = false;
-    updateCount();
+    thinking.done();
+    end(controller);
+    if (controller.signal.aborted) {
+      thread.append(stoppedNode(question, asked));
+      return;
+    }
     if (!res?.ok || body.error) {
       const retry = el('button', { type: 'button', class: 'secondary small' }, 'Retry');
       const box = notice(res?.status === 429 ? 'bad' : 'warn', String(body.error || 'Ask failed. Try again.'), ' ', retry);
-      retry.addEventListener('click', () => { box.remove(); ask(question); });
+      retry.addEventListener('click', () => {
+        if (active) return;
+        box.remove();
+        ask(question, asked);
+      });
       thread.append(box);
       return;
     }
@@ -371,17 +453,18 @@ if (globalThis.document?.getElementById('ask-form')) {
       return;
     }
     status.replaceChildren();
-    thread.append(el('div', { class: 'ask-msg ask-q' }, el('p', { class: 'ask-who' }, 'You'), el('p', { class: 'ask-q-text' }, question)));
+    const asked = el('div', { class: 'ask-msg ask-q' }, el('p', { class: 'ask-who' }, 'You'), el('p', { class: 'ask-q-text' }, question));
+    thread.append(asked);
     updateEmpty();
     input.value = '';
     updateCount();
-    ask(question);
+    ask(question, asked);
   }
 
   $('ask-form').addEventListener('submit', (ev) => {
     ev.preventDefault();
     const question = input.value.trim();
-    if (!question || busy) return;
+    if (!question || active) return;
     submit(question);
   });
 
