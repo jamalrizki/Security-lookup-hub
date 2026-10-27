@@ -109,6 +109,12 @@ test('the daily budget counts audio minutes Whisper reports, so long low-bitrate
   const kv2 = memoryKv();
   await send(WEBM, env({ AI: failing, NEWS: kv2 }));
   assert.equal(kv2.map.get(`voice:${today()}`), '1', 'a failed run still counts a minute');
+  // The minute is reserved before the model runs, so a request cut off mid-run still counts.
+  const kv3 = memoryKv();
+  const seen = { async run() { seen.before = kv3.map.get(`voice:${today()}`); return { text: 'x' }; } };
+  await send(WEBM, env({ AI: seen, NEWS: kv3 }));
+  assert.equal(seen.before, '1', 'reserved before AI.run');
+  assert.equal(kv3.map.get(`voice:${today()}`), '1');
 });
 
 test('the daily budget keeps voice at about 2,500 neurons (46.63 per audio minute)', () => {

@@ -68,18 +68,27 @@ const utcDay = (now) => now.toISOString().slice(0, 10);
 
 const voiceKey = (now) => `voice:${utcDay(now)}`;
 
-/** True while today's voice minutes (KV) are under the cap. No KV, no cap. */
-export async function voiceLeft(kv, now = new Date()) {
+const audioMinutes = (seconds) => Math.max(1, Math.ceil((Number(seconds) || 0) / 60));
+
+/**
+ * Reserves one minute of today's budget before the model runs (so a request cut
+ * off mid-run is still counted). False, and nothing reserved, when it's used up.
+ * No KV, no cap.
+ */
+export async function reserveVoice(kv, now = new Date()) {
   if (!kv) return true;
-  return (Number(await kv.get(voiceKey(now))) || 0) < DAILY_VOICE_MINUTES;
+  const used = Number(await kv.get(voiceKey(now))) || 0;
+  if (used >= DAILY_VOICE_MINUTES) return false;
+  await kv.put(voiceKey(now), String(used + 1), { expirationTtl: 2 * 86400 });
+  return true;
 }
 
-/** Adds a transcription's audio minutes (rounded up, at least 1) to today's count. */
-export async function countVoice(kv, seconds, now = new Date()) {
-  if (!kv) return;
-  const minutes = Math.max(1, Math.ceil((Number(seconds) || 0) / 60));
+/** After the run: adds the minutes Whisper reported beyond the one already reserved. */
+export async function settleVoice(kv, seconds, now = new Date()) {
+  const extra = audioMinutes(seconds) - 1;
+  if (!kv || extra <= 0) return;
   const used = Number(await kv.get(voiceKey(now))) || 0;
-  await kv.put(voiceKey(now), String(used + minutes), { expirationTtl: 2 * 86400 });
+  await kv.put(voiceKey(now), String(used + extra), { expirationTtl: 2 * 86400 });
 }
 
 function toBase64(bytes) {
@@ -100,7 +109,7 @@ export async function handleTranscribe(request, env, exec, deps) {
 
   const busy = { status: 429, body: { error: VOICE_USED_UP }, headers: { 'retry-after': '60' } };
   if (!(await deps.quotaTools(env, exec).allow('transcribe', TRANSCRIBE_PER_MINUTE))) return busy;
-  if (!(await voiceLeft(env.NEWS))) return busy;
+  if (!(await reserveVoice(env.NEWS))) return busy;
 
   let out;
   try {
@@ -112,10 +121,9 @@ export async function handleTranscribe(request, env, exec, deps) {
       initial_prompt: vocabPrompt(),
     });
   } catch {
-    await countVoice(env.NEWS, 60); // a failed run may still have used neurons
     return { status: 502, body: { error: 'Voice input failed. Try again, or type your question.' } };
   }
-  await countVoice(env.NEWS, out?.transcription_info?.duration);
+  await settleVoice(env.NEWS, out?.transcription_info?.duration);
   const text = cleanTranscript(out?.text);
   return { status: 200, body: text ? { text } : { text: '', empty: true } };
 }
