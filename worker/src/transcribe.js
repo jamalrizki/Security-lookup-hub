@@ -14,10 +14,13 @@ import VOICE_VOCAB from '../../data/voice-vocab.json' with { type: 'json' };
 export const MAX_AUDIO_BYTES = 2 * 1024 * 1024;
 export const WHISPER_MODEL = '@cf/openai/whisper-large-v3-turbo';
 export const TRANSCRIBE_PER_MINUTE = 20; // site-wide
-// 46.63 neurons per audio minute (Workers AI pricing, Oct 2026); recordings stop at
-// 60 s, so 50 a day is at most 50 x 46.63 = 2,331.5 neurons, under the 2,500 budget
-// (a quarter of the 10,000 free daily neurons Ask's reference search also uses).
-export const DAILY_TRANSCRIPTIONS = 50;
+// The daily budget is counted in audio minutes, as Whisper reports them, not in
+// requests: 2 MB of low-bitrate audio could be far longer than the page's 60 s.
+// 46.63 neurons per audio minute (Workers AI pricing, Oct 2026), so 50 minutes a day
+// is 50 x 46.63 = 2,331.5 neurons, under the 2,500 budget (a quarter of the 10,000
+// free daily neurons Ask's reference search also uses). Each transcription counts
+// at least one minute.
+export const DAILY_VOICE_MINUTES = 50;
 export const MAX_TRANSCRIPT = 1000;
 // Whisper's prompt holds about 224 tokens; tests keep the vocabulary hint under this.
 export const MAX_PROMPT_CHARS = 600;
@@ -63,14 +66,20 @@ export function cleanTranscript(text) {
 
 const utcDay = (now) => now.toISOString().slice(0, 10);
 
-/** Counts one transcription against today's cap in KV; false when it's used up. No KV, no cap. */
-export async function takeVoice(kv, now = new Date()) {
+const voiceKey = (now) => `voice:${utcDay(now)}`;
+
+/** True while today's voice minutes (KV) are under the cap. No KV, no cap. */
+export async function voiceLeft(kv, now = new Date()) {
   if (!kv) return true;
-  const key = `voice:${utcDay(now)}`;
-  const used = Number(await kv.get(key)) || 0;
-  if (used >= DAILY_TRANSCRIPTIONS) return false;
-  await kv.put(key, String(used + 1), { expirationTtl: 2 * 86400 });
-  return true;
+  return (Number(await kv.get(voiceKey(now))) || 0) < DAILY_VOICE_MINUTES;
+}
+
+/** Adds a transcription's audio minutes (rounded up, at least 1) to today's count. */
+export async function countVoice(kv, seconds, now = new Date()) {
+  if (!kv) return;
+  const minutes = Math.max(1, Math.ceil((Number(seconds) || 0) / 60));
+  const used = Number(await kv.get(voiceKey(now))) || 0;
+  await kv.put(voiceKey(now), String(used + minutes), { expirationTtl: 2 * 86400 });
 }
 
 function toBase64(bytes) {
@@ -91,7 +100,7 @@ export async function handleTranscribe(request, env, exec, deps) {
 
   const busy = { status: 429, body: { error: VOICE_USED_UP }, headers: { 'retry-after': '60' } };
   if (!(await deps.quotaTools(env, exec).allow('transcribe', TRANSCRIBE_PER_MINUTE))) return busy;
-  if (!(await takeVoice(env.NEWS))) return busy;
+  if (!(await voiceLeft(env.NEWS))) return busy;
 
   let out;
   try {
@@ -103,8 +112,10 @@ export async function handleTranscribe(request, env, exec, deps) {
       initial_prompt: vocabPrompt(),
     });
   } catch {
+    await countVoice(env.NEWS, 60); // a failed run may still have used neurons
     return { status: 502, body: { error: 'Voice input failed. Try again, or type your question.' } };
   }
+  await countVoice(env.NEWS, out?.transcription_info?.duration);
   const text = cleanTranscript(out?.text);
   return { status: 200, body: text ? { text } : { text: '', empty: true } };
 }

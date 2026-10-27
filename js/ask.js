@@ -223,6 +223,9 @@ if (globalThis.document?.getElementById('ask-form')) {
   }
 
   $('ask-new').addEventListener('click', () => {
+    for (const url of threadUrls) URL.revokeObjectURL(url);
+    threadUrls = [];
+    images.clear();
     history = [];
     thread.replaceChildren();
     status.replaceChildren();
@@ -236,6 +239,15 @@ if (globalThis.document?.getElementById('ask-form')) {
       if (!active) $('ask-form').requestSubmit();
     }
   });
+
+  // One image per question: paperclip, paste or drop. The thread keeps each sent
+  // image's object URL (for its thumbnail) until New chat revokes it.
+  const { setupImages, IMAGE_ONLY_QUESTION } = await import('./ask-image.js');
+  const images = setupImages({
+    button: $('ask-image'), fileInput: $('ask-file'), form: $('ask-form'), input, preview: $('ask-attach'), status, el, notice,
+    begin, end, isBusy: () => Boolean(active),
+  });
+  let threadUrls = [];
 
   // Voice input: the mic records, the Worker transcribes, the text lands at the cursor.
   const { setupVoice } = await import('./voice.js');
@@ -344,14 +356,14 @@ if (globalThis.document?.getElementById('ask-form')) {
 
   // "Stopped." with Retry (the same messages again) and Edit (back into the box, out of
   // the thread). A stopped question never joins the history sent with later questions.
-  function stoppedNode(question, asked) {
+  function stoppedNode(question, asked, image) {
     const retry = el('button', { type: 'button', class: 'secondary small' }, 'Retry');
     const edit = el('button', { type: 'button', class: 'secondary small' }, 'Edit');
     const box = el('div', { class: 'notice warn ask-stopped' }, el('p', {}, 'Stopped.'), el('div', { class: 'row' }, retry, edit));
     retry.addEventListener('click', () => {
       if (active) return;
       box.remove();
-      ask(question, asked);
+      ask(question, asked, image);
     });
     edit.addEventListener('click', () => {
       if (active) return;
@@ -379,8 +391,11 @@ if (globalThis.document?.getElementById('ask-form')) {
     return { line, done: () => { clearInterval(timer); line.remove(); } };
   }
 
-  async function ask(question, asked) {
+  async function ask(question, asked, image) {
     const controller = begin('ask');
+    // The image goes only with the question it was attached to; the history is text.
+    const messages = historyForSend(history, question);
+    if (image) messages[messages.length - 1].image = { media_type: image.media_type, data: image.data };
     status.replaceChildren();
     const thinking = thinkingLine();
     thread.append(thinking.line);
@@ -392,7 +407,7 @@ if (globalThis.document?.getElementById('ask-form')) {
       res = await fetch(`${API_BASE}/api/ask`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ messages: historyForSend(history, question) }),
+        body: JSON.stringify({ messages }),
         referrerPolicy: 'no-referrer',
         signal: controller.signal,
       });
@@ -403,7 +418,7 @@ if (globalThis.document?.getElementById('ask-form')) {
     thinking.done();
     end(controller);
     if (controller.signal.aborted) {
-      thread.append(stoppedNode(question, asked));
+      thread.append(stoppedNode(question, asked, image));
       return;
     }
     if (!res?.ok || body.error) {
@@ -412,7 +427,7 @@ if (globalThis.document?.getElementById('ask-form')) {
       retry.addEventListener('click', () => {
         if (active) return;
         box.remove();
-        ask(question, asked);
+        ask(question, asked, image);
       });
       thread.append(box);
       return;
@@ -446,7 +461,7 @@ if (globalThis.document?.getElementById('ask-form')) {
         return;
       }
       // Just an indicator: Lookup has better data, and it doesn't spend a paid question.
-      const only = indicatorOnly(question);
+      const only = images.get() ? null : indicatorOnly(question);
       if (only) {
         const go = lookupLink(only.value, 'Look it up', { class: 'button' });
         const anyway = el('button', { type: 'button', class: 'secondary' }, 'Ask anyway');
@@ -460,17 +475,22 @@ if (globalThis.document?.getElementById('ask-form')) {
       return;
     }
     status.replaceChildren();
-    const asked = el('div', { class: 'ask-msg ask-q' }, el('p', { class: 'ask-who' }, 'You'), el('p', { class: 'ask-q-text' }, question));
+    const image = images.take();
+    if (image) threadUrls.push(image.url);
+    const asked = el('div', { class: 'ask-msg ask-q' }, el('p', { class: 'ask-who' }, 'You'),
+      image ? el('img', { src: image.url, alt: 'Attached image', class: 'ask-thumb' }) : null,
+      el('p', { class: 'ask-q-text' }, question));
     thread.append(asked);
     updateEmpty();
     input.value = '';
     updateCount();
-    ask(question, asked);
+    ask(question, asked, image);
   }
 
   $('ask-form').addEventListener('submit', (ev) => {
     ev.preventDefault();
-    const question = input.value.trim();
+    // An image on its own is a question too.
+    const question = input.value.trim() || (images.get() ? IMAGE_ONLY_QUESTION : '');
     if (!question || active) return;
     submit(question);
   });

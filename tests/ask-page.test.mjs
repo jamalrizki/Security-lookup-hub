@@ -45,6 +45,8 @@ afterEach(async () => {
   dom = null;
   delete globalThis.fetch;
   delete globalThis.MediaRecorder;
+  delete globalThis.createImageBitmap;
+  delete globalThis.OffscreenCanvas;
 });
 
 const send = async ($, text) => {
@@ -414,4 +416,140 @@ test('insertAtCursor: spaces as needed, and cut at the limit', () => {
   assert.equal(pickRecordingType({ isTypeSupported: (t) => t.startsWith('audio/ogg') }), 'audio/ogg;codecs=opus');
   assert.equal(pickRecordingType({ isTypeSupported: () => true }), 'audio/webm;codecs=opus', 'webm first');
   assert.equal(pickRecordingType(undefined), '');
+});
+
+/* ---------- Phase 20: one image per question ---------- */
+
+import { prepareImage, scaledSize, sniffImage, IMAGE_MESSAGES, IMAGE_ONLY_QUESTION } from '../js/ask-image.js';
+
+const PNG_HEAD = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+const fileOf = (head, size, name = 'shot.png', type = 'image/png') => {
+  const bytes = new Uint8Array(size);
+  bytes.set(head);
+  return new File([bytes], name, { type });
+};
+
+/** createImageBitmap and OffscreenCanvas stand-ins: JPEG size from quality (sizes[quality]). */
+function fakeCanvas({ width = 3000, height = 2000, sizes = { 0.85: 300_000, 0.7: 200_000 } } = {}) {
+  const log = { drawn: [], encodes: [] };
+  globalThis.createImageBitmap = async () => ({ width, height, close() {} });
+  globalThis.OffscreenCanvas = class {
+    constructor(w, h) { this.width = w; this.height = h; log.canvas = [w, h]; }
+    getContext() { return { fillRect() {}, drawImage: (b, x, y, w, h) => log.drawn.push([w, h]), set fillStyle(v) {} }; }
+    async convertToBlob({ type, quality }) {
+      log.encodes.push([type, quality]);
+      const bytes = new Uint8Array(sizes[quality]);
+      bytes.set([0xff, 0xd8, 0xff]);
+      return new Blob([bytes], { type });
+    }
+  };
+  return log;
+}
+
+test('prepareImage: scaled to 1,568 px on the long side, JPEG 0.85, lower quality once, then "too large"', async () => {
+  const log = fakeCanvas();
+  const out = await prepareImage(fileOf(PNG_HEAD, 2000));
+  assert.deepEqual(log.canvas, [1568, 1045]);
+  assert.deepEqual(log.encodes, [['image/jpeg', 0.85]]);
+  assert.equal(out.media_type, 'image/jpeg');
+  assert.equal(Buffer.from(out.data, 'base64').length, 300_000);
+  assert.equal(Buffer.from(out.data, 'base64')[0], 0xff);
+
+  const twice = fakeCanvas({ sizes: { 0.85: 1.6 * 1024 * 1024, 0.7: 1.2 * 1024 * 1024 } });
+  await prepareImage(fileOf(PNG_HEAD, 2000));
+  assert.deepEqual(twice.encodes.map((e) => e[1]), [0.85, 0.7], 'quality lowered once');
+
+  fakeCanvas({ sizes: { 0.85: 1.7 * 1024 * 1024, 0.7: 1.6 * 1024 * 1024 } });
+  await assert.rejects(prepareImage(fileOf(PNG_HEAD, 2000)), { message: IMAGE_MESSAGES.tooLarge });
+  assert.equal(IMAGE_MESSAGES.tooLarge, 'That image is too large.');
+
+  assert.deepEqual(scaledSize(800, 600), { width: 800, height: 600 }, 'never enlarged');
+  assert.deepEqual(scaledSize(1000, 4000), { width: 392, height: 1568 });
+  assert.equal(sniffImage(Uint8Array.from([...Buffer.from('RIFF'), 0, 0, 0, 0, ...Buffer.from('WEBP')])), 'image/webp');
+});
+
+test('images: a 12 MB file, a GIF and an SVG are refused (by size and first bytes, not the name)', async () => {
+  fakeCanvas();
+  const { $, doc } = await loadPage();
+  for (const [file, message] of [
+    [fileOf(PNG_HEAD, 12 * 1024 * 1024), IMAGE_MESSAGES.sourceTooLarge],
+    [fileOf([...Buffer.from('GIF89a')], 500, 'cat.png', 'image/png'), IMAGE_MESSAGES.wrongType],
+    [new File(['<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'], 'x.png', { type: 'image/svg+xml' }), IMAGE_MESSAGES.wrongType],
+  ]) {
+    $('ask-image').click();
+    assert.equal(doc.filePickers.at(-1), $('ask-file'), 'the paperclip opens the file picker');
+    $('ask-file').files = [file];
+    $('ask-file').dispatchEvent(new Event('change'));
+    await settle();
+    assert.equal($('ask-notice').textContent, message);
+    assert.equal($('ask-attach').hidden, true, 'nothing attached');
+  }
+  assert.equal($('ask-file').getAttribute('accept'), 'image/png,image/jpeg,image/webp');
+});
+
+test('images: paste and drop both attach; the X removes it; a new one replaces the old', async () => {
+  fakeCanvas();
+  const { $ } = await loadPage();
+  const paste = new Event('paste', { clipboardData: { items: [{ kind: 'file', type: 'image/png', getAsFile: () => fileOf(PNG_HEAD, 900) }] } });
+  $('ask-input').dispatchEvent(paste);
+  await settle();
+  assert.equal(paste.defaultPrevented, true);
+  assert.equal($('ask-attach').hidden, false);
+  const thumb = $('ask-attach').querySelector('img');
+  assert.match(thumb.getAttribute('src'), /^blob:/);
+  $('ask-attach').querySelector('button').click();
+  assert.equal($('ask-attach').hidden, true);
+  assert.equal($('ask-attach').childElementCount, 0);
+
+  const textPaste = new Event('paste', { clipboardData: { items: [{ kind: 'string', type: 'text/plain' }] } });
+  $('ask-input').dispatchEvent(textPaste);
+  assert.equal(textPaste.defaultPrevented, false, 'ordinary text pastes as usual');
+
+  const drop = new Event('drop', { dataTransfer: { files: [fileOf(PNG_HEAD, 900)], types: ['Files'] } });
+  $('ask-form').dispatchEvent(drop);
+  await settle();
+  assert.equal(drop.defaultPrevented, true);
+  const first = $('ask-attach').querySelector('img').getAttribute('src');
+  $('ask-form').dispatchEvent(new Event('drop', { dataTransfer: { files: [fileOf(PNG_HEAD, 900)], types: ['Files'] } }));
+  await settle();
+  assert.equal($('ask-attach').querySelectorAll('img').length, 1, 'one image per question');
+  assert.notEqual($('ask-attach').querySelector('img').getAttribute('src'), first);
+});
+
+test('images: an image alone is a question; only that question carries it; follow-ups are text', async () => {
+  fakeCanvas();
+  const { $, calls } = await loadPage();
+  $('ask-input').dispatchEvent(new Event('paste', { clipboardData: { items: [{ kind: 'file', type: 'image/png', getAsFile: () => fileOf(PNG_HEAD, 900) }] } }));
+  await settle();
+  $('ask-send').click();
+  await settle();
+  assert.equal(calls.length, 1);
+  const sent = calls[0].body.messages;
+  assert.equal(sent.at(-1).content, IMAGE_ONLY_QUESTION);
+  assert.equal(IMAGE_ONLY_QUESTION, 'Is this safe? What should I do?');
+  assert.equal(sent.at(-1).image.media_type, 'image/jpeg');
+  assert.ok(sent.at(-1).image.data.length > 1000);
+  assert.ok($('ask-thread').querySelector('.ask-q img.ask-thumb'), 'the thumbnail is on the question in the thread');
+  assert.equal($('ask-attach').hidden, true, 'the composer is clear again');
+
+  await send($, 'What should I do if I clicked the link?');
+  const follow = calls[1].body.messages;
+  assert.equal(follow.length, 3);
+  assert.ok(follow.every((m) => !('image' in m)), 'the image is not sent again');
+});
+
+test('images: a bare indicator with an image attached is a question, not a lookup', async () => {
+  fakeCanvas();
+  const { $, calls } = await loadPage();
+  $('ask-form').dispatchEvent(new Event('drop', { dataTransfer: { files: [fileOf(PNG_HEAD, 900)], types: ['Files'] } }));
+  await settle();
+  await send($, 'paypal.com');
+  assert.equal(calls.length, 1);
+  assert.ok(calls[0].body.messages.at(-1).image);
+});
+
+test('the Ask page allows blob: thumbnails and nothing else new in its CSP', () => {
+  const csp = /Content-Security-Policy" content="([^"]+)"/.exec(HTML)[1];
+  assert.match(csp, /img-src 'self' data: blob: /);
+  assert.match(csp, /connect-src 'self' http:\/\/127\.0\.0\.1:8787 https:\/\/security-lookup-hub\.jamal-598\.workers\.dev https:\/\/www\.googletagmanager\.com/);
 });

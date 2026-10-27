@@ -3,7 +3,7 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/src/index.js';
-import { audioMatches, cleanTranscript, vocabPrompt, MAX_PROMPT_CHARS, WHISPER_MODEL, DAILY_TRANSCRIPTIONS, VOICE_USED_UP } from '../worker/src/transcribe.js';
+import { audioMatches, cleanTranscript, vocabPrompt, MAX_PROMPT_CHARS, WHISPER_MODEL, DAILY_VOICE_MINUTES, VOICE_USED_UP } from '../worker/src/transcribe.js';
 import { ORIGIN, installCaches, exec, memoryKv } from './helpers/ask-stubs.mjs';
 
 const ascii = (s) => [...s].map((c) => c.charCodeAt(0));
@@ -83,7 +83,7 @@ test('limits: 20 a minute site-wide, then 429; the daily cap in KV, then 429 wit
   assert.equal(model.calls.length, 20);
 
   installCaches();
-  const kv = memoryKv({ [`voice:${today()}`]: String(DAILY_TRANSCRIPTIONS) });
+  const kv = memoryKv({ [`voice:${today()}`]: String(DAILY_VOICE_MINUTES) });
   const daily = await send(WEBM, env({ AI: model.binding, NEWS: kv }));
   assert.equal(daily.status, 429);
   assert.equal(daily.body.error, VOICE_USED_UP);
@@ -94,9 +94,26 @@ test('limits: 20 a minute site-wide, then 429; the daily cap in KV, then 429 wit
   assert.deepEqual(fresh.puts.map((p) => [p.k, p.v, p.opts.expirationTtl]), [[`voice:${today()}`, '1', 172800]], 'counted per UTC day, expires after 2 days');
 });
 
-test('the daily cap keeps voice at about 2,500 neurons (46.63 per audio minute, recordings stop at 60 s)', () => {
-  assert.ok(DAILY_TRANSCRIPTIONS * 46.63 <= 2500, `${DAILY_TRANSCRIPTIONS * 46.63}`);
-  assert.equal(DAILY_TRANSCRIPTIONS, 50);
+test('the daily budget counts audio minutes Whisper reports, so long low-bitrate audio can\'t slip past it', async () => {
+  const kv = memoryKv();
+  const long = ai({ text: 'a long one', transcription_info: { duration: 1500 } }); // 25 minutes in under 2 MB
+  assert.equal((await send(WEBM, env({ AI: long.binding, NEWS: kv }))).status, 200);
+  assert.equal(kv.map.get(`voice:${today()}`), '25');
+  const short = ai({ text: 'hi', transcription_info: { duration: 7.5 } });
+  await send(WEBM, env({ AI: short.binding, NEWS: kv }));
+  assert.equal(kv.map.get(`voice:${today()}`), '26', 'a short clip counts one minute');
+  kv.map.set(`voice:${today()}`, '50');
+  assert.equal((await send(WEBM, env({ AI: short.binding, NEWS: kv }))).status, 429);
+  assert.equal(short.calls.length, 1, 'no model call once the minutes are used up');
+  const failing = { async run() { throw new Error('boom'); } };
+  const kv2 = memoryKv();
+  await send(WEBM, env({ AI: failing, NEWS: kv2 }));
+  assert.equal(kv2.map.get(`voice:${today()}`), '1', 'a failed run still counts a minute');
+});
+
+test('the daily budget keeps voice at about 2,500 neurons (46.63 per audio minute)', () => {
+  assert.ok(DAILY_VOICE_MINUTES * 46.63 <= 2500, `${DAILY_VOICE_MINUTES * 46.63}`);
+  assert.equal(DAILY_VOICE_MINUTES, 50);
 });
 
 test('nothing heard: { text: "", empty: true }; a model failure is 502; no AI binding is 503', async () => {
