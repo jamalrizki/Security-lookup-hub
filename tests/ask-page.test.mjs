@@ -37,10 +37,10 @@ async function loadPage({ url, api = () => ANSWER, touch = false, navigator } = 
 afterEach(async () => {
   // Stop anything still running, so its timer doesn't keep the test process alive.
   const button = dom?.document.getElementById('ask-send');
-  if (button?.classList.contains('stop')) {
-    button.click();
-    await settle();
-  }
+  const cancel = dom?.document.getElementById('ask-cancel');
+  if (cancel && !cancel.hidden) cancel.click();
+  else if (button?.classList.contains('stop')) button.click();
+  await settle();
   dom?.restore();
   dom = null;
   delete globalThis.fetch;
@@ -162,7 +162,7 @@ test('Stop: Send becomes Stop; stopping leaves "Stopped." with Retry and Edit an
   await send($, 'What is Kerberoasting?');
   const button = $('ask-send');
   assert.ok(button.classList.contains('stop'));
-  assert.equal(button.textContent, 'Stop', 'the word is there for screen readers');
+  assert.equal(button.textContent, 'Stop', 'the word shows next to the square');
   assert.ok(button.querySelector('.stop-icon'), 'square icon');
   assert.ok(calls[0].init.signal, 'the fetch carries an AbortController signal');
   button.click();
@@ -256,6 +256,10 @@ test('Make it simpler can be stopped too', async () => {
   button.click();
   await settle();
   assert.ok($('ask-send').classList.contains('stop'));
+  const working = $('ask-thread').querySelector('.ask-simpler .ask-thinking');
+  assert.ok(working, 'an animated "Simplifying" line shows it is working');
+  assert.match(working.textContent, /^Simplifying 0 s$/);
+  assert.ok(working.querySelector('.ask-dots'));
   $('ask-send').click();
   await settle();
   assert.equal(simplify.aborted, true);
@@ -331,8 +335,14 @@ test('voice: record, stop, transcribe; the text goes in at the cursor and is nev
   assert.ok($('ask-mic').classList.contains('recording'));
   assert.equal($('ask-mic').getAttribute('aria-pressed'), 'true');
   assert.equal($('ask-mic').querySelector('.mic-time').textContent, '0:00');
-  assert.ok($('ask-send').classList.contains('stop'), 'Send is Stop while recording');
-  $('ask-mic').click(); // stop and transcribe
+  // While recording: the main button is "Done" (finish), with a separate Cancel, and the box says so.
+  assert.equal($('ask-send').textContent, 'Done');
+  assert.ok($('ask-send').classList.contains('done'));
+  assert.equal($('ask-cancel').hidden, false);
+  assert.equal(input.getAttribute('placeholder'), "Recording\u2026 press Done when you've finished");
+  assert.ok(input.hasAttribute('readonly'));
+  assert.equal($('ask-form').getAttribute('data-busy'), 'record');
+  $('ask-send').click(); // Done: stop and transcribe (not discard)
   await settle();
   assert.equal(calls.length, 1);
   assert.ok(calls[0].url.endsWith('/api/transcribe'));
@@ -346,6 +356,42 @@ test('voice: record, stop, transcribe; the text goes in at the cursor and is nev
   assert.equal(mic.tracksStopped, 1, 'microphone released');
   assert.equal($('ask-mic').classList.contains('recording'), false);
   assert.equal($('ask-send').textContent, 'Send');
+  assert.equal($('ask-cancel').hidden, true);
+  assert.equal(input.getAttribute('placeholder'), 'Ask a security question', 'the box is back to normal');
+  assert.equal(input.hasAttribute('readonly'), false);
+});
+
+test('voice: the mic button still finishes too; Cancel throws the recording away', async () => {
+  const mic = fakeMic();
+  const { $, calls } = await loadPage({ navigator: mic.navigator, api: () => ({ text: 'hello' }) });
+  $('ask-mic').click();
+  await settle();
+  $('ask-mic').click();
+  await settle();
+  assert.equal(calls.length, 1, 'mic again = Done');
+  $('ask-mic').click();
+  await settle();
+  $('ask-cancel').click();
+  await settle();
+  assert.equal(calls.length, 1, 'Cancel uploads nothing');
+  assert.equal(mic.tracksStopped, 2);
+  assert.equal($('ask-send').textContent, 'Send');
+});
+
+test('voice: while transcribing the box says so, with animated dots, and Send is Stop', async () => {
+  const mic = fakeMic();
+  let release;
+  const { $ } = await loadPage({ navigator: mic.navigator, api: () => new Promise((r) => { release = () => r({ text: 'hi' }); }) });
+  $('ask-mic').click();
+  await settle();
+  $('ask-send').click();
+  await settle();
+  assert.equal($('ask-input').getAttribute('placeholder'), 'Transcribing\u2026');
+  assert.ok($('ask-notice').querySelector('.ask-thinking .ask-dots'), 'animated, like Thinking');
+  assert.equal($('ask-send').textContent, 'Stop');
+  release();
+  await settle();
+  assert.equal($('ask-input').value, 'hi');
 });
 
 test('voice: Esc cancels a recording and throws it away', async () => {

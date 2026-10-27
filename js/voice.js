@@ -46,8 +46,9 @@ export function insertAtCursor(value, start, end, text, max) {
 /**
  * Wires the mic button. page: { button, input, status, apiBase, max, el, notice,
  * begin(kind) -> AbortController, end(controller), isBusy(), changed() }. begin/end
- * come from js/ask.js, so Send turns into Stop while recording or transcribing, and
- * Stop or Esc cancels (a cancelled recording is discarded).
+ * come from js/ask.js: while recording, Send turns into "Done" (stop and transcribe)
+ * with a Cancel beside it, and the box says "Recording…"; Cancel or Esc throws the
+ * recording away. While transcribing, Send is "Stop".
  */
 export function setupVoice(page) {
   const { button, input, status, el, notice } = page;
@@ -72,8 +73,8 @@ export function setupVoice(page) {
   };
 
   async function transcribe(blob) {
-    const controller = page.begin('transcribe');
-    status.replaceChildren(el('p', { class: 'hint ask-transcribing', role: 'status' }, 'Transcribing…'));
+    const controller = page.begin('transcribe', { message: 'Transcribing\u2026' });
+    status.replaceChildren(el('p', { class: 'ask-thinking ask-transcribing', role: 'status' }, 'Transcribing', el('span', { class: 'ask-dots', 'aria-hidden': 'true' })));
     let res;
     let body;
     try {
@@ -114,9 +115,9 @@ export function setupVoice(page) {
     const type = pickRecordingType();
     const recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
     const r = { recorder, stream, chunks: [], started: Date.now(), cancelled: false };
-    r.controller = page.begin('record');
+    r.controller = page.begin('record', { done: finish, message: "Recording\u2026 press Done when you've finished" });
     rec = r;
-    // Stop (the Send button) or Esc cancels: the recording is thrown away.
+    // Cancel or Esc: the recording is thrown away.
     r.controller.signal.addEventListener('abort', () => {
       r.cancelled = true;
       if (recorder.state !== 'inactive') recorder.stop();
@@ -134,7 +135,7 @@ export function setupVoice(page) {
     recorder.start();
     button.classList.add('recording');
     button.setAttribute('aria-pressed', 'true');
-    button.setAttribute('aria-label', 'Stop recording and transcribe');
+    button.setAttribute('aria-label', 'Recording. Press to finish and transcribe');
     const tick = () => {
       const secs = Math.min(MAX_RECORDING_S, Math.floor((Date.now() - r.started) / 1000));
       if (label) label.textContent = formatTimer(secs);

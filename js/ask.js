@@ -177,26 +177,43 @@ if (globalThis.document?.getElementById('ask-form')) {
     grow();
   };
 
-  // Send turns into Stop (a square; the word is for screen readers) while something runs.
-  const begin = (kind) => {
+  // While something runs, Send turns into "Stop" (cancels it). Something that has a
+  // finish step (recording) gets "Done" instead (finish it), plus a separate Cancel,
+  // so the main button never throws work away. The box says what's happening.
+  const form = $('ask-form');
+  const cancel = $('ask-cancel');
+  const placeholder = input.getAttribute('placeholder');
+  const begin = (kind, { done, message } = {}) => {
     const controller = new AbortController();
-    active = { controller, kind };
-    send.classList.add('stop');
-    send.replaceChildren(el('span', { class: 'stop-icon', 'aria-hidden': 'true' }), el('span', { class: 'visually-hidden' }, 'Stop'));
+    active = { controller, kind, done };
+    form.setAttribute('data-busy', kind);
+    send.classList.add(done ? 'done' : 'stop');
+    send.replaceChildren(el('span', { class: done ? 'done-icon' : 'stop-icon', 'aria-hidden': 'true' }), el('span', {}, done ? 'Done' : 'Stop'));
+    cancel.hidden = !done;
+    if (message) {
+      input.setAttribute('placeholder', message);
+      input.setAttribute('readonly', '');
+    }
     return controller;
   };
   const end = (controller) => {
     if (active?.controller !== controller) return;
     active = null;
-    send.classList.remove('stop');
+    form.removeAttribute('data-busy');
+    send.classList.remove('stop', 'done');
     send.replaceChildren('Send');
+    cancel.hidden = true;
+    input.setAttribute('placeholder', placeholder);
+    input.removeAttribute('readonly');
   };
   const stop = () => active?.controller.abort();
   send.addEventListener('click', (ev) => {
     if (!active) return;
-    ev.preventDefault(); // Stop, not submit
-    stop();
+    ev.preventDefault(); // Stop or Done, not submit
+    if (active.done) active.done();
+    else stop();
   });
+  cancel.addEventListener('click', stop);
   document.addEventListener('keydown', (ev) => {
     if (ev.key === 'Escape' && active) {
       ev.preventDefault();
@@ -292,6 +309,8 @@ if (globalThis.document?.getElementById('ask-form')) {
       const controller = begin('simplify');
       button.disabled = true;
       button.textContent = 'Simplifying\u2026';
+      const working = thinkingLine('Simplifying');
+      box.replaceChildren(working.line);
       let res;
       let r;
       try {
@@ -306,6 +325,7 @@ if (globalThis.document?.getElementById('ask-form')) {
       } catch {
         r = { error: 'Ask could not be reached. Try again.' };
       }
+      working.done();
       end(controller);
       if (controller.signal.aborted) {
         button.disabled = false;
@@ -376,11 +396,11 @@ if (globalThis.document?.getElementById('ask-form')) {
   }
 
   // "Thinking… 12 s", once a second; after 40 s, a nudge that Stop is there.
-  function thinkingLine() {
+  function thinkingLine(label = 'Thinking') {
     const started = Date.now();
     const elapsed = el('span', { class: 'ask-elapsed', 'aria-hidden': 'true' });
     const still = el('span', { class: 'ask-still' });
-    const line = el('p', { class: 'ask-thinking', role: 'status' }, 'Thinking', el('span', { class: 'ask-dots', 'aria-hidden': 'true' }), ' ', elapsed, still);
+    const line = el('p', { class: 'ask-thinking', role: 'status' }, label, el('span', { class: 'ask-dots', 'aria-hidden': 'true' }), ' ', elapsed, still);
     const tick = () => {
       const secs = Math.floor((Date.now() - started) / 1000);
       elapsed.textContent = `${secs} s`;
