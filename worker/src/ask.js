@@ -14,7 +14,7 @@
 // the tools returned, hub links from data/hub-features.json, and any other URL
 // in the reply is defanged. Questions and answers are never logged or stored.
 
-import { detect } from '../../js/detect.js';
+import { detect, FILE_EXT } from '../../js/detect.js';
 import { readCapped } from './http.js';
 import { defangText } from './explain.js';
 import { TOOL_CAPS, runTool, newState, featureById, featuresPrompt, cveIdsIn } from './ask-tools.js';
@@ -219,9 +219,7 @@ export function removeOverlapping(reply, texts, n = OVERLAP_WORDS) {
 
 // ---------- Indicators in the question ----------
 
-// detect() accepts any 2+ letter TLD, so "setup.exe" would be a domain. Skip names
-// ending in common file extensions; Ask is for questions, not IOC lists.
-const FILE_EXT = /\.(exe|dll|js|py|zip|jar|pdf|txt|docx?|xlsx?|pptx?|ps1|sh|php|html?|json|xml|csv|log|bat|msi|iso|png|jpe?g|gif|md|yml|yaml|conf|ini)$/i;
+// Names ending in common file extensions are skipped (FILE_EXT); Ask is for questions, not IOC lists.
 
 /** Public indicators (and CVE IDs) in the visitor's message, as detect() decides. */
 export function findLookups(text) {

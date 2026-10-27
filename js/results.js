@@ -18,7 +18,7 @@ function el(tag, attrs = {}, ...children) {
 
 const extLink = (href, ...children) => el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, ...children);
 // Opens the hub's own lookup for an indicator (same tab; the page reacts to #q=).
-export const hubLink = (value, text = value) => el('a', { href: `./#q=${encodeURIComponent(value)}` }, text);
+export const hubLink = (value, text = value) => el('a', { href: `./lookup.html#q=${encodeURIComponent(value)}` }, text);
 
 /** Returns the URL if it is https with no userinfo, else null. Feed data decides these links. */
 export function safeUrl(raw) {

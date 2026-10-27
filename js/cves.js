@@ -24,7 +24,7 @@ const notice = (kind, text) => el('p', { class: `notice ${kind}` }, text);
 
 function row(r) {
   const sev = (r.severity || '').toLowerCase();
-  const href = `./#q=${encodeURIComponent(r.id)}`;
+  const href = `./lookup.html#q=${encodeURIComponent(r.id)}`;
   return el('li', { class: 'cve-row' },
     el('span', { class: `cve-score sev-${sev || 'none'}` }, r.score != null ? String(r.score) : '\u2014'),
     el('div', { class: 'cve-id' },
@@ -118,7 +118,7 @@ function prioRow(r, i) {
       el('strong', { class: 'mono' }, `${i + 1}. ${r.id}`),
       el('span', { class: VERDICT_CLASS[r.verdict] || 'sev-none' }, r.verdict)),
     el('p', { class: 'cve-desc' }, `${factsLine(r)}${reasons}${gaps}`),
-    el('a', { class: 'cve-go', href: `./#q=${encodeURIComponent(r.id)}` }, 'Look up →'));
+    el('a', { class: 'cve-go', href: `./lookup.html#q=${encodeURIComponent(r.id)}` }, 'Look up →'));
 }
 
 async function lookupCve(id) {
@@ -177,7 +177,7 @@ function kevRow(r) {
       el('strong', { class: 'mono' }, r.id),
       el('span', { class: r.ransomware ? 'sev-critical' : 'sev-high' }, rowLabel(r))),
     el('p', { class: 'cve-desc' }, rowDetail(r)),
-    el('a', { class: 'cve-go', href: `./#q=${encodeURIComponent(r.id)}` }, 'Look up →'));
+    el('a', { class: 'cve-go', href: `./lookup.html#q=${encodeURIComponent(r.id)}` }, 'Look up →'));
 }
 
 let kevRun = 0;

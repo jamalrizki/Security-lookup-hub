@@ -8,7 +8,7 @@
   "whereToStart": [
     {
       "have": "A file hash",
-      "hub": [{ "label": "Lookup", "href": "./" }],
+      "hub": [{ "label": "Lookup", "href": "lookup.html" }],
       "sites": [
         { "name": "VirusTotal", "when": "Detections from ~70 antivirus engines and any behaviour reports." },
         { "name": "MalwareBazaar", "when": "Whether it's a known malware sample, with family and tags." },
@@ -17,7 +17,7 @@
     },
     {
       "have": "A domain",
-      "hub": [{ "label": "Lookup", "href": "./" }],
+      "hub": [{ "label": "Lookup", "href": "lookup.html" }],
       "sites": [
         { "name": "ICANN Lookup", "when": "Who registered it and when; very new domains are a phishing signal." },
         { "name": "crt.sh", "when": "Every certificate issued for it, which reveals subdomains." },
@@ -26,7 +26,7 @@
     },
     {
       "have": "An IP address",
-      "hub": [{ "label": "Lookup", "href": "./" }],
+      "hub": [{ "label": "Lookup", "href": "lookup.html" }],
       "sites": [
         { "name": "AbuseIPDB", "when": "Community abuse reports and a confidence score." },
         { "name": "GreyNoise", "when": "Whether it's internet-wide scanning noise or something targeted." },
@@ -35,7 +35,7 @@
     },
     {
       "have": "A URL",
-      "hub": [{ "label": "Lookup", "href": "./" }, { "label": "Link inspector", "href": "analyze.html#link" }],
+      "hub": [{ "label": "Lookup", "href": "lookup.html" }, { "label": "Link inspector", "href": "analyze.html#link" }],
       "sites": [
         { "name": "urlscan.io", "when": "A safe look at the page from a sandbox browser, without opening it yourself." },
         { "name": "URLhaus", "when": "Whether it's a known malware download link." },
@@ -44,7 +44,7 @@
     },
     {
       "have": "An email address",
-      "hub": [{ "label": "Lookup", "href": "./" }],
+      "hub": [{ "label": "Lookup", "href": "lookup.html" }],
       "sites": [
         { "name": "Have I Been Pwned", "when": "Whether the address appears in known data breaches." },
         { "name": "MXToolbox", "when": "Mail records and blocklist checks for the address's domain." }
@@ -60,7 +60,7 @@
     },
     {
       "have": "A CVE ID",
-      "hub": [{ "label": "Lookup", "href": "./" }, { "label": "CVEs", "href": "cves.html" }],
+      "hub": [{ "label": "Lookup", "href": "lookup.html" }, { "label": "CVEs", "href": "cves.html" }],
       "sites": [
         { "name": "NVD", "when": "The official record, CVSS score and affected products." },
         { "name": "CISA KEV", "when": "Whether it's confirmed exploited in the wild." },

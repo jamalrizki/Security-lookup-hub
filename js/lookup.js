@@ -8,7 +8,7 @@ import { CODECS } from './encoding.js';
 import { checkPassword } from './pwned.js';
 import { API_BASE } from './config.js';
 import { sourceCard, priorityStrip } from './results.js';
-import { cvePrompt } from './ask.js';
+import { cvePrompt, askHref } from './ask.js';
 
 const $ = (id) => document.getElementById(id);
 const TYPE_LABELS = { cve: 'CVE ID', ipv4: 'IPv4 address', ipv6: 'IPv6 address', domain: 'Domain', url: 'URL', email: 'Email address' };
@@ -127,17 +127,9 @@ function explainPanel(d) {
   return panel;
 }
 
-// Fills the Ask box (doesn't send) and scrolls to it.
+// Opens Ask (the home page) with the question in its box; Ask never sends it on its own.
 function askAboutButton(id) {
-  const b = el('button', { type: 'button', class: 'secondary small' }, 'Ask about this CVE');
-  b.addEventListener('click', () => {
-    const input = $('ask-input');
-    input.value = cvePrompt(id);
-    input.dispatchEvent(new Event('input'));
-    $('ask').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    input.focus({ preventScroll: true });
-  });
-  return b;
+  return el('a', { class: 'button secondary small', href: askHref(cvePrompt(id)) }, 'Ask about this CVE');
 }
 
 function renderSearch(raw) {
@@ -184,7 +176,7 @@ function searchFromHash() {
   if (q) {
     $('search-input').value = q;
     renderSearch(q);
-    // The Ask box sits above Lookup, so bring the search and its results into view.
+    // Bring the search and its results into view below the hero.
     $('search-input').scrollIntoView({ block: 'start' });
   }
 }

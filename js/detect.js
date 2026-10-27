@@ -261,6 +261,10 @@ export function validateCveSearch(q, severity) {
  * input is recognisable but not something we will look up (private IPs etc.).
  * type is one of: cve, hash, ipv4, ipv6, domain, url, email, unknown, empty.
  */
+// detect() accepts any 2+ letter TLD, so "setup.exe" would be a domain. Ask skips
+// names ending in common file extensions when it looks for indicators.
+export const FILE_EXT = /\.(exe|dll|js|py|zip|jar|pdf|txt|docx?|xlsx?|pptx?|ps1|sh|php|html?|json|xml|csv|log|bat|msi|iso|png|jpe?g|gif|md|yml|yaml|conf|ini)$/i;
+
 export function detect(raw) {
   const s = refang(raw);
   if (!s) return { type: 'empty', value: '' };

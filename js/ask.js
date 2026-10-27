@@ -1,13 +1,14 @@
-// Ask box on the Lookup page. The thread lives in a JS variable only: never in
-// browser storage or the URL fragment, so a question never lands in history or
-// Analytics. Answers are rendered as text nodes (render-answer.js); links come
-// only from the Worker's sources and hub lists, re-checked here.
+// Ask, the home page: a chat with the composer pinned to the bottom. The thread
+// lives in a JS variable only: never in browser storage or the URL, so a question
+// never lands in history or Analytics (a #ask= fill link is read once and removed).
+// Answers are rendered as text nodes (render-answer.js); links come only from the
+// Worker's sources and hub lists, re-checked here.
 
 import { decodeJwt } from './analyze/jwt.js';
 import { readCertificates } from './analyze/cert.js';
 import { parseHeaders } from './extract.js';
 import { safeUrl } from './results.js';
-import { defang } from './detect.js';
+import { defang, detect, FILE_EXT } from './detect.js';
 
 export const MAX_QUESTION = 1000;
 const MAX_ANSWER = 3000; // the Worker rejects longer earlier answers
@@ -94,6 +95,49 @@ export function checkedSources(sources) {
     .slice(0, 8);
 }
 
+/** Ask (the home page) with this text in its box. Ask fills the box and never sends it. */
+export const askHref = (text) => `./#ask=${encodeURIComponent(text)}`;
+
+/** The Lookup page, running this lookup. */
+export const lookupHref = (value) => `./lookup.html#q=${encodeURIComponent(value)}`;
+
+/** The text of a #ask= fill link (decoded, capped at MAX_QUESTION), or null. */
+export function readAskFragment(hash) {
+  const h = String(hash || '');
+  if (!h.startsWith('#ask=')) return null;
+  let text;
+  try {
+    text = decodeURIComponent(h.slice(5).replace(/\+/g, ' '));
+  } catch {
+    return null;
+  }
+  text = text.trim().slice(0, MAX_QUESTION);
+  return text || null;
+}
+
+const INDICATOR_WORDS = {
+  ipv4: 'an IPv4 address', ipv6: 'an IPv6 address', domain: 'a domain', url: 'a URL', email: 'an email address', cve: 'a CVE ID',
+};
+
+/**
+ * A question that is nothing but one indicator Lookup handles: { type, value, what },
+ * else null. "is 8.8.8.8 safe?" is a question; "8.8.8.8" is a lookup.
+ */
+export function indicatorOnly(text) {
+  const d = detect(String(text).trim());
+  if (d.error) return null;
+  if (d.type === 'hash') return { type: d.type, value: d.value, what: `${d.algorithm === 'MD5' ? 'an' : 'a'} ${d.algorithm} hash` };
+  if (!INDICATOR_WORDS[d.type] || (d.type === 'domain' && FILE_EXT.test(d.value))) return null;
+  return { type: d.type, value: d.value, what: INDICATOR_WORDS[d.type] };
+}
+
+/** Enter sends on desktop (Shift+Enter is a new line); on touch screens Enter is a new line. Ctrl/Cmd+Enter always sends. */
+export function enterSends(ev, touch) {
+  if (ev.key !== 'Enter' || ev.isComposing) return false;
+  if (ev.ctrlKey || ev.metaKey) return true;
+  return !touch && !ev.shiftKey && !ev.altKey;
+}
+
 // ---------- Page wiring ----------
 
 if (globalThis.document?.getElementById('ask-form')) {
@@ -112,9 +156,16 @@ if (globalThis.document?.getElementById('ask-form')) {
   const count = $('ask-count');
   const thread = $('ask-thread');
   const status = $('ask-notice');
+  const touch = globalThis.matchMedia?.('(pointer: coarse)').matches || false;
+  const reducedMotion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
   let history = []; // [{ role, content }], this page view only
   let busy = false;
 
+  // The box grows with its text up to about 6 lines (CSS max-height), then scrolls.
+  const grow = () => {
+    input.style.height = 'auto';
+    input.style.height = `${input.scrollHeight}px`;
+  };
   const updateCount = () => {
     const n = input.value.length;
     count.textContent = `${n.toLocaleString('en-US')} / ${MAX_QUESTION.toLocaleString('en-US')}`;
@@ -122,29 +173,37 @@ if (globalThis.document?.getElementById('ask-form')) {
     // Send stays clickable over the limit, so the pre-send check still runs on a pasted
     // key or certificate (both are longer than 1,000 characters) and can warn about it.
     send.disabled = busy;
+    grow();
   };
   input.addEventListener('input', updateCount);
 
+  // The intro and examples show until the first question; "New chat" from then on.
+  const updateEmpty = () => {
+    const started = thread.childElementCount > 0;
+    $('ask-empty').hidden = started;
+    $('ask-top').hidden = !started;
+  };
+
+  const fill = (text) => {
+    input.value = text;
+    updateCount();
+    input.focus();
+  };
+
   for (const chip of document.querySelectorAll('#ask-examples .chip')) {
-    chip.addEventListener('click', () => {
-      input.value = chip.textContent;
-      updateCount();
-      input.focus();
-    });
+    chip.addEventListener('click', () => fill(chip.textContent));
   }
 
   $('ask-new').addEventListener('click', () => {
     history = [];
     thread.replaceChildren();
     status.replaceChildren();
-    input.value = '';
-    updateCount();
-    input.focus();
+    updateEmpty();
+    fill('');
   });
 
-  // Ctrl/Cmd+Enter sends; plain Enter makes a new line.
   input.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) {
+    if (enterSends(ev, touch)) {
       ev.preventDefault();
       $('ask-form').requestSubmit();
     }
@@ -157,10 +216,23 @@ if (globalThis.document?.getElementById('ask-form')) {
     location.href = `./analyze.html#${check.tool}`;
   };
 
-  const lookUp = (value) => {
-    $('search-input').value = value;
-    $('search-form').requestSubmit();
-    $('search-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Lookup is another page. Once there is a thread, it opens in a new tab so the
+  // thread (which lives only in this page) isn't lost.
+  const lookupLink = (value, text, attrs = {}) => el('a', {
+    href: lookupHref(value),
+    ...(thread.childElementCount ? { target: '_blank', rel: 'noopener noreferrer' } : {}),
+    ...attrs,
+  }, text);
+
+  // Answers are long: bring the start of the answer to the top, unless the visitor
+  // scrolled up while waiting (then leave the page where they put it).
+  let scrollMark = null;
+  const markScroll = () => { scrollMark = globalThis.scrollY ?? 0; };
+  const showAnswer = (node) => {
+    if (scrollMark === null || (globalThis.scrollY ?? 0) >= scrollMark - 40) {
+      node.scrollIntoView?.({ block: 'start', behavior: reducedMotion ? 'auto' : 'smooth' });
+    }
+    scrollMark = null;
   };
 
   // "Make it simpler": the same answer in plain language (tools off, no new facts),
@@ -170,7 +242,7 @@ if (globalThis.document?.getElementById('ask-form')) {
     const button = el('button', { type: 'button', class: 'secondary small' }, 'Make it simpler');
     button.addEventListener('click', async () => {
       button.disabled = true;
-      button.textContent = 'Simplifying\u2026';
+      button.textContent = 'Simplifying…';
       let res;
       let r;
       try {
@@ -209,11 +281,8 @@ if (globalThis.document?.getElementById('ask-form')) {
       el('p', { class: 'ask-who' }, 'Ask'),
       el('div', { class: 'ask-text' }, ...renderAnswer(String(body.reply || ''))),
       hub.length ? section('In the hub', el('div', { class: 'chips' }, ...hub.map((h) => el('a', { class: 'chip', href: h.href }, `${h.name} →`)))) : null,
-      lookups.length ? section('Look up', el('div', { class: 'chips' }, ...lookups.map((l) => {
-        const b = el('button', { type: 'button', class: 'chip' }, `Look up ${['url', 'domain', 'email'].includes(l.type) ? defang(l.value) : l.value}`);
-        b.addEventListener('click', () => lookUp(l.value));
-        return b;
-      }))) : null,
+      lookups.length ? section('Look up', el('div', { class: 'chips' }, ...lookups.map((l) => lookupLink(l.value,
+        `Look up ${['url', 'domain', 'email'].includes(l.type) ? defang(l.value) : l.value}`, { class: 'chip' })))) : null,
       sources.length ? section('Sources', el('ol', { class: 'ask-sources' }, ...sources.map((s) => el('li', {},
         el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer' }, String(s.title || s.domain || s.url)),
         el('span', { class: 'hint' }, ` ${String(s.domain || '')}`))))) : null,
@@ -234,6 +303,8 @@ if (globalThis.document?.getElementById('ask-form')) {
     status.replaceChildren();
     const thinking = el('p', { class: 'ask-thinking', role: 'status' }, 'Thinking', el('span', { class: 'ask-dots', 'aria-hidden': 'true' }));
     thread.append(thinking);
+    thinking.scrollIntoView?.({ block: 'nearest' });
+    markScroll();
     let res;
     let body;
     try {
@@ -259,7 +330,14 @@ if (globalThis.document?.getElementById('ask-form')) {
     }
     history.push({ role: 'user', content: question }, { role: 'assistant', content: String(body.reply || '') });
     history = history.slice(-MAX_HISTORY);
-    thread.append(answerNode(body, question));
+    const node = answerNode(body, question);
+    thread.append(node);
+    showAnswer(node);
+  }
+
+  function offer(text, ...buttons) {
+    status.replaceChildren(el('div', { class: 'notice warn ask-offer' }, el('p', {}, text), el('div', { class: 'row' }, ...buttons)));
+    buttons[0].focus();
   }
 
   function submit(question, { skipCheck = false } = {}) {
@@ -267,8 +345,7 @@ if (globalThis.document?.getElementById('ask-form')) {
       const check = preSendCheck(question);
       if (check?.block) {
         status.replaceChildren(notice('bad', check.block));
-        input.value = '';
-        updateCount();
+        fill('');
         return;
       }
       if (check?.tool) {
@@ -276,10 +353,16 @@ if (globalThis.document?.getElementById('ask-form')) {
         const anyway = el('button', { type: 'button', class: 'secondary' }, 'Send anyway');
         open.addEventListener('click', () => openTool(check));
         anyway.addEventListener('click', () => submit(question, { skipCheck: true }));
-        status.replaceChildren(el('div', { class: 'notice warn ask-offer' },
-          el('p', {}, `This would be sent to the AI. The ${check.name} reads it without it leaving your browser.`),
-          el('div', { class: 'row' }, open, anyway)));
-        open.focus();
+        offer(`This would be sent to the AI. The ${check.name} reads it without it leaving your browser.`, open, anyway);
+        return;
+      }
+      // Just an indicator: Lookup has better data, and it doesn't spend a paid question.
+      const only = indicatorOnly(question);
+      if (only) {
+        const go = lookupLink(only.value, 'Look it up', { class: 'button' });
+        const anyway = el('button', { type: 'button', class: 'secondary' }, 'Ask anyway');
+        anyway.addEventListener('click', () => submit(question, { skipCheck: true }));
+        offer(`That looks like ${only.what}. Lookup checks it against reputation sources for free.`, go, anyway);
         return;
       }
     }
@@ -289,6 +372,7 @@ if (globalThis.document?.getElementById('ask-form')) {
     }
     status.replaceChildren();
     thread.append(el('div', { class: 'ask-msg ask-q' }, el('p', { class: 'ask-who' }, 'You'), el('p', { class: 'ask-q-text' }, question)));
+    updateEmpty();
     input.value = '';
     updateCount();
     ask(question);
@@ -301,5 +385,12 @@ if (globalThis.document?.getElementById('ask-form')) {
     submit(question);
   });
 
+  // A #ask= fill link (e.g. "Ask about this CVE" on Lookup): read once, put in the box,
+  // never sent, and the fragment removed so it isn't left in the address bar or history.
+  // Not focused: on phones that would pop up the keyboard.
+  const filled = readAskFragment(location.hash);
+  if (location.hash.startsWith('#ask=')) globalThis.history.replaceState(null, '', location.pathname + location.search);
+  if (filled) input.value = filled;
   updateCount();
+  updateEmpty();
 }

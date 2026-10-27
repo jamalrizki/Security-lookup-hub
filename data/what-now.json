@@ -29,7 +29,7 @@
         "For an email account, delete any forwarding rules or filters you didn't create.",
         "Can't sign in any more? Follow \"Someone got into my account\"."
       ],
-      "hub": [{ "label": "Check a password against known breaches", "href": "./#password" }],
+      "hub": [{ "label": "Check a password against known breaches", "href": "./lookup.html#password" }],
       "guidance": [
         { "by": "FTC (US)", "title": "What to do if you were scammed", "url": "https://consumer.ftc.gov/articles/what-do-if-you-were-scammed" },
         { "by": "NCSC (UK)", "title": "Phishing scams: if you've shared sensitive information", "url": "https://www.ncsc.gov.uk/collection/phishing-scams/what-to-do" }
@@ -45,7 +45,7 @@
         "If it happened on a work computer, phone or account, tell your IT team now. Acting fast matters more than feeling embarrassed.",
         "Still have the file? The file analyzer shows its real type and its hashes without uploading it, and Lookup checks a hash."
       ],
-      "hub": [{ "label": "File analyzer (stays in your browser)", "href": "./analyze.html#file" }, { "label": "Lookup", "href": "./" }],
+      "hub": [{ "label": "File analyzer (stays in your browser)", "href": "./analyze.html#file" }, { "label": "Lookup", "href": "./lookup.html" }],
       "guidance": [
         { "by": "FTC (US)", "title": "How to recognize and avoid phishing scams", "url": "https://consumer.ftc.gov/articles/how-recognize-avoid-phishing-scams" },
         { "by": "NCSC (UK)", "title": "Phishing scams: if you've shared sensitive information", "url": "https://www.ncsc.gov.uk/collection/phishing-scams/what-to-do" }
@@ -95,7 +95,7 @@
         "Check your bank and shopping accounts for activity you don't recognise.",
         "Change the password anywhere else you used the same one."
       ],
-      "hub": [{ "label": "Check a password against known breaches", "href": "./#password" }],
+      "hub": [{ "label": "Check a password against known breaches", "href": "./lookup.html#password" }],
       "guidance": [
         { "by": "FTC (US)", "title": "How to recover your hacked email or social media account", "url": "https://consumer.ftc.gov/articles/how-recover-your-hacked-email-or-social-media-account" },
         { "by": "NCSC (UK)", "title": "Recovering a hacked account", "url": "https://www.ncsc.gov.uk/guidance/recovering-a-hacked-account" }
@@ -111,7 +111,7 @@
         "In the US, if your Social Security number was exposed, IdentityTheft.gov lists what to do, including a free credit freeze.",
         "Watch your accounts and statements for activity you don't recognise."
       ],
-      "hub": [{ "label": "Check a password against known breaches", "href": "./#password" }],
+      "hub": [{ "label": "Check a password against known breaches", "href": "./lookup.html#password" }],
       "guidance": [
         { "by": "FTC (US)", "title": "IdentityTheft.gov: when information is lost or exposed", "url": "https://www.identitytheft.gov/Info-Lost-or-Stolen" },
         { "by": "NCSC (UK)", "title": "Data breaches: guidance for individuals and families", "url": "https://www.ncsc.gov.uk/guidance/data-breaches" }

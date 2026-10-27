@@ -3,6 +3,11 @@
 // prefers-reduced-motion, the first command and its output are shown statically.
 
 const COMMANDS = {
+  ask: [
+    ['ask "how does kerberoasting work?"', 'searching reference library · 2 passages'],
+    ['ask "is CVE-2024-3400 exploited?"', '[!] in CISA KEV · patch urgently'],
+    ['ask "spf vs dkim vs dmarc"', 'answer ready · 3 sources'],
+  ],
   lookup: [
     ['whois example.com', 'Registrar: IANA · created 1995-08-14'],
     ['dig +short bad[.]example', '198.51.100.23'],

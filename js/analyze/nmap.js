@@ -116,7 +116,7 @@ if (globalThis.document?.getElementById('nmap-file')) {
           el('td', { class: 'mono' }, `${port.port}/${port.proto}`),
           el('td', {}, el('span', { class: `flag ${port.state === 'open' ? 'ok' : 'muted'}` }, port.state || '?')),
           el('td', {}, port.service || ''),
-          el('td', {}, port.product || '', port.cves.length ? el('div', { class: 'cve-links' }, ...port.cves.flatMap((c, i) => [i ? ', ' : null, el('a', { href: `./#q=${c}`, class: 'mono' }, c)])) : null))))));
+          el('td', {}, port.product || '', port.cves.length ? el('div', { class: 'cve-links' }, ...port.cves.flatMap((c, i) => [i ? ', ' : null, el('a', { href: `./lookup.html#q=${c}`, class: 'mono' }, c)])) : null))))));
   };
 
   const load = async (file) => {

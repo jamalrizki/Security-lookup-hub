@@ -64,5 +64,5 @@ test('the Reference page has the section, and Ask can link to it and to the pass
   const features = JSON.parse(readFileSync(new URL('data/hub-features.json', root), 'utf8')).features;
   const byId = Object.fromEntries(features.map((f) => [f.id, f.href]));
   assert.equal(byId['what-now'], './reference.html#what-now');
-  assert.equal(byId.password, './#password');
+  assert.equal(byId.password, './lookup.html#password');
 });

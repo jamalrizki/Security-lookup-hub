@@ -62,7 +62,7 @@ function itemRow(item, sources) {
     el('div', { class: 'news-source' }, publisher));
   if (item.cve) {
     body.append(el('p', { class: 'kev-line' },
-      el('a', { href: `./#q=${encodeURIComponent(item.cve)}`, class: 'mono' }, item.cve),
+      el('a', { href: `./lookup.html#q=${encodeURIComponent(item.cve)}`, class: 'mono' }, item.cve),
       ` \u00b7 ${[item.vendor, item.product].filter(Boolean).join(' ')}`,
       item.ransomware ? el('span', { class: 'flag bad' }, 'Ransomware use') : null));
   }

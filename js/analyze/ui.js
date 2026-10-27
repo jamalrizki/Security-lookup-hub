@@ -17,7 +17,7 @@ export const $ = (id) => document.getElementById(id);
 export const notice = (kind, ...children) => el('p', { class: `notice ${kind}` }, ...children);
 
 /** "Look up" opens the hub's own lookup for one value: one click, one lookup. */
-export const lookUpLink = (value) => el('a', { href: `./#q=${encodeURIComponent(value)}`, class: 'small-link' }, 'Look up');
+export const lookUpLink = (value) => el('a', { href: `./lookup.html#q=${encodeURIComponent(value)}`, class: 'small-link' }, 'Look up');
 
 export function copyButton(getText, label = 'Copy') {
   const b = el('button', { type: 'button', class: 'secondary small' }, label);

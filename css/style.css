@@ -280,7 +280,9 @@ textarea { min-height: 110px; resize: vertical; font-family: var(--mono); }
 .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .row > input, .row > select { flex: 1 1 220px; width: auto; }
 
-button {
+button, a.button {
+  display: inline-block;
+  text-decoration: none;
   background: var(--accent);
   color: var(--on-accent);
   border: 1px solid var(--accent);
@@ -292,10 +294,10 @@ button {
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-button:hover { background: var(--text); border-color: var(--text); color: var(--on-accent); }
-button.secondary { background: transparent; color: var(--text); border-color: var(--input-line); }
-button.secondary:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
-button.small { padding: 5px 10px; font-size: 11px; }
+button:hover, a.button:hover { background: var(--text); border-color: var(--text); color: var(--on-accent); }
+button.secondary, a.button.secondary { background: transparent; color: var(--text); border-color: var(--input-line); }
+button.secondary:hover, a.button.secondary:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
+button.small, a.button.small { padding: 5px 10px; font-size: 11px; }
 button:disabled { opacity: 0.6; cursor: progress; }
 
 /* Big search bar: input + button inside a 2px white frame. */
@@ -593,17 +595,18 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 .wts-card { gap: 10px; }
 .cve-go { text-transform: uppercase; }
 
-/* ---------- Ask (Lookup page) ---------- */
+/* ---------- Boxed blocks (Lookup) and Ask ---------- */
 
-/* The Ask and Lookup sections share a boxed layout and title style. */
+/* The Lookup section and Ask's intro share a boxed layout and title style. */
 .block { scroll-margin-top: 90px; margin: 34px 0; padding: 22px; border: 2px solid var(--text); background: var(--overlay); display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .block > * { margin-top: 0; margin-bottom: 0; }
 .search-block.block > * + * { margin-top: 0; }
 .block-title { font: 400 34px/1 var(--display); letter-spacing: 1px; color: var(--text); text-transform: uppercase; }
 .block-title::before { content: "> "; color: var(--accent); }
-.ask-form { display: flex; flex-direction: column; border: 1px solid var(--input-line); }
+.ask-form { display: flex; flex-direction: column; border: 1px solid var(--input-line); background: var(--bg); }
 .ask-form:focus-within { border-color: var(--accent); }
-.ask-form textarea { border: 0; min-height: 90px; font-size: 14px; }
+/* Grows with its text (js/ask.js sets the height) up to about 6 lines, then scrolls. */
+.ask-form textarea { border: 0; min-height: 46px; max-height: calc(6 * 1.6em + 22px); resize: none; overflow-y: auto; font-size: 14px; }
 .ask-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; border-top: 1px solid var(--line); }
 .ask-count { margin-right: auto; color: var(--muted); font-size: 12px; }
 .ask-count.over { color: var(--bad); font-weight: 700; }
@@ -634,12 +637,37 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 .ask-dots::after { content: "..."; display: inline-block; width: 3ch; overflow: hidden; vertical-align: bottom; animation: ask-dots 1.2s steps(4, end) infinite; }
 @keyframes ask-dots { from { width: 0; } to { width: 4ch; } }
 
+/* Ask is the home page: a chat that fills the screen, thread on top, composer pinned
+   to the bottom (sticky, so it sits above the on-screen keyboard and the home
+   indicator). 100dvh follows the phone's toolbars; 100vh is the fallback. */
+body[data-page="ask"] { min-height: 100vh; min-height: 100dvh; }
+.chat-main { padding-bottom: 0; }
+.chat { flex: 1; width: 100%; max-width: 900px; margin: 0 auto; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.chat-empty { padding: 22px; border: 2px solid var(--text); background: var(--overlay); display: flex; flex-direction: column; gap: 12px; }
+.chat-empty > * { margin: 0; }
+.chat-route { color: var(--body); }
+.chat-top { display: flex; justify-content: flex-end; }
+.ask-thread > * { scroll-margin-top: 80px; }
+.chat-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: auto;
+  padding: 12px 0 calc(14px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#ask-notice:empty { display: none; }
+
 @media (max-width: 720px) {
-  .ask-block { padding: 16px; }
+  .chat-empty { padding: 16px; }
   .block-title { font-size: 28px; }
   .block { padding: 16px; }
-  .ask-bar > button { flex: 1 1 auto; }
-  .ask-count { flex: 1 1 100%; }
+  .chat-main { padding-top: 16px; }
+  .ask-bar { gap: 6px; padding: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

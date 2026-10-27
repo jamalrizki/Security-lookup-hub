@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { preSendCheck, historyForSend, checkedHub, checkedSources, cvePrompt, answeredBy, PRIVATE_KEY_MESSAGE, MAX_HISTORY } from '../js/ask.js';
+import { preSendCheck, historyForSend, checkedHub, checkedSources, cvePrompt, answeredBy, PRIVATE_KEY_MESSAGE, MAX_HISTORY, askHref, lookupHref, readAskFragment, indicatorOnly, enterSends } from '../js/ask.js';
 
 const root = new URL('../', import.meta.url);
 const b64url = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
@@ -78,20 +78,68 @@ test('sources: https only, no userinfo, javascript: dropped', () => {
   assert.deepEqual(s.map((x) => x.url), ['https://www.cisa.gov/a']);
 });
 
-test('the page has the Ask box, its script, and keeps the existing CVE Explainer link', () => {
+test('the Ask page is the chat: intro, examples, route to Lookup, thread, composer; Lookup keeps the CVE Explainer link', () => {
   const html = readFileSync(new URL('index.html', root), 'utf8');
-  for (const id of ['ask', 'ask-form', 'ask-input', 'ask-send', 'ask-new', 'ask-count', 'ask-thread', 'ask-examples']) assert.ok(html.includes(`id="${id}"`), id);
+  for (const id of ['ask', 'ask-empty', 'ask-form', 'ask-input', 'ask-send', 'ask-new', 'ask-top', 'ask-count', 'ask-thread', 'ask-examples', 'ask-notice']) assert.ok(html.includes(`id="${id}"`), id);
   assert.ok(html.includes('<script type="module" src="js/ask.js"></script>'));
-  const askSection = html.slice(html.indexOf('<section class="ask-block'), html.indexOf('</section>', html.indexOf('<section class="ask-block')));
-  const hints = [...askSection.matchAll(/<p class="hint">([^<]*)<\/p>/g)].map((m) => m[1]);
+  const empty = html.slice(html.indexOf('<div id="ask-empty"'), html.indexOf('<div class="chat-top"'));
+  assert.match(empty, /<h1 id="ask-h" class="block-title">Ask<\/h1>/);
+  const hints = [...empty.matchAll(/<p class="hint">([^<]*)<\/p>/g)].map((m) => m[1]);
   assert.deepEqual(hints, ['Ask a security question. Answers draw on a reference library, current security news and the hub’s data, and can be wrong.'], 'the Ask intro is exactly this one line');
+  assert.match(empty, /Have an IP, domain, hash, URL or CVE\? <a href="\.\/lookup\.html">Look it up &rarr;<\/a>/);
+  assert.equal((empty.match(/class="chip"/g) || []).length, 3, 'three example chips');
+  // The composer comes after the thread, pinned to the bottom.
+  assert.ok(html.indexOf('id="ask-thread"') < html.indexOf('id="ask-form"'));
+  assert.match(html, /<div class="chat-dock">/);
+  assert.ok(!html.includes('<section class="hero">'), 'compact header: no hero on the chat page');
+  assert.match(/<meta name="viewport" content="([^"]+)"/.exec(html)[1], /viewport-fit=cover/, 'safe-area insets apply');
+  const css = readFileSync(new URL('css/style.css', root), 'utf8');
+  assert.match(css, /\.chat-dock \{\s*position: sticky;\s*bottom: 0;/);
+  assert.match(css, /env\(safe-area-inset-bottom/);
+  assert.match(css, /min-height: 100dvh/);
   const csp = /Content-Security-Policy" content="([^"]+)"/.exec(html)[1];
   assert.ok(csp.includes('https://security-lookup-hub.jamal-598.workers.dev'));
   const lookup = readFileSync(new URL('js/lookup.js', root), 'utf8');
   assert.ok(lookup.includes('Try CVE Explainer'));
   assert.ok(lookup.includes('Ask about this CVE'));
+  assert.ok(lookup.includes('askHref(cvePrompt(id))'), '"Ask about this CVE" opens Ask with the question filled in');
   const ask = readFileSync(new URL('js/ask.js', root), 'utf8');
-  assert.ok(!/localStorage|location\.hash\s*=|history\.(push|replace)State/.test(ask), 'questions never stored or put in the URL');
+  assert.ok(!/localStorage|location\.hash\s*=|history\.pushState/.test(ask), 'questions never stored or put in the URL');
+  const replaces = [...ask.matchAll(/history\.replaceState\(([^)]*)\)/g)].map((m) => m[1]);
+  assert.deepEqual(replaces, ["null, '', location.pathname + location.search"], 'replaceState only ever removes the fragment');
+});
+
+test('#ask= fill links: decoded, capped at 1,000 characters, never anything else', () => {
+  assert.equal(askHref(cvePrompt('CVE-2021-44228')), './#ask=Explain%20CVE-2021-44228%3A%20what%20is%20it%2C%20is%20it%20being%20exploited%2C%20and%20what%20should%20I%20do%3F');
+  assert.equal(readAskFragment(askHref(cvePrompt('CVE-2021-44228')).slice(2)), cvePrompt('CVE-2021-44228'));
+  assert.equal(readAskFragment('#ask=what+is+DMARC'), 'what is DMARC');
+  assert.equal(readAskFragment(`#ask=${'a'.repeat(1500)}`).length, 1000);
+  assert.equal(readAskFragment('#ask=%E0%A4%A'), null, 'malformed encoding is ignored');
+  assert.equal(readAskFragment('#ask='), null);
+  assert.equal(readAskFragment('#q=8.8.8.8'), null);
+  assert.equal(readAskFragment(''), null);
+  assert.equal(lookupHref('hxxp://bad[.]example'), './lookup.html#q=hxxp%3A%2F%2Fbad%5B.%5Dexample');
+});
+
+test('indicator-only questions: one indicator Lookup handles; a question that contains one is sent', () => {
+  assert.deepEqual(indicatorOnly(' 8.8.8.8 '), { type: 'ipv4', value: '8.8.8.8', what: 'an IPv4 address' });
+  assert.deepEqual(indicatorOnly('CVE-2021-44228'), { type: 'cve', value: 'CVE-2021-44228', what: 'a CVE ID' });
+  assert.equal(indicatorOnly('example.com').what, 'a domain');
+  assert.equal(indicatorOnly('hxxps://bad[.]example/login').what, 'a URL');
+  assert.equal(indicatorOnly('a@example.com').what, 'an email address');
+  assert.equal(indicatorOnly('2001:4860:4860::8888').what, 'an IPv6 address');
+  assert.equal(indicatorOnly('5f4dcc3b5aa765d61d8327deb882cf99').what, 'an MD5 hash');
+  assert.equal(indicatorOnly('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855').what, 'a SHA-256 hash');
+  for (const q of ['is 8.8.8.8 safe to use as DNS?', 'phishing', 'Log4Shell', 'setup.exe', '10.0.0.1', 'What is CVE-2021-44228?']) assert.equal(indicatorOnly(q), null, q);
+});
+
+test('Enter sends on desktop, Shift+Enter is a new line; on touch screens Enter is a new line', () => {
+  assert.equal(enterSends({ key: 'Enter' }, false), true);
+  assert.equal(enterSends({ key: 'Enter', shiftKey: true }, false), false);
+  assert.equal(enterSends({ key: 'Enter', isComposing: true }, false), false, 'IME composition');
+  assert.equal(enterSends({ key: 'Enter' }, true), false);
+  assert.equal(enterSends({ key: 'Enter', metaKey: true }, true), true, 'Cmd/Ctrl+Enter always sends');
+  assert.equal(enterSends({ key: 'a' }, false), false);
 });
 
 test('Analyze handoff: taken once, by the right tool, and ignored after a minute', async () => {
@@ -125,22 +173,20 @@ test('"Answered by" names the model that answered, and every step that changed i
   assert.equal(answeredBy({}), 'Answered by the AI model. AI can be wrong: check the sources.');
 });
 
-test('section numbers come from page order: empty placeholders, a CSS counter, Ask 01 and Lookup 02 first', () => {
+test('section numbers come from page order: empty placeholders, a CSS counter, Lookup 01 first on its page', () => {
   const css = readFileSync(new URL('css/style.css', root), 'utf8');
   assert.match(css, /main \{ counter-reset: section; \}/);
   assert.match(css, /\.num::before \{ counter-increment: section; content: counter\(section, decimal-leading-zero\); \}/);
-  for (const page of ['index.html', 'analyze.html']) {
+  for (const page of ['lookup.html', 'analyze.html']) {
     const html = readFileSync(new URL(page, root), 'utf8');
     const nums = [...html.matchAll(/<span class="num"[^>]*>([^<]*)<\/span>/g)].map((m) => m[1]);
-    assert.ok(nums.length >= 6, page);
+    assert.ok(nums.length >= 5, page);
     assert.ok(nums.every((n) => n === ''), `${page}: no hard-coded numbers, so they can't drift`);
   }
-  // In page order, the numbered sections on Lookup are Ask, Lookup, then the panels.
-  const html = readFileSync(new URL('index.html', root), 'utf8');
+  const html = readFileSync(new URL('lookup.html', root), 'utf8');
   const order = [...html.matchAll(/<span class="num"[^>]*><\/span>\s*<h2 id="([a-z-]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(order, ['ask-h', 'search-h', 'pw-h', 'hid-h', 'calc-h', 'dec-h']);
+  assert.deepEqual(order, ['search-h', 'pw-h', 'hid-h', 'calc-h', 'dec-h']);
   assert.match(html, /<h2 id="search-h" class="block-title">Lookup<\/h2>/);
-  assert.match(html, /<h2 id="ask-h" class="block-title">Ask<\/h2>/);
 });
 
 test('phones: form fields are 16px (no iOS zoom), pinch-zoom stays enabled, chips wrap', () => {
@@ -149,7 +195,7 @@ test('phones: form fields are 16px (no iOS zoom), pinch-zoom stays enabled, chip
   assert.match(mobile, /select, textarea,\s*\.ask-form textarea, \.row > input, \.dkim-row input \{ font-size: 16px; \}/);
   assert.match(css, /\.chip \{ max-width: 100%; overflow-wrap: anywhere;/);
   assert.ok(!/body\s*\{[^}]*overflow-x:\s*hidden/.test(css), 'not hidden on body');
-  for (const page of ['index.html', 'analyze.html', 'cves.html', 'news.html']) {
+  for (const page of ['index.html', 'lookup.html', 'analyze.html', 'cves.html', 'news.html']) {
     const html = readFileSync(new URL(page, root), 'utf8');
     const vp = /<meta name="viewport" content="([^"]+)"/.exec(html)[1];
     assert.ok(!/maximum-scale|user-scalable/.test(vp), `${page}: pinch-zoom allowed`);
