@@ -39,7 +39,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 
 ## Design
 
-The site uses the "Red Team Brutalist" design from the handoff (`Docs/design_handoff_security_lookup_hub/`, not committed). It's a reskin only: every lookup and tool works as before.
+The site uses the "Red Team Brutalist" design from the handoff, recoloured green (see "Matrix palette" below) (`Docs/design_handoff_security_lookup_hub/`, not committed). It's a reskin only: every lookup and tool works as before.
 
 - **Fonts are self-hosted** in `fonts/`: Anton, Space Mono and JetBrains Mono, Latin subset, 68 KB in total, with their SIL Open Font License texts. The CSP stays `'self'`-only, and visitors' browsers never contact Google.
 - **Shared chrome is generated** by `scripts/nav.py` on every page: the terminal bar, binary rain and hex ticker (decorative and `aria-hidden`), the header and nav, and the hero (outlined title, the page's intro paragraph, and the radar with "MODULE 0N/07"). Re-run it after adding a page or editing `css/style.css`, `js/nav.js` or `js/chrome.js`; it also refreshes the cache-busting `?v=` hashes.
@@ -48,7 +48,8 @@ The site uses the "Red Team Brutalist" design from the handoff (`Docs/design_han
 - **One breakpoint at 720px** gives the phone menu, hidden terminal output, half-size radar beside the title, full-width search buttons and stacked rows.
 - **Phones:** every form field is at least 16px on phones, because iOS zooms into smaller ones and the zoomed page then scrolls sideways. Pinch-zoom stays enabled (no `maximum-scale`). Long unbroken values (URLs and hashes in Look up chips, code spans, the trace) wrap with `overflow-wrap: anywhere`; there is no `overflow-x: hidden` on `body`. Checked in headless Chrome at 375px and 390px on every page and after a long Ask answer.
 - **Section numbers** (the big "01", "02" labels) come from page order through a CSS counter; the markup has empty `<span class="num">` placeholders, so a moved or added section can't leave them out of order. On Lookup: Lookup 01, then the panels.
-- **The Ask page has no hero.** `scripts/nav.py` skips the hero for pages in `NO_HERO` (just `index.html`), so the chat fills the screen under the same terminal bar, header and ticker. Its sharing title and description are `HOME_TITLE` and `HOME_DESCRIPTION` in that script.
+- **Matrix palette (Oct 26, 2026):** colours only, on every page: the `:root` tokens in `css/style.css` are film-poster greens (accent `#5ec27a`, background `#050a06`), the hover tints and the radar use the same green, and the hero's filled title has a soft green glow. The severity and status colours (`--critical`, `--high`, `--medium`, `--low`, `--ok`, `--warn`, `--bad`) are unchanged, so red still means bad. `theme-color` is `#050a06` (set by `scripts/nav.py`). The background rain is 50 columns of half-width katakana and digits, each lit by a gradient (`background-clip: text`) so it has a bright head and a fading trail; `js/chrome.js` gives each column its own speed and trail length. Layout, spacing, fonts and markup are as before.
+- **The Ask page has the standard hero** ("Ask", the intro, and the radar with "MODULE 01/08") above the chat, like every other page. `scripts/nav.py` keeps it in step; `NO_HERO` is still there for a page that ever needs a compact header. The home page's sharing title and description are `HOME_TITLE` and `HOME_DESCRIPTION` in that script.
 - **`prefers-reduced-motion`** turns off the rain, ticker, fill sweep, radar spin and typing; the terminal shows its first command statically.
 
 ## Run locally
@@ -409,7 +410,7 @@ npm test
 
 Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
 
-312 tests as of Oct 26, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+313 tests as of Oct 26, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -438,7 +439,7 @@ index.html (Ask, the home page), lookup.html (Lookup and the panels), cves.html,
 js/forward.js    forwards old ./#q=, ./#password and ./#lookup links to lookup.html (classic script at the top of index.html)
 scripts/nav.py   rewrites the shared nav (and the phone menu button) in every page and stamps css/style.css and js/nav.js with a content hash (?v=…) so browsers never mix a new page with an old cached file; run after adding a page or editing either file (tests/assets.test.mjs fails if you forget)
 js/nav.js        phone menu toggle (classic script in <head>; without JS the nav stays visible)
-js/chrome.js     decorative terminal typing, hex ticker and binary rain
+js/chrome.js     decorative terminal typing, hex ticker and katakana rain
 fonts/           self-hosted woff2 fonts (Anton, Space Mono, JetBrains Mono) and their OFL licenses
 favicon.svg
 css/style.css

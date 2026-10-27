@@ -91,7 +91,11 @@ test('the Ask page is the chat: intro, examples, route to Lookup, thread, compos
   // The composer comes after the thread, pinned to the bottom.
   assert.ok(html.indexOf('id="ask-thread"') < html.indexOf('id="ask-form"'));
   assert.match(html, /<div class="chat-dock">/);
-  assert.ok(!html.includes('<section class="hero">'), 'compact header: no hero on the chat page');
+  // The standard hero (Matrix redesign), first in <main>, before the chat.
+  assert.ok(html.indexOf('<section class="hero">') > html.indexOf('<main id="main" class="chat-main">'));
+  assert.ok(html.indexOf('<section class="hero">') < html.indexOf('<section class="chat"'));
+  assert.match(html, /<h1 class="hero-title"><span class="hero-outline">Ask<\/span><span class="hero-fill" aria-hidden="true">Ask<\/span><\/h1>/);
+  assert.match(html, /MODULE 01\/08/);
   assert.match(/<meta name="viewport" content="([^"]+)"/.exec(html)[1], /viewport-fit=cover/, 'safe-area insets apply');
   const css = readFileSync(new URL('css/style.css', root), 'utf8');
   assert.match(css, /\.chat-dock \{\s*position: sticky;\s*bottom: 0;/);

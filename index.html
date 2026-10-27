@@ -18,17 +18,17 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Security Lookup Hub: one search box for hashes, domains, IPs, URLs, emails and CVEs.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#050a06">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <!-- /social -->
   <script src="js/forward.js"></script>
   <title>Ask · Security Lookup Hub</title>
-  <script type="module" src="js/chrome.js?v=57c2740bfb"></script>
+  <script type="module" src="js/chrome.js?v=d8564bac14"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=c6933ec0d9">
+  <link rel="stylesheet" href="css/style.css?v=1aee0b3ffc">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/ask.js"></script>
 </head>
@@ -62,6 +62,16 @@
   <div class="ticker" aria-hidden="true"><span class="ticker-track"></span></div>
 
   <main id="main" class="chat-main">
+    <section class="hero">
+      <div class="hero-text">
+        <h1 class="hero-title"><span class="hero-outline">Ask</span><span class="hero-fill" aria-hidden="true">Ask</span></h1>
+        <p class="lede">Ask a security question, or look up a hash, domain, IP, URL, email or CVE. Free threat intel from VirusTotal, AbuseIPDB, NVD, CISA KEV and more, using passive lookups only. Have an indicator already? <a href="lookup.html">Look it up</a>.</p>
+      </div>
+      <div class="radar-block" aria-hidden="true">
+        <div class="radar"><span class="radar-sweep"></span><span class="radar-ring"></span><span class="radar-blip"></span><span class="radar-dot"></span></div>
+        <p class="radar-caption">MODULE 01/08<br>STATUS: ARMED</p>
+      </div>
+    </section>
     <section class="chat" id="ask" aria-labelledby="ask-h">
       <div id="ask-empty" class="chat-empty">
         <h1 id="ask-h" class="block-title">Ask</h1>

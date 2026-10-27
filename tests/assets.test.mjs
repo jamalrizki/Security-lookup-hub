@@ -51,3 +51,23 @@ test('every page loads Google Analytics through a CSP that allows only its docum
   assert.match(snippet, /page_location: location\.origin \+ location\.pathname \+ location\.search/, 'fragment (#q=...) is never sent');
 });
 
+
+test('Matrix palette: sage-green accent and tokens; severity colours unchanged; no red tints left; theme-color on every page', () => {
+  const css = readFileSync(new URL('css/style.css', root), 'utf8');
+  const token = (name) => new RegExp(`--${name}: ([^;]+);`).exec(css)[1];
+  assert.equal(token('accent'), '#5ec27a');
+  assert.equal(token('bg'), '#050a06');
+  assert.equal(token('on-accent'), '#000');
+  for (const [name, value] of [['critical', '#ff3344'], ['high', '#ff8a3d'], ['medium', '#ffd23d'], ['low', '#9fd36b'], ['ok', '#9fd36b'], ['warn', '#ffd23d'], ['bad', '#ff3344']]) {
+    assert.equal(token(name), value, `--${name} unchanged`);
+  }
+  assert.ok(!css.includes('rgba(255, 51, 68'), 'no hard-coded red tints');
+  assert.match(css, /\.hero-fill \{[^}]*text-shadow: 0 0 24px rgba\(94, 194, 122, 0\.45\)/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[^}]*\.rain, \.radar-sweep, \.radar-ring \{ display: none; \}/);
+  for (const page of readdirSync(root).filter((f) => f.endsWith('.html'))) {
+    assert.ok(readFileSync(new URL(page, root), 'utf8').includes('<meta name="theme-color" content="#050a06">'), page);
+  }
+  const chrome = readFileSync(new URL('js/chrome.js', root), 'utf8');
+  assert.match(chrome, /i < 50;/);
+  assert.match(chrome, /ｱｲｳｴｵ/);
+});
