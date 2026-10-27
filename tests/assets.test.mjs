@@ -52,14 +52,14 @@ test('every page loads Google Analytics through a CSP that allows only its docum
 });
 
 
-test('Matrix palette: green accent and tokens; severity colours unchanged; no red tints left; theme-color on every page', () => {
+test('Matrix palette: green accent and tokens; severity colours (low and ok teal, off the accent green); no red tints left; theme-color on every page', () => {
   const css = readFileSync(new URL('css/style.css', root), 'utf8');
   const token = (name) => new RegExp(`--${name}: ([^;]+);`).exec(css)[1];
   assert.equal(token('accent'), '#00ff41');
   assert.equal(token('bg'), '#000');
   assert.equal(token('on-accent'), '#000');
-  for (const [name, value] of [['critical', '#ff3344'], ['high', '#ff8a3d'], ['medium', '#ffd23d'], ['low', '#9fd36b'], ['ok', '#9fd36b'], ['warn', '#ffd23d'], ['bad', '#ff3344']]) {
-    assert.equal(token(name), value, `--${name} unchanged`);
+  for (const [name, value] of [['critical', '#ff3344'], ['high', '#ff8a3d'], ['medium', '#ffd23d'], ['low', '#3ddcc4'], ['ok', '#3ddcc4'], ['warn', '#ffd23d'], ['bad', '#ff3344']]) {
+    assert.equal(token(name), value, `--${name}`);
   }
   assert.ok(!css.includes('rgba(255, 51, 68'), 'no hard-coded red tints');
   assert.ok(!/\.hero-fill \{[^}]*text-shadow/.test(css), 'no glow on the title fill (it clipped into a block)');
