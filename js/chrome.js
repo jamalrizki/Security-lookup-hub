@@ -1,5 +1,5 @@
 // Decorative page chrome: the typing terminal bar, the hex ticker and the
-// binary rain. Purely visual (all aria-hidden) and runs nothing. With
+// katakana rain. Purely visual (all aria-hidden) and runs nothing. With
 // prefers-reduced-motion, the first command and its output are shown statically.
 
 const COMMANDS = {
@@ -46,6 +46,7 @@ const COMMANDS = {
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const page = document.body.dataset.page || 'lookup';
 const rand = (n) => Math.floor(Math.random() * n);
+const GLYPHS = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function hexGroups(n) {
@@ -69,13 +70,15 @@ function ticker() {
 function rain() {
   const layer = document.querySelector('.rain');
   if (!layer || reduced) return;
-  for (let i = 0; i < 34; i++) {
+  for (let i = 0; i < 50; i++) {
     const col = document.createElement('span');
-    col.textContent = Array.from({ length: 60 }, () => rand(2)).join('\n');
+    col.textContent = Array.from({ length: 60 }, () => GLYPHS[rand(GLYPHS.length)]).join('\n');
     // CSSOM writes are allowed by the CSP (only style attributes in markup are not).
-    col.style.left = `${i * 3}%`;
-    col.style.animationDuration = `${6 + ((i * 37) % 9)}s`;
+    col.style.left = `${i * 2}%`;
+    col.style.animationDuration = `${8 + ((i * 37) % 11)}s`;
     col.style.animationDelay = `-${(i * 53) % 11}s`;
+    // Different trail lengths per column (the CSS gradient lights the glyphs).
+    col.style.backgroundSize = `100% ${480 + ((i * 29) % 200)}px`;
     layer.append(col);
   }
 }
