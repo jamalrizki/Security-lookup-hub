@@ -33,6 +33,12 @@ export async function getJson(url, { accept = 'application/json', timeout = TIME
 
 // Reads at most maxBytes so one huge response can't blow the CPU or memory budget.
 export async function readCapped(res, maxBytes) {
+  const bytes = await readCappedBytes(res, maxBytes);
+  return bytes === null ? null : new TextDecoder().decode(bytes);
+}
+
+/** readCapped for binary bodies (audio): the bytes, or null over maxBytes. */
+export async function readCappedBytes(res, maxBytes) {
   const reader = res.body.getReader();
   const chunks = [];
   let size = 0;
@@ -52,5 +58,5 @@ export async function readCapped(res, maxBytes) {
     all.set(c, off);
     off += c.byteLength;
   }
-  return new TextDecoder().decode(all);
+  return all;
 }

@@ -669,6 +669,14 @@ body[data-page="ask"] { min-height: 100vh; min-height: 100dvh; }
 .ask-still { text-transform: none; letter-spacing: 0; }
 .ask-stopped { display: flex; flex-direction: column; gap: 8px; }
 .ask-stopped p { margin: 0; }
+/* Composer icon buttons (mic, image): CSS-drawn icons from inline SVG masks. */
+.icon-button { display: inline-flex; align-items: center; gap: 6px; min-width: 40px; min-height: 36px; justify-content: center; padding: 6px 10px; }
+.mic-icon, .clip-icon { display: inline-block; width: 16px; height: 16px; background: currentColor; -webkit-mask: var(--icon) center / contain no-repeat; mask: var(--icon) center / contain no-repeat; }
+.mic-icon { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='square'%3E%3Crect x='9' y='3' width='6' height='11'/%3E%3Cpath d='M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8'/%3E%3C/svg%3E"); }
+.mic-time:empty { display: none; }
+.mic-time { font-variant-numeric: tabular-nums; font-size: 12px; }
+#ask-mic.recording { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.ask-transcribing { margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; }
 
 @media (max-width: 720px) {
   .chat-empty { padding: 16px; }

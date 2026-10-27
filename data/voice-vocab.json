@@ -1,0 +1,10 @@
+{
+  "_about": "Words Whisper should spell correctly in Ask's voice input. Joined into Whisper's initial prompt by worker/src/transcribe.js. Edit freely, then redeploy the Worker; tests/transcribe.test.mjs fails if the prompt gets too long for Whisper (about 224 tokens; kept under 600 characters).",
+  "terms": [
+    "CVE", "KEV", "EPSS", "CVSS", "NVD", "CISA", "SPF", "DKIM", "DMARC", "JWT",
+    "Kerberoasting", "Log4Shell", "phishing", "MFA", "VPN", "nmap", "SIEM", "EDR",
+    "ransomware", "zero-day", "DNS", "TLS", "SSL", "IOC", "malware", "VirusTotal",
+    "AbuseIPDB", "MITRE ATT&CK", "APT", "XSS", "SQL injection", "OAuth", "SAML",
+    "Active Directory", "PowerShell", "Fortinet", "Ivanti", "Citrix", "SHA-256", "MD5"
+  ]
+}

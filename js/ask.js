@@ -237,6 +237,13 @@ if (globalThis.document?.getElementById('ask-form')) {
     }
   });
 
+  // Voice input: the mic records, the Worker transcribes, the text lands at the cursor.
+  const { setupVoice } = await import('./voice.js');
+  setupVoice({
+    button: $('ask-mic'), input, status, apiBase: API_BASE, max: MAX_QUESTION, el, notice,
+    begin, end, isBusy: () => Boolean(active), changed: updateCount,
+  });
+
   const openTool = (check) => {
     try {
       sessionStorage.setItem(HANDOFF_KEY, JSON.stringify({ tool: check.tool, text: check.payload, at: Date.now() }));

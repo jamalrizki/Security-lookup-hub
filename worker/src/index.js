@@ -5,7 +5,9 @@
 //   GET /api/cve-search?q=&severity= newest NVD matches for a keyword
 //   GET /api/kev-search?q=          CISA KEV entries for a vendor or product
 //   GET /api/news                   feed snapshot kept in KV by the cron job (scheduled())
-//   POST /api/ask                   Ask: AI answers with tools (ask.js); the only POST route
+//   POST /api/ask                   Ask: AI answers with tools (ask.js)
+//   POST /api/ask/simplify          "Make it simpler" for an Ask answer (ask.js)
+//   POST /api/transcribe            Ask's voice input: raw audio -> text, Whisper on Workers AI (transcribe.js)
 //   GET /api/health
 //
 // Guardrails (see Docs/Requirements.md): input validated with the same rules as
@@ -22,6 +24,7 @@ import { explain, MODEL, verdict } from './explain.js';
 import { validateSearch, searchCves, CVE_TTL, loadKev, kevSearch } from './cve.js';
 import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 import { handleAsk, handleSimplify } from './ask.js';
+import { handleTranscribe } from './transcribe.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -32,9 +35,11 @@ const CACHE_VERSION = 'v3';
 
 const ASK_PATH = '/api/ask';
 const SIMPLIFY_PATH = '/api/ask/simplify';
-const isAskPath = (path) => path === ASK_PATH || path === SIMPLIFY_PATH;
+const TRANSCRIBE_PATH = '/api/transcribe';
+const POST_HANDLERS = { [ASK_PATH]: handleAsk, [SIMPLIFY_PATH]: handleSimplify, [TRANSCRIBE_PATH]: handleTranscribe };
+const isAskPath = (path) => Object.hasOwn(POST_HANDLERS, path);
 
-// Every route is GET-only except Ask, which takes a JSON POST.
+// Every route is GET-only except Ask's, which take a POST (JSON, or audio for voice input).
 function corsHeaders(origin, path = '') {
   if (!origin) return { vary: 'Origin' };
   return isAskPath(path)
@@ -283,8 +288,7 @@ export default {
     if (isAskPath(url.pathname)) {
       if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405, origin, { allow: 'POST, OPTIONS' }, url.pathname);
       if (!origin) return json({ error: 'This API only serves the Security Lookup Hub site.' }, 403, null);
-      const handler = url.pathname === SIMPLIFY_PATH ? handleSimplify : handleAsk;
-      const r = await handler(request, env, ctx, { quotaTools, runSource });
+      const r = await POST_HANDLERS[url.pathname](request, env, ctx, { quotaTools, runSource });
       return json(r.body, r.status, origin, r.headers || {}, url.pathname);
     }
     if (request.method !== 'GET') return json({ error: 'Method not allowed.' }, 405, origin, { allow: 'GET, OPTIONS' });

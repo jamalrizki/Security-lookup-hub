@@ -28,7 +28,7 @@
   <script type="module" src="js/chrome.js?v=57c2740bfb"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=234c14629e">
+  <link rel="stylesheet" href="css/style.css?v=b6db1644e0">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/ask.js"></script>
 </head>
@@ -83,6 +83,7 @@
           <label for="ask-input" class="visually-hidden">Security question</label>
           <textarea id="ask-input" rows="1" spellcheck="true" aria-describedby="ask-count" placeholder="Ask a security question"></textarea>
           <div class="ask-bar">
+            <button type="button" id="ask-mic" class="secondary icon-button" aria-label="Voice input" aria-pressed="false" hidden><span class="mic-icon" aria-hidden="true"></span><span class="mic-time" aria-hidden="true"></span></button>
             <span id="ask-count" class="ask-count">0 / 1,000</span>
             <button type="submit" id="ask-send">Send</button>
           </div>

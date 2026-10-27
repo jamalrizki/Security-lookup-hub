@@ -44,6 +44,7 @@ afterEach(async () => {
   dom?.restore();
   dom = null;
   delete globalThis.fetch;
+  delete globalThis.MediaRecorder;
 });
 
 const send = async ($, text) => {
@@ -265,4 +266,152 @@ test('Make it simpler can be stopped too', async () => {
 test('reduced motion: the dots stop, the timer still counts (CSS)', () => {
   const css = readFileSync(new URL('css/style.css', root), 'utf8');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.ask-dots::after \{ animation: none;/);
+});
+
+/* ---------- Phase 19: voice input ---------- */
+
+import { insertAtCursor, pickRecordingType, formatTimer, VOICE_MESSAGES } from '../js/voice.js';
+
+/** A Safari-like recorder (audio/mp4 only) and a microphone that records `bytes`. */
+function fakeMic({ deny } = {}) {
+  const mic = { asked: 0, tracksStopped: 0, recorder: null };
+  class FakeRecorder {
+    static isTypeSupported(t) { return t === 'audio/mp4'; }
+    constructor(stream, opts) { this.mimeType = opts?.mimeType || ''; this.state = 'inactive'; mic.recorder = this; }
+    start() { this.state = 'recording'; }
+    stop() {
+      this.state = 'inactive';
+      this.ondataavailable?.({ data: new Blob([Uint8Array.from([0, 0, 0, 0x20, 0x66, 0x74, 0x79, 0x70])], { type: this.mimeType }) });
+      this.onstop?.();
+    }
+  }
+  globalThis.MediaRecorder = FakeRecorder;
+  mic.navigator = {
+    mediaDevices: {
+      getUserMedia(constraints) {
+        mic.asked++;
+        mic.constraints = constraints;
+        if (deny) return Promise.reject(Object.assign(new Error('denied'), { name: deny }));
+        return Promise.resolve({ getTracks: () => [{ stop: () => { mic.tracksStopped++; } }] });
+      },
+    },
+  };
+  return mic;
+}
+
+test('the mic button is hidden without MediaRecorder or getUserMedia', async () => {
+  const { $ } = await loadPage();
+  assert.equal($('ask-mic').hidden, true, 'no MediaRecorder');
+  dom.restore();
+  globalThis.MediaRecorder = class {};
+  const again = await loadPage({ navigator: {} });
+  assert.equal(again.$('ask-mic').hidden, true, 'no getUserMedia (e.g. not a secure page)');
+  dom.restore();
+  const mic = fakeMic();
+  const shown = await loadPage({ navigator: mic.navigator });
+  assert.equal(shown.$('ask-mic').hidden, false);
+});
+
+test('voice: record, stop, transcribe; the text goes in at the cursor and is never sent', async () => {
+  const mic = fakeMic();
+  const { $, calls, doc } = await loadPage({
+    navigator: mic.navigator,
+    api: (url) => (url.endsWith('/api/transcribe') ? { text: 'CVE-2021-44228' } : ANSWER),
+  });
+  const input = $('ask-input');
+  type(input, 'Is in KEV?');
+  input.setSelectionRange(3, 3);
+  $('ask-mic').click();
+  assert.equal(mic.asked, 1, 'getUserMedia called from the tap itself, nothing awaited first (iPhone Safari)');
+  assert.equal(mic.constraints.audio.channelCount, 1, 'mono');
+  await settle();
+  assert.equal(mic.recorder.mimeType, 'audio/mp4', 'the first supported type');
+  assert.ok($('ask-mic').classList.contains('recording'));
+  assert.equal($('ask-mic').getAttribute('aria-pressed'), 'true');
+  assert.equal($('ask-mic').querySelector('.mic-time').textContent, '0:00');
+  assert.ok($('ask-send').classList.contains('stop'), 'Send is Stop while recording');
+  $('ask-mic').click(); // stop and transcribe
+  await settle();
+  assert.equal(calls.length, 1);
+  assert.ok(calls[0].url.endsWith('/api/transcribe'));
+  assert.equal(calls[0].init.headers['content-type'], 'audio/mp4');
+  assert.ok(calls[0].body instanceof Blob);
+  assert.equal(input.value, 'Is CVE-2021-44228 in KEV?');
+  assert.equal(input.selectionStart, 'Is CVE-2021-44228 '.length, 'caret after the inserted text');
+  assert.equal(doc.activeElement, input, 'focus back in the box');
+  assert.equal($('ask-count').textContent, '25 / 1,000');
+  assert.ok(!calls.some((c) => c.url.endsWith('/api/ask')), 'never sent');
+  assert.equal(mic.tracksStopped, 1, 'microphone released');
+  assert.equal($('ask-mic').classList.contains('recording'), false);
+  assert.equal($('ask-send').textContent, 'Send');
+});
+
+test('voice: Esc cancels a recording and throws it away', async () => {
+  const mic = fakeMic();
+  const { $, calls, doc } = await loadPage({ navigator: mic.navigator });
+  $('ask-mic').click();
+  await settle();
+  doc.dispatchEvent(new Event('keydown', { key: 'Escape' }));
+  await settle();
+  assert.equal(calls.length, 0, 'nothing uploaded');
+  assert.equal(mic.tracksStopped, 1);
+  assert.equal($('ask-mic').classList.contains('recording'), false);
+});
+
+test('voice: Stop while transcribing cancels it; errors are plain words', async () => {
+  const mic = fakeMic();
+  let signal;
+  const { $ } = await loadPage({
+    navigator: mic.navigator,
+    api: (url, body, init) => new Promise((resolve, reject) => {
+      signal = init.signal;
+      init.signal.addEventListener('abort', () => reject(Object.assign(new Error('aborted'), { name: 'AbortError' })));
+    }),
+  });
+  $('ask-mic').click();
+  await settle();
+  $('ask-mic').click();
+  await settle();
+  assert.match($('ask-notice').textContent, /Transcribing/);
+  $('ask-send').click();
+  await settle();
+  assert.equal(signal.aborted, true);
+  assert.equal($('ask-notice').textContent, '');
+  assert.equal($('ask-input').value, '');
+  dom.restore();
+
+  for (const [reply, message] of [
+    [{ text: '', empty: true }, VOICE_MESSAGES.empty],
+    [{ httpStatus: 429, error: 'Voice input is used up for now. Type your question instead.' }, 'Voice input is used up for now. Type your question instead.'],
+    [{ httpStatus: 502, error: 'x' }, VOICE_MESSAGES.failed],
+  ]) {
+    const m = fakeMic();
+    const page = await loadPage({ navigator: m.navigator, api: () => reply });
+    page.$('ask-mic').click();
+    await settle();
+    page.$('ask-mic').click();
+    await settle();
+    assert.equal(page.$('ask-notice').textContent, message);
+    dom.restore();
+  }
+  const denied = fakeMic({ deny: 'NotAllowedError' });
+  const page = await loadPage({ navigator: denied.navigator });
+  page.$('ask-mic').click();
+  await settle();
+  assert.equal(page.$('ask-notice').textContent, "Microphone access is blocked. Allow it in your browser's site settings.");
+});
+
+test('insertAtCursor: spaces as needed, and cut at the limit', () => {
+  assert.deepEqual(insertAtCursor('', 0, 0, 'hello', 1000), { value: 'hello', caret: 5, cut: false });
+  assert.deepEqual(insertAtCursor('Is in KEV?', 3, 3, 'CVE-1', 1000), { value: 'Is CVE-1 in KEV?', caret: 9, cut: false });
+  assert.equal(insertAtCursor('abc', 3, 3, 'def', 1000).value, 'abc def');
+  assert.equal(insertAtCursor('replace me', 0, 7, 'swap', 1000).value, 'swap me', 'replaces a selection');
+  const full = insertAtCursor('x'.repeat(995), 995, 995, 'a long transcript', 1000);
+  assert.equal(full.value.length, 1000);
+  assert.equal(full.cut, true);
+  assert.equal(formatTimer(7), '0:07');
+  assert.equal(formatTimer(60), '1:00');
+  assert.equal(pickRecordingType({ isTypeSupported: (t) => t.startsWith('audio/ogg') }), 'audio/ogg;codecs=opus');
+  assert.equal(pickRecordingType({ isTypeSupported: () => true }), 'audio/webm;codecs=opus', 'webm first');
+  assert.equal(pickRecordingType(undefined), '');
 });
