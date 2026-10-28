@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { TOOL_DEFINITIONS, TOOL_CAPS, FEATURES, featuresPrompt, resolveCveId, cveIdsIn, runTool, newState } from '../worker/src/ask-tools.js';
+import { TOOL_DEFINITIONS, TOOL_CAPS, FEATURES, featuresPrompt, resolveCveId, cveIdsIn, runTool, newState, nearDuplicate, searchWords } from '../worker/src/ask-tools.js';
 
 const root = new URL('../', import.meta.url);
 
@@ -60,4 +60,39 @@ test('recent_news filters and returns at most 10 newest items, links only to the
   assert.equal(r.result.items[0].link, undefined, 'the model gets no URLs to copy');
   assert.equal(state.sources.length, 10);
   assert.equal((await runTool('recent_news', { filter: 'bogus' }, { env: { NEWS }, state: newState('') })).isError, true);
+});
+
+test('near-duplicate web searches: reworded or reordered repeats match; a new angle, version or CVE does not', () => {
+  assert.deepEqual([...searchWords('Is the IBM bulletins for PHP2Shell?')].sort(), ['bulletin', 'ibm', 'php2shell']);
+  // The Oct 23 product check: two bulletin searches that were the same search.
+  assert.equal(nearDuplicate('Contoso FacilityHub security bulletin PHP2Shell', 'PHP2Shell Contoso FacilityHub security bulletins'), true);
+  assert.equal(nearDuplicate('Contoso FacilityHub security bulletin PHP2Shell', 'Contoso FacilityHub PHP2Shell security bulletin 2026'), true);
+  assert.equal(nearDuplicate('Contoso FacilityHub security bulletin PHP2Shell', 'Contoso FacilityHub technology stack PHP'), false, 'a new angle is allowed');
+  assert.equal(nearDuplicate('Apache Tomcat 9.0.1 security advisory', 'Apache Tomcat 10.1.2 security advisory'), false, 'a different version');
+  assert.equal(nearDuplicate('CVE-2024-4577 exploit advisory', 'CVE-2024-4578 exploit advisory'), false, 'a different CVE');
+  assert.equal(nearDuplicate('query number 1', 'query number 2'), false);
+  assert.equal(nearDuplicate('the of and', 'the of and'), false, 'no significant words: never a duplicate');
+});
+
+test('a near-duplicate web_search is refused before Tavily and does not use up the cap', async () => {
+  const calls = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    calls.push(JSON.parse(init.body).query);
+    return new Response(JSON.stringify({ results: [{ title: 'Bulletin', url: 'https://www.cisa.gov/b', content: 'text' }] }), { status: 200, headers: { 'content-type': 'application/json' } });
+  };
+  try {
+    const ctx = { env: { TAVILY_API_KEY: 'tvly-test' }, state: newState('') };
+    assert.equal((await runTool('web_search', { query: 'Contoso FacilityHub security bulletin PHP2Shell' }, ctx)).isError, false);
+    const dup = await runTool('web_search', { query: 'PHP2Shell Contoso FacilityHub security bulletin 2026' }, ctx);
+    assert.equal(dup.isError, true);
+    assert.equal(dup.summary, 'Skipped: nearly the same as an earlier search');
+    assert.match(dup.result.error, /^You already searched for almost the same thing \("Contoso FacilityHub security bulletin PHP2Shell"\)/);
+    assert.equal(ctx.state.counts.web_search, 1, 'the repeat did not use up the cap');
+    assert.equal((await runTool('web_search', { query: 'Contoso FacilityHub technology stack' }, ctx)).isError, false);
+    assert.equal((await runTool('web_search', { query: 'PHP2Shell patch guidance' }, ctx)).isError, false, 'still three real searches');
+    assert.deepEqual(calls, ['Contoso FacilityHub security bulletin PHP2Shell', 'Contoso FacilityHub technology stack', 'PHP2Shell patch guidance'], 'the repeat never reached Tavily');
+  } finally {
+    globalThis.fetch = realFetch;
+  }
 });

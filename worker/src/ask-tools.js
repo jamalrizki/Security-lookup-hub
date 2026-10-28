@@ -36,6 +36,35 @@ export const TOOL_CAPS = { search_reference: 2, web_search: 3, cve_lookup: 3, re
 const MAX_WEB_SEARCH_ATTEMPTS = 6;
 const LIMIT_REACHED = 'limit reached, answer from what you have';
 
+// ---------- Near-duplicate web searches ----------
+// Models often re-run the same search reworded ("X security bulletin PHP2Shell", then
+// "PHP2Shell X security bulletin 2026"), which spends one of the 3 searches and a
+// Tavily credit on the same results. Decided in code: a query whose words are at
+// least NEAR_DUPLICATE (Jaccard) the same as an earlier query in this question is
+// refused without calling Tavily and without using up the cap.
+const NEAR_DUPLICATE = 0.75;
+const STOPWORDS = new Set('a an and are as at be by can do does for from has have how i in is it its my of on or our the this to vs was what when which with'.split(' '));
+const VERSION_LIKE = /\d\.\d|^cve-/; // tokens that must match exactly (a different version or CVE is a new search)
+
+/** The set of significant words in a search query: lowercased, stopwords dropped, plural "s" removed. */
+export function searchWords(query) {
+  return new Set(String(query).toLowerCase().split(/[^a-z0-9.-]+/)
+    .map((w) => w.replace(/^[.-]+|[.-]+$/g, ''))
+    .filter((w) => w && !STOPWORDS.has(w))
+    .map((w) => (w.length > 3 && w.endsWith('s') && !w.endsWith('ss') ? w.slice(0, -1) : w)));
+}
+
+/** True if two queries would search for nearly the same thing. */
+export function nearDuplicate(a, b) {
+  const wa = searchWords(a);
+  const wb = searchWords(b);
+  if (!wa.size || !wb.size) return false;
+  const exact = (ws) => [...ws].filter((w) => VERSION_LIKE.test(w)).sort().join(' ');
+  if (exact(wa) !== exact(wb)) return false;
+  const shared = [...wa].filter((w) => wb.has(w)).length;
+  return shared / (wa.size + wb.size - shared) >= NEAR_DUPLICATE;
+}
+
 // ---------- Hub features ----------
 
 export const FEATURES = HUB_FEATURES.features;
@@ -88,6 +117,7 @@ export function newState(visitorText) {
     inKev: new Set(), // looked-up CVE IDs that are in CISA KEV (the only confirmation of exploitation)
     texts: [], // reference passages and web excerpts, for the verbatim-overlap check
     sources: [], // { title, url, domain } in call order, for the Sources list
+    webQueries: [], // web_search queries sent this question, for the near-duplicate check
   };
 }
 
@@ -120,8 +150,16 @@ async function searchReferenceTool(args, { env, state }) {
 }
 
 async function webSearchTool(args, { env, state, signal }) {
+  const earlier = (state.webQueries || []).find((q) => nearDuplicate(q, args.query));
+  if (earlier) {
+    return {
+      duplicate: true,
+      ...fail(`You already searched for almost the same thing ("${earlier}"). Search for something different, or answer from what you have.`, 'Skipped: nearly the same as an earlier search'),
+    };
+  }
   const r = await webSearch(args.query, env, new Date(), signal);
   if (r.error) return fail(r.error);
+  (state.webQueries ||= []).push(String(args.query).trim().slice(0, 200));
   for (const x of r.results) {
     state.texts.push(x.excerpt);
     addSource(state, x.url, x.title, 'web');
@@ -234,7 +272,7 @@ export async function runTool(name, args, ctx) {
   }
   try {
     const out = await handler(args || {}, ctx);
-    if (out.emptySearch) ctx.state.counts[name] -= 1; // no results: doesn't use up the cap
+    if (out.emptySearch || out.duplicate) ctx.state.counts[name] -= 1; // no results, or refused as a repeat: doesn't use up the cap
     return out;
   } catch (err) {
     return fail(err.name === 'TimeoutError' ? 'the tool timed out' : 'the tool failed', 'Failed');

@@ -617,6 +617,22 @@ test('a web search with no results does not use up the per-question cap, but cou
   assert.equal(news.map.get(`ask:websearch:${day}`), '5', 'every search that reached Tavily counted toward the day');
 });
 
+test('a reworded repeat of a web search is skipped in code: one Tavily call, the trace says why, the cap is kept', async () => {
+  const sent = [];
+  const model = modelScript([
+    toolCall(['web_search', { query: 'Contoso FacilityHub security bulletin PHP2Shell' }]),
+    toolCall(['web_search', { query: 'PHP2Shell Contoso FacilityHub security bulletins' }]),
+    say('No bulletin found yet.'),
+  ]);
+  installFetch([[GROQ, model.handler], ['api.tavily.com', (u, i, b) => { sent.push(b.query); return { results: [{ title: 't', url: 'https://www.cisa.gov/t', content: 'c' }] }; }]]);
+  const { body } = await ask(user('Is Contoso FacilityHub affected by PHP2Shell?'), baseEnv({ TAVILY_API_KEY: 'tvly-test' }));
+  assert.deepEqual(sent, ['Contoso FacilityHub security bulletin PHP2Shell']);
+  assert.deepEqual(body.trace.map((t) => t.ok), [true, false]);
+  assert.equal(body.trace[1].summary, 'Skipped: nearly the same as an earlier search');
+  const toolMsg = model.bodies[2].messages.filter((m) => m.role === 'tool').pop();
+  assert.match(toolMsg.content, /You already searched for almost the same thing/);
+});
+
 test('empty web searches are still bounded (6 attempts a question)', async () => {
   const model = modelScript([toolCall(...Array.from({ length: 8 }, (_, n) => ['web_search', { query: `empty query ${n}` }])), say('nothing.')]);
   installFetch([[GROQ, model.handler], ['api.tavily.com', () => ({ results: [] })]]);
