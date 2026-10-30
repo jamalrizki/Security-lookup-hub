@@ -1,6 +1,7 @@
 // Reference page: renders data/reference.json with a text filter and toggles.
 
 import { guidanceUrl, isHubHref } from './what-now.js';
+import { searchPorts, portLabel, secureVersions } from './ports.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -112,6 +113,51 @@ async function loadWhatNow() {
 }
 
 loadWhatNow();
+
+// "Ports and protocols": data/ports.json, searched in code (js/ports.js).
+// A port number from the address (#ports=3389) fills the box, so other pages can link here.
+let ports = [];
+
+function portRow(p) {
+  const secure = secureVersions(ports, p);
+  return el('li', { class: 'ref-row' },
+    el('span', { class: 'ref-key' }, portLabel(p)),
+    el('span', { class: 'ref-name' }, p.name, el('span', { class: 'hint' }, ` ${p.full}`)),
+    el('span', { class: 'ref-desc' }, p.use,
+      secure.length ? ` Encrypted version: ${secure.join(' or ')}.` : null,
+      p.default ? ' (A common default, not its official assignment.)' : null,
+      p.exposed ? el('span', {}, ' ', el('span', { class: 'badge' }, 'Keep off the internet')) : null));
+}
+
+function renderPorts() {
+  const { results, error, kind } = searchPorts(ports, $('ports-filter').value);
+  const shown = $('ports-exposed').checked ? results.filter((p) => p.exposed) : results;
+  $('ports-count').textContent = error || (kind === 'all' && !$('ports-exposed').checked ? `${ports.length} common ports.` : `${shown.length} of ${ports.length} match.`);
+  $('ports-list').replaceChildren(shown.length
+    ? el('ul', { class: 'rows' }, ...shown.map(portRow))
+    : el('p', { class: 'empty' }, kind === 'port' && !error
+      ? 'Not in this list of common ports. Unlisted ports can be anything; check what is listening on the device itself.'
+      : 'No ports match.'));
+}
+
+async function loadPorts() {
+  try {
+    const res = await fetch('data/ports.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    ports = (await res.json()).ports || [];
+    const m = location.hash.match(/^#ports=(\d{1,5})$/);
+    if (m) {
+      $('ports-filter').value = m[1];
+      $('ports').scrollIntoView();
+    }
+    for (const id of ['ports-filter', 'ports-exposed']) $(id).addEventListener('input', renderPorts);
+    renderPorts();
+  } catch (err) {
+    $('ports-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the port list: ${err.message}`));
+  }
+}
+
+loadPorts();
 
 try {
   const res = await fetch('data/reference.json');

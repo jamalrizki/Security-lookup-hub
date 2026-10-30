@@ -84,6 +84,17 @@
       <div id="wn-list" class="card-grid"></div>
     </section>
 
+    <section id="ports" class="search-block" aria-labelledby="ports-h">
+      <h2 id="ports-h">Ports and protocols</h2>
+      <p class="hint">Type a port number (443, 53/udp) or a name (ssh, mail, vpn). Shows what runs there, its encrypted version, and whether it should stay off the internet.</p>
+      <div class="filters">
+        <input id="ports-filter" type="search" inputmode="search" maxlength="60" placeholder="Port or name, e.g. 3389, SMB, LDAP" aria-label="Find a port or protocol">
+        <label><input id="ports-exposed" type="checkbox"> Keep-off-the-internet only</label>
+      </div>
+      <p id="ports-count" class="small hint" aria-live="polite"></p>
+      <div id="ports-list"></div>
+    </section>
+
     <p class="hint">Looking for what a tool does? See the <a href="tools.html">tools glossary</a>.</p>
 
     <h2>All sites</h2>
