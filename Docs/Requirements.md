@@ -25,8 +25,9 @@ Non-goals
 • Ask is defensive only: it declines exploit code, payloads, step-by-step attack instructions, malware, phishing kits and credential theft, and offers the defensive angle instead. It stores no questions or answers, and never calls the keyed reputation sources (those stay one click per indicator in Lookup). (Added in v3.)
 • No file uploads to Ask other than one image per question. (Added in v4, replacing v3's "no uploading files to Ask".)
 • No voice or image input outside Ask: not in Lookup (dictating hashes and IPs is error-prone) or Analyze (its point is that nothing leaves the browser). No voice output. (Added in v4.)
+• No VPN or proxy detection from paid data: network type says "can't tell" instead of guessing. No bulk IP-to-ASN/location tables (one lookup per click stays the rule), no HTTP/SOCKS proxy checkers or domain monitoring (both connect to visitor-supplied hosts or store watchlists), and no single numeric risk or "fraud" score: verdicts list their reasons. (Added in v5.)
 Core features
-The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze. Version 3 (Docs/spec-v3.md) adds Ask to the Lookup page. Version 4 (Docs/spec-v4.md) makes Ask the home page (index.html) and gives Lookup, with the password check, hash tools and decoder, its own page (lookup.html); old ./#q= links are forwarded there.
+The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze. Version 3 (Docs/spec-v3.md) adds Ask to the Lookup page. Version 4 (Docs/spec-v4.md) makes Ask the home page (index.html) and gives Lookup, with the password check, hash tools and decoder, its own page (lookup.html); old ./#q= links are forwarded there. Version 5 (Docs/spec-v5.md) adds type buttons to Lookup, Check my IP, and network type.
 1. Lookup: one box, type detected automatically
 The input type is detected in code (regex and length), then only the matching lookups run. Each result card shows the verdict, the key numbers, and a "view full report" link to the source.
 You paste
@@ -50,6 +51,9 @@ Link out to Have I Been Pwned (the email search API is paid; see Data sources)
 Any other text, via a separate "Check a password" field
 Password
 How many times it appears in known breaches, checked without the password leaving the browser
+Version 5 adds type buttons above the box (My IP, IP address, Domain, URL, Hash, Email, CVE). Each shows its placeholder, what it checks and which sources it uses; detection still decides what runs.
+• Check my IP: one click shows the visitor's own public address as the Worker sees it (Cloudflare's own connection data: network, approximate city, time zone; never coordinates), with plain notes on what it does and doesn't reveal, then runs the normal IP lookup on it. Nothing is stored or sent to a third party.
+• Network type: IP lookups say whether the address is a Tor exit node or belongs to Amazon Web Services, Google Cloud or Cloudflare, from the providers' published lists, refreshed by the cron into KV and decided in code. VPNs and small hosts can't be told apart; the card says so. The Analyze subnet calculator and IOC log mode can check IPs against the same lists in the browser after downloading them once.
 Extra tools on the same page, done entirely in the browser with no API:
 • Hash identifier: guesses the hash type from length and format, including bcrypt ($2b$…) and NTLM.
 • Hash calculator: type text and get its MD5, SHA-1 and SHA-256.

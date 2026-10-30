@@ -2,6 +2,7 @@
   "_about": "Places Ask may send a visitor. The model only writes an id in double brackets ([[jwt]]); the Worker and the page turn ids into links from this file. href is relative to the site root. about (60 characters max) goes into Ask's prompt. tests/ask-tools.test.mjs fails if an href points to a page or anchor that doesn't exist.",
   "features": [
     { "id": "lookup", "name": "Lookup", "href": "./lookup.html", "about": "Reputation of a hash, domain, IP, URL, email or CVE ID" },
+    { "id": "myip", "name": "Check my IP", "href": "./lookup.html", "about": "Show your own public IP and what it reveals" },
     { "id": "cves", "name": "CVEs search", "href": "./cves.html", "about": "Search NVD for vulnerabilities by product or keyword" },
     { "id": "kev-product", "name": "Exploited in my products", "href": "./cves.html#kev", "about": "Exploited CVEs (CISA KEV) for a vendor or product" },
     { "id": "patch-list", "name": "Patch priority list", "href": "./cves.html#priority", "about": "Rank pasted CVE IDs: which to patch first" },
