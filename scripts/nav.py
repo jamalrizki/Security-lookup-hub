@@ -72,7 +72,7 @@ HERO = '''    <section class="hero">
 SITE = 'https://jamalrizki.github.io/Security-lookup-hub/'
 GA_LOADER = '<script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>'
 # Pages without a hero keep their own compact heading (none at the moment; the Ask
-# page has had the standard hero since the Matrix redesign).
+# page has had the standard hero since Oct 26, 2026).
 NO_HERO = set()
 # The home page (Ask) has no intro paragraph, so it gets a description written for sharing.
 HOME_TITLE = 'Security Lookup Hub: ask a security question'
@@ -104,7 +104,7 @@ def social(title, description, url):
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Security Lookup Hub: one search box for hashes, domains, IPs, URLs, emails and CVEs.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#0a0a0a">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">

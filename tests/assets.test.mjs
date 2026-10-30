@@ -52,19 +52,19 @@ test('every page loads Google Analytics through a CSP that allows only its docum
 });
 
 
-test('Matrix palette: green accent and tokens; severity colours (neon orange, yellow and cyan; red as before); no red tints left; theme-color on every page', () => {
+test('Red palette: red accent and tokens; severity colours; no green left; theme-color on every page', () => {
   const css = readFileSync(new URL('css/style.css', root), 'utf8');
   const token = (name) => new RegExp(`--${name}: ([^;]+);`).exec(css)[1];
-  assert.equal(token('accent'), '#00ff41');
-  assert.equal(token('bg'), '#000');
-  assert.equal(token('on-accent'), '#000');
-  for (const [name, value] of [['critical', '#ff3344'], ['high', '#ff8c1a'], ['medium', '#ffe600'], ['low', '#00e5ff'], ['ok', '#00e5ff'], ['warn', '#ffe600'], ['bad', '#ff3344']]) {
+  assert.equal(token('accent'), '#ff3344');
+  assert.equal(token('bg'), '#0a0a0a');
+  assert.equal(token('on-accent'), '#0a0a0a');
+  for (const [name, value] of [['critical', '#ff3344'], ['high', '#ff8a3d'], ['medium', '#ffd23d'], ['low', '#9fd36b'], ['ok', '#9fd36b'], ['warn', '#ffd23d'], ['bad', '#ff3344']]) {
     assert.equal(token(name), value, `--${name}`);
   }
-  assert.ok(!css.includes('rgba(255, 51, 68'), 'no hard-coded red tints');
+  assert.ok(!css.includes('rgba(0, 255, 65') && !css.includes('#00ff41'), 'no Matrix green left');
   assert.ok(!/\.hero-fill \{[^}]*text-shadow/.test(css), 'no glow on the title fill (it clipped into a block)');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{[^}]*\.rain, \.radar-sweep, \.radar-ring \{ display: none; \}/);
   for (const page of readdirSync(root).filter((f) => f.endsWith('.html'))) {
-    assert.ok(readFileSync(new URL(page, root), 'utf8').includes('<meta name="theme-color" content="#000000">'), page);
+    assert.ok(readFileSync(new URL(page, root), 'utf8').includes('<meta name="theme-color" content="#0a0a0a">'), page);
   }
 });
