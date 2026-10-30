@@ -23,6 +23,7 @@
     { "id": "where-to-start", "name": "Where to start", "href": "./reference.html#where-to-start", "about": "Which tool or site to try for what you have" },
     { "id": "what-now", "name": "Already happened? What to do now", "href": "./reference.html#what-now", "about": "First steps after clicking, giving a password or paying" },
     { "id": "ports", "name": "Ports and protocols", "href": "./reference.html#ports", "about": "Common port numbers: service, encrypted version, exposure" },
+    { "id": "acronyms", "name": "Security acronyms", "href": "./reference.html#acronyms", "about": "What security acronyms stand for, in plain words" },
     { "id": "password", "name": "Password check", "href": "./lookup.html#password", "about": "Has this password appeared in known breaches" },
     { "id": "tools", "name": "Tools glossary", "href": "./tools.html", "about": "What common security tools do, one line each" }
   ]

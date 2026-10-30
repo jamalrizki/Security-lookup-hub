@@ -2,6 +2,7 @@
 
 import { guidanceUrl, isHubHref } from './what-now.js';
 import { searchPorts, portLabel, secureVersions } from './ports.js';
+import { searchAcronyms } from './acronyms.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -158,6 +159,51 @@ async function loadPorts() {
 }
 
 loadPorts();
+
+// "Security acronyms": data/acronyms.json, searched in code (js/acronyms.js).
+// An acronym from the address (#acronyms=XSS) fills the box, so other pages can link here.
+let acronyms = [];
+
+function acronymRow(a) {
+  return el('li', { class: 'ref-row' },
+    el('span', { class: 'ref-key' }, a.acronym),
+    el('span', { class: 'ref-name' }, a.full),
+    el('span', { class: 'ref-desc' }, a.plain));
+}
+
+function renderAcronyms() {
+  const { results, kind } = searchAcronyms(acronyms, $('acronyms-filter').value);
+  if (kind === 'empty') {
+    $('acronyms-count').textContent = `${acronyms.length} acronyms. Type one to see what it means.`;
+    $('acronyms-list').replaceChildren();
+    return;
+  }
+  $('acronyms-count').textContent = `${results.length} of ${acronyms.length} match.`;
+  $('acronyms-list').replaceChildren(results.length
+    ? el('ul', { class: 'rows' }, ...results.map(acronymRow))
+    : el('p', { class: 'empty' }, 'Not in this list. Try the NIST glossary at csrc.nist.gov/glossary, or ask on the Ask page.'));
+}
+
+async function loadAcronyms() {
+  try {
+    const res = await fetch('data/acronyms.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    acronyms = (await res.json()).acronyms || [];
+    const m = location.hash.match(/^#acronyms=([A-Za-z0-9%&/ .+-]{1,60})$/);
+    if (m) {
+      let q = m[1];
+      try { q = decodeURIComponent(q); } catch { /* keep as typed */ }
+      $('acronyms-filter').value = q.slice(0, 60);
+      $('acronyms').scrollIntoView();
+    }
+    $('acronyms-filter').addEventListener('input', renderAcronyms);
+    renderAcronyms();
+  } catch (err) {
+    $('acronyms-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the acronym list: ${err.message}`));
+  }
+}
+
+loadAcronyms();
 
 try {
   const res = await fetch('data/reference.json');
