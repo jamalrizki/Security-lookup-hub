@@ -2,9 +2,10 @@
 // value leaves the page. There is deliberately no "look up all": VirusTotal
 // allows 4 lookups a minute for the whole site.
 
-import { extractIocs, toCsv, MAX_TEXT } from '../extract.js';
+import { extractIocs, parseAccessLog, toCsv, MAX_TEXT } from '../extract.js';
 import { ready } from './data.js';
 import { el, $, notice, lookUpLink, copyButton, download, defang } from './ui.js';
+import { providerRanges, rowLabel, RANGES_NOTE } from './provider-ranges.js';
 
 const TYPES = [
   ['url', 'URLs', 'URL'], ['domain', 'Domains', 'domain'], ['ipv4', 'IPv4 addresses', 'IPv4 address'], ['ipv6', 'IPv6 addresses', 'IPv6 address'],
@@ -30,6 +31,42 @@ function topList(label, items, type) {
   return el('div', {}, el('h3', {}, label), top.length
     ? el('ol', { class: 'plain-list' }, ...top.map((i) => el('li', { class: 'mono' }, `${show(type, i.value)} × ${i.count}`)))
     : el('p', { class: 'hint' }, 'None'));
+}
+
+// Top IPs, with a button that labels each row from the provider lists (downloaded
+// once, after the click; the IPs stay in the browser).
+function topIps(items) {
+  const top = [...items].sort((a, b) => b.count - a.count).slice(0, 10);
+  if (!top.length) return el('div', {}, el('h3', {}, 'Top IPs'), el('p', { class: 'hint' }, 'None'));
+  const labels = top.map(() => el('span', { class: 'net-label hint' }));
+  const button = el('button', { type: 'button', class: 'secondary small' }, 'Label top IPs (cloud / Tor)');
+  const status = el('p', { class: 'hint', 'aria-live': 'polite' }, RANGES_NOTE);
+  button.addEventListener('click', async () => {
+    button.disabled = true;
+    try {
+      const lists = await providerRanges();
+      top.forEach((i, n) => { labels[n].textContent = rowLabel(lists, i.value) ? ` \u2014 ${rowLabel(lists, i.value)}` : ''; });
+      status.textContent = 'Labelled from the Tor and AWS / Google Cloud / Cloudflare lists. No label means none of them.';
+    } catch (err) {
+      status.textContent = err.message;
+      button.disabled = false;
+    }
+  });
+  return el('div', {}, el('h3', {}, 'Top IPs'),
+    el('ol', { class: 'plain-list' }, ...top.map((i, n) => el('li', { class: 'mono' }, `${i.value} \u00d7 ${i.count}`, labels[n]))),
+    el('div', { class: 'row' }, button), status);
+}
+
+/** Time range and top statuses, paths and user agents for a recognised access log. */
+function accessLogSummary(a) {
+  const list = (label, items) => el('div', {}, el('h3', {}, label), items.length
+    ? el('ol', { class: 'plain-list' }, ...items.map((i) => el('li', { class: 'mono' }, `${i.value} \u00d7 ${i.count}`)))
+    : el('p', { class: 'hint' }, 'None'));
+  return el('section', { class: 'access-log' },
+    el('h3', {}, 'Access log'),
+    el('p', { class: 'hint' }, `${a.matched} of ${a.lines} lines in Apache/nginx format`, a.first ? `, from ${a.first} to ${a.last}.` : '.'),
+    el('div', { class: 'tools pair' }, list('Top status codes', a.statuses), list('Top paths (query strings dropped)', a.paths)),
+    a.agents.length ? list('Top user agents', a.agents) : null);
 }
 
 async function run() {
@@ -69,9 +106,11 @@ async function run() {
         return b;
       })()));
   }
+  const access = logMode ? parseAccessLog(text, { lineFilter: $('ioc-filter').value }) : null;
+  if (access) parts.push(accessLogSummary(access));
   if (logMode && r.total) {
     parts.push(el('div', { class: 'tools pair' },
-      topList('Top IPs', [...(r.groups.ipv4 || []), ...(r.groups.ipv6 || [])], 'ip'),
+      topIps([...(r.groups.ipv4 || []), ...(r.groups.ipv6 || [])]),
       topList('Top domains', r.groups.domain || [], 'domain')));
   }
   for (const [t, l] of TYPES) if (r.groups[t]) parts.push(groupTable(t, l, r.groups[t]));

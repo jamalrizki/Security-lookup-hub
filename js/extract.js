@@ -225,6 +225,76 @@ export function extractIocs(input, { psl = null, lineFilter = '' } = {}) {
   return { groups, dropped: [...dropped.values()], total: found.size };
 }
 
+// ---------- Access logs (IOC extractor, log mode) ----------
+
+// Apache/nginx "common" and "combined" formats:
+//   host ident user [10/Oct/2026:13:55:36 +0000] "GET /path?q HTTP/1.1" 200 2326 "referer" "user agent"
+const ACCESS_LINE = /^(\S+) \S+ \S+ \[([^\]]{1,40})\] "([^"]*)" (\d{3}) (?:\d+|-)(?: "(?:[^"\\]|\\.)*" "((?:[^"\\]|\\.)*)")?/;
+const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+export const MAX_AGENT = 120;
+const MAX_PATH = 200;
+
+/** "10/Oct/2026:13:55:36 +0000" -> epoch ms, or NaN. */
+function logTime(s) {
+  const m = /^(\d{2})\/([A-Z][a-z]{2})\/(\d{4}):(\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$/.exec(s);
+  if (!m || !(m[2] in MONTHS)) return NaN;
+  const offset = (m[7] === '-' ? -1 : 1) * (Number(m[8]) * 60 + Number(m[9])) * 60_000;
+  return Date.UTC(Number(m[3]), MONTHS[m[2]], Number(m[1]), Number(m[4]), Number(m[5]), Number(m[6])) - offset;
+}
+
+const top = (map, n = 10) => [...map].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))).slice(0, n).map(([value, count]) => ({ value, count }));
+
+/**
+ * Counts from an access log, or null when most non-empty lines aren't in the
+ * common/combined format (log mode then works as before). Paths lose their query
+ * string; user agents are cut to 120 characters. Same text limit and line filter
+ * as extractIocs.
+ */
+export function parseAccessLog(input, { lineFilter = '' } = {}) {
+  let lines = String(input).slice(0, MAX_TEXT).split(/\r?\n/).filter((l) => l.trim());
+  if (lineFilter) {
+    const f = lineFilter.toLowerCase();
+    lines = lines.filter((l) => l.toLowerCase().includes(f));
+  }
+  if (!lines.length) return null;
+  const statuses = new Map();
+  const paths = new Map();
+  const agents = new Map();
+  let matched = 0;
+  let first = null;
+  let last = null;
+  for (const line of lines) {
+    const m = ACCESS_LINE.exec(line);
+    if (!m) continue;
+    matched += 1;
+    const t = logTime(m[2]);
+    if (!Number.isNaN(t)) {
+      if (!first || t < first.t) first = { t, text: m[2] };
+      if (!last || t > last.t) last = { t, text: m[2] };
+    }
+    statuses.set(m[4], (statuses.get(m[4]) || 0) + 1);
+    const target = m[3].split(' ')[1];
+    if (target) {
+      const path = target.split('?')[0].slice(0, MAX_PATH);
+      paths.set(path, (paths.get(path) || 0) + 1);
+    }
+    if (m[5] !== undefined) {
+      const agent = m[5].slice(0, MAX_AGENT);
+      agents.set(agent, (agents.get(agent) || 0) + 1);
+    }
+  }
+  if (matched * 2 <= lines.length) return null;
+  return {
+    lines: lines.length,
+    matched,
+    first: first?.text || null,
+    last: last?.text || null,
+    statuses: top(statuses),
+    paths: top(paths),
+    agents: top(agents),
+  };
+}
+
 /** CSV with a header row; every field quoted, and formula-leading cells neutralised for spreadsheets. */
 export function toCsv(rows) {
   const cell = (v) => {

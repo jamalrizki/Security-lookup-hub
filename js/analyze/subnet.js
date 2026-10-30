@@ -2,7 +2,7 @@
 // this range?". Pure functions are exported for tests; the page wiring at the
 // bottom only runs in a browser.
 
-import { parseIPv4, parseIPv6 } from '../detect.js';
+import { parseIPv4, parseIPv6, detect } from '../detect.js';
 
 const v4ToBig = (o) => o.reduce((n, x) => (n << 8n) | BigInt(x), 0n);
 const v6ToBig = (g) => g.reduce((n, x) => (n << 16n) | BigInt(x), 0n);
@@ -133,6 +133,30 @@ if (globalThis.document?.getElementById('subnet-form')) {
     out.replaceChildren(...parts);
   };
   $('subnet-form').addEventListener('submit', (ev) => { ev.preventDefault(); show(); });
+
+  // Known provider ranges: the "Is this IP in it?" address, else the range's own address.
+  $('subnet-provider').addEventListener('click', async () => {
+    const out = $('subnet-provider-result');
+    const ip = ($('subnet-check').value.trim() || $('subnet-input').value.trim()).split('/')[0];
+    const d = detect(ip);
+    if (d.type !== 'ipv4' && d.type !== 'ipv6') { out.replaceChildren(notice('warn', 'Type an IPv4 or IPv6 address first.')); return; }
+    // Private and other non-public addresses are answered without downloading anything.
+    if (d.error) { out.replaceChildren(el('p', { class: 'verdict muted' }, 'Private address: not on the internet.')); return; }
+    const { providerRanges } = await import('./provider-ranges.js');
+    const { classify, shortLabel } = await import('../ranges.js');
+    const button = $('subnet-provider');
+    button.disabled = true;
+    out.replaceChildren(el('p', { class: 'hint' }, 'Downloading the provider lists\u2026'));
+    try {
+      const lists = await providerRanges();
+      const c = classify(lists, d.value);
+      out.replaceChildren(el('p', { class: `verdict ${c.tor ? 'warn' : 'muted'}` }, el('strong', {}, d.value), ': ', shortLabel(c), '.'));
+    } catch (err) {
+      out.replaceChildren(notice('warn', err.message));
+    } finally {
+      button.disabled = false;
+    }
+  });
   $('subnet-input').addEventListener('input', show);
   $('subnet-check').addEventListener('input', show);
 }
