@@ -5,7 +5,7 @@
     "placeholder": "",
     "about": "Shows the public IP address websites see for your connection, then checks it like any other IP.",
     "invalid": "",
-    "sources": ["abuseipdb", "vtIp", "urlhausHost", "internetdb", "ipowner"]
+    "sources": ["abuseipdb", "vtIp", "urlhausHost", "internetdb", "ipowner", "network"]
   },
   {
     "id": "ip",
@@ -13,7 +13,7 @@
     "placeholder": "8.8.8.8 or 2001:4860:4860::8888",
     "about": "Tells you if an IP address has been reported for abuse or malware, which ports it has open, and who runs the network.",
     "invalid": "That isn't a valid public IPv4 or IPv6 address.",
-    "sources": ["abuseipdb", "vtIp", "urlhausHost", "internetdb", "ipowner"]
+    "sources": ["abuseipdb", "vtIp", "urlhausHost", "internetdb", "ipowner", "network"]
   },
   {
     "id": "domain",
@@ -32,7 +32,7 @@
     "sources": ["vtUrl", "urlhausUrl"],
     "hostSources": {
       "domain": ["rdap", "dns", "certs"],
-      "ip": ["abuseipdb", "internetdb", "ipowner"]
+      "ip": ["abuseipdb", "internetdb", "ipowner", "network"]
     }
   },
   {

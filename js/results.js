@@ -3,6 +3,7 @@
 // nothing from a feed becomes a link except CVE IDs, which are validated first.
 
 import { defang } from './detect.js';
+import { providerText, PROVIDERS } from './ranges.js';
 
 const fmtDate = (iso) => (iso ? new Date(iso).toISOString().slice(0, 10) : '—');
 
@@ -141,7 +142,26 @@ const RENDER = {
       d.country ? ['Country', d.country] : null,
     ])];
   },
+
+  network(d) {
+    return networkLines(d);
+  },
 };
+
+const LIST_NAMES = { tor: 'Tor', ...PROVIDERS };
+
+/** The network-type card's body: Tor, provider, or neither, plus stale-list notes. */
+export function networkLines(d) {
+  return [
+    d.tor ? el('p', {}, flag('warn', 'Tor exit node (Tor Project list)')) : null,
+    d.provider ? el('p', {}, `Belongs to ${providerText(d.provider)}`) : null,
+    d.provider ? el('p', { class: 'hint' }, 'Traffic from cloud addresses usually comes from servers, scripts or VPN/proxy services, not a person at home.') : null,
+    !d.tor && !d.provider ? el('p', {}, "Not in the Tor or major cloud lists. It could still be a VPN, proxy or smaller hosting company: this check can't tell.") : null,
+    ...(d.stale || []).map((s) => el('p', { class: 'hint' }, s.hours === null
+      ? `The ${LIST_NAMES[s.id]} list hasn\u2019t been downloaded yet.`
+      : `${LIST_NAMES[s.id]} list last updated ${s.hours} h ago.`)),
+  ];
+}
 
 // ---------- Keyed sources ----------
 
@@ -306,6 +326,7 @@ export function sourceCard(s) {
   const [kind, text] = s.status === 'ok' && s.id === 'kev' ? (s.data.inKev ? ['bad', 'In KEV'] : ['muted', 'Not in KEV'])
     : s.status === 'ok' && s.id.startsWith('vt') ? VERDICT[s.data.verdict] || VERDICT.unknown
     : s.status === 'ok' && s.id === 'urlhausHost' ? ['warn', 'Used for malware']
+      : s.status === 'ok' && s.id === 'network' ? (s.data.tor ? ['warn', 'Tor exit node'] : s.data.provider ? ['muted', 'Cloud / CDN'] : ['muted', 'Not listed'])
       : s.status === 'ok' && LISTED.has(s.id) ? ['bad', 'Listed']
     : s.status === 'empty' && LISTED.has(s.id) ? ['ok', 'Not listed']
       : STATUS[s.status] || ['muted', s.status];

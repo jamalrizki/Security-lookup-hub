@@ -36,6 +36,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | 22 | v5 ([spec](Docs/spec-v5.md)): section numbers (01, 02…) lose the white edge; page titles and Tools letters keep it | Built on `v5`, not deployed |
 | 23 | Lookup type buttons (My IP · IP address · Domain · URL · Hash · Email · CVE) above the one box: placeholder, "Checks:" line and extras per type; detection still decides and switches the button; `data/lookup-types.json` checked against the Worker's `plan()` | Built on `v5`, not deployed |
 | 24 | Check my IP: the My IP button shows "Show my IP"; `GET /api/my-ip` returns the visitor's address (from `CF-Connecting-IP` only) and Cloudflare's `request.cf` details, never coordinates or postcode, never cached or stored; a "Your connection" card, then the normal IP lookup | Built on `v5`, not deployed |
+| 25 | Network type: Tor exit list and AWS / Google Cloud / Cloudflare ranges refreshed by the cron at :07 into KV (4-hour rotation); a keyless `network` source on IP lookups reads KV only; `GET /api/ranges` for the browser tools | Built on `v5`, not deployed |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -121,6 +122,25 @@ It returns `{ ip, version, country, region, city, timezone, asn, asOrganization 
 
 The page shows a "Your connection" card first (address with a Copy button, IPv4/IPv6, network as AS number and organisation, approximate place, time zone, and three plain-words notes: approximate location and not your home address; a VPN shows the VPN's address; IPv4 vs IPv6), then runs the normal IP lookup on that address. The address goes into the box and `#q=` only after the click, so a shared link never contains someone's IP by surprise (Analytics drops fragments anyway). The button stays on My IP.
 
+## Network type (Tor and cloud ranges)
+
+IP lookups (and URLs whose host is an IP) include a **Network type** card: whether the address is a Tor exit node, or belongs to Amazon Web Services, Google Cloud or Cloudflare. It's decided in code from published lists. **VPN detection is not offered:** it needs paid data, so an address in none of the lists gets "Not in the Tor or major cloud lists. It could still be a VPN, proxy or smaller hosting company: this check can't tell."
+
+| id | List | URL (from the provider's own documentation, checked Oct 29, 2026) | Size, Oct 29, 2026 | Stored in KV |
+|---|---|---|---|---|
+| `tor` | Tor Project bulk exit list | `https://check.torproject.org/torbulkexitlist` | 17 KB, ~1,230 addresses | 15 KB |
+| `aws` | AWS `ip-ranges.json` (region, service) | `https://ip-ranges.amazonaws.com/ip-ranges.json` | 2.7 MB, 10,699 IPv4 + 7,008 IPv6 prefixes | 550 KB |
+| `gcp` | Google Cloud `cloud.json` (scope) | `https://www.gstatic.com/ipranges/cloud.json` | 116 KB, 1,135 prefixes | 44 KB |
+| `cloudflare` | Cloudflare `ips-v4` and `ips-v6` | `https://www.cloudflare.com/ips-v4`, `https://www.cloudflare.com/ips-v6` | under 1 KB | 1 KB |
+
+Azure is out of scope: its download URL changes every week. Cloudflare's list is its proxy/CDN network; the 1.1.1.1 resolver isn't in it, so `1.1.1.1` shows as not listed.
+
+- **Refresh:** the cron's :07 run, never a visitor (`worker/src/ranges.js`). A 4-hour rotation by UTC hour (`rangesForRun`): hour % 4 = 0 Tor, 1 AWS, 2 Tor, 3 Google Cloud + Cloudflare. Tor, which changes fastest, refreshes every 2 hours; the others every 4. The spec asked for one list per run with Tor every other hour and every list at least every 4 hours, which can't all hold at one list an hour, so Cloudflare's two tiny files ride along with Google's.
+- **Stored as** one KV key per list, `ranges:<id>:v1` = `{ fetchedAt, ok, v4: [[start, end, label]…], v6: [[startHex, endHex, label]…] }`, sorted and non-overlapping (nested prefixes such as an AWS "AMAZON" /16 holding an "EC2" /20 are flattened so the innermost label wins, and one lookup is one binary search), plus `ranges:meta:v1` with each list's `fetchedAt`, ok/stale and last error. A failed, HTML or empty fetch keeps the previous copy and marks it stale, as for news. Each file is read with a size cap (Tor 200 KB, AWS 6 MB, Google 600 KB, Cloudflare 20 KB). KV: 30 list writes + 24 meta writes = **54 writes a day**; with the news (72) and Ask's counters it stays far under the Free plan's 1,000.
+- **CPU (check after deploy):** parsing the AWS file is the heaviest job. Measured in Node on the real file: `JSON.parse` ~6 ms; prefixes, flattening and serialising bring it to about 50 ms warm, 60 ms cold. That's over the Free plan's ~10 ms cron budget on paper. The spec's fallback, a regex pass instead of `JSON.parse`, measured about 10 times slower, so it isn't used; IPv4 maths uses plain numbers and each distinct prefix is parsed once. If Cloudflare stops the AWS run, nothing is written: the AWS card says the list hasn't been downloaded (or is N h old), and the other lists are unaffected. Watch a :07 run at hour % 4 = 1 with `npx wrangler tail`.
+- **The `network` source** (display name "Network type") reads the four KV keys, with no outbound fetch, and returns `{ tor, provider: { name, region?, service? } | null, listsUpdated, stale }`. A list counts as stale after two missed refreshes (Tor 4 h, others 8 h), and the card adds "<list> list last updated N h ago". Its result is cached for 6 hours (the lookup cache is 24). AbuseIPDB's own Usage and Tor rows stay as they are; if they disagree with the Tor list, both show. The verdict ignores network type; `facts()` includes it, so Explain and In plain English can mention it.
+- **`GET /api/ranges`** returns all four lists in one JSON (no meta), about 600 KB before compression, edge-cached for 1 hour; `{ pending: true }` before the first cron run (not cached). It takes no parameters, so nothing about the visitor is sent. Only the browser tools use it, after a click.
+
 ## CVEs
 
 A CVE ID in the Lookup box (any case, with copy-paste dash variants such as non-breaking hyphens) runs three sources, all keyless:
@@ -154,8 +174,8 @@ npx wrangler secret put NVD_API_KEY
 | CISA | Official advisories | `https://www.cisa.gov/cybersecurity-advisories/all.xml` (listed on cisa.gov's subscribe page; plain-text summaries up to 240 characters) |
 | The Hacker News | News | `https://feeds.feedburner.com/TheHackersNews` (the feed thehackernews.com advertises; headlines only, no excerpts). It replaced BleepingComputer, which answers Cloudflare's network with HTTP 403, so it never updated from the Worker |
 
-- **Schedule:** `17,37,57 * * * *` (UTC). That's one trigger out of the 5 the Free plan allows per account. Each run refreshes **one** source (:17 KEV, :37 CISA, :57 The Hacker News), so every source still updates hourly. One run refreshing everything would parse about 3.3 MB (1.5 MB of the CISA feed, 1.8 MB of KEV), which risks the Free plan's 10 ms CPU limit for cron runs. A manual trigger refreshes all three.
-- **Limits:** that's about 72 KV writes and a few hundred reads a day. Workers KV Free allows 1,000 writes, 100,000 reads, 1,000 deletes and 1,000 lists a day, and 1 GB stored; limits reset at 00:00 UTC (Cloudflare pricing page, checked Oct 2026).
+- **Schedule:** `7,17,37,57 * * * *` (UTC); :07 belongs to the network lists (see "Network type" below). That's one trigger out of the 5 the Free plan allows per account. Each run refreshes **one** source (:17 KEV, :37 CISA, :57 The Hacker News), so every source still updates hourly. One run refreshing everything would parse about 3.3 MB (1.5 MB of the CISA feed, 1.8 MB of KEV), which risks the Free plan's 10 ms CPU limit for cron runs. A manual trigger refreshes all three.
+- **Limits:** that's about 72 KV writes and a few hundred reads a day (126 with the network lists' 54). Workers KV Free allows 1,000 writes, 100,000 reads, 1,000 deletes and 1,000 lists a day, and 1 GB stored; limits reset at 00:00 UTC (Cloudflare pricing page, checked Oct 2026).
 - **Safety:** each fetch has an 8-second timeout and a 2 MB cap, except CISA's: that feed carries full advisory text (5.7 MB and only 30 items in Oct 2026, newest first), so only its first 1.5 MB is read and cut at the last complete item, which gave 15 advisories. Its summaries are made from the first 6,000 characters of each description, which keeps the parse well inside the cron run's CPU budget. The parser keeps at most 50 items per feed (KEV: the 25 newest), strips all tags from titles, caps them at 200 characters, and drops any item whose link isn't https on the publisher's own domain. A failed, HTML or empty fetch keeps that source's previous items and marks it stale.
 - **Before the first deploy,** create the KV namespace. Run this from `worker/`:
 
@@ -472,6 +492,7 @@ js/md5.js        MD5 (WebCrypto has none)
 js/encoding.js   Base64 / URL / hex codecs
 js/pwned.js      Pwned Passwords k-anonymity check
 js/lookup.js     Lookup page wiring (type buttons, search, panels)
+js/ranges.js     network type from the Tor / cloud lists: IP keys, binary search, labels; shared by the Worker's network source and the browser tools (DOM-free, tested in Node)
 js/lookup-types.js   Lookup type buttons: detected type -> button, the "Checks:" line, invalid-input message (DOM-free, tested in Node)
 js/ask-image.js  Ask's image questions: checks by first bytes, resize and re-encode on a canvas, paperclip / paste / drop
 js/voice.js      Ask's voice input: recording, POST /api/transcribe, text inserted at the cursor
@@ -498,7 +519,7 @@ data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
 data/brands.json      brands for the lookalike check
 data/tools.json       tools glossary entries { tool, whatItDoes } (maintained separately)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
-worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js, src/ask.js (Ask loop, prompt, output guards), src/ask-models.js (Ask's model setting, Anthropic/OpenAI-style adapters, free fallback), src/ask-tools.js (Ask tool definitions and handlers), src/reference.js (reference-library search), src/websearch.js (Tavily, allowlist), src/transcribe.js (voice input: checks, limits, Whisper), src/myip.js (Check my IP: CF-Connecting-IP and request.cf), src/retry-wait.js (Groq 429 wait parser, copied from Jaizz)
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js, src/ask.js (Ask loop, prompt, output guards), src/ask-models.js (Ask's model setting, Anthropic/OpenAI-style adapters, free fallback), src/ask-tools.js (Ask tool definitions and handlers), src/reference.js (reference-library search), src/websearch.js (Tavily, allowlist), src/transcribe.js (voice input: checks, limits, Whisper), src/myip.js (Check my IP: CF-Connecting-IP and request.cf), src/ranges.js (Tor / cloud list parsers, flattening, cron refresh into KV), src/retry-wait.js (Groq 429 wait parser, copied from Jaizz)
 data/search-domains.json   Ask's web-search allowlist (edit freely)
 data/voice-vocab.json      words Whisper should spell correctly in voice input (edit freely)
 data/hub-features.json     hub pages and tools Ask may link to (ids -> links)

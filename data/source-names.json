@@ -4,6 +4,7 @@
   "certs": "Certificates",
   "internetdb": "Shodan InternetDB",
   "ipowner": "Network owner (RDAP)",
+  "network": "Network type",
   "vtFile": "VirusTotal",
   "vtDomain": "VirusTotal",
   "vtIp": "VirusTotal",

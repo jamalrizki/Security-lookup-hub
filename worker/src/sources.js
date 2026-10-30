@@ -10,6 +10,8 @@ import { getJson } from './http.js';
 import { KEYED_SOURCES } from './keyed.js';
 import { CVE_SOURCES } from './cve.js';
 import NAMES from '../../data/source-names.json' with { type: 'json' };
+import { readRanges } from './ranges.js';
+import { classify, RANGE_IDS } from '../../js/ranges.js';
 
 const DAY = 86_400_000;
 const vcardName = (entity) => entity?.vcardArray?.[1]?.find((v) => v[0] === 'fn')?.[3] || null;
@@ -287,6 +289,35 @@ async function rdapIp(ip) {
   return { status: 'ok', data: parseIpRdap(r.json) };
 }
 
+// ---------- IP: network type (Tor and cloud/CDN lists in KV) ----------
+
+// A list counts as stale when it's missed two refreshes (Tor every 2 h, the others every 4 h).
+const STALE_HOURS = { tor: 4, aws: 8, gcp: 8, cloudflare: 8 };
+const HOUR = 3_600_000;
+
+/** The network result from the stored lists: { tor, provider, listsUpdated, stale }. */
+export function networkType(lists, ip, now = Date.now()) {
+  const c = classify(lists, ip);
+  const listsUpdated = {};
+  const stale = [];
+  for (const id of RANGE_IDS) {
+    const at = lists[id]?.fetchedAt || null;
+    listsUpdated[id] = at;
+    const hours = at ? Math.floor((now - Date.parse(at)) / HOUR) : null;
+    if (hours === null || hours >= STALE_HOURS[id]) stale.push({ id, hours });
+  }
+  return { tor: c.tor, provider: c.provider, listsUpdated, stale };
+}
+
+// Reads KV only: the cron keeps the lists fresh, so a lookup never fetches one.
+async function network(ip, tools) {
+  const lists = await readRanges(tools.env.NEWS);
+  if (!Object.values(lists).some(Boolean)) {
+    return { status: 'empty', message: 'The Tor and cloud lists haven\u2019t been downloaded yet. They refresh every few hours.' };
+  }
+  return { status: 'ok', data: networkType(lists, ip) };
+}
+
 // ---------- Registry ----------
 
 export const SOURCES = {
@@ -295,6 +326,8 @@ export const SOURCES = {
   certs: { name: NAMES.certs, run: certificates, link: (d) => `https://crt.sh/?q=${encodeURIComponent(d)}` },
   internetdb: { name: NAMES.internetdb, run: internetDb, link: (ip) => `https://www.shodan.io/host/${ip}` },
   ipowner: { name: NAMES.ipowner, run: rdapIp, link: (ip) => `https://ipinfo.io/${ip}` },
+  // Capped at 6 hours: the lists change faster than the 24-hour result cache.
+  network: { name: NAMES.network, ttl: 21_600, run: network, link: (ip) => `https://metrics.torproject.org/exonerator.html?ip=${encodeURIComponent(ip)}` },
   ...KEYED_SOURCES,
   ...CVE_SOURCES,
 };
@@ -303,7 +336,7 @@ export const SOURCES = {
 export function plan(detected) {
   const run = (ids, value) => ids.map((id) => ({ id, value }));
   const forDomain = (d) => run(['vtDomain', 'urlhausHost', 'rdap', 'dns', 'certs'], d);
-  const forIp = (ip) => run(['abuseipdb', 'vtIp', 'urlhausHost', 'internetdb', 'ipowner'], ip);
+  const forIp = (ip) => run(['abuseipdb', 'vtIp', 'urlhausHost', 'internetdb', 'ipowner', 'network'], ip);
   switch (detected.type) {
     case 'cve': return run(['nvd', 'kev', 'epss'], detected.value);
     case 'hash': return run(['vtFile', 'bazaar', 'urlhausPayload'], detected.value);
@@ -314,7 +347,7 @@ export function plan(detected) {
       // One VirusTotal call per search: the URL itself, not its host as well.
       const host = detected.host.replace(/^\[|\]$/g, '');
       const hostSources = /^[\d.]+$|:/.test(host)
-        ? run(['abuseipdb', 'internetdb', 'ipowner'], host)
+        ? run(['abuseipdb', 'internetdb', 'ipowner', 'network'], host)
         : run(['rdap', 'dns', 'certs'], host);
       return [...run(['vtUrl', 'urlhausUrl'], detected.value), ...hostSources];
     }

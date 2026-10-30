@@ -8,6 +8,7 @@
 //   POST /api/ask                   Ask: AI answers with tools (ask.js)
 //   POST /api/ask/simplify          "Make it simpler" for an Ask answer (ask.js)
 //   POST /api/transcribe            Ask's voice input: raw audio -> text, Whisper on Workers AI (transcribe.js)
+//   GET /api/ranges                 Tor and cloud/CDN lists from KV for the browser tools (ranges.js); edge-cached 1 hour
 //   GET /api/my-ip                  the visitor's own public IP and request.cf details (myip.js); never cached
 //   GET /api/health
 //
@@ -27,6 +28,7 @@ import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 import { handleAsk, handleSimplify } from './ask.js';
 import { handleTranscribe } from './transcribe.js';
 import { myIp } from './myip.js';
+import { RANGES_MINUTE, rangesForRun, refreshRanges, readRanges } from './ranges.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -242,6 +244,22 @@ async function newsRoute(request, env, ctx, origin) {
   return json(value, 200, origin);
 }
 
+// GET /api/ranges  All four lists in one JSON, for the subnet calculator and the
+// IOC extractor's log mode, which check IPs in the browser. Takes no parameters.
+async function rangesRoute(request, env, ctx, origin) {
+  if (!env.NEWS) return json({ error: 'Network lists are not configured.' }, 503, origin);
+  const cache = caches.default;
+  const key = cacheUrl(`${CACHE_VERSION}/ranges`);
+  const hit = await cache.match(key);
+  if (hit) return json(await hit.json(), 200, origin);
+  const lists = await readRanges(env.NEWS);
+  // Before the first cron run there is nothing yet; don't cache that.
+  if (!Object.values(lists).some(Boolean)) return json({ pending: true }, 200, origin);
+  const value = Object.fromEntries(Object.entries(lists).filter(([, l]) => l).map(([id, l]) => [id, { fetchedAt: l.fetchedAt, v4: l.v4, v6: l.v6 }]));
+  ctx.waitUntil(cache.put(key, new Response(JSON.stringify(value), { headers: { 'cache-control': 'max-age=3600' } })));
+  return json(value, 200, origin);
+}
+
 // The explanation is built from the same (cached) source results the page
 // shows, so asking for one doesn't call the threat feeds again.
 async function explainRoute(request, env, ctx, origin) {
@@ -302,13 +320,19 @@ export default {
     if (url.pathname === '/api/kev-search') return kevSearchRoute(request, env, ctx, origin);
     if (url.pathname === '/api/news') return newsRoute(request, env, ctx, origin);
     // json() sends Cache-Control: no-store; nothing here touches the edge cache or KV.
+    if (url.pathname === '/api/ranges') return rangesRoute(request, env, ctx, origin);
     if (url.pathname === '/api/my-ip') return json(myIp(request), 200, origin);
     return json({ error: 'Not found.' }, 404, origin);
   },
 
-  // Cron Trigger (wrangler.toml): refreshes the news feeds into KV.
+  // Cron Trigger (wrangler.toml): :07 refreshes the Tor and cloud lists, the
+  // other minutes the news feeds, one source per run (CPU budget).
   async scheduled(controller, env, ctx) {
     if (!env.NEWS) return;
+    if (new Date(controller.scheduledTime).getUTCMinutes() === RANGES_MINUTE) {
+      ctx.waitUntil(refreshRanges(env.NEWS, rangesForRun(controller.scheduledTime)));
+      return;
+    }
     ctx.waitUntil(refreshNews(env.NEWS, sourcesForRun(controller.scheduledTime)));
   },
 };

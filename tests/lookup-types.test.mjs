@@ -48,8 +48,8 @@ test('helpers: detected type → button, Checks line, invalid message', () => {
   assert.equal(buttonFor('ipv6'), 'ip');
   assert.equal(buttonFor('hash'), 'hash');
   assert.equal(buttonFor('unknown'), null);
-  assert.equal(checksText(byId.ip, NAMES), 'Checks: AbuseIPDB, VirusTotal, URLhaus, Shodan InternetDB, Network owner (RDAP).');
-  assert.equal(checksText(byId.url, NAMES), 'Checks: VirusTotal, URLhaus, then the host: Domain registration (RDAP), DNS records, Certificates (or for an IP host: AbuseIPDB, Shodan InternetDB, Network owner (RDAP)).');
+  assert.equal(checksText(byId.ip, NAMES), 'Checks: AbuseIPDB, VirusTotal, URLhaus, Shodan InternetDB, Network owner (RDAP), Network type.');
+  assert.equal(checksText(byId.url, NAMES), 'Checks: VirusTotal, URLhaus, then the host: Domain registration (RDAP), DNS records, Certificates (or for an IP host: AbuseIPDB, Shodan InternetDB, Network owner (RDAP), Network type).');
   assert.equal(invalidMessage(byId.hash, detect('not a thing at all')), "That isn't a valid MD5, SHA-1 or SHA-256 hash.");
   // detect()'s specific messages are kept.
   assert.match(invalidMessage(byId.hash, detect('abc@not_valid')), /looks like an email address/);

@@ -72,7 +72,9 @@ test('a 2.1 MB body is 413 (by content-length or by reading); no model call', as
   assert.equal(model.calls.length, 0);
 });
 
-test('limits: 20 a minute site-wide, then 429; the daily cap in KV, then 429 with the plain message', async () => {
+test('limits: 20 a minute site-wide, then 429; the daily cap in KV, then 429 with the plain message', async (t) => {
+  // A fixed clock, so the 21 requests can't straddle a minute (the per-minute counter would reset).
+  t.mock.timers.enable({ apis: ['Date'], now: Date.UTC(2026, 9, 29, 12, 0, 5) });
   const model = ai({ text: 'hi' });
   const e = env({ AI: model.binding });
   for (let i = 0; i < 20; i++) assert.equal((await send(WEBM, e)).status, 200, `#${i + 1}`);

@@ -16,12 +16,13 @@ ALLOWED_ORIGINS = "https://jamalrizki.github.io,http://localhost:8000,http://127
 ASK_MODEL = "anthropic:claude-haiku-5-5"
 # ASK_EFFORT = "medium"   # Claude only; unset = the model's default
 
-# News feeds: refreshed by this Cron Trigger (UTC) into the NEWS KV namespace.
-# Each run refreshes one source (:17 KEV, :37 CISA, :57 The Hacker News) so a
-# run stays inside the Free plan's 10 ms CPU budget. One trigger of the 5 the
-# Free plan allows per account.
+# News feeds and network lists: refreshed by this Cron Trigger (UTC) into the NEWS
+# KV namespace. Each news run refreshes one source (:17 KEV, :37 CISA, :57 The
+# Hacker News) to stay near the Free plan's 10 ms CPU budget; :07 refreshes the
+# Tor / cloud lists in a 4-hour rotation (worker/src/ranges.js rangesForRun). One
+# trigger of the 5 the Free plan allows per account.
 [triggers]
-crons = ["17,37,57 * * * *"]
+crons = ["7,17,37,57 * * * *"]
 
 [[kv_namespaces]]
 binding = "NEWS"

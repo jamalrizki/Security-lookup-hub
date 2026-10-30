@@ -9,6 +9,7 @@
 
 import { getJson } from './http.js';
 import { keepSourceFacts } from './plain.js';
+import { providerText } from '../../js/ranges.js';
 
 export const MODEL = 'openai/gpt-oss-120b';
 
@@ -42,6 +43,7 @@ export const PICK = {
   certs: (d) => ({ hostnamesOnCertificates: d.total, tooManyToCount: Boolean(d.tooMany) }),
   internetdb: (d) => ({ openPorts: (d.ports || []).slice(0, 15), knownCves: (d.vulns || []).length, exampleCves: cutList(d.vulns, 5, 20), tags: cutList(d.tags, 5, 20) }),
   ipowner: (d) => ({ owner: cut(d.owner), network: cut(d.network, 40), registry: d.registry }),
+  network: (d) => ({ torExitNode: d.tor, cloudProvider: d.provider ? providerText(d.provider) : null, vpnDetection: 'not checked: a VPN or small host can still look like neither' }),
   nvd: (d) => ({
     id: d.id,
     status: cut(d.status, 30),

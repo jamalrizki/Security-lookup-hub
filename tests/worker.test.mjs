@@ -80,14 +80,14 @@ test('InternetDB and IP RDAP', () => {
 test('plan picks sources per indicator type, verdict sources first', () => {
   const ids = (q) => plan(detect(q)).map((s) => `${s.id}:${s.value}`);
   assert.deepEqual(ids('example.com'), ['vtDomain', 'urlhausHost', 'rdap', 'dns', 'certs'].map((i) => `${i}:example.com`));
-  assert.deepEqual(ids('8.8.8.8'), ['abuseipdb', 'vtIp', 'urlhausHost', 'internetdb', 'ipowner'].map((i) => `${i}:8.8.8.8`));
+  assert.deepEqual(ids('8.8.8.8'), ['abuseipdb', 'vtIp', 'urlhausHost', 'internetdb', 'ipowner', 'network'].map((i) => `${i}:8.8.8.8`));
   assert.deepEqual(ids('https://www.example.com/x'), [
     'vtUrl:https://www.example.com/x', 'urlhausUrl:https://www.example.com/x',
     'rdap:www.example.com', 'dns:www.example.com', 'certs:www.example.com',
   ]);
   assert.deepEqual(ids('http://[2606:4700::1111]/'), [
     'vtUrl:http://[2606:4700::1111]/', 'urlhausUrl:http://[2606:4700::1111]/',
-    'abuseipdb:2606:4700::1111', 'internetdb:2606:4700::1111', 'ipowner:2606:4700::1111',
+    'abuseipdb:2606:4700::1111', 'internetdb:2606:4700::1111', 'ipowner:2606:4700::1111', 'network:2606:4700::1111',
   ]);
   assert.deepEqual(ids('a@example.org'), ['dns:example.org']);
   const h = 'd41d8cd98f00b204e9800998ecf8427e';
