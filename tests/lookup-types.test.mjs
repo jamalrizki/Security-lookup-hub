@@ -134,3 +134,48 @@ test('page: unrecognised input names the selected type; nothing is sent', async 
   assert.equal($('search-result').textContent, "That isn't a valid MD5, SHA-1 or SHA-256 hash.");
   assert.equal(calls.length, 0);
 });
+
+test('page: switching to another type starts a fresh view; the selected type keeps it', async () => {
+  const { $, pressed } = await loadPage('https://jamalrizki.github.io/Security-lookup-hub/lookup.html#q=8.8.8.8');
+  assert.deepEqual(pressed(), ['ip']);
+  assert.ok($('search-result').textContent, 'results showing');
+  pick($, 'ip');
+  assert.equal($('search-input').value, '8.8.8.8', 'same type: nothing cleared');
+  assert.ok($('search-result').textContent);
+  pick($, 'domain');
+  assert.equal($('search-input').value, '');
+  assert.equal($('search-result').textContent, '');
+  assert.equal(location.hash, '', '#q= link removed');
+});
+
+test('page: a lookup or My IP answer that arrives after switching type is dropped', async () => {
+  dom = installDom(read('lookup.html'), { url: 'https://jamalrizki.github.io/Security-lookup-hub/lookup.html' });
+  const pending = [];
+  globalThis.fetch = async (input) => {
+    const u = String(input);
+    if (u.startsWith('data/')) return new Response(read(u));
+    const body = u.endsWith('/api/my-ip')
+      ? { ip: '81.2.69.142', version: 4 }
+      : { sources: [{ id: 'internetdb', name: 'Shodan InternetDB', status: 'empty', message: 'Late answer', link: 'https://www.shodan.io/host/8.8.8.8' }] };
+    return new Promise((resolve) => { pending.push(() => resolve(new Response(JSON.stringify(body)))); });
+  };
+  await import(`../js/lookup.js?page=${++loads}`);
+  await settle();
+  const $ = (id) => dom.document.getElementById(id);
+  $('search-input').value = '8.8.8.8';
+  $('search-form').requestSubmit();
+  await settle();
+  pick($, 'hash');
+  pending.shift()();
+  await settle();
+  assert.equal($('search-result').textContent, '', 'late lookup not shown');
+
+  pick($, 'myip');
+  $('myip-button').click();
+  await settle();
+  pick($, 'cve');
+  pending.shift()();
+  await settle();
+  assert.equal($('search-result').textContent, '', 'late My IP not shown');
+  assert.equal(location.hash, '');
+});

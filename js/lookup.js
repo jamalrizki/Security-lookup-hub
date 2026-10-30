@@ -63,9 +63,20 @@ $('type-picker').addEventListener('click', (ev) => {
   const b = ev.target.closest('button[data-type]');
   if (!b) return;
   const id = b.getAttribute('data-type');
+  // Another type starts a fresh view; clicking the selected one changes nothing.
+  if (id !== selected) clearView();
   selectType(id);
   if (id !== 'myip') $('search-input').focus();
 });
+
+/** Empties the box, the results and the #q= link, and drops any answer still on its way. */
+function clearView() {
+  searchRun += 1;
+  myIpRun += 1;
+  $('search-input').value = '';
+  $('search-result').replaceChildren();
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+}
 
 selectType(DEFAULT_TYPE);
 Promise.all(['data/lookup-types.json', 'data/source-names.json'].map((f) => fetch(f).then((r) => r.json())))
@@ -233,8 +244,11 @@ const MYIP_ERRORS = {
   failed: 'Your IP could not be checked. Try again later.',
 };
 
+let myIpRun = 0;
+
 // Only this click calls the Worker; selecting the My IP button sends nothing.
 $('myip-button').addEventListener('click', async () => {
+  const run = ++myIpRun;
   const button = $('myip-button');
   const out = $('search-result');
   button.disabled = true;
@@ -248,6 +262,7 @@ $('myip-button').addEventListener('click', async () => {
     body = null;
   }
   button.disabled = false;
+  if (run !== myIpRun) return; // the visitor switched type meanwhile
   if (!res) return out.replaceChildren(notice('warn', MYIP_ERRORS.network));
   if (res.status === 429) return out.replaceChildren(notice('bad', body?.error || MYIP_ERRORS.failed));
   if (!res.ok || !body) return out.replaceChildren(notice('warn', body?.error || MYIP_ERRORS.failed));
