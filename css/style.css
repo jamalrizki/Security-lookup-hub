@@ -201,8 +201,9 @@ h3 { font-size: 15px; font-weight: 700; }
 .hero-title span { grid-area: 1 / 1; padding: 0.12em 0; margin: -0.12em 0; }
 .hero-outline { color: transparent; -webkit-text-stroke: 2px var(--text); }
 /* Same stroke as the outline, in red, so the fill covers the white edge completely. */
-/* Same stroke as the outline, in red, so the fill covers the white edge completely. */
-.hero-fill { color: var(--accent); -webkit-text-stroke: 2px var(--accent); animation: fillsweep 4s ease-in-out infinite; }
+/* A red stroke 1px wider than the outline's, so the fill covers the white edge completely
+   (at the same width, the outline's anti-aliased edge showed through as a light fringe). */
+.hero-fill { color: var(--accent); -webkit-text-stroke: 3px var(--accent); animation: fillsweep 4s ease-in-out infinite; }
 .lede { margin: 0; max-width: 680px; color: var(--body); font-size: 15px; line-height: 1.6; }
 .lede code { color: var(--text); }
 
