@@ -21,6 +21,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | Reference: "Already happened? What to do now" checklists (clicked a link, typed a password, opened a file, remote access, paid a scammer, hacked account, data breach) | Built, not deployed |
 | 12 | Analyze: certificate viewer and Nmap viewer | Done |
 | Extra | Reference: "Ports and protocols" lookup (67 common ports: service, TCP/UDP, encrypted version, keep-off-the-internet flag; searched in code; `[[ports]]` for Ask) | Built (Oct 29, 2026), not deployed |
+| Extra | Reference: "Security acronyms" lookup (155 entries: what it stands for and one plain sentence; several meanings shown together; searched in code; `[[acronyms]]` for Ask) | Built (Oct 30, 2026), not deployed |
 | 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
 | 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
 | 15 | Reference-library pipeline: manifest, OCR, ingest and embedding scripts (books stay in the gitignored `security-books/`) | Built on `v3`; index not built yet |
@@ -250,6 +251,15 @@ Below "Where to start", `reference.html#what-now` has one card per thing that al
 - `reference.html#ports=3389` opens the section with that port filled in.
 - `tests/ports.test.mjs` checks every entry's shape and order, that each "encrypted version" points at a listed port, the exam staples and their transports, and the search rules. Ask can send visitors here with `[[ports]]`.
 
+## Reference: security acronyms
+
+`reference.html#acronyms` answers "what does RPO stand for?" and "what's the difference between the three MACs?" for certification students (Security+, CySA+, CISSP and the rest) and for anyone reading an audit report, vendor questionnaire or advisory full of letters. Type an acronym (`XSS`, `pci dss`, `s/mime`) or a word (`encrypt`, `recovery`); each row shows the acronym, what it stands for, and one plain sentence on what it means. Nothing is listed until something is typed.
+
+- The data is `data/acronyms.json` (155 entries), fixed text with no AI and no network calls. Expansions follow the NIST CSRC Glossary and the acronym lists in CompTIA's exam objectives. An acronym with several meanings has one entry per meaning (MAC ×3; PAM, SOC and CSP ×2), and all of them are shown together. The list is kept in alphabetical order.
+- Search is in code (`js/acronyms.js`, DOM-free). Case, spaces and punctuation in an acronym don't matter (`PCIDSS` finds PCI DSS, `att&ck` finds ATT&CK). Ranking: exact acronym (every meaning, list order), then acronyms that start with the text, then (3+ characters) matches in the full name, then in the plain sentence. One or two letters only match acronyms, so `a` doesn't list everything. An acronym not in the list says so and points to the NIST glossary.
+- `reference.html#acronyms=RPO` opens the section with that acronym filled in.
+- `tests/acronyms.test.mjs` checks every entry's shape and order, no repeated meaning, exam staples (CIA, AAA, RPO/RTO, ALE/SLE/ARO, SIEM, SOAR, XSS, CSRF, OCSP, CVSS, KEV, EPSS…) with their standard expansions, multi-meaning acronyms, and the search rules. Ask can send visitors here with `[[acronyms]]`.
+
 ## Analyze tools
 
 `analyze.html` holds paste-and-check tools that run entirely in the browser; nothing pasted is sent anywhere. The page's CSP allows same-origin requests (the two data files) and, since v5, the Worker, for one request only: `GET /api/ranges`, the public provider lists, which takes no parameters and is made only after a "provider ranges" button click (once per page visit; `js/analyze/provider-ranges.js`). A "Look up" link on one extracted value opens the normal lookup (`./lookup.html#q=…`). There is deliberately no "look up all", because VirusTotal allows 4 lookups a minute for the whole site. The tools keep working offline once the page has loaded.
@@ -467,7 +477,7 @@ npm test
 
 Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
 
-373 tests as of Oct 30, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+382 tests as of Oct 30, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -516,6 +526,7 @@ js/reference.js  Reference page rendering
 js/exposure.js   My exposure page rendering (data/exposure.json)
 js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
 js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
+js/acronyms.js   "Security acronyms" search and checks (DOM-free, tested in Node)
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
@@ -529,6 +540,7 @@ js/analyze/      one module per Analyze tool (provider-ranges.js downloads the T
 data/reference.json   the site directory
 data/what-now.json    "Already happened? What to do now" checklists
 data/ports.json       common ports and protocols for the Reference page
+data/acronyms.json    security acronyms for the Reference page
 data/exposure.json    My exposure sections: why, steps, outside links (fixed text)
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
