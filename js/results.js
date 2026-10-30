@@ -346,29 +346,42 @@ export const CONNECTION_NOTES = [
   "Using a VPN? This shows the VPN's address, not yours.",
   'Your device may have both an IPv4 and an IPv6 address; this shows the one this connection used.',
 ];
+export const BOTH_NOTE = 'Your device has both an IPv4 and an IPv6 address. Websites see whichever one a connection uses; the checks below are for the IPv6 one, and the IPv4 one has its own Look up link.';
+export const SHARED_V4_NOTE = 'On some mobile networks the IPv4 address is shared by many customers at once.';
+export const NO_V4 = 'None found: this connection may be IPv6-only';
 
-/** The "Your connection" card from GET /api/my-ip: shown above the normal IP lookup. */
-export function connectionCard(info) {
-  const copy = el('button', { type: 'button', class: 'secondary small', 'aria-label': 'Copy IP address' }, 'Copy');
+function copyIp(ip, label) {
+  const copy = el('button', { type: 'button', class: 'secondary small', 'aria-label': `Copy ${label}` }, 'Copy');
   copy.addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(info.ip);
+      await navigator.clipboard.writeText(ip);
       copy.textContent = 'Copied';
     } catch {
       copy.textContent = 'Blocked';
     }
     setTimeout(() => { copy.textContent = 'Copy'; }, 1200);
   });
+  return copy;
+}
+
+/**
+ * The "Your connection" card from GET /api/my-ip: shown above the normal IP lookup.
+ * ipv4: for an IPv6 connection, the IPv4 address the browser found separately
+ * (a string), or null when it found none; undefined for an IPv4 connection.
+ */
+export function connectionCard(info, ipv4) {
   const place = [info.city, info.region, info.country].filter(Boolean).join(', ');
   const network = [info.asn ? `AS${info.asn}` : null, info.asOrganization].filter(Boolean).join(' ');
+  const v6 = info.version === 6;
+  const addr = (ip, label) => el('span', {}, el('span', { class: 'mono' }, ip), ' ', copyIp(ip, label));
   return el('article', { class: 'card connection' },
     el('header', {}, el('h3', {}, 'Your connection'), flag('muted', `IPv${info.version}`)),
     rows([
-      ['IP address', el('span', {}, el('span', { class: 'mono' }, info.ip), ' ', copy)],
-      ['Version', `IPv${info.version}`],
+      v6 ? ['IPv6 address', addr(info.ip, 'IPv6 address')] : ['IP address', addr(info.ip, 'IP address')],
+      v6 ? ['IPv4 address', ipv4 ? el('span', {}, addr(ipv4, 'IPv4 address'), ' ', hubLink(ipv4, 'Look up')) : el('span', { class: 'hint' }, NO_V4)] : ['Version', 'IPv4'],
       ['Network', network || null],
       ['Approximate place', place || null],
       ['Time zone', info.timezone || null],
     ]),
-    ...CONNECTION_NOTES.map((t) => el('p', { class: 'hint' }, t)));
+    ...(v6 && ipv4 ? [...CONNECTION_NOTES.slice(0, 2), BOTH_NOTE, SHARED_V4_NOTE] : CONNECTION_NOTES).map((t) => el('p', { class: 'hint' }, t)));
 }

@@ -172,7 +172,7 @@ function explainPanel(d) {
   }
   panel.append(
     el('div', { class: 'row' }, ...buttons),
-    el('p', { class: 'hint' }, 'Writes a summary with an AI model (gpt-oss-120b on Groq): the normal one, or a plain-English one for beginners. The results above are sent to Groq; your IP address and anything else are not. AI can be wrong, so check the cards.'),
+    el('p', { class: 'hint' }, 'Writes a summary with an AI model: the normal one, or a plain-English one for beginners. The results above are sent to the AI provider; your IP address and anything else are not. AI can be wrong, so check the cards.'),
     out,
   );
   return panel;
@@ -247,6 +247,23 @@ const MYIP_ERRORS = {
 
 let myIpRun = 0;
 
+// The Worker sees only the address the connection used. For an IPv6 connection the
+// IPv4 address comes from Cloudflare's trace page reached by an IPv4 address
+// (1.1.1.1), so it can only answer over IPv4. Cloudflare already handles the
+// connection to the Worker; only the "ip=" line is read. Called only from the
+// Show my IP click. Returns the public IPv4 address, or null.
+async function findIpv4() {
+  try {
+    const res = await fetch('https://1.1.1.1/cdn-cgi/trace', { referrerPolicy: 'no-referrer', credentials: 'omit', signal: AbortSignal.timeout(4000) });
+    if (!res.ok) return null;
+    const ip = /^ip=(.+)$/m.exec((await res.text()).slice(0, 2000))?.[1]?.trim() || '';
+    const d = detect(ip);
+    return d.type === 'ipv4' && !d.error ? d.value : null;
+  } catch {
+    return null;
+  }
+}
+
 // Only this click calls the Worker; selecting the My IP button sends nothing.
 $('myip-button').addEventListener('click', async () => {
   const run = ++myIpRun;
@@ -268,12 +285,14 @@ $('myip-button').addEventListener('click', async () => {
   if (res.status === 429) return out.replaceChildren(notice('bad', body?.error || MYIP_ERRORS.failed));
   if (!res.ok || !body) return out.replaceChildren(notice('warn', body?.error || MYIP_ERRORS.failed));
   if (body.local) return out.replaceChildren(notice('warn', MYIP_ERRORS.local));
+  const ipv4 = body.version === 6 ? await findIpv4() : undefined;
+  if (run !== myIpRun) return;
   // The address goes into the box and the fragment only now, after the click, so a
   // shared link never carries someone's IP by surprise. replaceState fires no
   // hashchange, so the card isn't redrawn away.
   $('search-input').value = body.ip;
   history.replaceState(null, '', `#q=${encodeURIComponent(body.ip)}`);
-  renderSearch(body.ip, connectionCard(body));
+  renderSearch(body.ip, connectionCard(body, ipv4));
 });
 
 // ---------- Password check ----------

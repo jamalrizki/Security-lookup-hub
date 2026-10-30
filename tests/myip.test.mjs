@@ -62,7 +62,7 @@ const read = (f) => readFileSync(new URL(f, root), 'utf8');
 let dom;
 let loads = 0;
 
-async function loadPage(myIpReply) {
+async function loadPage(myIpReply, traceReply = () => new Response('fl=1\nip=35.146.17.198\nloc=US\n')) {
   dom = installDom(read('lookup.html'), { url: 'https://jamalrizki.github.io/Security-lookup-hub/lookup.html' });
   const calls = [];
   globalThis.fetch = async (input) => {
@@ -70,6 +70,7 @@ async function loadPage(myIpReply) {
     if (u.startsWith('data/')) return new Response(read(u));
     calls.push(u);
     if (u.endsWith('/api/my-ip')) return myIpReply();
+    if (u === 'https://1.1.1.1/cdn-cgi/trace') return traceReply();
     return new Response(JSON.stringify({ sources: [], note: 'Nothing to show.' }));
   };
   await import(`../js/lookup.js?myip=${++loads}`);
@@ -129,4 +130,46 @@ test('page: local, rate-limited and unreachable answers are plain words, with no
     dom.restore();
     dom = null;
   }
+});
+
+const V6 = { ...PUBLIC, ip: '2603:8080:11f0:c610:acf4:7f84:eacc:862b', version: 6 };
+const showMyIp = async ($) => {
+  dom.document.querySelector('#type-picker button[data-type="myip"]').click();
+  $('myip-button').click();
+  await settle();
+};
+
+test('page: an IPv4 connection makes no extra request for an IPv4 address', async () => {
+  const { $, calls } = await loadPage(reply(PUBLIC));
+  await showMyIp($);
+  assert.ok(!calls.includes('https://1.1.1.1/cdn-cgi/trace'));
+  assert.deepEqual($('search-result').firstElementChild.querySelectorAll('dt').map((d) => d.textContent), ['IP address', 'Version', 'Network', 'Approximate place', 'Time zone']);
+});
+
+test('page: an IPv6 connection also shows the IPv4 address (from 1.1.1.1), with its own Look up link', async () => {
+  const { $, calls } = await loadPage(reply(V6));
+  await showMyIp($);
+  assert.deepEqual(calls.slice(0, 2), ['https://security-lookup-hub.jamal-598.workers.dev/api/my-ip', 'https://1.1.1.1/cdn-cgi/trace']);
+  assert.match(calls[2], /\/api\/lookup\?q=2603%3A8080/, 'the lookup is for the address the Worker saw');
+  const card = $('search-result').firstElementChild;
+  const text = card.textContent;
+  for (const want of ['IPv6 address', V6.ip, 'IPv4 address', '35.146.17.198', 'both an IPv4 and an IPv6 address', 'shared by many customers']) assert.ok(text.includes(want), want);
+  const look = card.querySelectorAll('a').find((a) => a.textContent === 'Look up');
+  assert.equal(look.getAttribute('href'), './lookup.html#q=35.146.17.198');
+  assert.equal(card.querySelectorAll('button').filter((b) => b.textContent === 'Copy').length, 2);
+});
+
+test('page: no IPv4 found (trace fails, or answers with a non-public or non-IPv4 address)', async () => {
+  for (const trace of [() => { throw new TypeError('no IPv4 route'); }, () => new Response('ip=10.0.0.5\n'), () => new Response('ip=2001:db8::1\n'), () => new Response('nope', { status: 500 })]) {
+    const { $ } = await loadPage(reply(V6), trace);
+    await showMyIp($);
+    assert.match($('search-result').firstElementChild.textContent, /None found: this connection may be IPv6-only/);
+    dom.restore();
+    dom = null;
+  }
+});
+
+test('lookup.html allows https://1.1.1.1 in connect-src (the IPv4 check only)', () => {
+  const csp = /Content-Security-Policy" content="([^"]+)"/.exec(read('lookup.html'))[1];
+  assert.match(csp, /connect-src [^;]*https:\/\/1\.1\.1\.1 /);
 });

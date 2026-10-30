@@ -285,7 +285,7 @@ async function explainRoute(request, env, ctx, origin) {
     text = await explain(body, env.GROQ_API_KEY, { style });
   } catch (err) {
     if (err instanceof QuotaError) {
-      return json({ error: 'The AI explainer is busy (Groq free tier). Try again in a minute.' }, 429, origin, { 'retry-after': '60' });
+      return json({ error: 'The AI explainer is busy. Try again in a minute.' }, 429, origin, { 'retry-after': '60' });
     }
     return json({ error: err.name === 'TimeoutError' ? 'The AI explainer took too long. Try again.' : 'The AI explainer failed. Try again later.' }, 502, origin);
   }
