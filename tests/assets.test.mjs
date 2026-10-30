@@ -52,13 +52,13 @@ test('every page loads Google Analytics through a CSP that allows only its docum
 });
 
 
-test('Matrix palette: green accent and tokens; severity colours (neon; low and ok cyan, off the accent green); no red tints left; theme-color on every page', () => {
+test('Matrix palette: green accent and tokens; severity colours (neon orange, yellow and cyan; red as before); no red tints left; theme-color on every page', () => {
   const css = readFileSync(new URL('css/style.css', root), 'utf8');
   const token = (name) => new RegExp(`--${name}: ([^;]+);`).exec(css)[1];
   assert.equal(token('accent'), '#00ff41');
   assert.equal(token('bg'), '#000');
   assert.equal(token('on-accent'), '#000');
-  for (const [name, value] of [['critical', '#ff2a55'], ['high', '#ff8c1a'], ['medium', '#ffe600'], ['low', '#00e5ff'], ['ok', '#00e5ff'], ['warn', '#ffe600'], ['bad', '#ff2a55']]) {
+  for (const [name, value] of [['critical', '#ff3344'], ['high', '#ff8c1a'], ['medium', '#ffe600'], ['low', '#00e5ff'], ['ok', '#00e5ff'], ['warn', '#ffe600'], ['bad', '#ff3344']]) {
     assert.equal(token(name), value, `--${name}`);
   }
   assert.ok(!css.includes('rgba(255, 51, 68'), 'no hard-coded red tints');
