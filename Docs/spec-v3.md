@@ -7,7 +7,7 @@ This spec adds an **Ask** box to the Lookup page of the live Security Lookup Hub
 **How to work: run all phases (13 → 16) in one go, without stopping between them.**
 - Work on a branch `v3` (create it from `main` first). Build phases in order. At the end of each phase: `npm test` passes (from the repo root), the README Status table and Layout are updated, and you make **one commit for that phase** ("Phase 13: Ask API", …). Then go straight on to the next phase.
 - Don't stop to ask about choices this spec already settles. For small choices it doesn't cover, pick the simpler option, note it in the README or the commit message, and keep going.
-- Never run `npx wrangler deploy`, `npx wrangler secret put`, `npx wrangler vectorize create`, `npx wrangler vectorize insert`, or push to `main`. Those need Jamal.
+- Never run `npx wrangler deploy`, `npx wrangler secret put`, `npx wrangler vectorize create` or `npx wrangler vectorize insert`. Those need Jamal. Ask Jamal before pushing to `main`; once he says to push or merge, do it.
 - Checks that only work on the deployed Worker (live Groq tool calls, live Tavily, Workers AI and Vectorize) go on a list instead of blocking you. Everything else is tested offline with `fetch`, `env.AI` and `env.BOOKS` stubbed.
 - Stop only if a test can't be made to pass or something in this spec turns out to be impossible as written; say which phase and why.
 - **When everything is done**, finish with one message for Jamal: what was built, anything dropped or changed and why, and a single ordered list of what he needs to do. Put every prerequisite or warning **before** the step it applies to, and say which folder each command runs from.

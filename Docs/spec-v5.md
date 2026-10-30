@@ -7,7 +7,7 @@ This spec changes the live Security Lookup Hub. Read `Docs/Requirements.md`, `Do
 **How to work: run all phases (22 → 27) in one go, without stopping between them.**
 - Work on a branch `v5` (create it from `main` first; `main` already has v4: `lookup.html`, Ask home page). Build phases in order. At the end of each phase: `npm test` passes (from the repo root), the README Status table and Layout are updated, and you make **one commit for that phase** ("Phase 22: section numbers without the white edge", …). Then go straight on to the next phase.
 - Don't stop to ask about choices this spec already settles. For small choices it doesn't cover, pick the simpler option, note it in the README or the commit message, and keep going.
-- Never run `npx wrangler deploy`, `npx wrangler secret put`, `npx wrangler kv namespace create`, or push to `main`. Those need Jamal.
+- Never run `npx wrangler deploy`, `npx wrangler secret put` or `npx wrangler kv namespace create`. Those need Jamal. Ask Jamal before pushing to `main`; once he says to push or merge, do it.
 - Checks that only work on the deployed Worker (real `request.cf` data, the visitor's real IP, live provider range files, cron CPU time) go on a list instead of blocking you. Everything else is tested offline with `fetch`, KV and `request.cf` stubbed.
 - `security-books/` stays gitignored. Never run `git add -A` or `git add .`; add files by name, and run `git status --short --ignored` before every commit.
 - After adding a page or editing `css/style.css`, `js/nav.js` or `js/chrome.js`: re-run `scripts/nav.py`, then `npm test`.
