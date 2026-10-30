@@ -83,9 +83,9 @@ test('the Ask page is the chat: intro, examples, route to Lookup, thread, compos
   for (const id of ['ask', 'ask-empty', 'ask-form', 'ask-input', 'ask-send', 'ask-new', 'ask-top', 'ask-count', 'ask-thread', 'ask-examples', 'ask-notice']) assert.ok(html.includes(`id="${id}"`), id);
   assert.ok(html.includes('<script type="module" src="js/ask.js"></script>'));
   const empty = html.slice(html.indexOf('<div id="ask-empty"'), html.indexOf('<div class="chat-top"'));
-  assert.match(empty, /<h1 id="ask-h" class="block-title">Ask<\/h1>/);
+  assert.match(empty, /<h1 id="ask-h" class="block-title">Ask AI<\/h1>/);
   const hints = [...empty.matchAll(/<p class="hint">([^<]*)<\/p>/g)].map((m) => m[1]);
-  assert.deepEqual(hints, ['Ask a security question. Answers draw on a reference library, current security news and the hub’s data, and can be wrong.'], 'the Ask intro is exactly this one line');
+  assert.deepEqual(hints, ['Ask AI a security question. Answers draw on a reference library, current security news and the hub’s data, and can be wrong.'], 'the Ask intro is exactly this one line');
   assert.match(empty, /Have an IP, domain, hash, URL or CVE\? <a href="\.\/lookup\.html">Look it up &rarr;<\/a>/);
   assert.equal((empty.match(/class="chip"/g) || []).length, 3, 'three example chips');
   // The composer comes after the thread, pinned to the bottom.

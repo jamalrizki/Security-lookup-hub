@@ -187,9 +187,10 @@ function renderSearch(raw, lead = null) {
   const out = $('search-result');
   const d = detect(raw);
   // Detection decides: pasting an IP with Hash selected runs an IP lookup and
-  // switches the button to match. (My IP's own lookup is an IP; it stays on My IP.)
+  // switches the button to match. (Show my IP's own lookup, which comes with the
+  // connection card as `lead`, is an IP but stays on My IP.)
   const detected = buttonFor(d.type);
-  if (detected && detected !== selected && !(selected === 'myip' && detected === 'ip')) selectType(detected);
+  if (detected && detected !== selected && !(lead && detected === 'ip')) selectType(detected);
   out.replaceChildren(...(lead ? [lead] : []));
   if (d.type === 'empty') return;
 

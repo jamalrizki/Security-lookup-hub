@@ -75,8 +75,8 @@ GA_LOADER = '<script async src="https://www.googletagmanager.com/gtag/js?id=G-26
 # page has had the standard hero since Oct 26, 2026).
 NO_HERO = set()
 # The home page (Ask) has no intro paragraph, so it gets a description written for sharing.
-HOME_TITLE = 'Security Lookup Hub: ask a security question'
-HOME_DESCRIPTION = ('Ask a security question, or look up a hash, domain, IP, URL, email or CVE. Free threat '
+HOME_TITLE = 'Security Lookup Hub: ask AI a security question'
+HOME_DESCRIPTION = ('Ask AI a security question, or look up a hash, domain, IP, URL, email or CVE. Free threat '
                     'intel from VirusTotal, AbuseIPDB, NVD, CISA KEV and more, using passive lookups only.')
 
 def plain(html_text):

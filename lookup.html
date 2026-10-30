@@ -76,20 +76,21 @@
       <h2 id="search-h" class="block-title">Lookup</h2>
       <!-- Buttons match data/lookup-types.json (same ids and labels, same order; a test checks). -->
       <div id="type-picker" class="type-picker" role="group" aria-label="What are you looking up?">
-        <button type="button" class="secondary" data-type="myip" aria-pressed="false">My IP</button>
-        <button type="button" class="secondary" data-type="ip" aria-pressed="true">IP address</button>
+        <button type="button" class="secondary" data-type="myip" aria-pressed="true">My IP</button>
+        <button type="button" class="secondary" data-type="ip" aria-pressed="false">IP address</button>
         <button type="button" class="secondary" data-type="domain" aria-pressed="false">Domain</button>
         <button type="button" class="secondary" data-type="url" aria-pressed="false">URL</button>
         <button type="button" class="secondary" data-type="hash" aria-pressed="false">Hash</button>
         <button type="button" class="secondary" data-type="email" aria-pressed="false">Email</button>
         <button type="button" class="secondary" data-type="cve" aria-pressed="false">CVE</button>
       </div>
-      <form id="search-form" class="bigbar" autocomplete="off">
+      <!-- My IP is selected on load, so the box starts hidden (js/lookup.js shows it for the other types). -->
+      <form id="search-form" class="bigbar" autocomplete="off" hidden>
         <input id="search-input" type="text" spellcheck="false"
                aria-label="Indicator to look up" aria-describedby="type-about type-checks" placeholder="8.8.8.8 or 2001:4860:4860::8888">
         <button type="submit">Look up &rarr;</button>
       </form>
-      <div id="myip-row" class="myip-row" hidden>
+      <div id="myip-row" class="myip-row">
         <button type="button" id="myip-button">Show my IP &rarr;</button>
       </div>
       <p id="type-about" class="hint type-about"></p>

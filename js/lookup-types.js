@@ -3,7 +3,7 @@
 // file), so the "Checks:" line can't drift from what the Worker runs; a test
 // compares each entry with the Worker's plan().
 
-export const DEFAULT_TYPE = 'ip';
+export const DEFAULT_TYPE = 'myip';
 
 /** The button for a detect() type: IPv4 and IPv6 share "IP address". */
 export function buttonFor(detectedType) {

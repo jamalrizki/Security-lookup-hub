@@ -357,7 +357,7 @@ test('voice: record, stop, transcribe; the text goes in at the cursor and is nev
   assert.equal($('ask-mic').classList.contains('recording'), false);
   assert.equal($('ask-send').textContent, 'Send');
   assert.equal($('ask-cancel').hidden, true);
-  assert.equal(input.getAttribute('placeholder'), 'Ask a security question', 'the box is back to normal');
+  assert.equal(input.getAttribute('placeholder'), 'Ask AI a security question', 'the box is back to normal');
   assert.equal(input.hasAttribute('readonly'), false);
 });
 

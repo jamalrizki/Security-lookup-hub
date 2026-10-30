@@ -39,7 +39,7 @@ test('lookup.html has one button per type, same ids, labels and order', () => {
   const buttons = [...read('lookup.html').matchAll(/<button type="button" class="secondary" data-type="([a-z]+)" aria-pressed="(true|false)">([^<]+)<\/button>/g)];
   assert.deepEqual(buttons.map((m) => m[1]), TYPES.map((t) => t.id));
   assert.deepEqual(buttons.map((m) => m[3]), TYPES.map((t) => t.label));
-  assert.deepEqual(buttons.filter((m) => m[2] === 'true').map((m) => m[1]), ['ip'], 'IP address is selected on load');
+  assert.deepEqual(buttons.filter((m) => m[2] === 'true').map((m) => m[1]), ['myip'], 'My IP is selected on load');
   for (const t of TYPES) assert.ok(t.about && typeof t.placeholder === 'string', t.id);
 });
 
@@ -84,14 +84,22 @@ afterEach(() => {
   delete globalThis.fetch;
 });
 
-test('page: IP address is selected on load, with its placeholder and Checks line; nothing is looked up', async () => {
+test('page: My IP is selected on load, with Show my IP instead of the box; nothing is looked up', async () => {
   const { $, calls, pressed } = await loadPage();
-  assert.deepEqual(pressed(), ['ip']);
-  assert.equal($('search-input').placeholder, byId.ip.placeholder);
-  assert.equal($('type-checks').textContent, checksText(byId.ip, NAMES));
-  assert.equal($('type-about').textContent, byId.ip.about);
+  assert.deepEqual(pressed(), ['myip']);
+  assert.equal($('search-form').hidden, true);
+  assert.equal($('myip-row').hidden, false);
+  assert.equal($('type-checks').textContent, checksText(byId.myip, NAMES));
+  assert.equal($('type-about').textContent, byId.myip.about);
   assert.equal($('dkim-row').hidden, true);
   assert.equal(calls.length, 0);
+});
+
+test('page: a #q= IP link switches from My IP to IP address and shows the box', async () => {
+  const { $, calls, pressed } = await loadPage('https://jamalrizki.github.io/Security-lookup-hub/lookup.html#q=8.8.8.8');
+  assert.deepEqual(pressed(), ['ip']);
+  assert.equal($('search-form').hidden, false);
+  assert.match(calls[0], /\/api\/lookup\?q=8\.8\.8\.8$/);
 });
 
 test('page: each button shows its placeholder, Checks line and extras, and sends nothing', async () => {
