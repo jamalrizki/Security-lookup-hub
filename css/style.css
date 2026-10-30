@@ -264,10 +264,10 @@ main { counter-reset: section; }
 .num { font: 400 44px/1 var(--display); color: var(--accent); }
 .num::before { counter-increment: section; content: counter(section, decimal-leading-zero); }
 
-/* Filled red titles (page titles, section numbers, the Tools page letters) get a thin
-   white edge, the same width around every letter: a 2px stroke painted behind the fill,
-   so 1px shows outside the letter and the letter keeps its full shape. */
-.hero-fill, .num, .tool-letter { -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9); paint-order: stroke fill; }
+/* Filled red titles (page titles, the Tools page letters) get a thin white edge, the
+   same width around every letter: a 2px stroke painted behind the fill, so 1px shows
+   outside the letter and the letter keeps its full shape. Section numbers stay plain. */
+.hero-fill, .tool-letter { -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9); paint-order: stroke fill; }
 .panel h2 { font-size: 18px; }
 
 .hint { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
