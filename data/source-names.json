@@ -1,0 +1,19 @@
+{
+  "rdap": "Domain registration (RDAP)",
+  "dns": "DNS records",
+  "certs": "Certificates",
+  "internetdb": "Shodan InternetDB",
+  "ipowner": "Network owner (RDAP)",
+  "vtFile": "VirusTotal",
+  "vtDomain": "VirusTotal",
+  "vtIp": "VirusTotal",
+  "vtUrl": "VirusTotal",
+  "abuseipdb": "AbuseIPDB",
+  "bazaar": "MalwareBazaar",
+  "urlhausUrl": "URLhaus",
+  "urlhausHost": "URLhaus",
+  "urlhausPayload": "URLhaus",
+  "nvd": "NVD",
+  "kev": "CISA KEV",
+  "epss": "FIRST EPSS"
+}

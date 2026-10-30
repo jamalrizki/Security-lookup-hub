@@ -1,6 +1,6 @@
 // A small DOM stand-in for the page-wiring tests (the repo has no browser test
 // dependencies). It parses a page's well-formed markup and covers what js/ask.js,
-// js/voice.js and js/ask-image.js touch: elements, text, attributes, classes,
+// js/voice.js, js/ask-image.js and js/lookup.js touch: elements, text, attributes, classes,
 // events, forms and a textarea's selection. Not a general DOM.
 
 const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
@@ -191,7 +191,7 @@ function parse(html, doc, parent) {
  */
 export function installDom(html, { url = 'https://jamalrizki.github.io/Security-lookup-hub/', touch = false, navigator: nav = {} } = {}) {
   const saved = {};
-  const names = ['document', 'window', 'location', 'history', 'navigator', 'matchMedia', 'scrollY', 'sessionStorage', 'Event', 'KeyboardEvent', 'HTMLElement'];
+  const names = ['document', 'window', 'location', 'history', 'navigator', 'matchMedia', 'scrollY', 'sessionStorage', 'Event', 'KeyboardEvent', 'HTMLElement', 'addEventListener', 'removeEventListener', 'dispatchEvent'];
   for (const n of names) saved[n] = Object.getOwnPropertyDescriptor(globalThis, n);
 
   const doc = new EventTargetish();
@@ -241,6 +241,11 @@ export function installDom(html, { url = 'https://jamalrizki.github.io/Security-
   define('KeyboardEvent', Event);
   define('HTMLElement', Element);
   define('window', globalThis);
+  // window-level events (hashchange): a plain listener list.
+  const win = new EventTargetish();
+  define('addEventListener', win.addEventListener.bind(win));
+  define('removeEventListener', win.removeEventListener.bind(win));
+  define('dispatchEvent', win.dispatchEvent.bind(win));
   return {
     document: doc,
     history,

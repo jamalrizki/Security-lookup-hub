@@ -34,6 +34,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | 20 | Image questions in Ask: one PNG/JPEG/WebP per question (paperclip, paste or drop), resized to 1,568 px JPEG in the browser; checked in code on the Worker; sent to the paid Claude model only, with a prompt-injection note; free models get a clear 503 instead | Built on `v4`, not deployed |
 | 21 | v4 docs: README, Requirements (Ask is the home page; voice and image non-goals), link checks; post-deploy checks listed below | Built on `v4`, not deployed |
 | 22 | v5 ([spec](Docs/spec-v5.md)): section numbers (01, 02…) lose the white edge; page titles and Tools letters keep it | Built on `v5`, not deployed |
+| 23 | Lookup type buttons (My IP · IP address · Domain · URL · Hash · Email · CVE) above the one box: placeholder, "Checks:" line and extras per type; detection still decides and switches the button; `data/lookup-types.json` checked against the Worker's `plan()` | Built on `v5`, not deployed |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -75,6 +76,8 @@ The Worker in `worker/` is deployed at https://security-lookup-hub.jamal-598.wor
 | IP | AbuseIPDB, VirusTotal, URLhaus, Shodan InternetDB (ports, CVEs, hostnames), RDAP (network owner) |
 | URL | VirusTotal and URLhaus for the URL, plus the keyless domain or IP sources for its host |
 | Email | DNS for the email's domain |
+
+The Lookup page has a button per type above the box (v5). A button only changes the placeholder, the one-line "what you get" and the "Checks:" line (built from `data/lookup-types.json` and `data/source-names.json`), and shows the DKIM selector for Domain and Email; it never sends anything. IP address is selected on load, and the choice isn't stored. On submit, `detect()` decides as before: pasting `8.8.8.8` with Hash selected runs an IP lookup and switches the button. Input it can't place gets the selected type's own message ("That isn't a valid MD5, SHA-1 or SHA-256 hash."). `#q=` links work as before and select the matching button. Display names live in `data/source-names.json` so the page never imports Worker code; a test checks every `sources` list equals what `plan()` runs for a sample value of that type (both URL host kinds), so the page can't claim a check the Worker doesn't make.
 
 API keys are Worker secrets: `VT_API_KEY`, `ABUSEIPDB_API_KEY` and `ABUSECH_AUTH_KEY` (used by both MalwareBazaar and URLhaus). To set or rotate one, run this from `worker/`. It prompts for the value:
 
@@ -459,7 +462,8 @@ js/links.js      "open in <source>" link builders
 js/md5.js        MD5 (WebCrypto has none)
 js/encoding.js   Base64 / URL / hex codecs
 js/pwned.js      Pwned Passwords k-anonymity check
-js/lookup.js     Lookup page wiring
+js/lookup.js     Lookup page wiring (type buttons, search, panels)
+js/lookup-types.js   Lookup type buttons: detected type -> button, the "Checks:" line, invalid-input message (DOM-free, tested in Node)
 js/ask-image.js  Ask's image questions: checks by first bytes, resize and re-encode on a canvas, paperclip / paste / drop
 js/voice.js      Ask's voice input: recording, POST /api/transcribe, text inserted at the cursor
 js/ask.js        Ask page: chat layout, Stop and elapsed time, pre-send check, indicator-only offer, #ask= fill, thread, hub/look-up/sources/trace under each answer
@@ -489,6 +493,8 @@ worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, qu
 data/search-domains.json   Ask's web-search allowlist (edit freely)
 data/voice-vocab.json      words Whisper should spell correctly in voice input (edit freely)
 data/hub-features.json     hub pages and tools Ask may link to (ids -> links)
+data/lookup-types.json     Lookup's type buttons { id, label, placeholder, about, invalid, sources[, hostSources] }; tests/lookup-types.test.mjs checks sources against the Worker's plan()
+data/source-names.json     display names of the lookup sources, read by both the Worker (sources.js, keyed.js, cve.js) and the Lookup page
 security-books/  reference books for Ask, GITIGNORED: never committed (tests/books-ignored.test.mjs fails if anything under it is tracked); generated files in security-books/.rag/
 rag/             reference-library pipeline scripts (build_manifest.py, ocr_books.sh, ingest_books.py); no book data ever lives here
 worker/scripts/embed-books.mjs   embeds chunks with Workers AI into Vectorize NDJSON, with the 12,000-vector budget guard

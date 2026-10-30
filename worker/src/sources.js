@@ -9,6 +9,7 @@
 import { getJson } from './http.js';
 import { KEYED_SOURCES } from './keyed.js';
 import { CVE_SOURCES } from './cve.js';
+import NAMES from '../../data/source-names.json' with { type: 'json' };
 
 const DAY = 86_400_000;
 const vcardName = (entity) => entity?.vcardArray?.[1]?.find((v) => v[0] === 'fn')?.[3] || null;
@@ -289,11 +290,11 @@ async function rdapIp(ip) {
 // ---------- Registry ----------
 
 export const SOURCES = {
-  rdap: { name: 'Domain registration (RDAP)', run: rdapDomain, link: (d) => `https://lookup.icann.org/en/lookup?name=${encodeURIComponent(d)}` },
-  dns: { name: 'DNS records', run: dns, link: (d) => `https://mxtoolbox.com/SuperTool.aspx?action=${encodeURIComponent(`mx:${d}`)}&run=toolpage` },
-  certs: { name: 'Certificates', run: certificates, link: (d) => `https://crt.sh/?q=${encodeURIComponent(d)}` },
-  internetdb: { name: 'Shodan InternetDB', run: internetDb, link: (ip) => `https://www.shodan.io/host/${ip}` },
-  ipowner: { name: 'Network owner (RDAP)', run: rdapIp, link: (ip) => `https://ipinfo.io/${ip}` },
+  rdap: { name: NAMES.rdap, run: rdapDomain, link: (d) => `https://lookup.icann.org/en/lookup?name=${encodeURIComponent(d)}` },
+  dns: { name: NAMES.dns, run: dns, link: (d) => `https://mxtoolbox.com/SuperTool.aspx?action=${encodeURIComponent(`mx:${d}`)}&run=toolpage` },
+  certs: { name: NAMES.certs, run: certificates, link: (d) => `https://crt.sh/?q=${encodeURIComponent(d)}` },
+  internetdb: { name: NAMES.internetdb, run: internetDb, link: (ip) => `https://www.shodan.io/host/${ip}` },
+  ipowner: { name: NAMES.ipowner, run: rdapIp, link: (ip) => `https://ipinfo.io/${ip}` },
   ...KEYED_SOURCES,
   ...CVE_SOURCES,
 };

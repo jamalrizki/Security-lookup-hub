@@ -1,0 +1,62 @@
+[
+  {
+    "id": "myip",
+    "label": "My IP",
+    "placeholder": "",
+    "about": "Shows the public IP address websites see for your connection, then checks it like any other IP.",
+    "invalid": "",
+    "sources": ["abuseipdb", "vtIp", "urlhausHost", "internetdb", "ipowner"]
+  },
+  {
+    "id": "ip",
+    "label": "IP address",
+    "placeholder": "8.8.8.8 or 2001:4860:4860::8888",
+    "about": "Tells you if an IP address has been reported for abuse or malware, which ports it has open, and who runs the network.",
+    "invalid": "That isn't a valid public IPv4 or IPv6 address.",
+    "sources": ["abuseipdb", "vtIp", "urlhausHost", "internetdb", "ipowner"]
+  },
+  {
+    "id": "domain",
+    "label": "Domain",
+    "placeholder": "example.com",
+    "about": "Tells you if a domain is flagged as malicious, how old it is, and how well it is protected against email spoofing.",
+    "invalid": "That isn't a valid domain name.",
+    "sources": ["vtDomain", "urlhausHost", "rdap", "dns", "certs"]
+  },
+  {
+    "id": "url",
+    "label": "URL",
+    "placeholder": "https://example.com/login (defanged works too)",
+    "about": "Tells you if a link is known for phishing or malware, and what is known about its host.",
+    "invalid": "That isn't a valid URL.",
+    "sources": ["vtUrl", "urlhausUrl"],
+    "hostSources": {
+      "domain": ["rdap", "dns", "certs"],
+      "ip": ["abuseipdb", "internetdb", "ipowner"]
+    }
+  },
+  {
+    "id": "hash",
+    "label": "Hash",
+    "placeholder": "MD5, SHA-1 or SHA-256",
+    "about": "Tells you if a file with this hash is known malware.",
+    "invalid": "That isn't a valid MD5, SHA-1 or SHA-256 hash.",
+    "sources": ["vtFile", "bazaar", "urlhausPayload"]
+  },
+  {
+    "id": "email",
+    "label": "Email",
+    "placeholder": "name@example.com",
+    "about": "Checks the email's domain: whether it takes mail and how easily it can be spoofed. It doesn't check the address for breaches.",
+    "invalid": "That isn't a valid email address.",
+    "sources": ["dns"]
+  },
+  {
+    "id": "cve",
+    "label": "CVE",
+    "placeholder": "CVE-2021-44228",
+    "about": "Shows how severe a vulnerability is, whether it's being exploited (CISA KEV), and how likely exploitation is (EPSS).",
+    "invalid": "That isn't a valid CVE ID.",
+    "sources": ["nvd", "kev", "epss"]
+  }
+]

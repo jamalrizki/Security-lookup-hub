@@ -8,6 +8,7 @@
 // chooses (or mistypes) the ID.
 
 import { getJson } from './http.js';
+import NAMES from '../../data/source-names.json' with { type: 'json' };
 
 const NVD_URL = 'https://services.nvd.nist.gov/rest/json/cves/2.0';
 const EPSS_URL = 'https://api.first.org/data/v1/epss';
@@ -428,7 +429,7 @@ export async function searchCves({ keyword, severity }, tools) {
 // ---------- Registry ----------
 
 export const CVE_SOURCES = {
-  nvd: { name: 'NVD', quota: 'nvd', ttl: CVE_TTL, run: nvd, link: (id) => `https://nvd.nist.gov/vuln/detail/${id}` },
-  kev: { name: 'CISA KEV', ttl: CVE_TTL, run: kev, link: (id) => `https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=${encodeURIComponent(id)}` },
-  epss: { name: 'FIRST EPSS', ttl: CVE_TTL, run: epss, link: () => 'https://www.first.org/epss/' },
+  nvd: { name: NAMES.nvd, quota: 'nvd', ttl: CVE_TTL, run: nvd, link: (id) => `https://nvd.nist.gov/vuln/detail/${id}` },
+  kev: { name: NAMES.kev, ttl: CVE_TTL, run: kev, link: (id) => `https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search_api_fulltext=${encodeURIComponent(id)}` },
+  epss: { name: NAMES.epss, ttl: CVE_TTL, run: epss, link: () => 'https://www.first.org/epss/' },
 };

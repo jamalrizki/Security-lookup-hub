@@ -9,6 +9,7 @@ import { checkPassword } from './pwned.js';
 import { API_BASE } from './config.js';
 import { sourceCard, priorityStrip } from './results.js';
 import { cvePrompt, askHref } from './ask.js';
+import { DEFAULT_TYPE, buttonFor, checksText, invalidMessage } from './lookup-types.js';
 
 const $ = (id) => document.getElementById(id);
 const TYPE_LABELS = { cve: 'CVE ID', ipv4: 'IPv4 address', ipv6: 'IPv6 address', domain: 'Domain', url: 'URL', email: 'Email address' };
@@ -35,6 +36,45 @@ function externalLink(href, ...children) {
 async function sha(algo, bytes) {
   return toHex(new Uint8Array(await crypto.subtle.digest(algo, bytes)));
 }
+
+// ---------- Type buttons ----------
+
+// Filled in from data/ once fetched; the buttons themselves are in the HTML.
+let TYPES = {};
+let NAMES = {};
+let selected = DEFAULT_TYPE;
+
+/** Selects a type button: placeholder, what it checks, and its extras. No requests. */
+function selectType(id) {
+  selected = id;
+  for (const b of document.querySelectorAll('#type-picker button')) b.setAttribute('aria-pressed', String(b.getAttribute('data-type') === id));
+  const type = TYPES[id];
+  const myIp = id === 'myip';
+  $('search-form').hidden = myIp;
+  $('myip-row').hidden = !myIp;
+  if (type) $('search-input').placeholder = type.placeholder;
+  $('type-about').textContent = type?.about || '';
+  $('type-checks').textContent = checksText(type, NAMES);
+  // The DKIM selector field only makes sense for domain and email lookups.
+  $('dkim-row').hidden = !['domain', 'email'].includes(id);
+}
+
+$('type-picker').addEventListener('click', (ev) => {
+  const b = ev.target.closest('button[data-type]');
+  if (!b) return;
+  const id = b.getAttribute('data-type');
+  selectType(id);
+  if (id !== 'myip') $('search-input').focus();
+});
+
+selectType(DEFAULT_TYPE);
+Promise.all(['data/lookup-types.json', 'data/source-names.json'].map((f) => fetch(f).then((r) => r.json())))
+  .then(([types, names]) => {
+    TYPES = Object.fromEntries(types.map((t) => [t.id, t]));
+    NAMES = names;
+    selectType(selected);
+  })
+  .catch(() => {}); // the buttons still work; only the Checks line and placeholders are missing
 
 // ---------- Search ----------
 
@@ -135,13 +175,15 @@ function askAboutButton(id) {
 function renderSearch(raw) {
   const out = $('search-result');
   const d = detect(raw);
-  // The DKIM selector field only makes sense for domain and email lookups.
-  $('dkim-row').hidden = !['domain', 'email'].includes(d.type);
+  // Detection decides: pasting an IP with Hash selected runs an IP lookup and
+  // switches the button to match.
+  const detected = buttonFor(d.type);
+  if (detected && detected !== selected) selectType(detected);
   out.replaceChildren();
   if (d.type === 'empty') return;
 
   if (d.type === 'unknown') {
-    out.append(notice('warn', d.error));
+    out.append(notice('warn', invalidMessage(TYPES[selected], d)));
     return;
   }
 

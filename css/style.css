@@ -313,6 +313,15 @@ button:hover, a.button:hover { background: var(--text); border-color: var(--text
 button.secondary, a.button.secondary { background: transparent; color: var(--text); border-color: var(--input-line); }
 button.secondary:hover, a.button.secondary:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
 button.small, a.button.small { padding: 5px 10px; font-size: 11px; }
+
+/* Lookup's type buttons: one choice, wrapping onto more rows on phones (never a
+   sideways-scrolling strip). The selected one is filled red. */
+.type-picker { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.type-picker button { padding: 8px 12px; font-size: 12px; }
+.type-picker button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.type-about { margin-top: 10px; }
+.type-checks { margin-top: 2px; }
+.myip-row { margin: 0; }
 button:disabled { opacity: 0.6; cursor: progress; }
 
 /* Big search bar: input + button inside a 2px white frame. */

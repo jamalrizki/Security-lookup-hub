@@ -2,6 +2,7 @@
 // and abuse.ch (MalwareBazaar, URLhaus). All free tiers are non-commercial.
 
 import { getJson } from './http.js';
+import NAMES from '../../data/source-names.json' with { type: 'json' };
 
 const unix = (s) => (s ? new Date(s * 1000).toISOString() : null);
 // abuse.ch dates look like "2024-01-31 12:34:56" (UTC).
@@ -160,13 +161,13 @@ function urlhaus(kind) {
 const e = encodeURIComponent;
 
 export const KEYED_SOURCES = {
-  vtFile: { name: 'VirusTotal', key: 'VT_API_KEY', run: virusTotal('file'), link: (h) => `https://www.virustotal.com/gui/file/${h}` },
-  vtDomain: { name: 'VirusTotal', key: 'VT_API_KEY', run: virusTotal('domain'), link: (d) => `https://www.virustotal.com/gui/domain/${d}` },
-  vtIp: { name: 'VirusTotal', key: 'VT_API_KEY', run: virusTotal('ip'), link: (ip) => `https://www.virustotal.com/gui/ip-address/${ip}` },
-  vtUrl: { name: 'VirusTotal', key: 'VT_API_KEY', run: virusTotal('url'), link: (u) => `https://www.virustotal.com/gui/search/${e(e(u))}` },
-  abuseipdb: { name: 'AbuseIPDB', key: 'ABUSEIPDB_API_KEY', run: abuseIpdb, link: (ip) => `https://www.abuseipdb.com/check/${ip}` },
-  bazaar: { name: 'MalwareBazaar', key: 'ABUSECH_AUTH_KEY', run: malwareBazaar, link: (h) => `https://bazaar.abuse.ch/browse.php?search=${e(h)}` },
-  urlhausUrl: { name: 'URLhaus', key: 'ABUSECH_AUTH_KEY', run: urlhaus('url'), link: (u) => `https://urlhaus.abuse.ch/browse.php?search=${e(u)}` },
-  urlhausHost: { name: 'URLhaus', key: 'ABUSECH_AUTH_KEY', run: urlhaus('host'), link: (h) => `https://urlhaus.abuse.ch/browse.php?search=${e(h)}` },
-  urlhausPayload: { name: 'URLhaus', key: 'ABUSECH_AUTH_KEY', run: urlhaus('payload'), link: (h) => `https://urlhaus.abuse.ch/browse.php?search=${e(h)}` },
+  vtFile: { name: NAMES.vtFile, key: 'VT_API_KEY', run: virusTotal('file'), link: (h) => `https://www.virustotal.com/gui/file/${h}` },
+  vtDomain: { name: NAMES.vtDomain, key: 'VT_API_KEY', run: virusTotal('domain'), link: (d) => `https://www.virustotal.com/gui/domain/${d}` },
+  vtIp: { name: NAMES.vtIp, key: 'VT_API_KEY', run: virusTotal('ip'), link: (ip) => `https://www.virustotal.com/gui/ip-address/${ip}` },
+  vtUrl: { name: NAMES.vtUrl, key: 'VT_API_KEY', run: virusTotal('url'), link: (u) => `https://www.virustotal.com/gui/search/${e(e(u))}` },
+  abuseipdb: { name: NAMES.abuseipdb, key: 'ABUSEIPDB_API_KEY', run: abuseIpdb, link: (ip) => `https://www.abuseipdb.com/check/${ip}` },
+  bazaar: { name: NAMES.bazaar, key: 'ABUSECH_AUTH_KEY', run: malwareBazaar, link: (h) => `https://bazaar.abuse.ch/browse.php?search=${e(h)}` },
+  urlhausUrl: { name: NAMES.urlhausUrl, key: 'ABUSECH_AUTH_KEY', run: urlhaus('url'), link: (u) => `https://urlhaus.abuse.ch/browse.php?search=${e(u)}` },
+  urlhausHost: { name: NAMES.urlhausHost, key: 'ABUSECH_AUTH_KEY', run: urlhaus('host'), link: (h) => `https://urlhaus.abuse.ch/browse.php?search=${e(h)}` },
+  urlhausPayload: { name: NAMES.urlhausPayload, key: 'ABUSECH_AUTH_KEY', run: urlhaus('payload'), link: (h) => `https://urlhaus.abuse.ch/browse.php?search=${e(h)}` },
 };
