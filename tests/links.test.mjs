@@ -83,7 +83,7 @@ test('nav: Ask first (./), then Lookup, on every page', () => {
   for (const page of pages) {
     const nav = /<nav class="site-nav"[^>]*>([\s\S]*?)<\/nav>/.exec(read(page))[1];
     const links = [...nav.matchAll(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g)].map((m) => `${m[2]}=${m[1]}`);
-    assert.deepEqual(links, ['Ask=./', 'Lookup=lookup.html', 'Analyze=analyze.html', 'CVEs=cves.html', 'News=news.html', 'Threat actors=actors.html', 'Reference=reference.html', 'Tools=tools.html'], page);
+    assert.deepEqual(links, ['Ask=./', 'Lookup=lookup.html', 'Analyze=analyze.html', 'CVEs=cves.html', 'News=news.html', 'Threat actors=actors.html', 'Exposure=exposure.html', 'Reference=reference.html', 'Tools=tools.html'], page);
   }
 });
 

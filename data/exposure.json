@@ -1,0 +1,108 @@
+{
+  "_about": "My exposure page: what an attacker can find out about you, and how to check and close it. Fixed text and outside links only; the hub sends nothing. account uses the Reference page's legend (no, api, yes, paid). Links must be https; hub links are ./page.html[#anchor]. tests/exposure.test.mjs checks the shape. Facts checked against each site Oct 30, 2026.",
+  "permission": "Check yourself, or someone who has asked you to: a family member, or an organisation inside an agreed security test. Searching other people without their permission is how stalkers and scammers use these same tools.",
+  "sections": [
+    {
+      "id": "breaches",
+      "title": "Breaches and leaked passwords",
+      "why": "When a site you use is breached, your email address, password, phone number and home address can end up in public dumps. Attackers try leaked passwords on your other accounts (credential stuffing) and use the details to make phishing messages convincing.",
+      "steps": [
+        "Search every email address you use on Have I Been Pwned.",
+        "For each breach listed, change that site's password, and the password anywhere you reused it.",
+        "Check passwords you still use with the hub's password check: it never sends the password.",
+        "Turn on breach alerts so you hear about new breaches."
+      ],
+      "sites": [
+        { "name": "Have I Been Pwned", "url": "https://haveibeenpwned.com/", "desc": "Shows which known breaches included your email address, and can alert you to new ones.", "account": "no" },
+        { "name": "Mozilla Monitor", "url": "https://monitor.mozilla.org/", "desc": "Free breach alerts for your email addresses, from Mozilla.", "account": "yes" }
+      ],
+      "hub": [{ "label": "Check a password", "href": "./lookup.html#password" }]
+    },
+    {
+      "id": "usernames",
+      "title": "Usernames and old accounts",
+      "why": "Reusing one username ties your accounts together: a gaming profile, a forum post and a work account can all be linked to one person. Old, forgotten accounts still hold photos, posts and personal details.",
+      "steps": [
+        "Search the usernames you use now, and the ones you used years ago.",
+        "Delete or lock down accounts you no longer use.",
+        "Use different usernames where you don't want accounts linked to each other."
+      ],
+      "sites": [
+        { "name": "WhatsMyName", "url": "https://whatsmyname.app/", "desc": "Checks one username across hundreds of sites, from your browser.", "account": "no" },
+        { "name": "Sherlock", "url": "https://github.com/sherlock-project/sherlock", "desc": "Open-source command-line tool that does the same search; you run it on your own computer.", "account": "no" },
+        { "name": "Namechk", "url": "https://namechk.com/", "desc": "Shows where a username is already taken across social sites and domains.", "account": "no" }
+      ],
+      "hub": []
+    },
+    {
+      "id": "search",
+      "title": "Search results and photos",
+      "why": "Whatever a search engine shows for your name, phone number or address is the first thing an attacker sees. Photos can reveal your face, home, car and workplace, and reverse image search can tie them to your other profiles.",
+      "steps": [
+        "Search your name in quotes, alone and with your city, employer and old usernames.",
+        "Use Google's \"Results about you\" to find results showing your phone number, email or home address, and ask for them to be removed.",
+        "Set a Google Alert for your name.",
+        "Run your profile photos through a reverse image search to see where else they appear."
+      ],
+      "sites": [
+        { "name": "Results about you (Google)", "url": "https://myactivity.google.com/results-about-you", "desc": "Finds Google results with your contact details and lets you request their removal.", "account": "yes" },
+        { "name": "Google Alerts", "url": "https://www.google.com/alerts", "desc": "Emails you when new pages mention your name.", "account": "yes" },
+        { "name": "Google Lens", "url": "https://lens.google/", "desc": "Reverse image search: where else a photo, or similar ones, appear.", "account": "no" },
+        { "name": "TinEye", "url": "https://tineye.com/", "desc": "Reverse image search that finds exact and edited copies of a photo.", "account": "no" }
+      ],
+      "hub": []
+    },
+    {
+      "id": "brokers",
+      "title": "Data brokers and people-search sites",
+      "why": "People-search sites compile home addresses, phone numbers, relatives and ages from public records and marketing data, and sell them to anyone. They are often where an attacker gets a home address, or the answers to security questions.",
+      "steps": [
+        "Search your name on the big people-search sites; the guides below list them.",
+        "Follow each site's opt-out process. Most are free but slow, and some list you again later.",
+        "Check again every few months."
+      ],
+      "sites": [
+        { "name": "Big Ass Data Broker Opt-Out List", "url": "https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List", "desc": "Free, maintained list of people-search sites with direct opt-out links and tips.", "account": "no" },
+        { "name": "IntelTechniques Data Removal Guide", "url": "https://inteltechniques.com/workbook.html", "desc": "Free guide with opt-out links for major data brokers and where to start.", "account": "no" },
+        { "name": "Privacy Rights Clearinghouse: data brokers", "url": "https://privacyrights.org/data-brokers", "desc": "Directory of registered data brokers and how to contact each.", "account": "no" }
+      ],
+      "hub": []
+    },
+    {
+      "id": "wifi",
+      "title": "Your Wi-Fi network and location (WiGLE)",
+      "why": "Your router broadcasts its network name (SSID) and hardware address (BSSID) to anyone nearby. Wardrivers record these with GPS positions and upload them. WiGLE is the largest public database of them, built from volunteers' uploads; anyone with a free account can search a network name and see on a map where it was seen. A distinctive name like \"Smith Family WiFi\" can lead straight to a home.",
+      "steps": [
+        "Search your own network's name on WiGLE (free account) to see whether it's mapped.",
+        "Rename a network whose name identifies you, your family or your address to something generic.",
+        "End the name in _nomap to keep it out of Google's and Apple's location services (Apple says this doesn't work for hidden networks). WiGLE doesn't say it honours _nomap.",
+        "To remove a network from WiGLE, email the address on its FAQ page with the network's BSSID (MAC address)."
+      ],
+      "note": "The hub doesn't search WiGLE for you. Looking up where other people's networks are is a stalking risk, so this page only explains how to check your own.",
+      "sites": [
+        { "name": "WiGLE", "url": "https://wigle.net/", "desc": "Crowd-sourced map of Wi-Fi, Bluetooth and cell networks, searchable with a free account.", "account": "yes" },
+        { "name": "WiGLE FAQ", "url": "https://wigle.net/faq", "desc": "How WiGLE's data is collected, and how to ask for a network to be removed.", "account": "no" },
+        { "name": "Google: opt out of location services", "url": "https://support.google.com/maps/answer/1725632", "desc": "Google's instructions for the _nomap opt-out.", "account": "no" },
+        { "name": "Apple: Location Services and privacy", "url": "https://support.apple.com/en-us/102515", "desc": "How Apple uses crowd-sourced Wi-Fi data, including the _nomap opt-out.", "account": "no" }
+      ],
+      "hub": []
+    },
+    {
+      "id": "work",
+      "title": "Your workplace and work email",
+      "why": "Attackers research a company before phishing it: who works there and in which job, the email format (first.last@), which systems it runs (from certificates and DNS), and whether its domain can be spoofed. Your public job title tells them who to pretend to be to reach you.",
+      "steps": [
+        "Check what your LinkedIn profile shows to people who aren't logged in.",
+        "Look up your employer's domain in the hub: it shows names from its certificates (subdomains) and how easily its email can be spoofed.",
+        "See what Hunter shows for your work domain: the email format and the addresses it found published.",
+        "If you find exposure at work, tell your security team rather than testing further yourself."
+      ],
+      "sites": [
+        { "name": "LinkedIn public profile settings", "url": "https://www.linkedin.com/public-profile/settings", "desc": "Choose what your profile shows to people who aren't signed in.", "account": "yes" },
+        { "name": "Hunter", "url": "https://hunter.io/", "desc": "Shows a company's email format and addresses found on the public web.", "account": "yes" },
+        { "name": "crt.sh", "url": "https://crt.sh/", "desc": "Searches certificate transparency logs, which reveal a domain's subdomains.", "account": "no" }
+      ],
+      "hub": [{ "label": "Lookup", "href": "./lookup.html" }]
+    }
+  ]
+}

@@ -33,6 +33,10 @@ const COMMANDS = {
     ['attack groups --search "fancy bear"', 'G0007 APT28'],
     ['attack techniques G0032', 'T1566.001 · T1059.001 · T1105 ...'],
   ],
+  exposure: [
+    ['hibp --email you@example.com', '[!] found in 3 breaches · change those passwords'],
+    ['wigle search --ssid "Smith Family WiFi"', '1 network mapped · rename it'],
+  ],
   reference: [
     ['grep -i sandbox reference.json', 'Hybrid Analysis · ANY.RUN'],
     ['cat where-to-start.txt | head -1', 'A file hash → Lookup first'],

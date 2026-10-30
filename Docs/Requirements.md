@@ -19,7 +19,8 @@ Non-goals
 • Not tied to the Claude exam or the MCP build. AI and MCP are optional extras, not requirements.
 • Not a replacement for a SOC tool or a sandbox. It points to deeper tools; it does not detonate files.
 • No website security-header checker: the Worker would fetch arbitrary user-supplied sites (active, and an SSRF surface). (Added in v2.)
-• No WiGLE lookup: locating people's Wi-Fi networks is a privacy and stalking risk. (Added in v2.)
+• No WiGLE lookup: locating people's Wi-Fi networks is a privacy and stalking risk. (Added in v2.) The My exposure page explains WiGLE and how to check your own network there, without searching it. (Oct 30, 2026.)
+• No people search in the hub (usernames, emails or phone numbers across sites): it would work just as well on someone else. My exposure links out to self-check tools instead. (Oct 30, 2026.)
 • No password generator or text diff (low value here), and no running or connecting offensive tools. (Added in v2.)
 • No MCP endpoint in the hub; CVE Explainer stays a separate app. (Added in v2. Chat was moved out of the non-goals in v3: see Ask below.)
 • Ask is defensive only: it declines exploit code, payloads, step-by-step attack instructions, malware, phishing kits and credential theft, and offers the defensive angle instead. It stores no questions or answers, and never calls the keyed reputation sources (those stay one click per indicator in Lookup). (Added in v3.)
@@ -27,7 +28,7 @@ Non-goals
 • No voice or image input outside Ask: not in Lookup (dictating hashes and IPs is error-prone) or Analyze (its point is that nothing leaves the browser). No voice output. (Added in v4.)
 • No VPN or proxy detection from paid data: network type says "can't tell" instead of guessing. No bulk IP-to-ASN/location tables (one lookup per click stays the rule), no HTTP/SOCKS proxy checkers or domain monitoring (both connect to visitor-supplied hosts or store watchlists), and no single numeric risk or "fraud" score: verdicts list their reasons. (Added in v5.)
 Core features
-The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze. Version 3 (Docs/spec-v3.md) adds Ask to the Lookup page. Version 4 (Docs/spec-v4.md) makes Ask the home page (index.html) and gives Lookup, with the password check, hash tools and decoder, its own page (lookup.html); old ./#q= links are forwarded there. Version 5 (Docs/spec-v5.md) adds type buttons to Lookup, Check my IP, and network type.
+The app has three pages: Lookup (the search box), Threat actors, and Reference. Version 2 (Docs/spec-v2.md) adds CVEs, News and Analyze. Version 3 (Docs/spec-v3.md) adds Ask to the Lookup page. Version 4 (Docs/spec-v4.md) makes Ask the home page (index.html) and gives Lookup, with the password check, hash tools and decoder, its own page (lookup.html); old ./#q= links are forwarded there. Version 5 (Docs/spec-v5.md) adds type buttons to Lookup, Check my IP, and network type. A My exposure page (exposure.html, Oct 30, 2026) explains what an attacker can find out about you and how to check and reduce it, linking out to established tools.
 1. Lookup: one box, type detected automatically
 The input type is detected in code (regex and length), then only the matching lookups run. Each result card shows the verdict, the key numbers, and a "view full report" link to the source.
 You paste

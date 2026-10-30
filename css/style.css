@@ -624,6 +624,9 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 .search-block.block > * + * { margin-top: 0; }
 .block-title { font: 400 34px/1 var(--display); letter-spacing: 1px; color: var(--text); text-transform: uppercase; }
 .block-title::before { content: "> "; color: var(--accent); }
+/* My exposure: why it matters, then checks and links. */
+.exposure-why { max-width: 760px; color: var(--body); line-height: 1.6; }
+#exposure-permission { margin-top: 24px; }
 .ask-form { display: flex; flex-direction: column; border: 1px solid var(--input-line); background: var(--bg); }
 .ask-form:focus-within { border-color: var(--accent); }
 /* Grows with its text (js/ask.js sets the height) up to about 6 lines, then scrolls. */

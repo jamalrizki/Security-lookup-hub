@@ -8,8 +8,8 @@ For every page it (re)writes:
     their contents are drawn by js/chrome.js)
   - the header: brand, phone menu button, main nav
   - the hero: giant outlined title (the nav label), the page's intro
-    paragraph (kept as is), and the radar with "MODULE 0N/08"; the Ask page
-    (index.html) has no hero, so the chat fills the screen
+    paragraph (kept as is), and the radar with "MODULE 0N/0M" (HERO_TITLES
+    gives a page a longer title than its nav label)
   - link-preview (Open Graph / Twitter) tags and icons, from the page title
     and intro paragraph; preview image images/og-image.png (1200x630)
   - Google Analytics 4 (loader + js/analytics.js) and its CSP entries
@@ -25,10 +25,13 @@ NAV = [
     ('cves.html', 'cves.html', 'CVEs', 'cves'),
     ('news.html', 'news.html', 'News', 'news'),
     ('actors.html', 'actors.html', 'Threat actors', 'actors'),
+    ('exposure.html', 'exposure.html', 'Exposure', 'exposure'),
     ('reference.html', 'reference.html', 'Reference', 'reference'),
     ('tools.html', 'tools.html', 'Tools', 'tools'),
 ]
 PAGES = [file for _, file, _, _ in NAV]
+# The hero's big title is the nav label unless a page has a longer one here.
+HERO_TITLES = {'index.html': 'Ask AI', 'exposure.html': 'My exposure'}
 
 root = pathlib.Path(__file__).resolve().parent.parent
 ASSETS = ['css/style.css', 'js/nav.js', 'js/chrome.js', 'js/analytics.js']
@@ -148,7 +151,7 @@ for page in existing:
         assert m, f'{page}: no h1 + lede'
         lede, span = m.group(2), m.span()
     if page not in NO_HERO:
-        html = html[:span[0]] + HERO.format(title=title, lede=lede, num=i + 1, total=len(NAV)) + html[span[1]:]
+        html = html[:span[0]] + HERO.format(title=HERO_TITLES.get(page, title), lede=lede, num=i + 1, total=len(NAV)) + html[span[1]:]
 
     # Link previews and icons, from the page title and intro paragraph.
     href = NAV[i][0]

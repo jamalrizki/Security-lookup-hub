@@ -38,6 +38,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | 24 | Check my IP: the My IP button shows "Show my IP"; `GET /api/my-ip` returns the visitor's address (from `CF-Connecting-IP` only) and Cloudflare's `request.cf` details, never coordinates or postcode, never cached or stored; a "Your connection" card, then the normal IP lookup | Built on `v5`, not deployed |
 | 25 | Network type: Tor exit list and AWS / Google Cloud / Cloudflare ranges refreshed by the cron at :07 into KV (4-hour rotation); a keyless `network` source on IP lookups reads KV only; `GET /api/ranges` for the browser tools | Built on `v5`, not deployed |
 | 26 | Provider ranges in Analyze, checked in the browser: "Check against known provider ranges" in the subnet calculator; IOC log mode recognises Apache/nginx access logs (time range, top statuses, paths, user agents) and labels top IPs (cloud / Tor); `/api/ranges` downloaded once per visit, only after a click | Built on `v5`, not deployed |
+| Extra | **My exposure** tab (`exposure.html`): what an attacker can find out about you (breaches, usernames, search results and photos, data brokers, your Wi-Fi network on WiGLE, your workplace), each with why it matters, steps to check and fix, and outside links; fixed text, nothing sent | Built (Oct 30, 2026) |
 | 27 | v5 docs: README, Requirements (Check my IP and network type; non-goals: VPN detection, bulk IP tables, proxy checkers, domain monitoring, a numeric risk score), `myip` in `hub-features.json`; post-deploy checks listed below | Built on `v5`, not deployed |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
@@ -220,6 +221,12 @@ Domain and email lookups grade how easily someone could send mail pretending to 
 - **DMARC on subdomains:** if the exact name has no `_dmarc` record, the Worker walks up to two parent labels and applies the parent's `sp=` (falling back to `p=`), as receivers do with the organisational domain. The card says where the policy came from.
 - **DKIM** needs a selector, because DNS can't list them. The optional "DKIM selector" field appears for domain and email lookups. Selectors are validated as DNS labels (letters, digits, `-`, `_`, dots between labels, 63 per label, 100 in all) on the page and in the Worker, and are part of the cache key. The card reports the key as present (with an approximate RSA size), revoked (empty `p=`) or not found.
 - `CACHE_VERSION` went to `v2` in this phase, because the cached DNS result gained these fields.
+
+## My exposure
+
+`exposure.html` (nav label "Exposure", title "My exposure") answers "what can someone find out about me?", because you can only defend what you know an attacker can see. It renders `data/exposure.json` with `js/exposure.js`: six sections (breaches and leaked passwords; usernames and old accounts; search results and photos; data brokers and people-search sites; your Wi-Fi network and location; your workplace and work email). Each says why it matters, gives steps to check and fix, and links out to established tools (Have I Been Pwned, WhatsMyName, Sherlock, Google's "Results about you", reverse image search, data-broker opt-out guides, WiGLE, Hunter, crt.sh), plus the hub's own password check and Lookup where they help. A note at the top says to check yourself, or someone who has asked you to.
+
+It's fixed text and links only: the page fetches nothing but its own data file, and its CSP allows no Worker. **WiGLE is explained, not searched:** the section says what it is (a crowd-sourced map of Wi-Fi networks' names and hardware addresses with GPS positions, searchable with a free account), how to check your own network, renaming, the `_nomap` suffix (honoured by Google's and Apple's location services per their docs; WiGLE's FAQ doesn't mention it) and WiGLE's removal-by-email with the BSSID. The hub itself doesn't look up where networks are, because that would work just as well for locating someone else's home. Every link was checked on Oct 30, 2026; `tests/exposure.test.mjs` checks the file's shape (https links, known account types, hub links that exist). Ask can link to it as `[[exposure]]`.
 
 ## Reference: where to start
 
@@ -460,7 +467,7 @@ npm test
 
 Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
 
-369 tests as of Oct 30, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+373 tests as of Oct 30, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -487,7 +494,7 @@ The script prints the group count and the per-country totals. Check them against
 ```
 index.html (Ask, the home page), lookup.html (Lookup and the panels), cves.html, news.html, analyze.html, actors.html, reference.html, tools.html   the pages
 js/forward.js    forwards old ./#q=, ./#password and ./#lookup links to lookup.html (classic script at the top of index.html)
-scripts/nav.py   rewrites the shared nav (and the phone menu button) in every page and stamps css/style.css and js/nav.js with a content hash (?v=…) so browsers never mix a new page with an old cached file; run after adding a page or editing either file (tests/assets.test.mjs fails if you forget)
+scripts/nav.py   rewrites the shared nav (NAV sets the labels; HERO_TITLES gives Ask "Ask AI" and Exposure "My exposure" as their big titles) (and the phone menu button) in every page and stamps css/style.css and js/nav.js with a content hash (?v=…) so browsers never mix a new page with an old cached file; run after adding a page or editing either file (tests/assets.test.mjs fails if you forget)
 js/nav.js        phone menu toggle (classic script in <head>; without JS the nav stays visible)
 js/chrome.js     decorative terminal typing, hex ticker and katakana rain
 fonts/           self-hosted woff2 fonts (Anton, Space Mono, JetBrains Mono) and their OFL licenses
@@ -506,6 +513,7 @@ js/voice.js      Ask's voice input: recording, POST /api/transcribe, text insert
 js/ask.js        Ask page: chat layout, Stop and elapsed time, pre-send check, indicator-only offer, #ask= fill, thread, hub/look-up/sources/trace under each answer
 js/render-answer.js   safe Markdown subset -> DOM nodes (text nodes only)
 js/reference.js  Reference page rendering
+js/exposure.js   My exposure page rendering (data/exposure.json)
 js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
 js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
 js/actors.js     Threat actors page rendering
@@ -521,6 +529,7 @@ js/analyze/      one module per Analyze tool (provider-ranges.js downloads the T
 data/reference.json   the site directory
 data/what-now.json    "Already happened? What to do now" checklists
 data/ports.json       common ports and protocols for the Reference page
+data/exposure.json    My exposure sections: why, steps, outside links (fixed text)
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
 data/brands.json      brands for the lookalike check
