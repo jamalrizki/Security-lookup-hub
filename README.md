@@ -35,6 +35,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | 21 | v4 docs: README, Requirements (Ask is the home page; voice and image non-goals), link checks; post-deploy checks listed below | Built on `v4`, not deployed |
 | 22 | v5 ([spec](Docs/spec-v5.md)): section numbers (01, 02…) lose the white edge; page titles and Tools letters keep it | Built on `v5`, not deployed |
 | 23 | Lookup type buttons (My IP · IP address · Domain · URL · Hash · Email · CVE) above the one box: placeholder, "Checks:" line and extras per type; detection still decides and switches the button; `data/lookup-types.json` checked against the Worker's `plan()` | Built on `v5`, not deployed |
+| 24 | Check my IP: the My IP button shows "Show my IP"; `GET /api/my-ip` returns the visitor's address (from `CF-Connecting-IP` only) and Cloudflare's `request.cf` details, never coordinates or postcode, never cached or stored; a "Your connection" card, then the normal IP lookup | Built on `v5`, not deployed |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -111,6 +112,14 @@ npx wrangler deploy
 ```
 
 wrangler is pinned to 4.86.0 because later 4.x versions need Node 22.
+
+## Check my IP
+
+The Lookup page's **My IP** button swaps the box for a "Show my IP" button. Selecting My IP sends nothing; only the click calls `GET /api/my-ip` (`worker/src/myip.js`, Origin allowlist as for the other routes). The Worker reads the address from the `CF-Connecting-IP` header only, which Cloudflare sets and a visitor can't (`X-Forwarded-For` and the like are ignored), and checks it with the shared `detect()`. A missing, private or loopback address (local `wrangler dev`) returns `{ local: true }`, and the page says "Running locally: your public IP can't be seen from here."
+
+It returns `{ ip, version, country, region, city, timezone, asn, asOrganization }`. Those are Cloudflare's `request.cf` field names as documented for `IncomingRequestCfProperties` (checked Oct 29, 2026); a missing one is `null`. `latitude`, `longitude` and `postalCode` are left out on purpose: they look exact and usually aren't. No third-party service sees the visitor. The response is `Cache-Control: no-store`; it never goes into the edge cache or KV, and nothing is logged.
+
+The page shows a "Your connection" card first (address with a Copy button, IPv4/IPv6, network as AS number and organisation, approximate place, time zone, and three plain-words notes: approximate location and not your home address; a VPN shows the VPN's address; IPv4 vs IPv6), then runs the normal IP lookup on that address. The address goes into the box and `#q=` only after the click, so a shared link never contains someone's IP by surprise (Analytics drops fragments anyway). The button stays on My IP.
 
 ## CVEs
 
@@ -489,7 +498,7 @@ data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
 data/brands.json      brands for the lookalike check
 data/tools.json       tools glossary entries { tool, whatItDoes } (maintained separately)
 scripts/build-actors.js, attribution.js, attribution-overrides.json   builds data/actors.json
-worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js, src/ask.js (Ask loop, prompt, output guards), src/ask-models.js (Ask's model setting, Anthropic/OpenAI-style adapters, free fallback), src/ask-tools.js (Ask tool definitions and handlers), src/reference.js (reference-library search), src/websearch.js (Tavily, allowlist), src/transcribe.js (voice input: checks, limits, Whisper), src/retry-wait.js (Groq 429 wait parser, copied from Jaizz)
+worker/          Cloudflare Worker: src/index.js (routing, guardrails, cache, quotas), src/sources.js (keyless sources, plan), src/keyed.js (VirusTotal, AbuseIPDB, abuse.ch), src/explain.js (AI summary and verdicts), src/cve.js (NVD, KEV, EPSS, search), src/news.js (feeds, RSS/Atom parser, cron refresh), src/http.js, src/ask.js (Ask loop, prompt, output guards), src/ask-models.js (Ask's model setting, Anthropic/OpenAI-style adapters, free fallback), src/ask-tools.js (Ask tool definitions and handlers), src/reference.js (reference-library search), src/websearch.js (Tavily, allowlist), src/transcribe.js (voice input: checks, limits, Whisper), src/myip.js (Check my IP: CF-Connecting-IP and request.cf), src/retry-wait.js (Groq 429 wait parser, copied from Jaizz)
 data/search-domains.json   Ask's web-search allowlist (edit freely)
 data/voice-vocab.json      words Whisper should spell correctly in voice input (edit freely)
 data/hub-features.json     hub pages and tools Ask may link to (ids -> links)

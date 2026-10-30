@@ -7,7 +7,7 @@ import { md5, toHex } from './md5.js';
 import { CODECS } from './encoding.js';
 import { checkPassword } from './pwned.js';
 import { API_BASE } from './config.js';
-import { sourceCard, priorityStrip } from './results.js';
+import { sourceCard, priorityStrip, connectionCard } from './results.js';
 import { cvePrompt, askHref } from './ask.js';
 import { DEFAULT_TYPE, buttonFor, checksText, invalidMessage } from './lookup-types.js';
 
@@ -172,14 +172,14 @@ function askAboutButton(id) {
   return el('a', { class: 'button secondary small', href: askHref(cvePrompt(id)) }, 'Ask about this CVE');
 }
 
-function renderSearch(raw) {
+function renderSearch(raw, lead = null) {
   const out = $('search-result');
   const d = detect(raw);
   // Detection decides: pasting an IP with Hash selected runs an IP lookup and
-  // switches the button to match.
+  // switches the button to match. (My IP's own lookup is an IP; it stays on My IP.)
   const detected = buttonFor(d.type);
-  if (detected && detected !== selected) selectType(detected);
-  out.replaceChildren();
+  if (detected && detected !== selected && !(selected === 'myip' && detected === 'ip')) selectType(detected);
+  out.replaceChildren(...(lead ? [lead] : []));
   if (d.type === 'empty') return;
 
   if (d.type === 'unknown') {
@@ -224,6 +224,41 @@ function searchFromHash() {
 }
 window.addEventListener('hashchange', searchFromHash);
 searchFromHash();
+
+// ---------- Check my IP ----------
+
+const MYIP_ERRORS = {
+  local: "Running locally: your public IP can't be seen from here.",
+  network: 'The lookup service could not be reached. Try again in a moment.',
+  failed: 'Your IP could not be checked. Try again later.',
+};
+
+// Only this click calls the Worker; selecting the My IP button sends nothing.
+$('myip-button').addEventListener('click', async () => {
+  const button = $('myip-button');
+  const out = $('search-result');
+  button.disabled = true;
+  out.replaceChildren(el('p', { class: 'hint' }, 'Checking your connection\u2026'));
+  let res;
+  let body;
+  try {
+    res = await fetch(`${API_BASE}/api/my-ip`, { referrerPolicy: 'no-referrer' });
+    body = await res.json();
+  } catch {
+    body = null;
+  }
+  button.disabled = false;
+  if (!res) return out.replaceChildren(notice('warn', MYIP_ERRORS.network));
+  if (res.status === 429) return out.replaceChildren(notice('bad', body?.error || MYIP_ERRORS.failed));
+  if (!res.ok || !body) return out.replaceChildren(notice('warn', body?.error || MYIP_ERRORS.failed));
+  if (body.local) return out.replaceChildren(notice('warn', MYIP_ERRORS.local));
+  // The address goes into the box and the fragment only now, after the click, so a
+  // shared link never carries someone's IP by surprise. replaceState fires no
+  // hashchange, so the card isn't redrawn away.
+  $('search-input').value = body.ip;
+  history.replaceState(null, '', `#q=${encodeURIComponent(body.ip)}`);
+  renderSearch(body.ip, connectionCard(body));
+});
 
 // ---------- Password check ----------
 

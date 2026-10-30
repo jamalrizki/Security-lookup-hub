@@ -8,6 +8,7 @@
 //   POST /api/ask                   Ask: AI answers with tools (ask.js)
 //   POST /api/ask/simplify          "Make it simpler" for an Ask answer (ask.js)
 //   POST /api/transcribe            Ask's voice input: raw audio -> text, Whisper on Workers AI (transcribe.js)
+//   GET /api/my-ip                  the visitor's own public IP and request.cf details (myip.js); never cached
 //   GET /api/health
 //
 // Guardrails (see Docs/Requirements.md): input validated with the same rules as
@@ -25,6 +26,7 @@ import { validateSearch, searchCves, CVE_TTL, loadKev, kevSearch } from './cve.j
 import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 import { handleAsk, handleSimplify } from './ask.js';
 import { handleTranscribe } from './transcribe.js';
+import { myIp } from './myip.js';
 
 const CACHE_TTL = 86_400; // 24h for results
 const EMPTY_TTL = 3_600; // 1h for "nothing found", so new data shows up sooner
@@ -299,6 +301,8 @@ export default {
     if (url.pathname === '/api/cve-search') return cveSearchRoute(request, env, ctx, origin);
     if (url.pathname === '/api/kev-search') return kevSearchRoute(request, env, ctx, origin);
     if (url.pathname === '/api/news') return newsRoute(request, env, ctx, origin);
+    // json() sends Cache-Control: no-store; nothing here touches the edge cache or KV.
+    if (url.pathname === '/api/my-ip') return json(myIp(request), 200, origin);
     return json({ error: 'Not found.' }, 404, origin);
   },
 

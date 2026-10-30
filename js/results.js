@@ -318,3 +318,36 @@ export function sourceCard(s) {
       extLink(s.link, `Full report on ${sourceHost} →`),
       s.checkedAt ? el('span', { class: 'hint' }, `${s.cached ? 'Cached, checked' : 'Checked'} ${fmtDate(s.checkedAt)}`) : null));
 }
+
+// Plain-words notes under "Your connection" (Check my IP).
+export const CONNECTION_NOTES = [
+  "This is the address websites see. Its location is approximate, usually the city of your provider's equipment, and often wrong for mobile and VPN connections. It is not your home address.",
+  "Using a VPN? This shows the VPN's address, not yours.",
+  'Your device may have both an IPv4 and an IPv6 address; this shows the one this connection used.',
+];
+
+/** The "Your connection" card from GET /api/my-ip: shown above the normal IP lookup. */
+export function connectionCard(info) {
+  const copy = el('button', { type: 'button', class: 'secondary small', 'aria-label': 'Copy IP address' }, 'Copy');
+  copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(info.ip);
+      copy.textContent = 'Copied';
+    } catch {
+      copy.textContent = 'Blocked';
+    }
+    setTimeout(() => { copy.textContent = 'Copy'; }, 1200);
+  });
+  const place = [info.city, info.region, info.country].filter(Boolean).join(', ');
+  const network = [info.asn ? `AS${info.asn}` : null, info.asOrganization].filter(Boolean).join(' ');
+  return el('article', { class: 'card connection' },
+    el('header', {}, el('h3', {}, 'Your connection'), flag('muted', `IPv${info.version}`)),
+    rows([
+      ['IP address', el('span', {}, el('span', { class: 'mono' }, info.ip), ' ', copy)],
+      ['Version', `IPv${info.version}`],
+      ['Network', network || null],
+      ['Approximate place', place || null],
+      ['Time zone', info.timezone || null],
+    ]),
+    ...CONNECTION_NOTES.map((t) => el('p', { class: 'hint' }, t)));
+}
