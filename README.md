@@ -20,6 +20,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | 11 | Reference: "Where to start" section (security tools guide dropped, see below) | Done |
 | Extra | Reference: "Already happened? What to do now" checklists (clicked a link, typed a password, opened a file, remote access, paid a scammer, hacked account, data breach) | Built, not deployed |
 | 12 | Analyze: certificate viewer and Nmap viewer | Done |
+| Extra | Reference: "Ports and protocols" lookup (67 common ports: service, TCP/UDP, encrypted version, keep-off-the-internet flag; searched in code; `[[ports]]` for Ask) | Built (Oct 29, 2026), not deployed |
 | 13 | Ask API: `POST /api/ask` tool-use loop (reference library, allowlisted web search, news snapshot, CVE data), caps and output guards | Built on `v3`, not deployed |
 | 14 | Ask UI on the Lookup page: thread with follow-ups, hub links, Look up buttons, Sources, trace; pre-send check for keys, JWTs, headers and certificates; "Ask about this CVE" | Built on `v3`, not deployed |
 | 15 | Reference-library pipeline: manifest, OCR, ingest and embedding scripts (books stay in the gitignored `security-books/`) | Built on `v3`; index not built yet |
@@ -35,7 +36,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
-**Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build; the page ships with an empty list. `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
+**Tools glossary:** the security tools guide originally planned for Phase 11 was dropped from the spec on Oct 15, 2026. In its place, `tools.html` (the Tools tab) renders `data/tools.json`, a list of `{ "tool": "…", "whatItDoes": "…" }` entries, as a filterable glossary. The data is written and maintained outside this build (98 entries as of Oct 2026). `tests/tools.test.mjs` checks the file's shape: each entry has exactly those two non-empty text fields, and tool names are unique.
 
 ## Design
 
@@ -193,6 +194,15 @@ Below "Where to start", `reference.html#what-now` has one card per thing that al
 - Official links must be https on an allowlist of government hosts (`GUIDANCE_HOSTS` in `js/what-now.js`). The page re-checks every link before rendering it, and `tests/what-now.test.mjs` fails on any other host, a hub link to a missing page or anchor, or a step that points at a card that doesn't exist.
 - Ask can send visitors here with `[[what-now]]`, and to the password check on the Lookup page (`./lookup.html#password`) with `[[password]]` (`data/hub-features.json`).
 - Guidance links were checked on Oct 24, 2026. Government pages move, so re-check them when you touch this file.
+
+## Reference: ports and protocols
+
+`reference.html#ports` answers "what runs on port 3389?" and "which port is LDAPS?" for certification students (Network+, Security+) and for anyone reading a scan or firewall rule. Type a port number (`443`, `53/udp`) or a name (`ssh`, `mail`, `vpn`); each row shows the port and transport, the service, what it is for in one plain sentence, its encrypted version if the list has one, and a "Keep off the internet" badge for services that should not be reachable from outside (RDP, SMB, databases, Docker's API…). A checkbox shows only those.
+
+- The data is `data/ports.json` (67 entries): well-known assignments from the IANA port registry, plus a few widely used defaults that IANA assigns to something else, marked `default: true` and labelled on the page (Oracle 1521, Kubernetes 6443, Elasticsearch 9200, WireGuard 51820). It is fixed text, with no AI and no network calls.
+- Search is in code (`js/ports.js`, DOM-free): a number matches that port exactly (with an optional `/tcp` or `/udp`), above 65535 is refused, and text ranks exact names first, then names that start with it, then full names and descriptions. A port not in the list says so plainly instead of guessing.
+- `reference.html#ports=3389` opens the section with that port filled in.
+- `tests/ports.test.mjs` checks every entry's shape and order, that each "encrypted version" points at a listed port, the exam staples and their transports, and the search rules. Ask can send visitors here with `[[ports]]`.
 
 ## Analyze tools
 
@@ -410,7 +420,7 @@ npm test
 
 Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
 
-313 tests as of Oct 26, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+321 tests as of Oct 29, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -455,6 +465,7 @@ js/ask.js        Ask page: chat layout, Stop and elapsed time, pre-send check, i
 js/render-answer.js   safe Markdown subset -> DOM nodes (text nodes only)
 js/reference.js  Reference page rendering
 js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
+js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
@@ -467,6 +478,7 @@ js/extract.js    Analyze logic (IOCs, PSL, punycode, lookalikes, URL and header 
 js/analyze/      one module per Analyze tool (ioc.js, link.js, headers.js, jwt.js, file.js, subnet.js, subnet-drill.js, cert.js, nmap.js) plus ui.js, data.js and handoff.js (receives text the Ask box hands over); tool modules export their pure functions for tests and only wire up the page in a browser
 data/reference.json   the site directory
 data/what-now.json    "Already happened? What to do now" checklists
+data/ports.json       common ports and protocols for the Reference page
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)
 data/brands.json      brands for the lookalike check
