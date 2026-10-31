@@ -4,6 +4,7 @@
 
 import { defang } from './detect.js';
 import { providerText, PROVIDERS } from './ranges.js';
+import { productChoices, checkVersion, MAX_VERSION_LENGTH } from './version-check.js';
 
 const fmtDate = (iso) => (iso ? new Date(iso).toISOString().slice(0, 10) : '—');
 
@@ -246,6 +247,30 @@ Object.assign(RENDER, {
 
 // ---------- CVE sources ----------
 
+const VERSION_KIND = { affected: 'bad', 'not-listed': 'ok', 'cant-tell': 'warn', invalid: 'muted' };
+const VERSION_HEAD = { affected: 'Affected', 'not-listed': 'Not in NVD\u2019s ranges', 'cant-tell': 'Can\u2019t tell', invalid: '' };
+
+/** "Is my version affected?" under Affected products. Checked in the browser by js/version-check.js. */
+function versionCheck(d) {
+  const choices = productChoices(d.affected);
+  const select = el('select', { 'aria-label': 'Product' }, ...choices.map((c) => el('option', { value: c.key }, c.label)));
+  const input = el('input', { type: 'text', maxlength: String(MAX_VERSION_LENGTH), spellcheck: 'false', autocomplete: 'off', placeholder: 'Your version, e.g. 2.14.1', 'aria-label': 'Your version' });
+  const out = el('div', { 'aria-live': 'polite' });
+  const form = el('form', { class: 'row', autocomplete: 'off' }, choices.length > 1 ? select : null, input, el('button', { type: 'submit', class: 'secondary' }, 'Check'));
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const r = checkVersion(d.affected, d.affectedTotal, choices.length > 1 ? select.value : choices[0].key, input.value);
+    const head = VERSION_HEAD[r.verdict];
+    out.replaceChildren(
+      el('p', { class: `verdict ${VERSION_KIND[r.verdict]}` }, head ? el('strong', {}, head) : null, head ? ` \u2014 ${r.text}` : r.text),
+      ...r.notes.map((n) => el('p', { class: 'hint' }, n)),
+    );
+  });
+  return el('details', { class: 'more' }, el('summary', {}, 'Is my version affected?'),
+    el('p', { class: 'hint' }, 'Compares your version with the ranges NVD lists. Checked in your browser; nothing is sent.'),
+    form, out);
+}
+
 const SEVERITY_KIND = { CRITICAL: 'bad', HIGH: 'bad', MEDIUM: 'warn', LOW: 'ok' };
 
 Object.assign(RENDER, {
@@ -272,6 +297,7 @@ Object.assign(RENDER, {
       ]),
       d.affected.length ? el('details', { class: 'more' }, el('summary', {}, `Affected products (${d.affectedTotal > d.affected.length ? `${d.affected.length} of ${d.affectedTotal}` : d.affected.length})`),
         el('ul', { class: 'mono-list' }, ...d.affected.map((a) => el('li', {}, `${a.vendor} ${a.product}: ${a.versions}`)))) : null,
+      d.affected.length ? versionCheck(d) : null,
       refs.length ? el('details', { class: 'more' }, el('summary', {}, `References (${refs.length})`), el('ul', { class: 'plain-list' }, ...refs)) : null,
     ];
   },
