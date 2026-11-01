@@ -15,7 +15,8 @@ const jsFiles = [
 const dataFiles = readdirSync(new URL('data/', root)).filter((f) => f.endsWith('.json') && f !== 'actors.json').map((f) => `data/${f}`);
 
 // Ids a page gets from its own script at runtime (rendered sections), keyed by page.
-const RUNTIME_IDS = { 'reference.html': [] };
+// js/reference.js renders one card per data/what-now.json item, id what-now-<id>.
+const RUNTIME_IDS = { 'reference.html': JSON.parse(read('data/what-now.json')).items.map((i) => `what-now-${i.id}`) };
 
 /** Checks one relative href from `from` (a page, or the site root for js/ and data/). */
 function checkHref(href, where, fromPage = 'index.html') {

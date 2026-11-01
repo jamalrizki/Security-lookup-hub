@@ -29,6 +29,7 @@
   <script src="js/analytics.js?v=b808e532a7"></script>
   <link rel="stylesheet" href="css/style.css?v=41e9f06669">
   <script src="js/nav.js?v=96e9c81ac7"></script>
+  <script type="module" src="js/analyze/message-check.js"></script>
   <script type="module" src="js/analyze/ioc.js"></script>
   <script type="module" src="js/analyze/link.js"></script>
   <script type="module" src="js/analyze/headers.js"></script>
@@ -82,17 +83,47 @@
     </section>
 
     <nav class="jumps" aria-label="Tools on this page">
-      <a href="#ioc"><span>01</span>IOC extractor</a>
-      <a href="#link"><span>02</span>Link inspector</a>
-      <a href="#headers"><span>03</span>Email headers</a>
-      <a href="#jwt"><span>04</span>JWT decoder</a>
-      <a href="#file"><span>05</span>File analyzer</a>
-      <a href="#subnet"><span>06</span>Subnet calculator</a>
-      <a href="#cert"><span>07</span>Certificate viewer</a>
-      <a href="#nmap"><span>08</span>Nmap viewer</a>
+      <a href="#message"><span>01</span>Scam message check</a>
+      <a href="#ioc"><span>02</span>IOC extractor</a>
+      <a href="#link"><span>03</span>Link inspector</a>
+      <a href="#headers"><span>04</span>Email headers</a>
+      <a href="#jwt"><span>05</span>JWT decoder</a>
+      <a href="#file"><span>06</span>File analyzer</a>
+      <a href="#subnet"><span>07</span>Subnet calculator</a>
+      <a href="#cert"><span>08</span>Certificate viewer</a>
+      <a href="#nmap"><span>09</span>Nmap viewer</a>
     </nav>
 
     <div class="card-grid">
+      <section class="panel" id="message" aria-labelledby="message-h">
+        <span class="num" aria-hidden="true"></span>
+        <h2 id="message-h">Is this message a scam?</h2>
+        <p class="hint">Paste a text message or email (up to 10 KB). It is checked in your browser against known scam warning signs from FTC and NCSC guidance, and any links in it are read by the link inspector. Nothing is sent anywhere and no link is opened.</p>
+        <form id="message-form" autocomplete="off">
+          <label for="message-input" class="visually-hidden">Message to check</label>
+          <textarea id="message-input" spellcheck="false" placeholder="Paste the whole message here"></textarea>
+          <div class="row tool-actions">
+            <button type="submit">Check message</button>
+            <button type="button" id="message-clear" class="secondary">Clear</button>
+          </div>
+        </form>
+        <div id="message-result" class="result" aria-live="polite"></div>
+        <div id="message-next" class="result" hidden>
+          <h3>What to do</h3>
+          <ul class="plain-list">
+            <li>Don't tap links in it, reply to it or call numbers it gives.</li>
+            <li>If it might be real, contact the company or agency a way you already trust: its app, or a website or phone number you type in yourself.</li>
+            <li>Then delete it.</li>
+          </ul>
+          <h3>Report it</h3>
+          <ul class="plain-list">
+            <li>Scam texts: forward them to 7726 (spells SPAM; works in the US and UK).</li>
+            <li>US: <a href="https://reportfraud.ftc.gov/" target="_blank" rel="noopener noreferrer">ReportFraud.ftc.gov</a>. UK scam emails: forward them to report@phishing.gov.uk.</li>
+          </ul>
+          <p class="small"><span class="hint">Already tapped, typed a password or paid? </span><a href="./reference.html#what-now-clicked-link">I clicked a link</a> &middot; <a href="./reference.html#what-now-typed-password">I typed my password</a> &middot; <a href="./reference.html#what-now-paid-scammer">I paid a scammer</a></p>
+        </div>
+        <details class="meaning"><summary>What does this mean?</summary><p>“Scam signs found” means the message uses a trick that scammers use and real organisations don't, such as asking for gift cards or a verification code, or its link uses a disguise. “Some warning signs” means real messages sometimes do this too, so check it a way you already trust. No signs found doesn't prove it's safe: if you weren't expecting it, contact the sender another way.</p></details>
+      </section>
       <section class="panel" id="ioc" aria-labelledby="ioc-h">
         <span class="num" aria-hidden="true"></span>
         <h2 id="ioc-h">IOC extractor</h2>
