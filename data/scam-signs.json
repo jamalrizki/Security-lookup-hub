@@ -1,0 +1,216 @@
+{
+  "_about": "Scam warning signs for the Analyze message check (analyze.html#message), matched in code by js/analyze/message-check.js, never by a model. Each pattern is a JavaScript regular expression (case-insensitive, Unicode) run on the normalised, lower-cased message; a sign matches when any pattern matches and no 'unless' pattern does. strength: 'strong' (a scam on its own) or 'warning' (real messages can do this too). says: one plain sentence (160 characters max). guidance: an official page on an allowed host (js/what-now.js GUIDANCE_HOSTS). The signs follow FTC and NCSC guidance on text and email scams; tests/message-check.test.mjs checks every pattern, link and length.",
+  "signs": [
+    {
+      "id": "toll-fine",
+      "strength": "strong",
+      "says": "An unpaid toll, fine or traffic ticket by text or email. This is one of the FTC's top text scams.",
+      "patterns": [
+        "\\b(?:unpaid|outstanding|overdue|past[- ]due|pending)\\s+(?:[a-z-]+\\s+){0,2}(?:tolls?|fines?|tickets?|parking|traffic)\\b",
+        "\\b(?:toll|tolls|traffic|parking)\\s+(?:violations?|invoices?|balances?|charges?|due|notices?|penalt(?:y|ies))\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Got a text about unpaid tolls? It's probably a scam",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2025/01/got-text-about-unpaid-tolls-its-probably-scam"
+      }
+    },
+    {
+      "id": "delivery-problem",
+      "strength": "warning",
+      "says": "Says a parcel is held or couldn't be delivered. Fake delivery problems are the FTC's most-reported text scam.",
+      "patterns": [
+        "\\b(?:package|parcel|shipment|delivery|order)\\b[^.!?\\n]{0,60}\\b(?:on hold|held|could ?n[o']t be delivered|cannot be delivered|undeliverable|delivery (?:attempt )?failed|unable to (?:be )?deliver(?:ed)?|returned to (?:the )?sender|suspended|incomplete address)",
+        "\\b(?:failed|unsuccessful|missed) delivery\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Think that text message is from USPS? It could be a scam",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2025/04/think-text-message-usps-it-could-be-scam"
+      }
+    },
+    {
+      "id": "confirm-address-fee",
+      "strength": "strong",
+      "says": "Asks you to confirm your address or pay a small fee before a delivery. Real couriers don't ask for this by text.",
+      "patterns": [
+        "\\b(?:confirm|update|verify|re-?enter|correct)\\s+(?:your\\s+)?(?:delivery\\s+|shipping\\s+|home\\s+|mailing\\s+)?(?:address|details)\\b[^.!?\\n]{0,80}\\b(?:package|parcel|shipment|delivery|redeliver)",
+        "\\b(?:redelivery|re-delivery|customs|shipping|delivery|handling)\\s+(?:fee|charge|payment|cost)s?\\b"
+      ],
+      "unless": [
+        "\\bno\\s+(?:redelivery|customs|shipping|delivery|handling)\\s+(?:fee|charge|payment|cost)s?\\b",
+        "\\bfree\\s+(?:shipping|delivery)\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Think that text message is from USPS? It could be a scam",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2025/04/think-text-message-usps-it-could-be-scam"
+      }
+    },
+    {
+      "id": "account-locked",
+      "strength": "strong",
+      "says": "Says your account is locked or suspended and asks you to verify it. That's how fake login pages get passwords.",
+      "patterns": [
+        "^(?=[\\s\\S]*\\b(?:account|card|access|profile|mailbox|apple id|password|membership|subscription|service|wallet)\\b[^.!?\\n]{0,40}\\b(?:locked|suspended|disabled|restricted|limited|frozen|on hold|deactivated|compromised|expir(?:ed|es|ing))\\b)(?=[\\s\\S]*\\b(?:verify|confirm|unlock|reactivate|restore|validate|update your (?:details|information|payment))\\b)"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "How to recognize and avoid phishing scams",
+        "url": "https://consumer.ftc.gov/articles/how-recognize-avoid-phishing-scams"
+      }
+    },
+    {
+      "id": "fraud-alert",
+      "strength": "warning",
+      "says": "Asks if you made a purchase or payment. Banks do send these, and so do scammers. Check in your bank's own app; never call a number given in it.",
+      "patterns": [
+        "\\bdid you (?:make|authori[sz]e|attempt|try|request|approve|initiate)\\b[^?\\n]{0,100}\\b(?:purchase|payment|charge|transaction|transfer|withdrawal|order|sign[- ]?in|login)",
+        "\\b(?:suspicious|unusual|fraudulent|unauthori[sz]ed)\\s+(?:activity|transaction|purchase|charge|payment|login|sign[- ]?in)\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Is that unexpected text a scam?",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2025/04/unexpected-text-scam"
+      }
+    },
+    {
+      "id": "deadline-penalty",
+      "strength": "warning",
+      "says": "A deadline plus a threat (a fee, suspension or legal action). Rushing you is a classic pressure trick.",
+      "patterns": [
+        "^(?=[\\s\\S]*(?:\\b(?:within|in)\\s+\\d{1,3}\\s*(?:hours?|hrs?|days?|minutes?|mins?)\\b|\\b(?:by|before)\\s+(?:\\d{1,2}[/.-]\\d{1,2}|today|tonight|tomorrow|midnight|(?:mon|tues|wednes|thurs|fri|satur|sun)day|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)|\\b(?:immediately|right away|urgent(?:ly)?|final (?:notice|warning|reminder)|last (?:chance|notice|warning))\\b))(?=[\\s\\S]*\\b(?:late fees?|penalt(?:y|ies)|suspen(?:d|ded|sion)|legal action|arrest(?:ed)?|warrant|lawsuit|prosecut\\w*|deactivat\\w*|terminat\\w*|permanently (?:closed|deleted|locked|disabled)|license|credit score|collections?)\\b)"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "How to recognize and avoid phishing scams",
+        "url": "https://consumer.ftc.gov/articles/how-recognize-avoid-phishing-scams"
+      }
+    },
+    {
+      "id": "unusual-payment",
+      "strength": "strong",
+      "says": "Asks for payment by gift card, cryptocurrency or wire transfer. Only scammers insist on these.",
+      "patterns": [
+        "^(?=[\\s\\S]*\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\b)(?=[\\s\\S]*\\b(?:pay|paying|payment|send|buy|purchase|transfer|deposit|scratch|photo of|card numbers?|codes? on the back)\\b)"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Avoiding and reporting gift card scams",
+        "url": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams"
+      }
+    },
+    {
+      "id": "payment-app",
+      "strength": "warning",
+      "says": "Asks you to pay or 'refund' someone with Zelle, Venmo, Cash App or PayPal. Money sent this way is hard to get back.",
+      "patterns": [
+        "^(?=[\\s\\S]*\\b(?:zelle|venmo|cash ?app|cashapp|paypal friends)\\b)(?=[\\s\\S]*\\b(?:pay|send|transfer|refund|reverse|return the)\\b)"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "A way to spot scams: how someone asks you to pay",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2026/07/way-spot-scams-how-someone-asks-you-pay"
+      }
+    },
+    {
+      "id": "share-code",
+      "strength": "strong",
+      "says": "Asks you to send or read out a verification code. That code lets someone into your account; no real company asks for it.",
+      "patterns": [
+        "(?<!(?:not|never|n't)\\s+)\\b(?:send|share|tell|give|read|forward|text|repeat|provide)\\s+(?:me|us)\\s+(?:back\\s+)?(?:the|your|that|this|a)?\\s*(?:\\d[- ]?digit\\s+)?(?:[a-z]+\\s+)?(?:code|otp|passcode|pin)\\b",
+        "(?<!(?:not|never|n't)\\s+)\\b(?:send|share|tell|give|read|forward|text|repeat|provide)\\s+(?:back\\s+)?(?:the|that|this)\\s+(?:\\d[- ]?digit\\s+)?(?:[a-z]+\\s+)?(?:code|otp|passcode|pin)\\b[^.\\n]{0,40}\\b(?:you (?:just )?(?:got|received)|(?:we|i) (?:just )?sent|was sent|to (?:me|us|this number)|with (?:me|us)|back)\\b",
+        "\\breply\\s+(?:back\\s+)?with\\s+(?:the|your|that|this)?\\s*(?:\\d[- ]?digit\\s+)?(?:[a-z]+\\s+)?(?:code|otp|passcode|pin)\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "What's a verification code and why would someone ask me for it?",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2024/03/whats-verification-code-why-would-someone-ask-me-it"
+      }
+    },
+    {
+      "id": "reply-to-activate",
+      "strength": "strong",
+      "says": "Asks you to reply (\"Y\") and reopen the message to make the link work. This switches off your phone's protection against links from strangers.",
+      "patterns": [
+        "\\breply\\s+(?:with\\s+)?[\"']?(?:y|yes|1)[\"']?\\b[^\\n]{0,120}\\b(?:link|activate|re-?open|open (?:this|the) (?:message|text|sms))",
+        "\\b(?:re-?open|exit and (?:re-?)?open|close and (?:re-?)?open)\\s+(?:this|the)\\s+(?:message|text|sms|conversation)\\b",
+        "\\bto activate (?:the|this) link\\b",
+        "\\bcopy (?:the|this) link (?:in)?to (?:your|a|the) browser\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "How to recognize and report spam text messages",
+        "url": "https://consumer.ftc.gov/articles/how-recognize-and-report-spam-text-messages"
+      }
+    },
+    {
+      "id": "government-payment",
+      "strength": "strong",
+      "says": "Claims to be a government agency or the police and asks for money or threatens arrest. Real agencies don't demand payment by text, email or phone.",
+      "patterns": [
+        "^(?=[\\s\\S]*\\b(?:irs|hmrc|social security(?: administration)?|ssa|dmv|department of motor vehicles|medicare|fbi|ftc|police|sheriff|marshal|court|customs|border patrol|immigration|tax office|revenue service|department of (?:revenue|transportation|justice))\\b)(?=[\\s\\S]*\\b(?:pay|payment|you owe|owed|outstanding|warrant|arrest|suspend\\w*|seiz\\w+|frozen|legal action|penalt(?:y|ies)|fine)\\b)"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "How to avoid imposter scams",
+        "url": "https://consumer.ftc.gov/features/how-avoid-imposter-scams"
+      }
+    },
+    {
+      "id": "job-offer",
+      "strength": "strong",
+      "says": "An unexpected job offer with high pay for little work. The FTC says these texts are almost always scams.",
+      "patterns": [
+        "^(?=[\\s\\S]*\\b(?:job|position|role|vacanc(?:y|ies)|opportunit(?:y|ies)|part[- ]time|full[- ]time|work from home|remote work|recruit\\w*|hiring|hr department)\\b)(?=[\\s\\S]*(?:\\$\\s?\\d{2,5}(?:\\s*(?:-|to|–)\\s*\\$?\\s?\\d{2,5})?\\s*(?:/|per|a|each)\\s*(?:day|daily)|\\b(?:earn|make)\\s+(?:up to\\s+)?\\$\\s?\\d|\\b(?:only|just)\\s+(?:need\\s+)?(?:\\d{1,2}|one|two|a few)\\s+(?:minutes?|hours?)\\s+(?:a|per)\\s+day|\\bno experience (?:needed|required)\\b[^\\n]{0,80}\\$))"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "That job offer text is probably a scam",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2026/04/job-offer-text-probably-scam"
+      }
+    },
+    {
+      "id": "wrong-number",
+      "strength": "warning",
+      "says": "A friendly \"wrong number\" opener from a stranger. These often turn into investment or romance scams. Don't reply.",
+      "patterns": [
+        "^\\W*(?:hi|hey|hello|good (?:morning|afternoon|evening))\\b[^\\n?]{0,30}\\b(?:is this|are you)\\s+(?:mr\\.?\\s+|mrs\\.?\\s+|ms\\.?\\s+|dr\\.?\\s+)?[a-z]+(?:\\s+[a-z]+)?\\s*\\?",
+        "\\b(?:sorry|oops|apologies)\\b[^\\n]{0,30}\\bwrong number\\b",
+        "\\bi got your number from\\b",
+        "\\bare we still (?:on for|meeting|having)\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Why it's not rude to ignore \"hi, how are you?\" texts from strangers",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2024/05/why-its-not-rude-ignore-hi-how-are-you-text-messages-strangers"
+      }
+    },
+    {
+      "id": "new-number",
+      "strength": "warning",
+      "says": "Someone says they're a relative or friend on a new number. Call them on the number you already have before sending anything.",
+      "patterns": [
+        "\\b(?:this is my new number|(?:i )?(?:lost|broke|dropped|smashed) my phone|my (?:old )?phone (?:broke|is broken|got stolen|was stolen|died)|(?:new|temporary) (?:number|phone),? save (?:it|this))\\b"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "How to avoid imposter scams",
+        "url": "https://consumer.ftc.gov/features/how-avoid-imposter-scams"
+      }
+    },
+    {
+      "id": "prize-to-claim",
+      "strength": "strong",
+      "says": "A prize, refund or reward you have to pay or give card details to claim. Real prizes and refunds don't cost money.",
+      "patterns": [
+        "^(?=[\\s\\S]*\\b(?:you(?:'ve| have)? won|you(?:'ve| have) been (?:selected|chosen)|winner|prize|reward|lottery|sweepstakes|giveaway|refund|unclaimed|compensation|cashback)\\b)(?=[\\s\\S]*\\b(?:claim|collect|receive|redeem|release)\\b)(?=[\\s\\S]*\\b(?:fee|pay|small charge|processing|shipping cost|card details|bank details|card number|account number|tax(?:es)? (?:first|upfront))\\b)"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Fake prize offers don't pay",
+        "url": "https://consumer.ftc.gov/consumer-alerts/2021/03/fake-prize-offers-dont-pay"
+      }
+    }
+  ]
+}

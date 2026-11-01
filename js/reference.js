@@ -108,6 +108,8 @@ async function loadWhatNow() {
     const res = await fetch('data/what-now.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     renderWhatNow((await res.json()).items || []);
+    // The cards are built after load, so a link to one (#what-now-clicked-link) has to scroll here.
+    if (/^#what-now-[a-z-]+$/.test(location.hash)) document.getElementById(location.hash.slice(1))?.scrollIntoView();
   } catch (err) {
     $('wn-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the checklists: ${err.message}`));
   }
