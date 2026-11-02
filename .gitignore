@@ -10,3 +10,6 @@ security-books/
 *.epub
 chunks.jsonl
 vectors.ndjson
+
+# Ask eval answers (scripts/eval-ask.mjs); local only
+tests/evals/out/

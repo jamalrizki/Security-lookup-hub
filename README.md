@@ -42,6 +42,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | 26 | Provider ranges in Analyze, checked in the browser: "Check against known provider ranges" in the subnet calculator; IOC log mode recognises Apache/nginx access logs (time range, top statuses, paths, user agents) and labels top IPs (cloud / Tor); `/api/ranges` downloaded once per visit, only after a click | Built on `v5`, not deployed |
 | Extra | **My exposure** tab (`exposure.html`): what an attacker can find out about you (breaches, usernames, search results and photos, data brokers, your Wi-Fi network on WiGLE, your workplace), each with why it matters, steps to check and fix, and outside links; fixed text, nothing sent | Built (Oct 30, 2026) |
 | 27 | v5 docs: README, Requirements (Check my IP and network type; non-goals: VPN detection, bulk IP tables, proxy checkers, domain monitoring, a numeric risk score), `myip` in `hub-features.json`; post-deploy checks listed below | Built on `v5`, not deployed |
+| Extra | Ask eval: 20 beginner questions (`tests/evals/beginner.json`) graded in code by `scripts/eval-ask.mjs` (hub links, keywords, banned reassurance phrases, word cap, tool calls from the trace, declines, no URLs); runs against a local `wrangler dev` by default, never in `npm test` | Built (Nov 2, 2026) |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -381,6 +382,28 @@ The mic button in Ask's composer records a spoken question; the Worker turns it 
 - **Limits, in code:** 20 transcriptions a minute site-wide (`quotaTools.allow('transcribe', 20)`, the edge-cache counter the threat-intel sources use) and **50 audio minutes a UTC day**, counted in the `NEWS` KV namespace (`voice:<date>`, one write per transcription, expires after 2 days). Over either: 429 "Voice input is used up for now. Type your question instead." **The arithmetic:** Whisper large-v3-turbo costs 46.63 neurons per audio minute (Workers AI pricing page, Oct 26, 2026). The budget is about 2,500 neurons a day, a quarter of the 10,000 free daily neurons that Ask's reference search also uses: 2,500 ÷ 46.63 ≈ 53.6 audio minutes, so the cap is 50 minutes = 2,331.5 neurons. The count is in **audio minutes as Whisper reports them** (`transcription_info.duration`, rounded up, at least 1 per transcription; a failed run counts 1), not in requests: the page stops at 60 s, but a hand-made 2 MB upload of very low-bitrate audio could be much longer, so counting requests wouldn't bound the neurons. One minute is reserved before the model runs (so a request the visitor cuts off mid-run is still counted), and any further minutes Whisper reports are added after it, so one long upload can overshoot the cap once; after that, voice is refused for the day. Like the other KV counters, it isn't atomic: requests arriving at the same moment can each see room. That's accepted: Workers AI is on the free allocation with no payment method, so overshooting borrows from the reference search's free neurons and can't cost money.
 - **The vocabulary list** is `data/voice-vocab.json` (`terms`): words Whisper should spell correctly (CVE, KEV, EPSS, DMARC, Kerberoasting, Log4Shell…). To change it, edit the list and redeploy the Worker; no code change. The terms are joined into Whisper's initial prompt, which holds about 224 tokens, so `tests/transcribe.test.mjs` fails if the prompt passes 600 characters, if a term repeats, or if one has characters other than letters, digits, spaces and `&.'-`.
 
+## Checking Ask's answers
+
+A fixed set of realistic questions with expectations checked in code, so a change to Ask's prompt, `ASK_MODEL` or a fallback can be checked before it ships. There's no model-as-judge: the same answer always gets the same verdict, and grading costs nothing.
+
+- **The set:** `tests/evals/beginner.json`, 20 questions from people who know nothing about security (clicked a link, typed a password, gift cards, a remote-access call, toll/package/bank texts, a leaked password, a hacked account, a fake virus pop-up), plus 2 real messages Ask must not call a scam, 1 offensive ask it must decline and 1 CVE-in-the-news question that must call `cve_lookup`. The questions were written for this repo.
+- **The checks** (`grade()` in `scripts/eval-ask.mjs`, read from the `/api/ask` JSON): `mustHub` ids in `hub`; `mustInclude` keyword groups (any one alternative counts; `a + b` needs both); `mustNotInclude` phrases (the set's defaults ban reassurance such as "you're safe" and "nothing to worry about"); `maxWords` (220 by default); `mustCallTool` from `trace`; `mustDecline`; and no raw or defanged URL in `reply`. `tests/eval-grade.test.mjs` tests the grader on hand-written answers and checks the set's shape (hub ids from `data/hub-features.json`, tool names from `TOOL_CAPS`).
+- **Run it locally on the free model** (prerequisites: the Worker's packages installed and `worker/.dev.vars` holding `GROQ_API_KEY`). From `worker/`, start the Worker with Ask on Groq:
+
+  ```sh
+  npx wrangler dev --var ASK_MODEL:groq:openai/gpt-oss-120b
+  ```
+
+  Then, from the repo root in a second terminal:
+
+  ```sh
+  node scripts/eval-ask.mjs
+  ```
+
+  It sends the questions one at a time, prints PASS/FAIL per question, then a line like `beginner: 17/20 pass; failures: q07 missing [[what-now]]` and how many web searches the run used. `--only q02,q19` runs a few; `--grade tests/evals/out/<run>` re-grades saved answers without the network. Answers are saved to `tests/evals/out/` (gitignored); they're Jamal's own test questions, nothing from visitors.
+- **Web searches count:** questions that make Ask search use Tavily calls from the 25-a-day cap, in local runs too if `TAVILY_API_KEY` is in `worker/.dev.vars`.
+- **Against the deployed Worker:** `node scripts/eval-ask.mjs --prod`. It first warns that the run uses one of the 100 daily paid Claude questions per question (20 for the full set) and waits 10 seconds so you can cancel. A `--url` pointing at `workers.dev` is refused, so the warning can't be skipped.
+
 ## Switching Ask's model
 
 Ask's model is a setting, `ASK_MODEL` under `[vars]` in `worker/wrangler.toml`, written as `provider:model`:
@@ -479,7 +502,7 @@ npm test
 
 Without `worker/node_modules`, `tests/ask.test.mjs` and `tests/ask-models.test.mjs` fail with "Cannot find package '@anthropic-ai/sdk'".
 
-382 tests as of Oct 30, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+406 tests as of Nov 2, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -557,6 +580,8 @@ data/hub-features.json     hub pages and tools Ask may link to (ids -> links)
 data/lookup-types.json     Lookup's type buttons { id, label, placeholder, about, invalid, sources[, hostSources] }; tests/lookup-types.test.mjs checks sources against the Worker's plan()
 data/source-names.json     display names of the lookup sources, read by both the Worker (sources.js, keyed.js, cve.js) and the Lookup page
 security-books/  reference books for Ask, GITIGNORED: never committed (tests/books-ignored.test.mjs fails if anything under it is tracked); generated files in security-books/.rag/
+scripts/eval-ask.mjs   Ask eval: grades /api/ask answers in code against tests/evals/*.json; runner for a local or (--prod) deployed Worker; never part of npm test
+tests/evals/beginner.json   beginner question set and expectations (answers go to tests/evals/out/, gitignored)
 rag/             reference-library pipeline scripts (build_manifest.py, ocr_books.sh, ingest_books.py); no book data ever lives here
 worker/scripts/embed-books.mjs   embeds chunks with Workers AI into Vectorize NDJSON, with the 12,000-vector budget guard
 tests/           node:test unit tests; tests/fixtures/ holds feed samples; tests/helpers/dom.mjs is a small DOM stand-in for the Ask, Lookup and Analyze page tests; tests/helpers/ask-stubs.mjs stubs the model, Tavily, KV, cache, Workers AI and Vectorize for the Ask tests
