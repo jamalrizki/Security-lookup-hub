@@ -2,6 +2,8 @@
 //
 //   node scripts/eval-ask.mjs                      runs tests/evals/beginner.json against a local
 //                                                  `wrangler dev` (http://127.0.0.1:8787)
+//   node scripts/eval-ask.mjs --set students       another set: beginner (default), students, work
+//                                                  (a name from tests/evals/, or a path to a .json)
 //   node scripts/eval-ask.mjs --only q02,q19       just those questions
 //   node scripts/eval-ask.mjs --grade <dir>        re-grade saved answers, no network
 //   node scripts/eval-ask.mjs --prod               the deployed Worker (uses paid questions)
@@ -96,21 +98,36 @@ export function summaryLine(setName, rows) {
   return `${setName}: ${passed}/${rows.length} pass${failed.length ? `; failures: ${failed.join('; ')}` : ''}`;
 }
 
-export function loadSet(path = join(ROOT, 'tests/evals/beginner.json')) {
+const EVALS = join(ROOT, 'tests/evals');
+
+/** The question sets in tests/evals/, by name (file name without .json). */
+export function setNames() {
+  return readdirSync(EVALS).filter((f) => f.endsWith('.json')).map((f) => f.replace(/\.json$/, '')).sort();
+}
+
+/** "students" → tests/evals/students.json; anything with a slash or .json is a path. */
+export function setPath(nameOrPath) {
+  const v = String(nameOrPath || '');
+  if (/[\\/]|\.json$/i.test(v)) return resolve(v);
+  if (!setNames().includes(v)) throw new Error(`Unknown set "${v}". Sets: ${setNames().join(', ')}`);
+  return join(EVALS, `${v}.json`);
+}
+
+export function loadSet(path = join(EVALS, 'beginner.json')) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
 
 // ---------- runner (CLI only) ----------
 
 export function parseArgs(argv) {
-  const opts = { url: LOCAL_URL, prod: false, only: null, grade: null, set: join(ROOT, 'tests/evals/beginner.json') };
+  const opts = { url: LOCAL_URL, prod: false, only: null, grade: null, set: join(EVALS, 'beginner.json') };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--prod') opts.prod = true;
     else if (a === '--url') opts.url = argv[++i];
     else if (a === '--only') opts.only = new Set(String(argv[++i] || '').split(',').map((s) => s.trim()).filter(Boolean));
     else if (a === '--grade') opts.grade = argv[++i];
-    else if (a === '--set') opts.set = resolve(argv[++i]);
+    else if (a === '--set') opts.set = setPath(argv[++i]);
     else throw new Error(`Unknown option: ${a}`);
   }
   if (opts.prod) opts.url = PROD_URL;
