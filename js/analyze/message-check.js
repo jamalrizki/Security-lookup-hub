@@ -236,7 +236,7 @@ if (globalThis.document?.getElementById('message-form')) {
     if (ai.error) return notice('warn', ai.error);
     return el('div', {},
       el('h3', {}, 'What the AI noticed'),
-      ai.reasons?.length ? el('ul', { class: 'plain-list' }, ...ai.reasons.map((t) => el('li', {}, t))) : el('p', { class: 'hint' }, 'It found nothing specific to point to.'),
+      ai.reasons?.length ? el('ul', { class: 'plain-list' }, ...ai.reasons.map((t) => el('li', {}, t))) : el('p', { class: 'hint' }, 'It found nothing specific to point to, which doesn\u2019t make the message safe.'),
       el('p', { class: 'hint' }, `Read by ${ai.model}. AI can be wrong, and it can't check who really sent this.`));
   };
 

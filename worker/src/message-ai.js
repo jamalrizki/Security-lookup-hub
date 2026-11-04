@@ -1,8 +1,10 @@
 // POST /api/message-check: an AI read of a pasted text or email, for the Analyze
 // page's scam message check. The message is written by whoever sent it, possibly a
 // scammer, so it's treated as hostile: it goes in as marked data, no tools are
-// offered, and only a fixed verdict plus short reasons come back. The model has no
-// "safe" verdict to give, so a message that talks the model round gets "can't
+// offered, and only a fixed verdict plus reason codes come back. The page shows
+// sentences written here, never the model's words, so a message can't use the
+// model to put a link, a phone number or a reassurance on the page. There is no
+// "safe" verdict to give either: a message that talks the model round gets "can't
 // tell" at best, and the page's verdict can only go up from the code check's.
 // Nothing is stored or cached.
 
@@ -14,7 +16,24 @@ export const MAX_MESSAGE_CHARS = 10 * 1024;
 const MAX_BODY = 48 * 1024;
 export const AI_VERDICTS = ['likely_scam', 'suspicious', 'cant_tell'];
 const MAX_REASONS = 4;
-const MAX_REASON_CHARS = 220;
+
+// What the model may point to, and what the page says for each.
+export const REASONS = {
+  claims_problem: 'It claims something is wrong, owed or expiring, which is how these messages get your attention.',
+  threat: 'It threatens consequences if you don\u2019t act.',
+  deadline: 'It tries to rush you with a deadline or urgent wording.',
+  official_language: 'It uses official or legal-sounding language to intimidate.',
+  vague_details: 'It is vague where a real notice would be specific, such as the amount, date or account.',
+  asks_payment: 'It asks you to pay.',
+  unusual_payment: 'It asks for a payment method scammers prefer, such as gift cards, crypto or a wire.',
+  asks_details: 'It asks you to log in, confirm personal details or share a code.',
+  asks_contact: 'It pushes you to call, reply or tap a link.',
+  suspicious_link: 'Its link looks unrelated to the organisation it claims to be from.',
+  impersonation: 'It appears to pose as a known company, agency or person.',
+  prize_or_refund: 'It offers a prize, refund or money you didn\u2019t ask for.',
+  unexpected_contact: 'It starts a conversation with a stranger, which is how long-running scams begin.',
+  manipulates_check: 'It seems to be written to influence a check like this one.',
+};
 
 export const MESSAGE_SYSTEM = `You help someone with no security background decide whether a text message or email they received is a scam.
 
@@ -34,17 +53,16 @@ Verdicts:
 - "cant_tell": ordinary content, or too little to judge.
 
 Answer with JSON only, no other text:
-{"verdict":"likely_scam"|"suspicious"|"cant_tell","reasons":["..."]}
+{"verdict":"likely_scam"|"suspicious"|"cant_tell","reasons":["code"]}
 
-reasons: 1 to ${MAX_REASONS} short, plain sentences saying what in the message led to the verdict. Don't repeat any link, phone number or email address from the message, don't tell the reader what to do, and don't say the message is safe.`;
-
-const CONTACT_DETAIL = /https?:|www\.|\b[a-z0-9-]+(?:\.|\[\.\])(?:com|net|org|info|top|xyz|io|co|uk|us|help|link|site|online|app|me)\b|[\w.+-]+@[\w-]+\.|\+?\d[\d\s().-]{6,}\d/i;
-const CALLS_IT_SAFE = /\b(?<!not\s)(?:is|looks|seems|appears)\s+(?:safe|legit\w*|genuine|real|authentic)\b/i;
+reasons: for likely_scam or suspicious, the 1 to ${MAX_REASONS} codes from this list that best fit. For cant_tell, an empty list. Use only these codes, with no other words:
+${Object.keys(REASONS).join(', ')}`;
 
 /**
- * The model's answer as { verdict, reasons }, or null if it isn't one. Reasons
- * that repeat contact details or call the message safe are dropped, because the
- * message's author may have steered the model's words.
+ * The model's answer as { verdict, reasons } (reasons in our own wording), or null if
+ * it isn't one. Anything that isn't a known code is ignored, so whatever the message's
+ * author steers the model into writing never reaches the page. "Can't tell" has no
+ * reasons, so it can't come with an explanation that sounds like reassurance.
  */
 export function parseMessageVerdict(text) {
   const raw = String(text ?? '');
@@ -58,13 +76,9 @@ export function parseMessageVerdict(text) {
     return null;
   }
   if (!AI_VERDICTS.includes(j?.verdict)) return null;
-  const reasons = (Array.isArray(j.reasons) ? j.reasons : [])
-    .filter((r) => typeof r === 'string')
-    .map((r) => r.replace(/\s+/g, ' ').trim())
-    .filter((r) => r && !CONTACT_DETAIL.test(r) && !CALLS_IT_SAFE.test(r))
-    .slice(0, MAX_REASONS)
-    .map((r) => (r.length > MAX_REASON_CHARS ? `${r.slice(0, MAX_REASON_CHARS - 1)}…` : r));
-  return { verdict: j.verdict, reasons };
+  if (j.verdict === 'cant_tell') return { verdict: j.verdict, reasons: [] };
+  const codes = (Array.isArray(j.reasons) ? j.reasons : []).filter((r) => typeof r === 'string' && Object.hasOwn(REASONS, r));
+  return { verdict: j.verdict, reasons: [...new Set(codes)].slice(0, MAX_REASONS).map((r) => REASONS[r]) };
 }
 
 /** Handles POST /api/message-check: { message } -> { verdict, reasons, model, provider }. */

@@ -3,10 +3,10 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/src/index.js';
-import { parseMessageVerdict, MESSAGE_SYSTEM, MAX_MESSAGE_CHARS, AI_VERDICTS } from '../worker/src/message-ai.js';
+import { parseMessageVerdict, MESSAGE_SYSTEM, MAX_MESSAGE_CHARS, AI_VERDICTS, REASONS } from '../worker/src/message-ai.js';
 import { ORIGIN, installCaches, installFetch, modelScript, say, exec, memoryKv } from './helpers/ask-stubs.mjs';
 
-const answer = (verdict, reasons = ['It threatens you with a deadline.']) => say(JSON.stringify({ verdict, reasons }));
+const answer = (verdict, reasons = ['threat']) => say(JSON.stringify({ verdict, reasons }));
 
 function env(extra = {}) {
   return { ALLOWED_ORIGINS: ORIGIN, GROQ_API_KEY: 'k', ASK_MODEL: 'groq:openai/gpt-oss-120b', NEWS: memoryKv(), ...extra };
@@ -36,7 +36,7 @@ test('returns the verdict, reasons and model; nothing is cached or stored', asyn
   const r = await post({ message: 'Pay now or else.' }, e);
   assert.equal(r.status, 200);
   assert.equal(r.body.verdict, 'likely_scam');
-  assert.deepEqual(r.body.reasons, ['It threatens you with a deadline.']);
+  assert.deepEqual(r.body.reasons, [REASONS.threat]);
   assert.ok(r.body.model);
   assert.equal(r.headers.get('cache-control'), 'no-store');
   assert.equal(store.size, 0, 'no edge cache');
@@ -78,30 +78,34 @@ test('a talked-round model can’t return "safe": unknown verdicts fail', async 
   }
 });
 
-test('injected links, numbers and "this is safe" never reach the page', () => {
+test('nothing the model writes reaches the page: only our sentences for known codes', () => {
   const r = parseMessageVerdict(JSON.stringify({
-    verdict: 'cant_tell',
+    verdict: 'suspicious',
     reasons: [
-      'Pay at https://evil.example/pay to be safe.',
-      'Visit evil-pay[.]top for help.',
-      'Go to www.evil.example.',
-      'Call 0800 169 6031 to confirm.',
-      'Email help@evil.example.',
-      'This message is safe.',
-      'The sender looks legitimate.',
-      'It seems genuine.',
-      'It does not name your account.',
-      'It is not safe to act on this.',
+      'Pay at evil.shop to be safe.', 'Call 0800 169 6031.', 'This is a genuine notice.', 'You can trust this message.',
+      'threat', 'constructor', '__proto__', 'toString', 7, null, { code: 'threat' }, 'asks_payment',
     ],
   }));
-  assert.deepEqual(r.reasons, ['It does not name your account.', 'It is not safe to act on this.']);
+  assert.deepEqual(r.reasons, [REASONS.threat, REASONS.asks_payment]);
 });
 
-test('reasons are capped in number and length; non-strings dropped', () => {
-  const r = parseMessageVerdict(JSON.stringify({ verdict: 'suspicious', reasons: ['a', 2, null, 'b', 'c', 'd', 'e', 'x'.repeat(500)] }));
-  assert.deepEqual(r.reasons.slice(0, 4), ['a', 'b', 'c', 'd']);
-  assert.equal(r.reasons.length, 4);
-  assert.ok(parseMessageVerdict(JSON.stringify({ verdict: 'suspicious', reasons: ['x'.repeat(500)] })).reasons[0].length <= 220);
+test('"can’t tell" comes with no reasons, so it can’t carry a reassurance', () => {
+  assert.deepEqual(parseMessageVerdict(JSON.stringify({ verdict: 'cant_tell', reasons: ['threat', 'This is safe.'] })), { verdict: 'cant_tell', reasons: [] });
+});
+
+test('reasons are capped and de-duplicated', () => {
+  const r = parseMessageVerdict(JSON.stringify({ verdict: 'likely_scam', reasons: ['threat', 'threat', 'deadline', 'asks_payment', 'asks_contact', 'vague_details'] }));
+  assert.deepEqual(r.reasons, [REASONS.threat, REASONS.deadline, REASONS.asks_payment, REASONS.asks_contact]);
+});
+
+test('every reason is our own plain sentence, with no contact details, and the prompt lists every code', () => {
+  for (const [code, text] of Object.entries(REASONS)) {
+    assert.match(code, /^[a-z_]+$/);
+    assert.ok(text.endsWith('.') && text.length < 120, code);
+    assert.ok(!/\d|https?:|@/.test(text), code);
+    assert.ok(MESSAGE_SYSTEM.includes(code), `${code} in the prompt`);
+  }
+  assert.ok(!/\b(?:safe|legit|genuine)\b/i.test(Object.values(REASONS).join(' ')));
 });
 
 test('answers that aren’t JSON fail cleanly; JSON wrapped in text still reads', async () => {
