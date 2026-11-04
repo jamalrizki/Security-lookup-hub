@@ -1,5 +1,5 @@
 {
-  "_about": "Scam warning signs for the Analyze message check (analyze.html#message), matched in code by js/analyze/message-check.js, never by a model. Each pattern is a JavaScript regular expression (case-insensitive, Unicode) run on the normalised, lower-cased message; a sign matches when any pattern matches and no 'unless' pattern does. strength: 'strong' (a scam on its own) or 'warning' (real messages can do this too). says: one plain sentence (160 characters max). guidance: an official page on an allowed host (js/what-now.js GUIDANCE_HOSTS). The signs follow FTC and NCSC guidance on text and email scams; tests/message-check.test.mjs checks every pattern, link and length.",
+  "_about": "Scam warning signs for the Analyze message check (analyze.html#message), matched in code by js/analyze/message-check.js, never by a model. Each pattern is a JavaScript regular expression (case-insensitive, Unicode) run on the normalised, lower-cased message; a sign matches when any pattern matches and no 'unless' pattern does. coveredBy (optional): ids of stronger signs that make this one redundant in the list. strength: 'strong' (a scam on its own) or 'warning' (real messages can do this too). says: one plain sentence (160 characters max). guidance: an official page on an allowed host (js/what-now.js GUIDANCE_HOSTS). The signs follow FTC and NCSC guidance on text and email scams; tests/message-check.test.mjs checks every pattern, link and length.",
   "signs": [
     {
       "id": "toll-fine",
@@ -11,17 +11,14 @@
         "\\bunpaid\\s+(?:[a-z-]+\\s+){0,2}tickets?\\b",
         "\\b(?:toll|tolls|traffic|parking)\\s+(?:violations?|penalt(?:y|ies))\\b",
         "\\btoll\\s+notices?\\b",
-        "\\b(?:toll|tolls|traffic|parking)\\s+(?:invoices?|balances?|charges?|due)\\b[^.!?\\n]{0,80}\\b(?:pay|settle|avoid|overdue|immediately|today|within)\\b",
-        "\\b(?:pay|settle)\\b[^.!?\\n]{0,40}\\b(?:toll|tolls|traffic|parking)\\s+(?:invoices?|balances?|charges?)\\b"
+        "\\b(?:toll|tolls|traffic|parking)\\s+(?:invoices?|balances?|charges?|due)\\b(?!\\s+(?:is\\s+|of\\s+|was\\s+)?\\$?0(?:\\.00)?(?![\\d.,]))(?:[^.!?\\n]|(?<=\\d)\\.(?=\\d)){0,80}\\b(?:pay|settle|avoid|overdue|immediately|today|within)\\b",
+        "\\b(?:pay|settle)\\b(?:[^.!?\\n]|(?<=\\d)\\.(?=\\d)){0,40}\\b(?:toll|tolls|traffic|parking)\\s+(?:invoices?|balances?|charges?)\\b(?!\\s+(?:is\\s+|of\\s+|was\\s+)?\\$?0(?:\\.00)?(?![\\d.,]))"
       ],
       "guidance": {
         "by": "FTC (US)",
         "title": "Got a text about unpaid tolls? It's probably a scam",
         "url": "https://consumer.ftc.gov/consumer-alerts/2025/01/got-text-about-unpaid-tolls-its-probably-scam"
-      },
-      "unless": [
-        "\\b(?:toll|tolls|traffic|parking)\\s+(?:balances?|charges?|invoices?)\\s+(?:is|of|was)?\\s*\\$?0(?:\\.00)?\\b(?!\\.\\d)"
-      ]
+      }
     },
     {
       "id": "delivery-problem",
@@ -43,12 +40,8 @@
       "says": "Asks you to confirm your address or pay a small fee before a delivery. Real couriers don't ask for this by text.",
       "patterns": [
         "\\b(?:confirm|update|verify|re-?enter|correct)\\s+(?:your\\s+)?(?:delivery\\s+|shipping\\s+|home\\s+|mailing\\s+)?(?:address|details)\\b[^.!?\\n]{0,80}\\b(?:package|parcel|shipment|delivery|redeliver)",
-        "\\b(?:pay|payment of|settle)\\b[^.!?\\n]{0,40}\\b(?:redelivery|re-delivery|customs|shipping|delivery|handling)\\s+(?:fee|charge|cost)s?\\b",
-        "\\b(?:redelivery|re-delivery|customs|shipping|delivery|handling)\\s+(?:fee|charge|payment|cost)s?\\b[^.!?\\n]{0,60}\\b(?:to (?:release|receive|redeliver|reschedule|complete)|before|required|must be paid|unpaid)\\b"
-      ],
-      "unless": [
-        "\\bno\\s+(?:redelivery|customs|shipping|delivery|handling)\\s+(?:fee|charge|payment|cost)s?\\b",
-        "\\bfree\\s+(?:shipping|delivery)\\b"
+        "\\b(?:pay|payment of|settle)\\b(?:[^.!?\\n]|(?<=\\d)\\.(?=\\d)){0,40}(?<!\\bno\\s)(?<!\\bfree\\s)\\b(?:redelivery|re-delivery|customs|shipping|delivery|handling)\\s+(?:fee|charge|cost)s?\\b",
+        "(?<!\\bno\\s)(?<!\\bfree\\s)\\b(?:redelivery|re-delivery|customs|shipping|delivery|handling)\\s+(?:fee|charge|payment|cost)s?\\b(?:[^.!?\\n]|(?<=\\d)\\.(?=\\d)){0,60}\\b(?:to (?:release|receive|redeliver|reschedule|complete)|before|required|must be paid|unpaid)\\b"
       ],
       "guidance": {
         "by": "FTC (US)",
@@ -114,15 +107,33 @@
       "strength": "strong",
       "says": "Asks for payment by gift card, cryptocurrency or wire transfer. Only scammers insist on these.",
       "patterns": [
-        "\\b(?:pay|paying|payment|send|buy|purchase|deposit|transfer|get)\\b[^.!?\\n]{0,60}\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\b",
-        "\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\b[^.!?\\n]{0,60}\\b(?:scratch|photo of|card numbers?|codes? on the back|the codes?|as payment|to pay)\\b",
-        "\\bwire\\s+(?:the\\s+)?(?:money|funds|payment)\\b"
+        "\\b(?:pay|paying|payment|send|buy|purchase|deposit|transfer|get)\\b(?:[^.!?\\n]|(?<=\\d)\\.(?=\\d)){0,60}\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\b",
+        "\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\b(?:[^.!?\\n]|(?<=\\d)\\.(?=\\d)){0,60}\\b(?:scratch|photo of|card numbers?|codes? on the back|the codes?|as payment|to pay)\\b",
+        "\\bwire\\s+(?:the\\s+)?(?:money|funds|payment)\\b",
+        "\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\s+only\\b",
+        "\\b(?:only\\s+accept|accept\\s+only)\\b(?:[^.!?\\n]|(?<=\\d)\\.(?=\\d)){0,30}\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\b"
       ],
       "guidance": {
         "by": "FTC (US)",
         "title": "Avoiding and reporting gift card scams",
         "url": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams"
       }
+    },
+    {
+      "id": "payment-method-mention",
+      "strength": "warning",
+      "says": "Mentions paying by gift card, crypto or wire. Scammers ask for these because the money can't be got back, though real messages can mention them too.",
+      "patterns": [
+        "^(?=[\\s\\S]*\\b(?:gift ?cards?|itunes cards?|google play cards?|steam cards?|apple cards?|bitcoin|btc|crypto(?:currency)?|usdt|tether|ethereum|bitcoin atm|crypto atm|wire transfer|wire the|western union|moneygram)\\b)(?=[\\s\\S]*\\b(?:pay|paying|payment|send|buy|purchase|deposit|transfer|owe|owes)\\b)"
+      ],
+      "guidance": {
+        "by": "FTC (US)",
+        "title": "Avoiding and reporting gift card scams",
+        "url": "https://consumer.ftc.gov/articles/avoiding-and-reporting-gift-card-scams"
+      },
+      "coveredBy": [
+        "unusual-payment"
+      ]
     },
     {
       "id": "payment-app",
@@ -173,7 +184,7 @@
       "strength": "strong",
       "says": "Claims to be a government agency or the police and asks for money or threatens arrest. Real agencies don't demand payment by text, email or phone.",
       "patterns": [
-        "^(?=[\\s\\S]*\\b(?:irs|hmrc|social security(?: administration)?|ssa|dmv|department of motor vehicles|medicare|fbi|ftc|police|sheriff|marshal|court|customs|border patrol|immigration|tax office|revenue service|department of (?:revenue|transportation|justice))\\b)(?=[\\s\\S]*\\b(?:you owe|you still owe|must pay|pay (?:now|immediately|today|this|the (?:fine|fee|balance|amount)|your (?:fine|balance|debt|taxes))|immediate payment|payment (?:is )?(?:required|due|overdue)|unpaid|outstanding|warrant|arrest(?:ed)?|suspend\\w*|seiz\\w+|frozen|legal action|penalt(?:y|ies)|(?:a|the|your|\\$\\s?\\d[\\d,.]*)\\s+fine)\\b)"
+        "^(?=[\\s\\S]*\\b(?:irs|hmrc|social security(?: administration)?|ssa|dmv|department of motor vehicles|medicare|fbi|ftc|police|sheriff|marshal|court|customs|border patrol|immigration|tax office|revenue service|department of (?:revenue|transportation|justice))\\b)(?=[\\s\\S]*(?:\\b(?:you owe|you still owe|must pay|immediate payment|unpaid|outstanding|warrant|arrest(?:ed)?|suspend\\w*|seiz\\w+|frozen|legal action|penalt(?:y|ies))\\b|\\bpay\\s+(?:\\$\\s?\\d|now\\b|immediately\\b|today\\b|this\\b|the (?:fine|fee|balance|amount)\\b|your (?:fine|balance|debt|taxes)\\b)|\\b(?:send|make|submit)\\s+(?:a\\s+|the\\s+|your\\s+)?payment\\b|\\bpayment (?:is )?(?:required|due|overdue)\\b|\\b(?:a|the|your)\\s+fine\\b|\\$\\s?\\d[\\d,.]*\\s+fine\\b))"
       ],
       "guidance": {
         "by": "FTC (US)",

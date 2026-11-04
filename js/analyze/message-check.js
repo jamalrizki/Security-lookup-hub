@@ -59,6 +59,7 @@ export function compileSigns(data) {
         says: s.says,
         patterns: s.patterns.map((p) => new RegExp(p, 'iu')),
         unless: (s.unless ?? []).map((p) => new RegExp(p, 'iu')),
+        coveredBy: Array.isArray(s.coveredBy) ? s.coveredBy : [],
         guidance: s.guidance && guidanceUrl(s.guidance.url) ? { by: s.guidance.by, title: s.guidance.title, url: guidanceUrl(s.guidance.url) } : null,
       });
     } catch {
@@ -106,15 +107,18 @@ export function checkMessage(text, { signs = [], psl = null, brands = [] } = {})
   for (const s of signs) {
     const hit = forms.some((f) => s.patterns.some((re) => re.test(f)));
     if (hit && !forms.some((f) => s.unless.some((re) => re.test(f)))) {
-      found.push({ id: s.id, strength: s.strength, says: s.says, guidance: s.guidance });
+      found.push({ id: s.id, strength: s.strength, says: s.says, guidance: s.guidance, coveredBy: s.coveredBy });
     }
   }
-  found.sort((a, b) => STRENGTHS.indexOf(a.strength) - STRENGTHS.indexOf(b.strength));
+  // A weaker sign says nothing new once the stronger one it belongs to has matched.
+  const hitIds = new Set(found.map((s) => s.id));
+  const shown = found.filter((s) => !s.coveredBy?.some((id) => hitIds.has(id))).map(({ coveredBy, ...rest }) => rest);
+  shown.sort((a, b) => STRENGTHS.indexOf(a.strength) - STRENGTHS.indexOf(b.strength));
 
   const { links, total } = messageLinks(clean, { psl, brands });
   const badLink = links.some((l) => l.verdict === 'Suspicious');
-  const verdict = found.some((s) => s.strength === 'strong') || badLink ? 'scam' : found.length ? 'warning' : 'none';
-  return { verdict, signs: found, links, truncated, linksCapped: total > links.length };
+  const verdict = shown.some((s) => s.strength === 'strong') || badLink ? 'scam' : shown.length ? 'warning' : 'none';
+  return { verdict, signs: shown, links, truncated, linksCapped: total > links.length };
 }
 
 export const VERDICT_TEXT = {

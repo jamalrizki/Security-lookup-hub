@@ -321,3 +321,47 @@ test('a short brand name as a whole hyphenated word is suspicious; inside anothe
   assert.equal(links('https://www.startups.com/').verdict, 'Looks normal');
   assert.equal(links('https://tools.usps.com/go').verdict, 'Looks normal');
 });
+
+/* ---------- demands that earlier wording let through ---------- */
+
+const DEMANDS = {
+  'price in the bitcoin demand': ['Pay $19.99 in bitcoin to get your refund.', 'unusual-payment'],
+  'price in the gift card demand': ['Send $50.00 in gift cards.', 'unusual-payment'],
+  'price after the toll balance': ['Your toll balance $6.99 is overdue. Pay now.', 'toll-fine'],
+  'price before the delivery fee': ['Pay $1.99 delivery fee to release your parcel.', 'confirm-address-fee'],
+  'agency, then an amount': ['IRS: Pay $4,200 immediately.', 'government-payment'],
+  'agency, send payment': ['IRS: send payment of $900 today.', 'government-payment'],
+  'agency, a $ fine and nothing else': ['Police: you have a $200 fine.', 'government-payment'],
+  'gift cards only': ['You must pay today. Gift cards only.', 'unusual-payment'],
+  'only accept crypto': ['Please send it now. We only accept crypto.', 'unusual-payment'],
+};
+for (const [name, [text, id]] of Object.entries(DEMANDS)) {
+  test(`demand "${name}" gets "Scam signs found"`, () => {
+    const r = check(text);
+    assert.ok(ids(r).includes(id), `${id}: got ${ids(r)}`);
+    assert.equal(r.verdict, 'scam');
+  });
+}
+
+test('wording added by the sender can’t cancel a sign', () => {
+  assert.ok(ids(check('You have an unpaid toll of $6.99. Pay today. Your toll balance is $0.00 after payment.')).includes('toll-fine'));
+  assert.ok(ids(check('Pay the $2.99 delivery fee to get your parcel. Free shipping on your next order!')).includes('confirm-address-fee'));
+  // No sign uses an "unless" any more, so nothing in a message can switch one off.
+  assert.deepEqual(JSON.parse(readFileSync(new URL('../data/scam-signs.json', import.meta.url), 'utf8')).signs.filter((x) => x.id === 'toll-fine' || x.id === 'confirm-address-fee').filter((x) => x.unless), []);
+});
+
+test('a payment method split from the demand is at least a warning', () => {
+  const r = check('Your account owes money. Our team takes crypto.');
+  assert.deepEqual(ids(r), ['payment-method-mention']);
+  assert.equal(r.verdict, 'warning');
+});
+
+test('the payment-method warning isn\u2019t repeated when the stronger sign matched', () => {
+  assert.deepEqual(ids(check('Pay $19.99 in bitcoin to get your refund.')), ['unusual-payment']);
+});
+
+test('prices and zero balances alone stay clean', () => {
+  for (const text of ['Your toll balance is $0.00. Thanks for using E-ZPass.', 'Your toll balance of $0 is up to date.', 'No delivery fee on this order, and no shipping fee required.', 'Shipping fee $5.99. Total $47.99.']) {
+    assert.notEqual(check(text).verdict, 'scam', text);
+  }
+});
