@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parsePsl, inspectUrl } from '../js/extract.js';
 import { guidanceUrl } from '../js/what-now.js';
-import { checkMessage, compileSigns, normalise, matchForms, messageLinks, MAX_MESSAGE, MAX_LINKS, VERDICT_TEXT } from '../js/analyze/message-check.js';
+import { checkMessage, compileSigns, compileTactics, combineVerdict, tacticsSign, normalise, matchForms, messageLinks, MAX_MESSAGE, MAX_LINKS, VERDICT_TEXT, AI_ERROR } from '../js/analyze/message-check.js';
 
 const root = new URL('../', import.meta.url);
 const read = (p) => readFileSync(new URL(p, root), 'utf8');
@@ -197,7 +197,7 @@ test('works without the domain lists (look-alike checks off) and with no signs l
 });
 
 test('verdict wording is fixed in code', () => {
-  assert.deepEqual(VERDICT_TEXT, { scam: 'Scam signs found', warning: 'Some warning signs', none: 'No known scam signs found' });
+  assert.deepEqual(VERDICT_TEXT, { scam: 'Scam signs found', warning: 'Some warning signs', none: "This check can't clear a message" });
 });
 
 /* ---------- the page ---------- */
@@ -219,13 +219,15 @@ test('the Analyze page has the message check, loads the module, and Ask can link
   assert.ok(read('js/reference.js').includes('#what-now-'), 'Reference scrolls to a what-now card linked by id');
 });
 
-test('in the page: Check shows the verdict, signs, links and next steps; nothing but bundled data is fetched; Clear hides them', async () => {
+test('in the page: Check shows the verdict, signs, links and next steps, and sends the message for an AI read; Clear hides them', async () => {
   const dom = installDom(read('analyze.html'), { url: 'https://jamalrizki.github.io/Security-lookup-hub/analyze.html' });
   const requests = [];
   globalThis.fetch = async (input) => {
     const u = String(input);
     requests.push(u);
-    return u.startsWith('data/') ? new Response(read(u)) : new Response('no', { status: 500 });
+    if (u.startsWith('data/')) return new Response(read(u));
+    if (u.endsWith('/api/message-check')) return new Response(JSON.stringify({ verdict: 'likely_scam', reasons: ['It rushes you with a threat.'], model: 'test-model' }));
+    return new Response('no', { status: 500 });
   };
   try {
     await import('../js/analyze/link.js');
@@ -246,7 +248,10 @@ test('in the page: Check shows the verdict, signs, links and next steps; nothing
     await settle();
     assert.equal($('link-input').value, 'https://chase.com.secure-verify.co/login');
     assert.match($('link-result').textContent, /Suspicious/);
-    assert.ok(requests.every((u) => u.startsWith('data/')), `only bundled data: ${requests}`);
+    assert.match(out, /What the AI noticed/);
+    assert.match(out, /It rushes you with a threat\./);
+    assert.match(out, /Read by test-model/);
+    assert.deepEqual(requests.filter((u) => !u.startsWith('data/')), ['https://security-lookup-hub.jamal-598.workers.dev/api/message-check'], 'one AI call, and nothing else leaves');
     $('message-clear').click();
     assert.equal($('message-result').textContent, '');
     assert.equal($('message-next').hidden, true);
@@ -364,4 +369,144 @@ test('prices and zero balances alone stay clean', () => {
   for (const text of ['Your toll balance is $0.00. Thanks for using E-ZPass.', 'Your toll balance of $0 is up to date.', 'No delivery fee on this order, and no shipping fee required.', 'Shipping fee $5.99. Total $47.99.']) {
     assert.notEqual(check(text).verdict, 'scam', text);
   }
+});
+
+/* ---------- tactics: the same threat on any subject ---------- */
+
+const tactics = compileTactics(DATA);
+const full = (text) => checkMessage(text, { signs, tactics, psl, brands });
+const REWORDED_THREATS = {
+  'toll notice (received Nov 2026)': `Violation Ref: EZPY335Z1DDWCMA
+Issued: November 2, 2026
+Your toll payment could not be processed
+We are writing to inform you that a recent toll crossing on your account could not be charged.
+Under 23 CFR Part 940 and applicable state tolling statutes, operators of all vehicles crossing a tolled facility are legally required to settle outstanding balances within the window printed on this notice.
+If this balance remains unpaid, your account may be referred to collections, a civil penalty of up to $100 per violation plus administrative fees may be assessed, and a hold may be placed on your vehicle registration renewal.`,
+  'water bill': 'Notice from the water department of your city. Your last payment could not be processed. Under state regulations you must settle your overdue account within 3 days or your service will be disconnected and late fees applied.',
+  'library': 'Official notice, case number 8841. Your library account shows an outstanding balance. Pay within 48 hours. Failure to do so will be referred to collections and may affect your credit score.',
+  'streaming': 'Your membership payment failed. Under applicable law we are required to notify you. Update your card today or your account will be closed and a penalty charged.',
+  'no familiar nouns': 'Compliance notice: your records show a violation. Confirm your details immediately. Further delay will result in legal action.',
+};
+for (const [name, text] of Object.entries(REWORDED_THREATS)) {
+  test(`a threat with authority, urgency and a request is a scam sign, whatever the subject: ${name}`, () => {
+    const r = full(text);
+    assert.ok(ids(r).includes('pressure-tactics'), JSON.stringify(ids(r)));
+    assert.equal(r.verdict, 'scam');
+  });
+}
+
+test('one or two tactics alone mean nothing', () => {
+  for (const text of ['Call me now, today is mad.', 'Please call the office to confirm your appointment today.', 'The court was booked so we lost the game.', 'My card was declined at lunch, so embarrassing.', 'Under federal regulations the office is closed on Monday.']) {
+    assert.equal(tacticsSign(tactics, matchForms(normalise(text))), null, text);
+  }
+});
+
+test('an ordinary bill with a late fee is at most a warning', () => {
+  const r = full('Your electric bill of $88.20 is overdue. A late fee applies after Nov 12. Pay in your account.');
+  assert.notEqual(r.verdict, 'scam', JSON.stringify(ids(r)));
+});
+
+test('a lure with a request is a warning, whatever the prize', () => {
+  for (const text of ['Please call our customer service on 0800 169 6031 as you have WON a guaranteed cash prize.', 'You have been selected for an award. Reply YES.']) {
+    assert.ok(ids(full(text)).includes('pressure-tactics'), text);
+  }
+});
+
+test('every tactic compiles and has a plain label', () => {
+  assert.equal(tactics.length, DATA.tactics.length);
+  for (const t of DATA.tactics) assert.ok(t.label.length > 10 && t.label.length < 60, t.id);
+});
+
+test('the AI can raise the verdict, never lower it', () => {
+  assert.equal(combineVerdict('none', 'likely_scam'), 'scam');
+  assert.equal(combineVerdict('none', 'suspicious'), 'warning');
+  assert.equal(combineVerdict('warning', 'likely_scam'), 'scam');
+  assert.equal(combineVerdict('scam', 'cant_tell'), 'scam');
+  assert.equal(combineVerdict('warning', 'cant_tell'), 'warning');
+  assert.equal(combineVerdict('none', 'cant_tell'), 'none');
+  assert.equal(combineVerdict('scam', undefined), 'scam', 'AI unavailable');
+  assert.equal(combineVerdict('none', undefined), 'none');
+});
+
+test('the page never paints a result as safe', () => {
+  const code = read('js/analyze/message-check.js');
+  assert.ok(!code.includes("class: 'verdict ok'"), 'no green verdict');
+  assert.ok(!/safe/i.test(VERDICT_TEXT.none));
+  const html = read('analyze.html');
+  assert.match(html, /the message is sent to an AI provider to read/, 'says so before the button');
+  assert.ok(!html.includes('Nothing you paste is sent anywhere'));
+});
+
+async function pageWith(aiReply) {
+  const dom = installDom(read('analyze.html'), { url: 'https://jamalrizki.github.io/Security-lookup-hub/analyze.html' });
+  const calls = [];
+  globalThis.fetch = async (input, init = {}) => {
+    const u = String(input);
+    if (u.startsWith('data/')) return new Response(read(u));
+    if (u.endsWith('/api/message-check')) { calls.push({ body: JSON.parse(init.body), init }); return aiReply(init); }
+    return new Response('no', { status: 500 });
+  };
+  await import(`../js/analyze/message-check.js?page=ai${pageWith.n = (pageWith.n || 0) + 1}`);
+  await settle();
+  return { dom, calls, $: (id) => dom.document.getElementById(id) };
+}
+
+test('in the page: nothing is sent before Check; no signs plus an AI "likely scam" shows Scam signs found', async () => {
+  const { dom, calls, $ } = await pageWith(() => new Response(JSON.stringify({ verdict: 'likely_scam', reasons: ['Vague threat.'], model: 'm' })));
+  try {
+    $('message-input').value = 'Please review the attached statement from our office.';
+    await settle();
+    assert.equal(calls.length, 0, 'typing sends nothing');
+    $('message-form').requestSubmit();
+    await settle();
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].body.message, 'Please review the attached statement from our office.');
+    assert.equal(calls[0].init.referrerPolicy, 'no-referrer');
+    assert.match($('message-result').textContent, /Scam signs found/);
+  } finally { dom.restore(); delete globalThis.fetch; }
+});
+
+test('in the page: AI down or refusing leaves the code result and says so', async () => {
+  for (const reply of [() => { throw new TypeError('offline'); }, () => new Response('{"error":"busy"}', { status: 429 })]) {
+    const { dom, $ } = await pageWith(reply);
+    try {
+      $('message-input').value = SCAMS.giftCard;
+      $('message-form').requestSubmit();
+      await settle();
+      const out = $('message-result').textContent;
+      assert.match(out, /Scam signs found/);
+      assert.ok(out.includes(AI_ERROR));
+    } finally { dom.restore(); delete globalThis.fetch; }
+  }
+});
+
+test('in the page: with no signs and "can’t tell", the result is neutral, not reassuring', async () => {
+  const { dom, $ } = await pageWith(() => new Response(JSON.stringify({ verdict: 'cant_tell', reasons: [], model: 'm' })));
+  try {
+    $('message-input').value = 'See you at 6.';
+    $('message-form').requestSubmit();
+    await settle();
+    const verdict = $('message-result').firstElementChild;
+    assert.equal(verdict.className, 'verdict muted');
+    assert.match(verdict.textContent, /This check can't clear a message.*Were you expecting this message\?/);
+  } finally { dom.restore(); delete globalThis.fetch; }
+});
+
+test('in the page: Clear drops an AI answer still on its way', async () => {
+  let release;
+  const { dom, calls, $ } = await pageWith((init) => new Promise((resolve, reject) => {
+    init.signal.addEventListener('abort', () => reject(Object.assign(new Error('stopped'), { name: 'AbortError' })));
+    release = () => resolve(new Response(JSON.stringify({ verdict: 'likely_scam', reasons: ['late'], model: 'm' })));
+  }));
+  try {
+    $('message-input').value = 'Hello there.';
+    $('message-form').requestSubmit();
+    await settle();
+    assert.equal(calls.length, 1);
+    assert.match($('message-result').textContent, /AI is reading/);
+    $('message-clear').click();
+    release();
+    await settle();
+    assert.equal($('message-result').textContent, '');
+  } finally { dom.restore(); delete globalThis.fetch; }
 });

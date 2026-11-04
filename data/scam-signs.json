@@ -1,5 +1,5 @@
 {
-  "_about": "Scam warning signs for the Analyze message check (analyze.html#message), matched in code by js/analyze/message-check.js, never by a model. Each pattern is a JavaScript regular expression (case-insensitive, Unicode) run on the normalised, lower-cased message; a sign matches when any pattern matches and no 'unless' pattern does. coveredBy (optional): ids of stronger signs that make this one redundant in the list. strength: 'strong' (a scam on its own) or 'warning' (real messages can do this too). says: one plain sentence (160 characters max). guidance: an official page on an allowed host (js/what-now.js GUIDANCE_HOSTS). The signs follow FTC and NCSC guidance on text and email scams; tests/message-check.test.mjs checks every pattern, link and length.",
+  "_about": "Scam warning signs for the Analyze message check (analyze.html#message), matched in code by js/analyze/message-check.js, never by a model. Each pattern is a JavaScript regular expression (case-insensitive, Unicode) run on the normalised, lower-cased message; a sign matches when any pattern matches and no 'unless' pattern does. coveredBy (optional): ids of stronger signs that make this one redundant in the list. strength: 'strong' (a scam on its own) or 'warning' (real messages can do this too). says: one plain sentence (160 characters max). guidance: an official page on an allowed host (js/what-now.js GUIDANCE_HOSTS). The signs follow FTC and NCSC guidance on text and email scams; tests/message-check.test.mjs checks every pattern, link and length. tactics: broader groups of wording, on any subject, that js/analyze/message-check.js combines (see tacticsSign); a single tactic means nothing, so they carry no strength of their own.",
   "signs": [
     {
       "id": "toll-fine",
@@ -246,6 +246,50 @@
         "title": "Fake prize offers don't pay",
         "url": "https://consumer.ftc.gov/consumer-alerts/2021/03/fake-prize-offers-dont-pay"
       }
+    }
+  ],
+  "tactics": [
+    {
+      "id": "problem",
+      "label": "a claim that something is wrong or owed",
+      "patterns": [
+        "\\b(?:outstanding|unpaid|overdue|past[- ]due|owed?|owes|debts?|arrears|balance due|violations?|could(?: not|n't) be (?:processed|charged|delivered|verified)|(?:failed|declined|unauthori[sz]ed|suspicious|unusual) (?:\\w+ )?(?:payment|transaction|charge|login|sign[- ]?in|activity|attempt)|payment (?:failed|declined)|compromised|locked|suspended|restricted|disabled|deactivated|(?:due|about) to expire|expir(?:ed|es|ing)|problem with your|issue with your)\\b"
+      ]
+    },
+    {
+      "id": "consequence",
+      "label": "a threat of what happens if you don't act",
+      "patterns": [
+        "\\b(?:collections?|penalt(?:y|ies)|late fees?|administrative fees?|legal action|lawsuit|prosecut\\w*|arrest\\w*|warrant|court|seiz\\w+|garnish\\w*|suspen(?:d|ded|sion)|terminat\\w*|deactivat\\w*|disconnect\\w*|permanently (?:closed|deleted|locked|disabled)|(?:will|may) be (?:closed|blocked|cancell?ed|locked|removed|charged|referred)|hold (?:may|will) be placed|lose (?:access|your)|credit score)\\b"
+      ]
+    },
+    {
+      "id": "urgency",
+      "label": "pressure to act quickly",
+      "patterns": [
+        "\\b(?:immediately|urgent(?:ly)?|right away|asap|act now|final (?:notice|notification|warning|reminder|attempt)|last (?:chance|notice|warning)|2nd (?:time|attempt)|within (?:\\d{1,3}\\s*(?:hours?|hrs?|days?|minutes?|mins?)|the (?:window|time|period))|(?:by|before) (?:today|tonight|tomorrow|midnight|\\d{1,2}[/.-]\\d{1,2})|today|now!|deadline|expires? (?:today|soon|tomorrow))\\b"
+      ]
+    },
+    {
+      "id": "authority",
+      "label": "official-sounding language",
+      "patterns": [
+        "\\b(?:legally (?:required|obligated)|statutes?|regulations?|pursuant to|under (?:federal|state|applicable) law|\\d+ (?:cfr|u\\.?s\\.?c)\\b|violation (?:ref|reference|number|no)|(?:case|reference|ref|notice) (?:number|no)\\b|official notice|compliance|government|federal|tax(?:-paying)? (?:office|citizens?)|department of)\\b"
+      ]
+    },
+    {
+      "id": "ask",
+      "label": "a request to pay, log in, confirm or get in touch",
+      "patterns": [
+        "\\b(?:pay|settle|click|tap|follow|log ?in|sign ?in|verify|validate|confirm|re-?activate|update your|enter your|provide your|send (?:us|me)|call|ring|reply|text|txt|claim|collect|visit|go to)\\b"
+      ]
+    },
+    {
+      "id": "lure",
+      "label": "a prize, refund or offer you didn't ask for",
+      "patterns": [
+        "\\b(?:you(?:'ve| have| are)? (?:won|been (?:selected|chosen|awarded|approved))|u (?:have )?won|ur? awarded|winner|prize|award|entitled to|unclaimed|emergency refund|tax refund|cash ?back|guaranteed)\\b"
+      ]
     }
   ]
 }

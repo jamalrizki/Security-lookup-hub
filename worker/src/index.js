@@ -7,6 +7,7 @@
 //   GET /api/news                   feed snapshot kept in KV by the cron job (scheduled())
 //   POST /api/ask                   Ask: AI answers with tools (ask.js)
 //   POST /api/ask/simplify          "Make it simpler" for an Ask answer (ask.js)
+//   POST /api/message-check         AI read of a pasted message for the Analyze scam check (message-ai.js); nothing stored
 //   POST /api/transcribe            Ask's voice input: raw audio -> text, Whisper on Workers AI (transcribe.js)
 //   GET /api/ranges                 Tor and cloud/CDN lists from KV for the browser tools (ranges.js); edge-cached 1 hour
 //   GET /api/my-ip                  the visitor's own public IP and request.cf details (myip.js); never cached
@@ -28,6 +29,7 @@ import { NEWS_KEY, refreshNews, sourcesForRun } from './news.js';
 import { handleAsk, handleSimplify } from './ask.js';
 import { handleTranscribe } from './transcribe.js';
 import { myIp } from './myip.js';
+import { handleMessageCheck } from './message-ai.js';
 import { RANGES_MINUTE, rangesForRun, refreshRanges, readRanges } from './ranges.js';
 
 const CACHE_TTL = 86_400; // 24h for results
@@ -40,7 +42,7 @@ const CACHE_VERSION = 'v3';
 const ASK_PATH = '/api/ask';
 const SIMPLIFY_PATH = '/api/ask/simplify';
 const TRANSCRIBE_PATH = '/api/transcribe';
-const POST_HANDLERS = { [ASK_PATH]: handleAsk, [SIMPLIFY_PATH]: handleSimplify, [TRANSCRIBE_PATH]: handleTranscribe };
+const POST_HANDLERS = { [ASK_PATH]: handleAsk, [SIMPLIFY_PATH]: handleSimplify, [TRANSCRIBE_PATH]: handleTranscribe, '/api/message-check': handleMessageCheck };
 const isAskPath = (path) => Object.hasOwn(POST_HANDLERS, path);
 
 // Every route is GET-only except Ask's, which take a POST (JSON, or audio for voice input).
