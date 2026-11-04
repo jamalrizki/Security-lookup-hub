@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import { installDom, settle } from './helpers/dom.mjs';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parsePsl } from '../js/extract.js';
+import { parsePsl, inspectUrl } from '../js/extract.js';
 import { guidanceUrl } from '../js/what-now.js';
 import { checkMessage, compileSigns, normalise, matchForms, messageLinks, MAX_MESSAGE, MAX_LINKS, VERDICT_TEXT } from '../js/analyze/message-check.js';
 
@@ -259,4 +259,65 @@ test('in the page: Check shows the verdict, signs, links and next steps; nothing
     dom.restore();
     delete globalThis.fetch;
   }
+});
+
+/* ---------- ordinary messages that mention fees, agencies or gift cards ---------- */
+
+const ORDINARY = {
+  'shop receipt': 'Thanks for your order #1182. Subtotal $42.00. Shipping fee $5.99. Total $47.99. It will arrive Tuesday.',
+  'delivery charge': "Your Domino's order: 1 large pizza $14.99, delivery charge $3.50.",
+  'parking receipt': 'Thanks for parking with us. Parking charge $12.00 paid by card ending 4412.',
+  'zero toll balance': 'Your toll balance is $0.00. Thanks for using E-ZPass.',
+  'password expiry': 'Your work password expires in 7 days. Please update your details through the IT portal as usual.',
+  'replacement card': 'Your new card is on its way. Once it arrives, activate it in the app to confirm. Your old card expires 03/27.',
+  'subscription renewal': 'Your subscription expires on May 3. Confirm your plan in your account settings to keep it.',
+  'helpdesk queue': 'You have 3 pending tickets in the helpdesk queue.',
+  'road notice': 'Traffic notice: Main St closed tomorrow. Parking notice: street cleaning Friday.',
+  'tax payment received': 'IRS: We received your payment of $420. Thank you. No further action needed.',
+  'dmv reminder': 'Your vehicle registration renewal is due next month. You can pay at the DMV office.',
+  'customs cleared': 'Our customs broker cleared your shipment. Duties were included in your invoice, nothing more to pay.',
+  'gift card receipt': 'Thanks for your Apple gift card purchase. Your receipt is attached.',
+  'gift cards errand': 'Can you pick up a couple of gift cards for the teachers? I will pay you back.',
+};
+for (const [name, text] of Object.entries(ORDINARY)) {
+  test(`ordinary message "${name}" does not get "Scam signs found"`, () => {
+    const r = check(text);
+    assert.notEqual(r.verdict, 'scam', JSON.stringify(ids(r)));
+  });
+}
+
+test('"are you free?" is not a wrong-number opener, but "is this Dave?" is', () => {
+  assert.deepEqual(ids(check('Hey, are you free Saturday? The parking at the venue is a pain.')), []);
+  assert.ok(ids(check('Hi, is this Dave?')).includes('wrong-number'));
+});
+
+test('an expiry notice is a warning; a locked account plus "verify" stays a scam sign', () => {
+  const expiring = check('Your password expires today. Verify now.');
+  assert.deepEqual(ids(expiring), ['account-expiring']);
+  assert.equal(expiring.verdict, 'warning');
+  assert.ok(ids(check('Your account has been suspended. Verify your details.')).includes('account-locked'));
+});
+
+test('demands still trip the tightened signs', () => {
+  for (const [text, id] of [
+    ['Parking charge overdue. Pay within 48 hours to avoid court.', 'toll-fine'],
+    ['Your parcel has customs fees to pay before delivery.', 'confirm-address-fee'],
+    ['IRS: You owe back taxes. Pay now to avoid arrest.', 'government-payment'],
+    ['DMV: your license will be suspended over a $90 fine.', 'government-payment'],
+    ['Buy 5 gift cards and send me the codes.', 'unusual-payment'],
+    ['Please scratch the gift card and send a photo of the back.', 'unusual-payment'],
+    ['Wire the money to this account today.', 'unusual-payment'],
+  ]) assert.ok(ids(check(text)).includes(id), `${text} -> ${ids(check(text))}`);
+});
+
+test('runs of swapped characters are folded: Unp41d T0ll', () => {
+  assert.ok(ids(check('Unp41d T0ll: p@y n0w t0 av0id a f1ne')).includes('toll-fine'));
+});
+
+test('a short brand name as a whole hyphenated word is suspicious; inside another word it is not', () => {
+  const links = (url) => inspectUrl(url, { psl, brands });
+  assert.equal(links('https://usps-redeliver.top/track').verdict, 'Suspicious');
+  assert.equal(links('https://ups-tracking.info/x').verdict, 'Suspicious');
+  assert.equal(links('https://www.startups.com/').verdict, 'Looks normal');
+  assert.equal(links('https://tools.usps.com/go').verdict, 'Looks normal');
 });

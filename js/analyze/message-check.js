@@ -26,7 +26,7 @@ const CONFUSABLE_RE = new RegExp(`[${Object.keys(CONFUSABLES).join('')}]`, 'gu')
 // Digits and symbols standing in for letters inside a word ("T0ll", "p@y", "Unpa1d").
 // "1" can be an i or an l, so both readings are tried.
 const LEET_COMMON = { 0: 'o', 3: 'e', 4: 'a', 5: 's', 7: 't', '@': 'a', $: 's' };
-const inWord = /(?<=\p{L})[0134578@$](?=\p{L})|(?<=\p{L}{2})[0134578@$]\b|\b[0134578@$](?=\p{L}{2})/gu;
+const inWord = /(?<=\p{L}[0134578@$]*)[0134578@$](?=[0134578@$]*\p{L})|(?<=\p{L}{2})[0134578@$]\b|\b[0134578@$](?=\p{L}{2})/gu;
 const fold = (s, one) => s.replace(inWord, (c) => (c === '1' ? one : c === '8' ? 'b' : LEET_COMMON[c] ?? c));
 
 /** Cleans pasted text for matching and link extraction: NFKC, no invisible characters, straight quotes. */

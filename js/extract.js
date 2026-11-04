@@ -367,7 +367,8 @@ export function lookalikes(host, psl, brands) {
     if (first !== b.label && skel === b.label) reasons.push(`"${first}" imitates ${b.name} using look-alike characters`);
     else if (first === b.label) reasons.push(`Uses the ${b.name} name on ${registrable}, which isn't one of ${b.name}'s listed domains`);
     else if (max && editDistance(skel, b.label) <= max) reasons.push(`"${first}" is one or two letters away from ${b.name} (${b.label})`);
-    else if (b.label.length >= 5 && skel.includes(b.label)) reasons.push(`The domain name contains "${b.label}" (${b.name}) but isn't ${b.name}'s`);
+    // Short names only as a whole hyphen-separated word: usps-redelivery, not campus.
+    else if ((b.label.length >= 5 && skel.includes(b.label)) || skel.split('-').includes(b.label)) reasons.push(`The domain name contains "${b.label}" (${b.name}) but isn't ${b.name}'s`);
     const subLabels = sub ? sub.split('.') : [];
     if (subLabels.some((l) => skeleton(l) === b.label) || b.domains.some((d) => sub === d || sub.endsWith(`.${d}`) || sub.startsWith(`${d}.`))) {
       reasons.push(`${b.name}'s name appears only in the subdomain; the real domain is ${registrable}`);
