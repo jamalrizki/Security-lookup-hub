@@ -48,21 +48,21 @@
       "id": "q06",
       "topic": "is this text a scam (toll)",
       "question": "I got a text saying I owe an unpaid toll and have to pay today at a link or get a fine. Is it real?",
-      "mayHub": ["link", "what-now", "lookup"],
+      "mayHub": ["message", "link", "what-now", "lookup"],
       "mustInclude": [["scam", "phishing", "smishing", "fake"], ["official", "toll agency", "toll's own", "real website", "typing the address", "type the address", "yourself"]]
     },
     {
       "id": "q07",
       "topic": "is this text a scam (package)",
       "question": "A text says my parcel is held at the depot and I need to pay a $1.99 redelivery fee. Should I pay it?",
-      "mayHub": ["link", "what-now", "lookup"],
+      "mayHub": ["message", "link", "what-now", "lookup"],
       "mustInclude": [["scam", "phishing", "smishing", "fake"], ["don't pay", "do not pay", "don't click", "do not click", "don't tap", "do not tap"]]
     },
     {
       "id": "q08",
       "topic": "is this text a scam (bank)",
       "question": "I got a text from my bank saying my account is locked and to tap a link to unlock it. What should I do?",
-      "mayHub": ["link", "what-now", "lookup"],
+      "mayHub": ["message", "link", "what-now", "lookup"],
       "mustInclude": [["scam", "phishing", "smishing", "fake", "suspicious"], ["bank's own app", "bank's app", "bank's website", "number on the back", "number on your card", "call your bank", "contact your bank", "official app"]]
     },
     {
@@ -157,6 +157,14 @@
       "mayHub": ["lookup", "kev-product"],
       "maxWords": 260,
       "mustInclude": [["palo alto", "firewall", "pan-os", "globalprotect"], ["home", "business", "company", "organization", "organisation"]]
+    },
+    {
+      "id": "q21",
+      "topic": "pasted text message",
+      "question": "Is this real? \"USPS: Your package is on hold due to an incomplete address. Update within 12 hours or it will be returned: usps-redelivery-help[.]com\"",
+      "mustHub": ["message"],
+      "mayHub": ["link", "lookup", "what-now"],
+      "mustInclude": [["scam", "phishing", "smishing", "fake"], ["don't tap", "do not tap", "don't click", "do not click", "don't use the link", "do not use the link"], ["usps.com", "usps app", "official", "tracking number", "yourself"]]
     }
   ]
 }
