@@ -96,6 +96,24 @@
       <div id="ports-list"></div>
     </section>
 
+    <section id="ports-practice" class="search-block" aria-labelledby="pdrill-h">
+      <h2 id="pdrill-h">Ports practice</h2>
+      <p class="hint">Random questions for Network+ and Security+: which port, what runs there, TCP or UDP, and the encrypted version. Checked against the same list as above. Your score is not saved anywhere.</p>
+      <label class="small"><input id="pdrill-exam" type="checkbox" checked> Exam ports only</label>
+      <p id="pdrill-question" class="mono" aria-live="polite"></p>
+      <form id="pdrill-form" class="row" autocomplete="off">
+        <input id="pdrill-answer" type="text" class="mono-input" spellcheck="false" maxlength="40" aria-label="Your answer" placeholder="Your answer">
+        <button type="submit">Check</button>
+      </form>
+      <div class="row">
+        <button type="button" id="pdrill-reveal" class="secondary small">Show answer</button>
+        <button type="button" id="pdrill-next" class="secondary small">Next question</button>
+        <button type="button" id="pdrill-show" class="secondary small">Show in the list</button>
+      </div>
+      <div id="pdrill-result" class="result" aria-live="polite"></div>
+      <p id="pdrill-score" class="hint" aria-live="polite"></p>
+    </section>
+
     <section id="acronyms" class="search-block" aria-labelledby="acronyms-h">
       <h2 id="acronyms-h">Security acronyms</h2>
       <p class="hint">Type an acronym (XSS, RPO, PCI DSS) or a word (encryption, recovery). Shows what it stands for and what it means in one plain sentence. Some acronyms have more than one meaning; all are shown.</p>

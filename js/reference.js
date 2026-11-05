@@ -2,6 +2,7 @@
 
 import { guidanceUrl, isHubHref } from './what-now.js';
 import { searchPorts, portLabel, secureVersions } from './ports.js';
+import { startPortsDrill } from './ports-drill.js';
 import { searchAcronyms } from './acronyms.js';
 
 const $ = (id) => document.getElementById(id);
@@ -155,6 +156,16 @@ async function loadPorts() {
     }
     for (const id of ['ports-filter', 'ports-exposed']) $(id).addEventListener('input', renderPorts);
     renderPorts();
+    startPortsDrill(ports, {
+      el,
+      $,
+      showInList: (port) => {
+        $('ports-filter').value = String(port);
+        $('ports-exposed').checked = false;
+        renderPorts();
+        $('ports').scrollIntoView();
+      },
+    });
   } catch (err) {
     $('ports-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the port list: ${err.message}`));
   }
