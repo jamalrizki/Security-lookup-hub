@@ -46,6 +46,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | Ask eval: 20 beginner questions (`tests/evals/beginner.json`) graded in code by `scripts/eval-ask.mjs` (hub links, keywords, banned reassurance phrases, word cap, tool calls from the trace, declines, no URLs); runs against a local `wrangler dev` by default, never in `npm test` | Built (Nov 2, 2026) |
 | Extra | Ask eval, more sets: 15 student questions (`tests/evals/students.json`: cert-style concepts that must link [[acronyms]], [[ports]], [[subnet-practice]] and other hub tools when they fit, plus a PenTest+ payload ask that must be declined) and 13 working non-specialist questions (`tests/evals/work.json`: "is this CVE urgent" must call `cve_lookup` and say "the hub's priority"; patch order, KEV by vendor, email headers, log indicators, exposed RDP, certificates, questionnaire terms, an exploit ask to decline); `--set students` / `--set work` | Built (Nov 3, 2026) |
 | Extra | Reference: "Ports practice" (`#ports-practice`, under the ports list): random questions (which port, what runs there, TCP/UDP/both, the encrypted version) built from `data/ports.json` and graded in code; "Exam ports only" on by default | Built (Nov 4, 2026) |
+| Extra | Reference: "Acronyms practice" (`#acronyms-practice`, under the acronym list): multiple-choice questions (what an acronym stands for, or which acronym a plain sentence describes) built from `data/acronyms.json` and graded in code | Built (Nov 6, 2026) |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -273,6 +274,14 @@ Below "Where to start", `reference.html#what-now` has one card per thing that al
 - Search is in code (`js/acronyms.js`, DOM-free). Case, spaces and punctuation in an acronym don't matter (`PCIDSS` finds PCI DSS, `att&ck` finds ATT&CK). Ranking: exact acronym (every meaning, list order), then acronyms that start with the text, then (3+ characters) matches in the full name, then in the plain sentence. One or two letters only match acronyms, so `a` doesn't list everything. An acronym not in the list says so and points to the NIST glossary.
 - `reference.html#acronyms=RPO` opens the section with that acronym filled in.
 - `tests/acronyms.test.mjs` checks every entry's shape and order, no repeated meaning, exam staples (CIA, AAA, RPO/RTO, ALE/SLE/ARO, SIEM, SOAR, XSS, CSRF, OCSP, CVSS, KEV, EPSS…) with their standard expansions, multi-meaning acronyms, and the search rules. Ask can send visitors here with `[[acronyms]]`.
+
+### Acronyms practice
+
+`reference.html#acronyms-practice`, under the list, quizzes Security+, CySA+ and CISSP students in the exams' own multiple-choice style, with two kinds of question: what an acronym stands for (pick the expansion), and which acronym a plain sentence describes (pick the acronym). Every question and option is built from `data/acronyms.json`, so the quiz and the list can't disagree. After each pick the page shows the list's own line for that acronym (and its other meanings, if any), and "Show in the list" fills the list's search box with it.
+
+- Four options, exactly one right, with the answer's position shuffled. Wrong options are other entries from the list; for "stands for" questions, acronyms starting with the same letter come first so the letters alone don't give it away.
+- A wrong option is never another meaning of the same acronym (CSP, MAC, PAM, SOC; the question says when an acronym has several), and never a close neighbour whose sentence would also fit (`CONFUSABLE` in `js/acronyms-drill.js`: 2FA/MFA, OTP/TOTP, DoS/DDoS, IDS/HIDS, EDR/XDR, SSL/TLS/HTTPS…). A sentence that names its own acronym (ARP, SSL, SOC 2) is never used for a "which acronym" question.
+- Grading is by option index, in code, with no AI; only the first pick on a question counts and the options lock after it. The session score lives in a page variable only (no storage); revealed answers don't score. Code: `js/acronyms-drill.js` (DOM-free apart from `startAcronymsDrill`), tests: `tests/acronyms-drill.test.mjs`.
 
 ## Analyze tools
 
@@ -575,6 +584,7 @@ js/exposure.js   My exposure page rendering (data/exposure.json)
 js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
 js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
 js/acronyms.js   "Security acronyms" search and checks (DOM-free, tested in Node)
+js/acronyms-drill.js   "Acronyms practice" quiz: questions, options and grading from data/acronyms.json (tested in Node)
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups

@@ -320,6 +320,8 @@ button.small, a.button.small { padding: 5px 10px; font-size: 11px; }
 .type-checks { margin-top: 2px; }
 .myip-row { margin: 0; }
 button:disabled { opacity: 0.6; cursor: progress; }
+#adrill-options button { text-transform: none; text-align: left; font-family: var(--term); } /* acronyms keep their case (DoS, IaaS) */
+#adrill-options button:disabled { cursor: default; }
 
 /* Big search bar: input + button inside a 2px white frame. */
 .bigbar { display: flex; flex-wrap: wrap; align-items: stretch; border: 2px solid var(--text); background: var(--bg); }
