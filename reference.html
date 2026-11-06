@@ -27,7 +27,7 @@
   <script type="module" src="js/chrome.js?v=19d86d58ae"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=41e9f06669">
+  <link rel="stylesheet" href="css/style.css?v=a05cb68b94">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/reference.js"></script>
 </head>
@@ -122,6 +122,20 @@
       </div>
       <p id="acronyms-count" class="small hint" aria-live="polite"></p>
       <div id="acronyms-list"></div>
+    </section>
+
+    <section id="acronyms-practice" class="search-block" aria-labelledby="adrill-h">
+      <h2 id="adrill-h">Acronyms practice</h2>
+      <p class="hint">Multiple-choice questions for Security+, CySA+ and CISSP: what an acronym stands for, or which acronym a plain sentence describes. Checked against the same list as above. Your score is not saved anywhere.</p>
+      <p id="adrill-question" aria-live="polite"></p>
+      <div id="adrill-options" class="row" role="group" aria-labelledby="adrill-question"></div>
+      <div class="row">
+        <button type="button" id="adrill-reveal" class="secondary small">Show answer</button>
+        <button type="button" id="adrill-next" class="secondary small">Next question</button>
+        <button type="button" id="adrill-show" class="secondary small">Show in the list</button>
+      </div>
+      <div id="adrill-result" class="result" aria-live="polite"></div>
+      <p id="adrill-score" class="hint" aria-live="polite"></p>
     </section>
 
     <p class="hint">Looking for what a tool does? See the <a href="tools.html">tools glossary</a>.</p>
