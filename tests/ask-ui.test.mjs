@@ -87,7 +87,8 @@ test('the Ask page is the chat: intro, examples, route to Lookup, thread, compos
   const hints = [...empty.matchAll(/<p class="hint">([^<]*)<\/p>/g)].map((m) => m[1]);
   assert.deepEqual(hints, ['Ask AI a security question. Answers draw on a reference library, current security news and the hub’s data, and can be wrong.'], 'the Ask intro is exactly this one line');
   assert.match(empty, /Have an IP, domain, hash, URL or CVE\? <a href="\.\/lookup\.html">Look it up &rarr;<\/a>/);
-  assert.equal((empty.match(/class="chip"/g) || []).length, 3, 'three example chips');
+  assert.equal((empty.match(/<button type="button" class="chip"/g) || []).length, 3, 'three example chips');
+  assert.equal((empty.match(/<a class="chip"/g) || []).length, 5, 'five "Not sure something is safe?" links (tests/ask-safe.test.mjs)');
   // The composer comes after the thread, pinned to the bottom.
   assert.ok(html.indexOf('id="ask-thread"') < html.indexOf('id="ask-form"'));
   assert.match(html, /<div class="chat-dock">/);
