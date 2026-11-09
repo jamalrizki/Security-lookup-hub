@@ -28,7 +28,7 @@
   <script type="module" src="js/chrome.js?v=19d86d58ae"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=41e9f06669">
+  <link rel="stylesheet" href="css/style.css?v=62bbb82b48">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/ask.js"></script>
 </head>
@@ -81,6 +81,14 @@
           <button type="button" class="chip">How does Kerberoasting work and how do I detect it?</button>
           <button type="button" class="chip">What's the latest exploited vulnerability in the news?</button>
           <button type="button" class="chip">SPF vs DKIM vs DMARC: what does each one stop?</button>
+        </div>
+        <p class="chat-route" id="ask-safe-h"><strong>Not sure something is safe?</strong> Check it first, or see what to do if it already happened:</p>
+        <div id="ask-safe" class="chips" role="group" aria-labelledby="ask-safe-h">
+          <a class="chip" href="./analyze.html#link">A link someone sent me &rarr;</a>
+          <a class="chip" href="./analyze.html#message">A text or email &rarr;</a>
+          <a class="chip" href="./analyze.html#file">A file or attachment &rarr;</a>
+          <a class="chip" href="./lookup.html#password">Did my password leak? &rarr;</a>
+          <a class="chip" href="./reference.html#what-now">I already clicked, replied or paid &rarr;</a>
         </div>
         <p class="chat-route">Have an IP, domain, hash, URL or CVE? <a href="./lookup.html">Look it up &rarr;</a></p>
       </div>
