@@ -39,6 +39,7 @@
   <script type="module" src="js/analyze/subnet-drill.js"></script>
   <script type="module" src="js/analyze/cert.js"></script>
   <script type="module" src="js/analyze/nmap.js"></script>
+  <script type="module" src="js/analyze/cvss.js"></script>
 </head>
 <body data-page="analyze">
   <a class="skip" href="#main">Skip to content</a>
@@ -92,6 +93,7 @@
       <a href="#subnet"><span>07</span>Subnet calculator</a>
       <a href="#cert"><span>08</span>Certificate viewer</a>
       <a href="#nmap"><span>09</span>Nmap viewer</a>
+      <a href="#cvss"><span>10</span>CVSS reader</a>
     </nav>
 
     <div class="card-grid">
@@ -253,6 +255,21 @@
         </label>
         <div id="nmap-result" class="result" aria-live="polite"></div>
         <details class="meaning"><summary>What does this mean?</summary><p>Each open port is a door into that machine where a program is listening. Close or firewall anything that doesn't need to be reachable, and keep the listed software up to date.</p></details>
+      </section>
+      <section class="panel" id="cvss" aria-labelledby="cvss-h">
+        <span class="num" aria-hidden="true"></span>
+        <h2 id="cvss-h">CVSS reader</h2>
+        <p class="hint">Paste a CVSS 3.1 or 3.0 vector to get its base score and severity, worked out in your browser with FIRST's published equations, plus what each metric means and what would lower the score.</p>
+        <form id="cvss-form" autocomplete="off">
+          <label for="cvss-input" class="visually-hidden">CVSS vector</label>
+          <input id="cvss-input" type="text" class="mono-input" spellcheck="false" maxlength="200" placeholder="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H">
+          <div class="row tool-actions">
+            <button type="submit">Read</button>
+            <button type="button" id="cvss-example" class="secondary small">Try an example</button>
+          </div>
+        </form>
+        <div id="cvss-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>CVSS rates how bad a vulnerability could be, from 0 to 10: Low under 4, Medium under 7, High under 9, Critical from 9. It does not say whether anyone is attacking it: for that, look the CVE up and check whether it's in CISA's exploited list (KEV).</p></details>
       </section>
     </div>
   </main>

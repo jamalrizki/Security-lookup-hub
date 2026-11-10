@@ -9,6 +9,7 @@
 
 import { getJson } from './http.js';
 import NAMES from '../../data/source-names.json' with { type: 'json' };
+import { describeCvss } from '../../js/cvss.js';
 
 const NVD_URL = 'https://services.nvd.nist.gov/rest/json/cves/2.0';
 const EPSS_URL = 'https://api.first.org/data/v1/epss';
@@ -101,49 +102,8 @@ export function pickCvss(metrics = {}) {
   };
 }
 
-const ATTACK_VECTOR = {
-  NETWORK: 'Can be attacked remotely over the network',
-  ADJACENT_NETWORK: 'Attacker must be on the same local network segment',
-  ADJACENT: 'Attacker must be on the same local network segment',
-  LOCAL: 'Attacker needs local access to the machine',
-  PHYSICAL: 'Attacker needs physical access to the device',
-};
-const COMPLEXITY = {
-  LOW: 'Easy to exploit; no special conditions needed',
-  HIGH: "Harder to exploit; depends on conditions outside the attacker's control",
-};
-const PRIVILEGES = {
-  NONE: 'No login or privileges needed',
-  LOW: 'Needs a basic user account',
-  HIGH: 'Needs an administrator-level account',
-};
-const INTERACTION = {
-  NONE: 'No user has to do anything',
-  REQUIRED: 'A user has to take an action (open a file, click a link)',
-  PASSIVE: 'A user is involved only passively',
-  ACTIVE: 'A user has to take a deliberate action',
-};
-const IMPACT = { NONE: 'none', LOW: 'limited', HIGH: 'high' };
-
-export function describeCvss(d) {
-  const out = [];
-  const add = (table, value) => table[value] && out.push(table[value]);
-  add(ATTACK_VECTOR, d.attackVector);
-  add(COMPLEXITY, d.attackComplexity);
-  add(PRIVILEGES, d.privilegesRequired);
-  add(INTERACTION, d.userInteraction);
-  if (d.attackRequirements === 'PRESENT') out.push('Exploitation depends on specific deployment conditions');
-  if (d.scope === 'CHANGED') out.push('Can affect resources beyond the vulnerable component');
-  // CVSS v3.x names these confidentialityImpact; v4.0 names them vulnConfidentialityImpact.
-  const c = d.confidentialityImpact ?? d.vulnConfidentialityImpact;
-  const i = d.integrityImpact ?? d.vulnIntegrityImpact;
-  const a = d.availabilityImpact ?? d.vulnAvailabilityImpact;
-  if (c || i || a) {
-    out.push(`Impact: data exposure ${IMPACT[c] ?? 'unknown'}, data tampering ${IMPACT[i] ?? 'unknown'}, `
-      + `service disruption ${IMPACT[a] ?? 'unknown'}`);
-  }
-  return out;
-}
+// The plain-English wording lives in js/cvss.js, shared with the Analyze CVSS reader.
+export { describeCvss };
 
 export const CWE_NAMES = {
   'CWE-20': 'Improper Input Validation',
