@@ -38,6 +38,7 @@
   <script type="module" src="js/analyze/subnet.js"></script>
   <script type="module" src="js/analyze/subnet-drill.js"></script>
   <script type="module" src="js/analyze/cert.js"></script>
+  <script type="module" src="js/analyze/ciphers.js"></script>
   <script type="module" src="js/analyze/nmap.js"></script>
 </head>
 <body data-page="analyze">
@@ -91,7 +92,8 @@
       <a href="#file"><span>06</span>File analyzer</a>
       <a href="#subnet"><span>07</span>Subnet calculator</a>
       <a href="#cert"><span>08</span>Certificate viewer</a>
-      <a href="#nmap"><span>09</span>Nmap viewer</a>
+      <a href="#ciphers"><span>09</span>Cipher suites</a>
+      <a href="#nmap"><span>10</span>Nmap viewer</a>
     </nav>
 
     <div class="card-grid">
@@ -241,6 +243,23 @@
         </form>
         <div id="cert-result" class="result" aria-live="polite"></div>
         <details class="meaning"><summary>What does this mean?</summary><p>A certificate proves a website's identity. Check that it's in date and issued to the name you expect. “Self-signed” means no trusted authority vouches for it, which is normal for internal test systems but not for public websites.</p></details>
+      </section>
+
+      <section class="panel" id="ciphers" aria-labelledby="ciphers-h">
+        <span class="num" aria-hidden="true"></span>
+        <h2 id="ciphers-h">Cipher suite decoder</h2>
+        <p class="hint">Paste cipher suite names from a scan report, a server config or Nmap's ssl-enum-ciphers output: <code>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</code>, OpenSSL names like <code>ECDHE-RSA-AES128-GCM-SHA256</code>, or codes like <code>0xC02F</code>. Each one is split into its parts and graded in your browser.</p>
+        <form id="ciphers-form" autocomplete="off">
+          <label for="ciphers-input" class="visually-hidden">Cipher suite names</label>
+          <textarea id="ciphers-input" spellcheck="false" placeholder="ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:…"></textarea>
+          <div class="row tool-actions">
+            <button type="submit">Decode</button>
+            <button type="button" id="ciphers-example" class="secondary">Try an example</button>
+            <button type="button" id="ciphers-clear" class="secondary">Clear</button>
+          </div>
+        </form>
+        <div id="ciphers-result" class="result" aria-live="polite"></div>
+        <details class="meaning"><summary>What does this mean?</summary><p>A cipher suite is the recipe a browser and a server agree on to protect a connection: how they swap keys, how the server proves who it is, and how the data is scrambled and checked. <strong>Insecure</strong> suites can be broken today; turn them off. <strong>Weak</strong> ones aren't broken, but current standards say to stop using them: most often because they lack forward secrecy (a key stolen later unlocks recorded traffic) or use the older CBC mode. Turning a suite off can lock out very old clients, so check who still connects before you change a live server.</p></details>
       </section>
 
       <section class="panel" id="nmap" aria-labelledby="nmap-h">
