@@ -646,6 +646,9 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 .qa-options button { text-align: left; text-transform: none; letter-spacing: 0; font-size: 14px; line-height: 1.4; white-space: normal; }
 .qa-options button:disabled { opacity: 1; cursor: default; }
 .qa-result:empty { display: none; }
+.qa-answer { display: grid; gap: 8px; }
+.qa-steps { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.qa-steps code { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
 @media (max-width: 640px) {
   .exam > summary { padding: 14px 16px; }
   .exam-name { font-size: 22px; }

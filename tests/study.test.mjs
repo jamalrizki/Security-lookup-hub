@@ -2,15 +2,15 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { validQuestion, checkPick, OPTIONS } from '../js/study.js';
+import { validQuestion, validTask, checkPick, OPTIONS } from '../js/study.js';
 import { installDom, settle } from './helpers/dom.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = (f) => readFileSync(new URL(f, root), 'utf8');
 const DATA = JSON.parse(read('data/study.json'));
 
-test('the four exams are there, each with valid questions', () => {
-  assert.deepEqual(DATA.exams.map((e) => e.name), ['Security+', 'Network+', 'CySA+', 'PenTest+']);
+test('the exams are there, each with valid questions or tasks', () => {
+  assert.deepEqual(DATA.exams.map((e) => e.name), ['Security+', 'Network+', 'CySA+', 'PenTest+', 'Linux', 'RHCSA']);
   const ids = new Set();
   for (const exam of DATA.exams) {
     assert.match(exam.id, /^[a-z-]+$/);
@@ -18,6 +18,10 @@ test('the four exams are there, each with valid questions', () => {
     ids.add(exam.id);
     assert.ok(exam.about.length > 20, exam.id);
     assert.ok(exam.questions.length >= 3, exam.id);
+    if (exam.format === 'tasks') {
+      for (const t of exam.questions) assert.ok(validTask(t), `${exam.id}: ${t.task}`);
+      continue;
+    }
     const asked = new Set();
     for (const q of exam.questions) {
       assert.ok(validQuestion(q), `${exam.id}: ${q.q}`);
@@ -130,4 +134,25 @@ test('study.html: in the nav, same-origin only, no storage; Reference forwards t
   assert.ok(!/innerHTML|localStorage|sessionStorage/.test(js));
   assert.match(read('js/reference.js'), /location\.hash === '#ports-practice' \|\| location\.hash === '#acronyms-practice'\) location\.replace\(`\.\/study\.html\$\{location\.hash\}`\)/);
   for (const id of ['exams', 'ports-practice', 'acronyms-practice']) assert.ok(html.includes(`id="${id}"`), id);
+});
+
+test('validTask rejects wrong shapes', () => {
+  const ok = { task: 'Do it.', steps: ['cmd'], check: 'See it.' };
+  assert.ok(validTask(ok));
+  for (const bad of [null, {}, { ...ok, task: '' }, { ...ok, steps: [] }, { ...ok, steps: [''] }, { ...ok, steps: 'cmd' }, { ...ok, check: '' }]) assert.equal(validTask(bad), false, JSON.stringify(bad));
+});
+
+test('page: the RHCSA panel shows tasks with hidden answers, revealed on request', async () => {
+  const { $ } = await loadPage();
+  const panel = $('exam-rhcsa');
+  assert.match(panel.querySelector('summary').textContent, /^RHCSA3 tasks$/);
+  const card = panel.querySelector('li.qa-card');
+  const answer = card.querySelector('.qa-answer');
+  assert.equal(answer.hidden, true, 'answer hidden until asked for');
+  const show = card.querySelector('button');
+  show.click();
+  assert.equal(answer.hidden, false);
+  assert.match(answer.textContent, /mkfs\.xfs \/dev\/vdb1/);
+  assert.match(answer.textContent, /Check: findmnt \/data/);
+  assert.equal(show.textContent, 'Hide answer');
 });

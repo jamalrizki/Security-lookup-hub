@@ -1,6 +1,6 @@
 {
-  "_about": "Study page (study.html): practice questions by exam, rendered by js/study.js. Each question has exactly 4 options, answer (the 0-based index of the right one) and why (one or two plain sentences). tests/study.test.mjs checks the shape.",
-  "note": "A few sample questions per exam for now; more are coming.",
+  "_about": "Study page (study.html): practice by exam, rendered by js/study.js. An exam is multiple choice by default: each question has exactly 4 options, answer (the 0-based index of the right one) and why (one or two plain sentences). An exam with \"format\": \"tasks\" has hands-on tasks instead: task (what to do), steps (commands or lines, in order) and check (how to confirm it worked), for exams done on a live system. tests/study.test.mjs checks the shape.",
+  "note": "A few sample questions per exam for now; more are coming. The RHCSA panel has hands-on tasks: do each one on your own practice VM, then compare.",
   "exams": [
     {
       "id": "security-plus",
@@ -159,6 +159,81 @@
           ],
           "answer": 0,
           "why": "Passive reconnaissance uses public sources and never touches the target. Scanning and enumeration send traffic to the target's systems, and exploitation uses a weakness."
+        }
+      ]
+    },
+    {
+      "id": "linux",
+      "name": "Linux",
+      "about": "General Linux administration on any distribution: the ground CompTIA Linux+ and the Linux Foundation's LFCS cover.",
+      "questions": [
+        {
+          "q": "Which permissions does chmod 750 give a file?",
+          "options": [
+            "Owner read and write; group read; others nothing",
+            "Owner read, write and execute; group read and execute; others nothing",
+            "Owner read, write and execute; group and others read and execute",
+            "Owner read and execute; group read; others nothing"
+          ],
+          "answer": 1,
+          "why": "Each digit adds read (4), write (2) and execute (1). 7 is rwx for the owner, 5 is r-x for the group, and 0 is nothing for everyone else."
+        },
+        {
+          "q": "Which file holds local users' password hashes on a modern Linux system?",
+          "options": [
+            "/etc/passwd",
+            "/etc/group",
+            "/etc/login.defs",
+            "/etc/shadow"
+          ],
+          "answer": 3,
+          "why": "/etc/shadow holds the hashes and password-aging fields and is readable only by root. /etc/passwd is world-readable, so it only has an x where the password used to be."
+        },
+        {
+          "q": "Which command lists the systemd units that failed?",
+          "options": [
+            "systemctl --failed",
+            "journalctl -f",
+            "ps -ef",
+            "systemctl list-timers"
+          ],
+          "answer": 0,
+          "why": "systemctl --failed (short for systemctl list-units --state=failed) shows units in the failed state. journalctl -f follows the log, and ps -ef lists processes."
+        }
+      ]
+    },
+    {
+      "id": "rhcsa",
+      "name": "RHCSA",
+      "format": "tasks",
+      "about": "Red Hat Certified System Administrator (EX200), on RHEL 10. The exam is hands-on: you configure a live system, so these are tasks, not multiple choice.",
+      "questions": [
+        {
+          "task": "Format /dev/vdb1 as XFS and mount it at /data, by UUID, so it survives a reboot.",
+          "steps": [
+            "mkfs.xfs /dev/vdb1",
+            "mkdir /data",
+            "blkid /dev/vdb1   (copy the UUID)",
+            "Add to /etc/fstab:  UUID=<the UUID>  /data  xfs  defaults  0 0",
+            "systemctl daemon-reload",
+            "mount -a"
+          ],
+          "check": "findmnt /data shows it mounted. Running mount -a without errors proves the fstab line is valid, so the system won't stop at boot."
+        },
+        {
+          "task": "Let a web server that SELinux confines as httpd listen on TCP port 8081.",
+          "steps": [
+            "semanage port -a -t http_port_t -p tcp 8081"
+          ],
+          "check": "semanage port -l | grep http_port_t lists 8081. Leave SELinux in enforcing mode; changing the port label is the fix."
+        },
+        {
+          "task": "Permanently allow HTTPS through the firewall.",
+          "steps": [
+            "firewall-cmd --permanent --add-service=https",
+            "firewall-cmd --reload"
+          ],
+          "check": "firewall-cmd --list-services includes https. Without --permanent the rule is lost at the next reload or reboot."
         }
       ]
     }

@@ -17,6 +17,13 @@ export function validQuestion(q) {
     && typeof q.why === 'string' && q.why.trim() !== '';
 }
 
+/** True for a hands-on task the page can show: what to do, the steps, and how to check it. */
+export function validTask(t) {
+  return Boolean(t) && typeof t.task === 'string' && t.task.trim() !== ''
+    && Array.isArray(t.steps) && t.steps.length > 0 && t.steps.every((x) => typeof x === 'string' && x.trim() !== '')
+    && typeof t.check === 'string' && t.check.trim() !== '';
+}
+
 /** Grades one pick: { correct, text }, or null if the pick isn't one of the options. */
 export function checkPick(q, index) {
   if (!validQuestion(q) || !Number.isInteger(index) || index < 0 || index >= OPTIONS) return null;
@@ -56,8 +63,31 @@ if (globalThis.document?.getElementById('study-exams')) {
     return el('li', { class: 'qa-card' }, el('p', { class: 'qa-q' }, q.q), el('div', { class: 'qa-options' }, ...buttons), result);
   };
 
+  // A hands-on task: the answer stays hidden until asked for, since it can't be graded here.
+  const taskCard = (t) => {
+    const answer = el('div', { class: 'qa-answer', hidden: '' },
+      el('ol', { class: 'qa-steps' }, ...t.steps.map((x) => el('li', {}, el('code', {}, x)))),
+      el('p', { class: 'hint' }, el('strong', {}, 'Check: '), t.check));
+    const show = el('button', { type: 'button', class: 'secondary small' }, 'Show answer');
+    show.addEventListener('click', () => {
+      answer.hidden = !answer.hidden;
+      show.textContent = answer.hidden ? 'Show answer' : 'Hide answer';
+    });
+    return el('li', { class: 'qa-card' }, el('p', { class: 'qa-q' }, t.task), el('div', {}, show), answer);
+  };
+
+  const taskPanel = (exam) => {
+    const tasks = exam.questions.filter(validTask);
+    return el('details', { class: 'exam', id: `exam-${exam.id}` },
+      el('summary', {}, el('span', { class: 'exam-name' }, exam.name), el('span', { class: 'exam-count' }, `${tasks.length} task${tasks.length === 1 ? '' : 's'}`)),
+      el('div', { class: 'exam-body' },
+        el('p', { class: 'hint' }, exam.about),
+        el('ol', { class: 'qa-list' }, ...tasks.map(taskCard))));
+  };
+
   // One accordion panel per exam.
   const panel = (exam) => {
+    if (exam.format === 'tasks') return taskPanel(exam);
     const questions = exam.questions.filter(validQuestion);
     let right = 0;
     let answered = 0;
