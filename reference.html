@@ -24,10 +24,10 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <!-- /social -->
   <title>Reference · Security Lookup Hub</title>
-  <script type="module" src="js/chrome.js?v=19d86d58ae"></script>
+  <script type="module" src="js/chrome.js?v=a86f7c4c00"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=b2439b5f02">
+  <link rel="stylesheet" href="css/style.css?v=4be658e37d">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/reference.js"></script>
 </head>
@@ -55,6 +55,7 @@
         <a href="actors.html">Threat actors</a>
         <a href="exposure.html">Exposure</a>
         <a href="reference.html" aria-current="page">Reference</a>
+        <a href="study.html">Study</a>
         <a href="tools.html">Tools</a>
       </nav>
     </div>
@@ -69,7 +70,7 @@
       </div>
       <div class="radar-block" aria-hidden="true">
         <div class="radar"><span class="radar-sweep"></span><span class="radar-ring"></span><span class="radar-blip"></span><span class="radar-dot"></span></div>
-        <p class="radar-caption">MODULE 08/09<br>STATUS: ARMED</p>
+        <p class="radar-caption">MODULE 08/10<br>STATUS: ARMED</p>
       </div>
     </section>
 
@@ -94,24 +95,7 @@
       </div>
       <p id="ports-count" class="small hint" aria-live="polite"></p>
       <div id="ports-list"></div>
-    </section>
-
-    <section id="ports-practice" class="search-block" aria-labelledby="pdrill-h">
-      <h2 id="pdrill-h">Ports practice</h2>
-      <p class="hint">Random questions for Network+ and Security+: which port, what runs there, TCP or UDP, and the encrypted version. Checked against the same list as above. Your score is not saved anywhere.</p>
-      <label class="small"><input id="pdrill-exam" type="checkbox" checked> Exam ports only</label>
-      <p id="pdrill-question" class="mono" aria-live="polite"></p>
-      <form id="pdrill-form" class="row" autocomplete="off">
-        <input id="pdrill-answer" type="text" class="mono-input" spellcheck="false" maxlength="40" aria-label="Your answer" placeholder="Your answer">
-        <button type="submit">Check</button>
-      </form>
-      <div class="row">
-        <button type="button" id="pdrill-reveal" class="secondary small">Show answer</button>
-        <button type="button" id="pdrill-next" class="secondary small">Next question</button>
-        <button type="button" id="pdrill-show" class="secondary small">Show in the list</button>
-      </div>
-      <div id="pdrill-result" class="result" aria-live="polite"></div>
-      <p id="pdrill-score" class="hint" aria-live="polite"></p>
+      <p class="hint">Learning these for an exam? Try the <a href="study.html#ports-practice">ports practice quiz</a> on the Study page.</p>
     </section>
 
     <section id="acronyms" class="search-block" aria-labelledby="acronyms-h">
@@ -122,6 +106,7 @@
       </div>
       <p id="acronyms-count" class="small hint" aria-live="polite"></p>
       <div id="acronyms-list"></div>
+      <p class="hint">Learning these for an exam? Try the <a href="study.html#acronyms-practice">acronyms practice quiz</a> on the Study page.</p>
     </section>
 
     <section id="events" class="search-block" aria-labelledby="events-h">
@@ -134,20 +119,6 @@
       <div id="events-list"></div>
       <details class="meaning"><summary>Logon types (4624, 4625)</summary><div id="events-logon-types"></div></details>
       <details class="meaning"><summary>4625 failure status codes</summary><div id="events-status-codes"></div></details>
-    </section>
-
-    <section id="acronyms-practice" class="search-block" aria-labelledby="adrill-h">
-      <h2 id="adrill-h">Acronyms practice</h2>
-      <p class="hint">Multiple-choice questions for Security+, CySA+ and CISSP: what an acronym stands for, or which acronym a plain sentence describes. Checked against the same list as above. Your score is not saved anywhere.</p>
-      <p id="adrill-question" aria-live="polite"></p>
-      <div id="adrill-options" class="row" role="group" aria-labelledby="adrill-question"></div>
-      <div class="row">
-        <button type="button" id="adrill-reveal" class="secondary small">Show answer</button>
-        <button type="button" id="adrill-next" class="secondary small">Next question</button>
-        <button type="button" id="adrill-show" class="secondary small">Show in the list</button>
-      </div>
-      <div id="adrill-result" class="result" aria-live="polite"></div>
-      <p id="adrill-score" class="hint" aria-live="polite"></p>
     </section>
 
     <p class="hint">Looking for what a tool does? See the <a href="tools.html">tools glossary</a>.</p>

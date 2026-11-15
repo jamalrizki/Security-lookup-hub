@@ -1,4 +1,4 @@
-// Acronyms practice (Reference page, #acronyms-practice). Multiple-choice
+// Acronyms practice (Study page, #acronyms-practice). Multiple-choice
 // questions for Security+, CySA+ and CISSP students, built from
 // data/acronyms.json, so the quiz and the "Security acronyms" list above it can
 // never disagree. No AI, no network beyond the same data file, no storage: the

@@ -1,4 +1,4 @@
-// Ports practice (Reference page, #ports-practice). Random questions for
+// Ports practice (Study page, #ports-practice). Random questions for
 // Network+/Security+ students, built from data/ports.json, so the quiz and the
 // "Ports and protocols" list above it can never disagree. No AI, no network
 // beyond the same data file, no storage: the session score lives in a variable.

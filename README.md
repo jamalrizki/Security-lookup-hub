@@ -50,6 +50,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | Reference: "Windows event IDs" (`#events`): 39 Windows Security log events (Microsoft's titles, a plain sentence, why it matters, a Microsoft Learn link), the nine logon types and 12 failure status codes for 4625; searched in code; `[[events]]` for Ask | Built (Nov 15, 2026), not deployed |
 | Extra | Ask points to the scam message check: the screenshot rule now also covers a pasted or described email or text and links [[message]] (+65 prompt characters); beginner eval q21 (a pasted delivery text) must link it | Built (Nov 5, 2026), needs a Worker deploy |
 | Extra | Reference: "Acronyms practice" (`#acronyms-practice`, under the acronym list): multiple-choice questions (what an acronym stands for, or which acronym a plain sentence describes) built from `data/acronyms.json` and graded in code | Built (Nov 6, 2026) |
+| Extra | **Study** tab (`study.html`): practice questions by exam in an accordion (Security+, Network+, CySA+, PenTest+; sample questions written for the site, graded in code), with the ports and acronyms quizzes moved here from Reference; old `reference.html#ports-practice` and `#acronyms-practice` links are forwarded | Built (Nov 15, 2026) |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -239,6 +240,15 @@ Domain and email lookups grade how easily someone could send mail pretending to 
 
 It's fixed text and links only: the page fetches nothing but its own data file, and its CSP allows no Worker. **WiGLE is explained, not searched:** the section says what it is (a crowd-sourced map of Wi-Fi networks' names and hardware addresses with GPS positions, searchable with a free account), how to check your own network, renaming, the `_nomap` suffix (honoured by Google's and Apple's location services per their docs; WiGLE's FAQ doesn't mention it) and WiGLE's removal-by-email with the BSSID. The hub itself doesn't look up where networks are, because that would work just as well for locating someone else's home. Every link was checked on Oct 30, 2026; `tests/exposure.test.mjs` checks the file's shape (https links, known account types, hub links that exist). Ask can link to it as `[[exposure]]`.
 
+## Study
+
+`study.html` is the place for exam practice, so the Reference page stays a set of lookups.
+
+- **Practice questions by exam** (`#exams`): an accordion with one panel per exam (Security+, Network+, CySA+, PenTest+), closed until picked; `study.html#exam-<id>` opens one. Each panel holds question cards with four options. Clicking an option grades it in code (`checkPick()` in `js/study.js`), marks the right one, shows a one- or two-sentence reason, and locks the card. A per-exam "N of M correct so far" line lives in a page variable only.
+- **Where the questions come from:** `data/study.json`. Every question is written for this site: 3 sample questions per exam for now. **Never paste questions from a book, a practice-test product or a real exam**; those are copyrighted, and real exam content is covered by the exam's candidate agreement. The file's `_about` says so and a test checks the wording is still there. Questions need exactly 4 distinct options, an answer index and a reason (`validQuestion()`); a malformed one is skipped, not shown.
+- **Ports practice and Acronyms practice** moved here from Reference (below). They still read `data/ports.json` and `data/acronyms.json`, so the quizzes and the lookups can't disagree. "Show in the list" opens the lookup on Reference (`reference.html#ports=3389`, `reference.html#acronyms=XSS`). `js/reference.js` forwards the old `reference.html#ports-practice` and `#acronyms-practice` addresses.
+- The page fetches only its own three data files; no Worker, no storage. Ask can link to it as `[[study]]` (after the next Worker deploy). Tests: `tests/study.test.mjs`.
+
 ## Reference: where to start
 
 The top of `reference.html` has one card per thing you might have: a hash, domain, IP, URL, email address, email headers, CVE, suspicious file or threat actor name. Each card links first to the hub feature to try, then to 2–3 outside sites with one line on when to use each. The data is `whereToStart` in `data/reference.json`. Outside sites are named, not linked: the page takes each URL from the directory entry of the same name, so it can only point at sites the directory already lists. `tests/reference.test.mjs` fails if a name isn't in the directory.
@@ -263,7 +273,7 @@ Below "Where to start", `reference.html#what-now` has one card per thing that al
 
 ### Ports practice
 
-`reference.html#ports-practice`, under the list, quizzes Network+ and Security+ students with four kinds of question: which port a service uses, what normally runs on a port, whether it uses TCP, UDP or both, and which port is the encrypted version of a clear-text service. Every question and answer is built from `data/ports.json`, so the quiz and the list can't disagree. After each answer the page shows the list's own line for that port, and "Show in the list" filters the list to it.
+`study.html#ports-practice` (on the Study page since Nov 15, 2026; it was under the ports list) quizzes Network+ and Security+ students with four kinds of question: which port a service uses, what normally runs on a port, whether it uses TCP, UDP or both, and which port is the encrypted version of a clear-text service. Every question and answer is built from `data/ports.json`, so the quiz and the list can't disagree. After each answer the page shows the list's own line for that port, and "Show in the list" filters the list to it.
 
 - "Exam ports only" (on by default) limits questions to 35 ports that certification objectives ask about most (`EXAM_PORTS` in `js/ports-drill.js`); with it off, every listed port can come up and exam ports are 3× as likely.
 - Grading is in code, with no AI. Port answers take a number (`443`, `port 443`, `443/tcp`). Name answers ignore case, punctuation and filler words ("the SMB service", "RDP protocol") and accept the list's name, its full name, names in its brackets (SFTP for 22) and a short alias list (`ALIASES`: `SQL Server` for 1433, `MariaDB` for 3306…). A test checks no port accepts another port's name unless the alias list says so (587 accepts SMTP). DHCP accepts 67 or 68, unless the question names the server or client side. Empty, over-long or wrong-type answers (a word where a port is asked) are refused without counting as wrong.
@@ -289,7 +299,7 @@ Below "Where to start", `reference.html#what-now` has one card per thing that al
 - `tests/events.test.mjs` checks every entry's shape and order, unique (log, ID) pairs, every link's host and path, exam staples with Microsoft's titles, the exact nine logon types, the status-code format, and the search rules. Ask can send visitors here with `[[events]]`.
 ### Acronyms practice
 
-`reference.html#acronyms-practice`, under the list, quizzes Security+, CySA+ and CISSP students in the exams' own multiple-choice style, with two kinds of question: what an acronym stands for (pick the expansion), and which acronym a plain sentence describes (pick the acronym). Every question and option is built from `data/acronyms.json`, so the quiz and the list can't disagree. After each pick the page shows the list's own line for that acronym (and its other meanings, if any), and "Show in the list" fills the list's search box with it.
+`study.html#acronyms-practice` (on the Study page since Nov 15, 2026; it was under the acronym list) quizzes Security+, CySA+ and CISSP students in the exams' own multiple-choice style, with two kinds of question: what an acronym stands for (pick the expansion), and which acronym a plain sentence describes (pick the acronym). Every question and option is built from `data/acronyms.json`, so the quiz and the list can't disagree. After each pick the page shows the list's own line for that acronym (and its other meanings, if any), and "Show in the list" fills the list's search box with it.
 
 - Four options, exactly one right, with the answer's position shuffled. Wrong options are other entries from the list; for "stands for" questions, acronyms starting with the same letter come first so the letters alone don't give it away.
 - A wrong option is never another meaning of the same acronym (CSP, MAC, PAM, SOC; the question says when an acronym has several), and never a close neighbour whose sentence would also fit (`CONFUSABLE` in `js/acronyms-drill.js`: 2FA/MFA, OTP/TOTP, DoS/DDoS, IDS/HIDS, EDR/XDR, SSL/TLS/HTTPS…). A sentence that names its own acronym (ARP, SSL, SOC 2) is never used for a "which acronym" question.
@@ -546,7 +556,7 @@ npm test
 
 Without `worker/node_modules`, every test file that imports the Worker's Ask code (`ask`, `ask-models`, `ask-image`, `ask-stop`, `kev-search`, `message-ai`, `myip`, `plain`, `ranges`, `transcribe`) fails with "Cannot find package '@anthropic-ai/sdk'".
 
-545 tests as of Nov 15, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`) and the message check (`tests/message-check.test.mjs`, which also runs written-for-the-test scam and real-message fixtures); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
+554 tests as of Nov 15, 2026. The Ask tests stub the model, Tavily, NVD/KEV/EPSS, KV, the edge cache, Workers AI and Vectorize, so nothing goes over the network. The Ask page tests (`tests/ask-page.test.mjs`) run `index.html` and `js/ask.js` in a small DOM stand-in (`tests/helpers/dom.mjs`), with stand-ins for `MediaRecorder`, `getUserMedia`, `createImageBitmap` and `OffscreenCanvas`; layout was checked separately in headless Chrome at 390px (in a 390px iframe, since Chrome's headless window on macOS can't be that narrow) and at 1280px. The same stand-in runs `lookup.html` with `js/lookup.js` (type buttons, Check my IP: `tests/lookup-types.test.mjs`, `tests/myip.test.mjs`) and `analyze.html` with the subnet calculator and IOC extractor (provider ranges, with a fetch spy: `tests/provider-ranges.test.mjs`) and the message check (`tests/message-check.test.mjs`, which also runs written-for-the-test scam and real-message fixtures); the v5 Lookup and Analyze layouts were checked the same way at 390px and 1300px. Node 20 prints an "Importing JSON modules is an experimental feature" warning because the Worker imports `data/*.json`; it is harmless, and wrangler bundles the files at build time.
 
 ## Refreshing the threat-actor data
 
@@ -571,7 +581,7 @@ The script prints the group count and the per-country totals. Check them against
 ## Layout
 
 ```
-index.html (Ask, the home page), lookup.html (Lookup and the panels), cves.html, news.html, analyze.html, actors.html, reference.html, tools.html   the pages
+index.html (Ask, the home page), lookup.html (Lookup and the panels), cves.html, news.html, analyze.html, actors.html, exposure.html, reference.html, study.html, tools.html   the pages
 js/forward.js    forwards old ./#q=, ./#password and ./#lookup links to lookup.html (classic script at the top of index.html)
 scripts/nav.py   rewrites the shared nav (NAV sets the labels; HERO_TITLES gives Ask "Ask AI" and Exposure "My exposure" as their big titles) (and the phone menu button) in every page and stamps css/style.css and js/nav.js with a content hash (?v=…) so browsers never mix a new page with an old cached file; run after adding a page or editing either file (tests/assets.test.mjs fails if you forget)
 js/nav.js        phone menu toggle (classic script in <head>; without JS the nav stays visible)
@@ -592,6 +602,7 @@ js/voice.js      Ask's voice input: recording, POST /api/transcribe, text insert
 js/ask.js        Ask page: chat layout, Stop and elapsed time, pre-send check, indicator-only offer, #ask= fill, thread, hub/look-up/sources/trace under each answer
 js/render-answer.js   safe Markdown subset -> DOM nodes (text nodes only)
 js/reference.js  Reference page rendering
+js/study.js      Study page: exam question accordion (data/study.json), and wiring for the ports and acronyms quizzes
 js/exposure.js   My exposure page rendering (data/exposure.json)
 js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
 js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
@@ -614,6 +625,7 @@ data/what-now.json    "Already happened? What to do now" checklists
 data/scam-signs.json  scam signs and tactic groups for the Analyze message check (patterns matched in code)
 data/ports.json       common ports and protocols for the Reference page
 data/acronyms.json    security acronyms for the Reference page
+data/study.json       Study page practice questions by exam (written for this site only)
 data/events.json      Windows Security log event IDs, logon types and 4625 status codes for the Reference page
 data/exposure.json    My exposure sections: why, steps, outside links (fixed text)
 data/actors.json      generated threat-actor extract (do not edit by hand)

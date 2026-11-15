@@ -2,10 +2,11 @@
 
 import { guidanceUrl, isHubHref } from './what-now.js';
 import { searchPorts, portLabel, secureVersions } from './ports.js';
-import { startPortsDrill } from './ports-drill.js';
 import { searchAcronyms } from './acronyms.js';
 import { searchEvents, eventDocUrl, eventPageId } from './events.js';
-import { startAcronymsDrill } from './acronyms-drill.js';
+
+// The ports and acronyms quizzes moved to the Study page; old links to them still work.
+if (location.hash === '#ports-practice' || location.hash === '#acronyms-practice') location.replace(`./study.html${location.hash}`);
 
 const $ = (id) => document.getElementById(id);
 
@@ -158,16 +159,6 @@ async function loadPorts() {
     }
     for (const id of ['ports-filter', 'ports-exposed']) $(id).addEventListener('input', renderPorts);
     renderPorts();
-    startPortsDrill(ports, {
-      el,
-      $,
-      showInList: (port) => {
-        $('ports-filter').value = String(port);
-        $('ports-exposed').checked = false;
-        renderPorts();
-        $('ports').scrollIntoView();
-      },
-    });
   } catch (err) {
     $('ports-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the port list: ${err.message}`));
   }
@@ -213,15 +204,6 @@ async function loadAcronyms() {
     }
     $('acronyms-filter').addEventListener('input', renderAcronyms);
     renderAcronyms();
-    startAcronymsDrill(acronyms, {
-      el,
-      $,
-      showInList: (acronym) => {
-        $('acronyms-filter').value = acronym;
-        renderAcronyms();
-        $('acronyms').scrollIntoView();
-      },
-    });
   } catch (err) {
     $('acronyms-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the acronym list: ${err.message}`));
   }

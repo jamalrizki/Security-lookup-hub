@@ -131,20 +131,21 @@ test('grading: the right index is correct, another is wrong, anything else is in
   assert.equal(checkChoice(null, 0).status, 'invalid');
 });
 
-test('the Reference page has the practice block under the acronym list', () => {
-  const html = readFileSync(new URL('reference.html', root), 'utf8');
+test('the Study page has the practice block; Reference links to it', () => {
+  const html = readFileSync(new URL('study.html', root), 'utf8');
   for (const id of ['acronyms-practice', 'adrill-question', 'adrill-options', 'adrill-reveal', 'adrill-next', 'adrill-show', 'adrill-result', 'adrill-score']) {
     assert.ok(html.includes(`id="${id}"`), id);
   }
-  assert.ok(html.indexOf('id="acronyms-practice"') > html.indexOf('id="acronyms-list"'));
-  const js = readFileSync(new URL('js/reference.js', root), 'utf8');
-  assert.match(js, /startAcronymsDrill\(acronyms,/);
+  const reference = readFileSync(new URL('reference.html', root), 'utf8');
+  assert.ok(!reference.includes('id="acronyms-practice"') && reference.includes('href="study.html#acronyms-practice"'));
+  const js = readFileSync(new URL('js/study.js', root), 'utf8');
+  assert.match(js, /startAcronymsDrill\(data\.acronyms/);
   const drill = readFileSync(new URL('js/acronyms-drill.js', root), 'utf8');
   assert.ok(!/innerHTML|localStorage|sessionStorage|fetch\(/.test(drill), 'no innerHTML, storage or network in the drill');
 });
 
 test('page wiring: one pick per question scores, options lock, reveal never scores, Show in the list', () => {
-  const html = readFileSync(new URL('reference.html', root), 'utf8');
+  const html = readFileSync(new URL('study.html', root), 'utf8');
   const dom = installDom(html);
   try {
     const $ = (id) => dom.document.getElementById(id);

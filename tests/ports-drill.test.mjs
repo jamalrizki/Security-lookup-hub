@@ -146,14 +146,15 @@ test('the explanation uses only the list\'s own text', () => {
   assert.match(explain(ports, { entry: byPort(3389) }), /^3389\/TCP\/UDP RDP: Remote Desktop Protocol\. /);
 });
 
-test('the Reference page has the practice block and wires it after the list loads', () => {
-  const html = readFileSync(new URL('reference.html', root), 'utf8');
+test('the Study page has the practice block and wires it once the list loads; Reference links to it', () => {
+  const html = readFileSync(new URL('study.html', root), 'utf8');
   for (const id of ['ports-practice', 'pdrill-exam', 'pdrill-question', 'pdrill-form', 'pdrill-answer', 'pdrill-reveal', 'pdrill-next', 'pdrill-show', 'pdrill-result', 'pdrill-score']) {
     assert.ok(html.includes(`id="${id}"`), id);
   }
-  assert.ok(html.indexOf('id="ports-practice"') > html.indexOf('id="ports-list"'));
-  const js = readFileSync(new URL('js/reference.js', root), 'utf8');
-  assert.match(js, /startPortsDrill\(ports,/);
+  const reference = readFileSync(new URL('reference.html', root), 'utf8');
+  assert.ok(!reference.includes('id="ports-practice"') && reference.includes('href="study.html#ports-practice"'));
+  const js = readFileSync(new URL('js/study.js', root), 'utf8');
+  assert.match(js, /startPortsDrill\(data\.ports/);
   const drill = readFileSync(new URL('js/ports-drill.js', root), 'utf8');
   assert.ok(!/innerHTML|localStorage|sessionStorage|fetch\(/.test(drill), 'no innerHTML, storage or network in the drill');
 });

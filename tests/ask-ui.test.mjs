@@ -96,7 +96,7 @@ test('the Ask page is the chat: intro, examples, route to Lookup, thread, compos
   assert.ok(html.indexOf('<section class="hero">') > html.indexOf('<main id="main" class="chat-main">'));
   assert.ok(html.indexOf('<section class="hero">') < html.indexOf('<section class="chat"'));
   assert.match(html, /<h1 class="hero-title"><span class="hero-outline">Ask AI<\/span><span class="hero-fill" aria-hidden="true">Ask AI<\/span><\/h1>/);
-  assert.match(html, /MODULE 01\/09/);
+  assert.match(html, /MODULE 01\/10/);
   assert.match(/<meta name="viewport" content="([^"]+)"/.exec(html)[1], /viewport-fit=cover/, 'safe-area insets apply');
   const css = readFileSync(new URL('css/style.css', root), 'utf8');
   assert.match(css, /\.chat-dock \{\s*position: sticky;\s*bottom: 0;/);

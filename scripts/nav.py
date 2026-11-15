@@ -27,6 +27,7 @@ NAV = [
     ('actors.html', 'actors.html', 'Threat actors', 'actors'),
     ('exposure.html', 'exposure.html', 'Exposure', 'exposure'),
     ('reference.html', 'reference.html', 'Reference', 'reference'),
+    ('study.html', 'study.html', 'Study', 'study'),
     ('tools.html', 'tools.html', 'Tools', 'tools'),
 ]
 PAGES = [file for _, file, _, _ in NAV]

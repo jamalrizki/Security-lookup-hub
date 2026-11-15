@@ -41,6 +41,10 @@ const COMMANDS = {
     ['grep -i sandbox reference.json', 'Hybrid Analysis · ANY.RUN'],
     ['cat where-to-start.txt | head -1', 'A file hash → Lookup first'],
   ],
+  study: [
+    ['quiz --exam security+ --next', 'Q3: which factor is "something you have"?'],
+    ['ports drill --exam-only', '[+] 443/tcp HTTPS · correct'],
+  ],
   tools: [
     ['apropos "password cracker"', 'hashcat (1) · john (8)'],
     ['man nmap | head -1', 'nmap - Network exploration tool and security scanner'],
