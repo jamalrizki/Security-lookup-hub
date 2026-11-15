@@ -5,6 +5,7 @@ import { searchPorts, portLabel, secureVersions } from './ports.js';
 import { startPortsDrill } from './ports-drill.js';
 import { searchAcronyms } from './acronyms.js';
 import { searchEvents, eventDocUrl, eventPageId } from './events.js';
+import { startAcronymsDrill } from './acronyms-drill.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -212,6 +213,15 @@ async function loadAcronyms() {
     }
     $('acronyms-filter').addEventListener('input', renderAcronyms);
     renderAcronyms();
+    startAcronymsDrill(acronyms, {
+      el,
+      $,
+      showInList: (acronym) => {
+        $('acronyms-filter').value = acronym;
+        renderAcronyms();
+        $('acronyms').scrollIntoView();
+      },
+    });
   } catch (err) {
     $('acronyms-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the acronym list: ${err.message}`));
   }
