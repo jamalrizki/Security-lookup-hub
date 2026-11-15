@@ -278,6 +278,12 @@ def ingest(book):
         stats["kept_pages"] = stats["pages"]
         stats["page_note"] = f"epub: {anchors} printed-page anchors" if anchors else "epub: by chapter"
     else:
+        # Optional hand-set "pages_keep" in the manifest: [[first, last], ...] PDF pages to
+        # keep (1-based, inclusive), for a long book where only some chapters are wanted.
+        # An empty list leaves the whole book out.
+        keep = book.get("pages_keep")
+        if keep == []:
+            return [], dict(stats, skipped='left out ("pages_keep": [] in the manifest)')
         pages = ocr_pages(book["id"]) if book.get("ocr") else pdf_pages(path)
         if pages is None:
             return [], dict(stats, skipped="needs OCR first (rag/ocr_books.sh)")
@@ -293,6 +299,7 @@ def ingest(book):
             # OCR garbles running headers ("CHarrer Teo"), so scanned books are cited by page only
             if h and h.lower() != book["title"].lower() and not book.get("ocr"): section = h
             if section and BACK_MATTER.search(section): continue
+            if keep and not any(a <= i <= b for a, b in keep): continue
             body = " ".join(paras)
             if len(body.split()) < 25 or prose_ratio(body) < 0.5:
                 continue   # notation, tables, blank or front-matter pages

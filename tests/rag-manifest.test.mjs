@@ -299,3 +299,33 @@ test('ingest skips a book that is not in English and reports it', { skip: !hasPy
     fs.rmSync(bin, { recursive: true, force: true });
   }
 });
+
+test('ingest keeps only the "pages_keep" ranges set in the manifest; an empty list leaves the book out', { skip: !hasPython && 'python3 not available' }, () => {
+  const bin = stubBin();
+  const books = fs.mkdtempSync(path.join(os.tmpdir(), 'slh-books-'));
+  try {
+    fs.writeFileSync(path.join(books, 'long.pdf'), makePdf([0, 1, 2, 3, 4, 5].map(prose)));
+    fs.writeFileSync(path.join(books, 'unwanted.pdf'), makePdf([0, 1, 2].map(prose)));
+    assert.equal(run('python3', ['rag/build_manifest.py', '--books', books], { env: env(bin) }).status, 0);
+    const mpath = path.join(books, '.rag', 'manifest.json');
+    const manifest = JSON.parse(fs.readFileSync(mpath, 'utf8'));
+    manifest.books.find((b) => b.file === 'long.pdf').pages_keep = [[2, 3], [6, 6]];
+    manifest.books.find((b) => b.file === 'unwanted.pdf').pages_keep = [];
+    fs.writeFileSync(mpath, JSON.stringify(manifest));
+    // A rebuild keeps the hand-set ranges.
+    assert.equal(run('python3', ['rag/build_manifest.py', '--books', books], { env: env(bin) }).status, 0);
+    assert.deepEqual(JSON.parse(fs.readFileSync(mpath, 'utf8')).books.find((b) => b.file === 'long.pdf').pages_keep, [[2, 3], [6, 6]]);
+    const r = run('python3', ['rag/ingest_books.py', '--books', books], { env: env(bin) });
+    assert.equal(r.status, 0, r.stderr);
+    assert.match(r.stdout, /SKIPPED: left out \("pages_keep": \[\] in the manifest\)/);
+    const chunks = fs.readFileSync(path.join(books, '.rag', 'chunks.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
+    const longId = manifest.books.find((b) => b.file === 'long.pdf').id;
+    assert.ok(chunks.length > 0);
+    assert.ok(chunks.every((c) => c.book_id === longId), 'nothing from the left-out book');
+    const kept = new Set(chunks.map((c) => c.pdf_page));
+    assert.ok([...kept].every((p) => [2, 3, 6].includes(p)), `pages ${[...kept]}`);
+  } finally {
+    fs.rmSync(books, { recursive: true, force: true });
+    fs.rmSync(bin, { recursive: true, force: true });
+  }
+});
