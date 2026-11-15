@@ -6,8 +6,9 @@ Scan the books folder and write a private manifest for the reference-library pip
 
 Run from the repo root. DIR defaults to security-books/ (gitignored: the repo is public,
 so book files and everything generated from them stay out of git). Only files directly in
-DIR are read (PDF, EPUB); subfolders and dot-files are ignored. Writes DIR/.rag/manifest.json
-and nothing else.
+DIR, or one subfolder down (e.g. DIR/Questions/), are read (PDF, EPUB); deeper folders and
+dot-files and dot-folders are ignored. "file" in the manifest is the path relative to DIR.
+Writes DIR/.rag/manifest.json and nothing else.
 
 For each book: an opaque id ("s" + the first 8 hex digits of the file's SHA-256, so it is
 stable across runs and renames), the file name, the page count (EPUB: spine documents), and
@@ -105,20 +106,24 @@ def main():
     previous = {b["id"]: b for b in old.get("books", [])}
 
     entries, skipped = [], []
-    for path in sorted(p for p in books.iterdir() if p.is_file() and not p.name.startswith(".")):
+    visible = lambda p: not p.name.startswith(".")
+    top = [p for p in books.iterdir() if visible(p)]
+    found = [p for p in top if p.is_file()] + [f for d in top if d.is_dir() for f in d.iterdir() if f.is_file() and visible(f)]
+    for path in sorted(found, key=lambda p: p.relative_to(books).as_posix()):
+        name = path.relative_to(books).as_posix()
         kind = path.suffix.lower()
         if kind not in (".pdf", ".epub"):
             continue
         try:
             pages, ocr = pdf_info(path) if kind == ".pdf" else epub_info(path)
         except ValueError as e:
-            skipped.append({"file": path.name, "reason": str(e)})
-            print(f"SKIPPED {path.name}: {e}")
+            skipped.append({"file": name, "reason": str(e)})
+            print(f"SKIPPED {name}: {e}")
             continue
         book_id = sha_id(path)
-        entry = {**previous.get(book_id, {}), "id": book_id, "file": path.name, "format": kind[1:], "pages": pages, "ocr": ocr}
+        entry = {**previous.get(book_id, {}), "id": book_id, "file": name, "format": kind[1:], "pages": pages, "ocr": ocr}
         entries.append(entry)
-        print(f"{book_id}  {'OCR ' if ocr else 'text'}  {pages:>5} pages  {path.name}")
+        print(f"{book_id}  {'OCR ' if ocr else 'text'}  {pages:>5} pages  {name}")
 
     manifest_path.write_text(json.dumps({"books": entries, "skipped": skipped}, indent=2, ensure_ascii=False) + "\n")
     print(f"{len(entries)} books, {sum(b['ocr'] for b in entries)} need OCR, {len(skipped)} skipped -> {manifest_path}")

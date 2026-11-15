@@ -61,6 +61,10 @@ function makeBooks(dir) {
   fs.writeFileSync(path.join(dir, 'notes.txt'), 'ignored');
   fs.mkdirSync(path.join(dir, 'subfolder'));
   fs.writeFileSync(path.join(dir, 'subfolder', 'nested.pdf'), makePdf([prose(1)]));
+  fs.mkdirSync(path.join(dir, 'subfolder', 'deeper'));
+  fs.writeFileSync(path.join(dir, 'subfolder', 'deeper', 'deep.pdf'), makePdf([prose(2)]));
+  fs.mkdirSync(path.join(dir, '.hidden'));
+  fs.writeFileSync(path.join(dir, '.hidden', 'hidden.pdf'), makePdf([prose(3)]));
 }
 
 // Stand-ins for poppler and tesseract (Python, so they run anywhere the pipeline does).
@@ -134,7 +138,8 @@ test('manifest: text PDF, scanned PDF needing OCR, unreadable files skipped; ids
     assert.equal(r.status, 0, r.stderr);
     const manifest = JSON.parse(fs.readFileSync(path.join(books, '.rag', 'manifest.json'), 'utf8'));
     const byFile = Object.fromEntries(manifest.books.map((b) => [b.file, b]));
-    assert.deepEqual(Object.keys(byFile).sort(), ['scanned-book.pdf', 'text-book.pdf'], 'only top-level PDF/EPUB that can be read');
+    assert.deepEqual(Object.keys(byFile).sort(), ['scanned-book.pdf', 'subfolder/nested.pdf', 'text-book.pdf'], 'readable PDF/EPUB at the top level or one subfolder down; deeper and hidden folders ignored');
+    assert.equal(byFile['subfolder/nested.pdf'].id, sha8(path.join(books, 'subfolder', 'nested.pdf')));
     assert.equal(byFile['text-book.pdf'].ocr, false);
     assert.equal(byFile['text-book.pdf'].pages, 6);
     assert.equal(byFile['scanned-book.pdf'].ocr, true);
@@ -269,7 +274,7 @@ test('full pipeline run inside security-books/ leaves git status unchanged', { t
     assert.equal((await runAsync(process.execPath, ['worker/scripts/embed-books.mjs', '--books', books], { env: e })).status, 0);
     assert.equal(cf.calls(), callsBefore);
 
-    assert.deepEqual(listFiles(books).filter((f) => !f.startsWith('.rag/')).sort(), ['broken.pdf', 'locked-book.pdf', 'notes.txt', 'scanned-book.pdf', 'subfolder/nested.pdf', 'text-book.pdf'], 'scripts only write under .rag/');
+    assert.deepEqual(listFiles(books).filter((f) => !f.startsWith('.rag/')).sort(), ['.hidden/hidden.pdf', 'broken.pdf', 'locked-book.pdf', 'notes.txt', 'scanned-book.pdf', 'subfolder/deeper/deep.pdf', 'subfolder/nested.pdf', 'text-book.pdf'], 'scripts only write under .rag/');
     assert.equal(status(), before, 'git status --porcelain shows nothing new');
   } finally {
     cf.server.close();

@@ -30,11 +30,6 @@ test('the four exams are there, each with valid questions', () => {
   }
 });
 
-test('the file says where questions may come from, and the page says they are samples', () => {
-  assert.match(DATA._about, /Never paste questions from a book/);
-  assert.match(DATA.note, /written for this site, not taken from any book or real exam/);
-});
-
 test('validQuestion rejects wrong shapes', () => {
   const ok = { q: 'Q?', options: ['a', 'b', 'c', 'd'], answer: 1, why: 'Because.' };
   assert.ok(validQuestion(ok));

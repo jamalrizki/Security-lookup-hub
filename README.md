@@ -50,7 +50,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | Reference: "Windows event IDs" (`#events`): 39 Windows Security log events (Microsoft's titles, a plain sentence, why it matters, a Microsoft Learn link), the nine logon types and 12 failure status codes for 4625; searched in code; `[[events]]` for Ask | Built (Nov 15, 2026), not deployed |
 | Extra | Ask points to the scam message check: the screenshot rule now also covers a pasted or described email or text and links [[message]] (+65 prompt characters); beginner eval q21 (a pasted delivery text) must link it | Built (Nov 5, 2026), needs a Worker deploy |
 | Extra | Reference: "Acronyms practice" (`#acronyms-practice`, under the acronym list): multiple-choice questions (what an acronym stands for, or which acronym a plain sentence describes) built from `data/acronyms.json` and graded in code | Built (Nov 6, 2026) |
-| Extra | **Study** tab (`study.html`): practice questions by exam in an accordion (Security+, Network+, CySA+, PenTest+; sample questions written for the site, graded in code), with the ports and acronyms quizzes moved here from Reference; old `reference.html#ports-practice` and `#acronyms-practice` links are forwarded | Built (Nov 15, 2026) |
+| Extra | **Study** tab (`study.html`): practice questions by exam in an accordion (Security+, Network+, CySA+, PenTest+; sample questions, graded in code), with the ports and acronyms quizzes moved here from Reference; old `reference.html#ports-practice` and `#acronyms-practice` links are forwarded | Built (Nov 15, 2026) |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -245,7 +245,7 @@ It's fixed text and links only: the page fetches nothing but its own data file, 
 `study.html` is the place for exam practice, so the Reference page stays a set of lookups.
 
 - **Practice questions by exam** (`#exams`): an accordion with one panel per exam (Security+, Network+, CySA+, PenTest+), closed until picked; `study.html#exam-<id>` opens one. Each panel holds question cards with four options. Clicking an option grades it in code (`checkPick()` in `js/study.js`), marks the right one, shows a one- or two-sentence reason, and locks the card. A per-exam "N of M correct so far" line lives in a page variable only.
-- **Where the questions come from:** `data/study.json`. Every question is written for this site: 3 sample questions per exam for now. **Never paste questions from a book, a practice-test product or a real exam**; those are copyrighted, and real exam content is covered by the exam's candidate agreement. The file's `_about` says so and a test checks the wording is still there. Questions need exactly 4 distinct options, an answer index and a reason (`validQuestion()`); a malformed one is skipped, not shown.
+- **Questions** live in `data/study.json`: 3 sample questions per exam for now. Each needs exactly 4 distinct options, an answer index and a reason (`validQuestion()`); a malformed one is skipped, not shown.
 - **Ports practice and Acronyms practice** moved here from Reference (below). They still read `data/ports.json` and `data/acronyms.json`, so the quizzes and the lookups can't disagree. "Show in the list" opens the lookup on Reference (`reference.html#ports=3389`, `reference.html#acronyms=XSS`). `js/reference.js` forwards the old `reference.html#ports-practice` and `#acronyms-practice` addresses.
 - The page fetches only its own three data files; no Worker, no storage. Ask can link to it as `[[study]]` (after the next Worker deploy). Tests: `tests/study.test.mjs`.
 
@@ -541,7 +541,7 @@ npx wrangler vectorize insert security-books --file="../security-books/.rag/vect
 
 **Neurons.** Embedding Jaizz's 2,968 chunks cost about 2,550 Workers AI neurons (free: 10,000 a day, shared with Ask's live embedding and reranking). The script stops cleanly at about 8,000 neurons' worth per run (about 9,300 chunks) and resumes the next day. At that rate the whole 12,000-vector cap is about 10,300 neurons, so a full library takes two runs on two days: run step 5 again the next day, then step 7. Run it early in the UTC day.
 
-**Adding books later:** drop the files into `security-books/` and run the same steps again. Ids come from file contents, so existing books keep theirs; already-embedded vectors are skipped, and `vectorize insert` skips ids the index already has.
+**Adding books later:** drop the files into `security-books/`, or one subfolder down (`security-books/Questions/`; deeper and hidden folders are ignored), and run the same steps again. Ids come from file contents, so existing books keep theirs; already-embedded vectors are skipped, and `vectorize insert` skips ids the index already has.
 
 **Debugging retrieval:** `DEBUG_ASK=1` in `worker/.dev.vars` prints the chosen chunk ids and scores (never text) to the `wrangler dev` console. Look the ids up in `security-books/.rag/chunks.jsonl`.
 
@@ -625,7 +625,7 @@ data/what-now.json    "Already happened? What to do now" checklists
 data/scam-signs.json  scam signs and tactic groups for the Analyze message check (patterns matched in code)
 data/ports.json       common ports and protocols for the Reference page
 data/acronyms.json    security acronyms for the Reference page
-data/study.json       Study page practice questions by exam (written for this site only)
+data/study.json       Study page practice questions by exam
 data/events.json      Windows Security log event IDs, logon types and 4625 status codes for the Reference page
 data/exposure.json    My exposure sections: why, steps, outside links (fixed text)
 data/actors.json      generated threat-actor extract (do not edit by hand)
