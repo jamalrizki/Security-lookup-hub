@@ -27,7 +27,7 @@
   <script type="module" src="js/chrome.js?v=19d86d58ae"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=62bbb82b48">
+  <link rel="stylesheet" href="css/style.css?v=529759cd2c">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/reference.js"></script>
 </head>
@@ -122,6 +122,18 @@
       </div>
       <p id="acronyms-count" class="small hint" aria-live="polite"></p>
       <div id="acronyms-list"></div>
+    </section>
+
+    <section id="events" class="search-block" aria-labelledby="events-h">
+      <h2 id="events-h">Windows event IDs</h2>
+      <p class="hint">Type a Windows Security log event ID (4625, 4688), a logon type (logon type 10), a 4625 status code (0xC000006A) or words (locked out, scheduled task). Shows Microsoft's name for the event, what it means in plain words, why it matters, and a link to Microsoft's page.</p>
+      <div class="filters">
+        <input id="events-filter" type="search" inputmode="search" maxlength="60" placeholder="Event ID, logon type or words, e.g. 4625, type 10" aria-label="Find a Windows event ID">
+      </div>
+      <p id="events-count" class="small hint" aria-live="polite"></p>
+      <div id="events-list"></div>
+      <details class="meaning"><summary>Logon types (4624, 4625)</summary><div id="events-logon-types"></div></details>
+      <details class="meaning"><summary>4625 failure status codes</summary><div id="events-status-codes"></div></details>
     </section>
 
     <p class="hint">Looking for what a tool does? See the <a href="tools.html">tools glossary</a>.</p>

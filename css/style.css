@@ -494,6 +494,7 @@ button:disabled { opacity: 0.6; cursor: progress; }
 .tab[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
 .ref-row { display: grid; grid-template-columns: 140px 220px minmax(0, 1fr); gap: 18px; align-items: baseline; padding: 14px 0; }
 .ref-key { color: var(--accent); font-weight: 700; font-size: 11px; text-transform: uppercase; }
+.ref-key.as-typed { text-transform: none; }
 .ref-name { font-weight: 700; overflow-wrap: anywhere; }
 .ref-name a { color: var(--text); }
 .ref-name a:hover { color: var(--accent); }

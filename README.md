@@ -47,6 +47,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | Ask eval, more sets: 15 student questions (`tests/evals/students.json`: cert-style concepts that must link [[acronyms]], [[ports]], [[subnet-practice]] and other hub tools when they fit, plus a PenTest+ payload ask that must be declined) and 13 working non-specialist questions (`tests/evals/work.json`: "is this CVE urgent" must call `cve_lookup` and say "the hub's priority"; patch order, KEV by vendor, email headers, log indicators, exposed RDP, certificates, questionnaire terms, an exploit ask to decline); `--set students` / `--set work` | Built (Nov 3, 2026) |
 | Extra | Reference: "Ports practice" (`#ports-practice`, under the ports list): random questions (which port, what runs there, TCP/UDP/both, the encrypted version) built from `data/ports.json` and graded in code; "Exam ports only" on by default | Built (Nov 4, 2026) |
 | Extra | Ask home: "Not sure something is safe?" links for beginners under the example questions (link, text or email, file, leaked password, already clicked or paid), each to the hub's own check; static links, nothing sent | Built (Nov 7, 2026), not published |
+| Extra | Reference: "Windows event IDs" (`#events`): 39 Windows Security log events (Microsoft's titles, a plain sentence, why it matters, a Microsoft Learn link), the nine logon types and 12 failure status codes for 4625; searched in code; `[[events]]` for Ask | Built (Nov 15, 2026), not deployed |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -274,6 +275,16 @@ Below "Where to start", `reference.html#what-now` has one card per thing that al
 - Search is in code (`js/acronyms.js`, DOM-free). Case, spaces and punctuation in an acronym don't matter (`PCIDSS` finds PCI DSS, `att&ck` finds ATT&CK). Ranking: exact acronym (every meaning, list order), then acronyms that start with the text, then (3+ characters) matches in the full name, then in the plain sentence. One or two letters only match acronyms, so `a` doesn't list everything. An acronym not in the list says so and points to the NIST glossary.
 - `reference.html#acronyms=RPO` opens the section with that acronym filled in.
 - `tests/acronyms.test.mjs` checks every entry's shape and order, no repeated meaning, exam staples (CIA, AAA, RPO/RTO, ALE/SLE/ARO, SIEM, SOAR, XSS, CSRF, OCSP, CVSS, KEV, EPSS…) with their standard expansions, multi-meaning acronyms, and the search rules. Ask can send visitors here with `[[acronyms]]`.
+
+## Reference: Windows event IDs
+
+`reference.html#events` answers "what is event 4625, logon type 10?" and "what does 0xC000006A mean?" for sysadmins and help desk staff reading Event Viewer or a SIEM alert, and for CySA+ and Security+ students practising log analysis. Type an event ID (`4625`, `event id 4688`), a logon type (`logon type 10`, `type 3`), a 4625 status code (`0xC000006A` or `c000006a`) or words (`locked out`, `scheduled task`, `kerberos`). Each event row shows Microsoft's own title, the log and audit category, one plain sentence, "why it matters", and a link to Microsoft Learn. Nothing is listed until something is typed; the logon-type and status-code tables are also under two "show" toggles.
+
+- The data is `data/events.json`: 39 Windows Security log events (logon/logoff, Kerberos and NTLM, account and group changes, lockouts, process creation, service install, scheduled tasks, audit-policy change, log cleared), the nine logon types (2, 3, 4, 5, 7, 8, 9, 10, 11; there is no 6) and 12 status codes from Microsoft's 4625 page. Event titles were checked against each event's Microsoft Learn page when added (Nov 15, 2026); the plain sentences and "why it matters" are fixed text written for the hub, with no AI and no network calls. Entries are keyed by log and ID, because IDs are only unique within one log (Sysmon 1 is not Security 1). Domain-group events (4728, 4756) link to the local-group page Microsoft documents them on.
+- Links are built from one Microsoft Learn base and re-checked when rendering (`eventDocUrl()`: https, `learn.microsoft.com` only, path must end in `event-<id>`).
+- Search is in code (`js/events.js`, DOM-free). An event ID (1 to 65535) matches exactly; one or two digits, or `logon type N`, look up a logon type; a status code needs exactly 8 hex digits (and `0x` or a letter, so an 8-digit number isn't read as one). Words (3+ characters) rank Microsoft's title first, then the plain sentence, then "why it matters", and also search the two tables. An ID, logon type or status code not in the list says so plainly and links to Microsoft instead of guessing.
+- `reference.html#events=4625` (or `#events=0xC000006A`) opens the section with that value filled in.
+- `tests/events.test.mjs` checks every entry's shape and order, unique (log, ID) pairs, every link's host and path, exam staples with Microsoft's titles, the exact nine logon types, the status-code format, and the search rules. Ask can send visitors here with `[[events]]`.
 
 ## Analyze tools
 
@@ -576,6 +587,7 @@ js/exposure.js   My exposure page rendering (data/exposure.json)
 js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
 js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
 js/acronyms.js   "Security acronyms" search and checks (DOM-free, tested in Node)
+js/events.js     "Windows event IDs" search and Microsoft link checks (DOM-free, tested in Node)
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
 js/results.js    result cards for Worker lookups
@@ -592,6 +604,7 @@ data/what-now.json    "Already happened? What to do now" checklists
 data/scam-signs.json  scam signs and tactic groups for the Analyze message check (patterns matched in code)
 data/ports.json       common ports and protocols for the Reference page
 data/acronyms.json    security acronyms for the Reference page
+data/events.json      Windows Security log event IDs, logon types and 4625 status codes for the Reference page
 data/exposure.json    My exposure sections: why, steps, outside links (fixed text)
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)

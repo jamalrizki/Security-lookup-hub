@@ -4,6 +4,7 @@ import { guidanceUrl, isHubHref } from './what-now.js';
 import { searchPorts, portLabel, secureVersions } from './ports.js';
 import { startPortsDrill } from './ports-drill.js';
 import { searchAcronyms } from './acronyms.js';
+import { searchEvents, eventDocUrl, eventPageId } from './events.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -217,6 +218,89 @@ async function loadAcronyms() {
 }
 
 loadAcronyms();
+
+// "Windows event IDs": data/events.json, searched in code (js/events.js).
+// An ID or status code from the address (#events=4625) fills the box, so other pages can link here.
+let events = null;
+
+function msLink(id, label) {
+  const href = eventDocUrl(events.docBase, id);
+  return href ? el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, label) : null;
+}
+
+function eventRow(e) {
+  const link = msLink(eventPageId(e), 'Microsoft Learn');
+  return el('li', { class: 'ref-row' },
+    el('span', { class: 'ref-key' }, String(e.id)),
+    el('span', { class: 'ref-name' }, e.name, el('span', { class: 'hint' }, ` ${e.log} log · ${e.category}`)),
+    el('span', { class: 'ref-desc' }, e.plain, ' ',
+      el('strong', {}, 'Why it matters: '), e.why,
+      link ? ' ' : null, link));
+}
+
+function logonTypeRow(l) {
+  return el('li', { class: 'ref-row' },
+    el('span', { class: 'ref-key' }, `Type ${l.type}`),
+    el('span', { class: 'ref-name' }, l.name),
+    el('span', { class: 'ref-desc' }, l.plain));
+}
+
+function statusRow(s) {
+  return el('li', { class: 'ref-row' },
+    el('span', { class: 'ref-key as-typed' }, s.code),
+    el('span', { class: 'ref-name' }, s.plain, el('span', { class: 'hint' }, ' 4625 status code')),
+    el('span', { class: 'ref-desc' }, s.why || ''));
+}
+
+function renderEvents() {
+  const r = searchEvents(events, $('events-filter').value);
+  const total = events.events.length;
+  if (r.kind === 'empty') {
+    $('events-count').textContent = `${total} Security log events, ${events.logonTypes.length} logon types and ${events.statusCodes.length} status codes. Type one to see what it means.`;
+    $('events-list').replaceChildren();
+    return;
+  }
+  const parts = [];
+  if (r.events.length) parts.push(el('ul', { class: 'rows' }, ...r.events.map(eventRow)));
+  if (r.logonTypes.length) parts.push(el('ul', { class: 'rows' }, ...r.logonTypes.map(logonTypeRow)));
+  if (r.statuses.length) parts.push(el('ul', { class: 'rows' }, ...r.statuses.map(statusRow)));
+  const shown = r.events.length + r.logonTypes.length + r.statuses.length;
+  $('events-count').textContent = r.error || (shown ? `${shown} ${shown === 1 ? 'match' : 'matches'}.` : '');
+  if (!shown && !r.error) {
+    const back = r.kind === 'status'
+      ? ['That status code is not in this list. ', msLink(events.statusCodesPage, 'Microsoft\'s 4625 page'), ' lists the codes worth watching.']
+      : r.kind === 'logon-type'
+        ? ['There is no such logon type. Windows uses 2, 3, 4, 5, 7, 8, 9, 10 and 11.']
+        : ['Not in this list. Check ', el('a', { href: events.source.url, target: '_blank', rel: 'noopener noreferrer' }, 'Microsoft\'s events to monitor'), ' instead of guessing.'];
+    parts.push(el('p', { class: 'empty' }, ...back));
+  }
+  $('events-list').replaceChildren(...parts);
+}
+
+async function loadEvents() {
+  try {
+    const res = await fetch('data/events.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    events = await res.json();
+    $('events-logon-types').replaceChildren(el('ul', { class: 'rows' }, ...events.logonTypes.map(logonTypeRow)),
+      el('p', { class: 'small hint' }, 'There is no logon type 6. Source: ', msLink(events.logonTypesPage, 'Microsoft Learn, event 4625'), '.'));
+    $('events-status-codes').replaceChildren(el('ul', { class: 'rows' }, ...events.statusCodes.map(statusRow)),
+      el('p', { class: 'small hint' }, 'Status and Sub Status appear under Failure Information. Source: ', msLink(events.statusCodesPage, 'Microsoft Learn, event 4625'), '.'));
+    const m = location.hash.match(/^#events=([A-Za-z0-9%. -]{1,60})$/);
+    if (m) {
+      let q = m[1];
+      try { q = decodeURIComponent(q); } catch { /* keep as typed */ }
+      $('events-filter').value = q.slice(0, 60);
+      $('events').scrollIntoView();
+    }
+    $('events-filter').addEventListener('input', renderEvents);
+    renderEvents();
+  } catch (err) {
+    $('events-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the event list: ${err.message}`));
+  }
+}
+
+loadEvents();
 
 try {
   const res = await fetch('data/reference.json');

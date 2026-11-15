@@ -25,6 +25,7 @@
     { "id": "what-now", "name": "Already happened? What to do now", "href": "./reference.html#what-now", "about": "First steps after clicking, giving a password or paying" },
     { "id": "ports", "name": "Ports and protocols", "href": "./reference.html#ports", "about": "Common port numbers: service, encrypted version, exposure" },
     { "id": "acronyms", "name": "Security acronyms", "href": "./reference.html#acronyms", "about": "What security acronyms stand for, in plain words" },
+    { "id": "events", "name": "Windows event IDs", "href": "./reference.html#events", "about": "What Windows Security log event IDs (4625, 4688…) mean" },
     { "id": "password", "name": "Password check", "href": "./lookup.html#password", "about": "Has this password appeared in known breaches" },
     { "id": "tools", "name": "Tools glossary", "href": "./tools.html", "about": "What common security tools do, one line each" }
   ]
