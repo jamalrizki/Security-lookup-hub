@@ -1,43 +1,49 @@
 {
- "_about": "Study page (study.html), rendered by js/study.js. This file lists the exams; each exam's questions are in its own file (\"file\"), shown ten at a time. An exam is multiple choice by default: each question has exactly 4 options, answer (the 0-based index of the right one) and why (one or two plain sentences). An exam with \"format\": \"tasks\" has hands-on tasks instead: task (what to do), steps (commands or lines, in order) and check (how to confirm it worked). The question files are written by rag/make_questions.mjs from the library's study guides and practice-test books (see README, Study). tests/study.test.mjs checks the shape.",
+ "_about": "Study page (study.html), rendered by js/study.js. This file lists the exams; each exam's questions are in its own file (\"file\"), fetched when its panel is first opened and shown ten at a time; \"count\" is shown before then and is kept up to date by rag/make_questions.mjs. An exam is multiple choice by default: each question has exactly 4 options, answer (the 0-based index of the right one) and why (one or two plain sentences). An exam with \"format\": \"tasks\" has hands-on tasks instead: task (what to do), steps (commands or lines, in order) and check (how to confirm it worked). The question files are written by rag/make_questions.mjs from the library's study guides and practice-test books (see README, Study). tests/study.test.mjs checks the shape.",
  "note": "Questions show ten at a time; use Shuffle for a new order. The RHCSA panel has hands-on tasks: do each one on your own practice VM, then compare.",
  "exams": [
   {
    "id": "security-plus",
    "name": "Security+",
    "about": "CompTIA's entry-level security certification: threats, architecture, operations and governance.",
-   "file": "data/study/security-plus.json"
+   "file": "data/study/security-plus.json",
+   "count": 489
   },
   {
    "id": "network-plus",
    "name": "Network+",
    "about": "CompTIA's networking certification: addressing, routing and switching, wireless, troubleshooting and network security.",
-   "file": "data/study/network-plus.json"
+   "file": "data/study/network-plus.json",
+   "count": 473
   },
   {
    "id": "cysa-plus",
    "name": "CySA+",
    "about": "CompTIA's security analyst certification: detection, vulnerability management and incident response.",
-   "file": "data/study/cysa-plus.json"
+   "file": "data/study/cysa-plus.json",
+   "count": 450
   },
   {
    "id": "pentest-plus",
    "name": "PenTest+",
    "about": "CompTIA's penetration testing certification: planning and scoping, reconnaissance, attacks and reporting.",
-   "file": "data/study/pentest-plus.json"
+   "file": "data/study/pentest-plus.json",
+   "count": 149
   },
   {
    "id": "linux",
    "name": "Linux",
    "about": "General Linux administration on any distribution: the ground CompTIA Linux+ and the Linux Foundation's LFCS cover.",
-   "file": "data/study/linux.json"
+   "file": "data/study/linux.json",
+   "count": 459
   },
   {
    "id": "rhcsa",
    "name": "RHCSA",
    "format": "tasks",
    "about": "Red Hat Certified System Administrator (EX200), on RHEL 10. The exam is hands-on: you configure a live system, so these are tasks, not multiple choice.",
-   "file": "data/study/rhcsa.json"
+   "file": "data/study/rhcsa.json",
+   "count": 201
   }
  ]
 }

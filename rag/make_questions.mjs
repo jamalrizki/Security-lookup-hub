@@ -253,6 +253,14 @@ function writeBank(examMeta, records) {
   const items = assemble(examMeta, records, loadRejects(examMeta.id));
   if (!items.length) return 0;
   fs.writeFileSync(path.join(ROOT, `data/study/${examMeta.id}.json`), `${JSON.stringify({ questions: items }, null, 1)}\n`);
+  // The page shows each exam's count before its file loads, so keep it in data/study.json.
+  const listFile = path.join(ROOT, 'data/study.json');
+  const list = JSON.parse(fs.readFileSync(listFile, 'utf8'));
+  const entry = list.exams.find((e) => e.id === examMeta.id);
+  if (entry) {
+    entry.count = items.length;
+    fs.writeFileSync(listFile, `${JSON.stringify(list, null, 1)}\n`);
+  }
   return items.length;
 }
 

@@ -94,9 +94,9 @@ if (globalThis.document?.getElementById('study-exams')) {
     return el('li', { class: 'qa-card' }, el('p', { class: 'qa-q' }, t.task), el('div', {}, show), answer);
   };
 
-  // One accordion panel per exam, showing PAGE items at a time. Picks are kept per
-  // question, so paging back shows answered cards still locked and the score counts once.
-  const panel = (exam, items) => {
+  // One exam's questions, ten at a time, inside its panel. Picks are kept per question,
+  // so paging back shows answered cards still locked and the score counts once.
+  const examBody = (exam, items) => {
     const tasks = exam.format === 'tasks';
     const all = items.filter(tasks ? validTask : validQuestion);
     let order = all.map((_, i) => i);
@@ -139,23 +139,41 @@ if (globalThis.document?.getElementById('study-exams')) {
       go(0, true);
     });
     render();
+    return [el('div', { class: 'qa-pager' }, prev, range, next, shuffle), list, tasks ? null : score];
+  };
 
+  // One accordion panel per exam. Its question file is fetched the first time the
+  // panel opens, so the page only downloads the exams someone actually looks at.
+  const panel = (exam) => {
+    const tasks = exam.format === 'tasks';
     const noun = tasks ? 'task' : 'question';
-    const count = `${all.length} ${noun}${all.length === 1 ? '' : 's'}`;
-    const pager = () => el('div', { class: 'qa-pager' }, prev, range, next, shuffle);
-    return el('details', { class: 'exam', id: `exam-${exam.id}` },
+    const n = Number.isInteger(exam.count) ? exam.count : null;
+    const count = n === null ? `${noun}s` : `${n} ${noun}${n === 1 ? '' : 's'}`;
+    const holder = el('div', { class: 'qa-holder' }, el('p', { class: 'hint' }, `Loading the ${exam.name} ${noun}s…`));
+    const details = el('details', { class: 'exam', id: `exam-${exam.id}` },
       el('summary', {}, el('span', { class: 'exam-name' }, exam.name), el('span', { class: 'exam-count' }, count)),
-      el('div', { class: 'exam-body' },
-        el('p', { class: 'hint' }, exam.about),
-        pager(),
-        list,
-        tasks ? null : score));
+      el('div', { class: 'exam-body' }, el('p', { class: 'hint' }, exam.about), holder));
+    let loading = null;
+    details.ensureLoaded = () => {
+      loading ||= load(exam.file).then((f) => {
+        holder.replaceChildren(...examBody(exam, f.questions || []).filter(Boolean));
+      }).catch((err) => {
+        loading = null; // closing and reopening the panel tries again
+        holder.replaceChildren(el('p', { class: 'notice warn' }, `Could not load the ${exam.name} ${noun}s: ${err.message}`));
+      });
+      return loading;
+    };
+    details.addEventListener('toggle', () => {
+      if (details.hasAttribute('open')) details.ensureLoaded();
+    });
+    return details;
   };
 
   const openFromHash = () => {
     const target = /^#(exam-[a-z-]+|ports-practice|acronyms-practice)$/.test(location.hash) ? $(location.hash.slice(1)) : null;
     if (!target) return;
     target.setAttribute('open', '');
+    target.ensureLoaded?.();
     target.scrollIntoView();
   };
 
@@ -165,15 +183,11 @@ if (globalThis.document?.getElementById('study-exams')) {
     return res.json();
   };
 
-  // The exam list, then every exam's own question file. An exam whose file fails
-  // to load still gets a panel, saying so, so the others keep working.
-  load('data/study.json').then(async (data) => {
+  // The exam list. Each exam's own question file loads when its panel is opened.
+  load('data/study.json').then((data) => {
     $('study-note').textContent = data.note || '';
     const exams = (data.exams || []).filter((e) => /^data\/study\/[a-z-]+\.json$/.test(e.file || ''));
-    const files = await Promise.all(exams.map((e) => load(e.file).then((f) => f.questions || [], (err) => err)));
-    $('study-exams').replaceChildren(...exams.map((exam, n) => (files[n] instanceof Error
-      ? el('p', { class: 'notice warn' }, `Could not load the ${exam.name} questions: ${files[n].message}`)
-      : panel(exam, files[n]))));
+    $('study-exams').replaceChildren(...exams.map(panel));
     openFromHash();
     window.addEventListener('hashchange', openFromHash);
   }).catch((err) => {
