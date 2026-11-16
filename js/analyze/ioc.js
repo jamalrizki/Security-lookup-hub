@@ -2,7 +2,7 @@
 // value leaves the page. There is deliberately no "look up all": VirusTotal
 // allows 4 lookups a minute for the whole site.
 
-import { extractIocs, parseAccessLog, toCsv, MAX_TEXT } from '../extract.js';
+import { extractIocs, parseAccessLog, parseAuthLog, SSH_FLAGS, toCsv, MAX_TEXT } from '../extract.js';
 import { ready } from './data.js';
 import { el, $, notice, lookUpLink, copyButton, download, defang } from './ui.js';
 import { providerRanges, rowLabel, RANGES_NOTE } from './provider-ranges.js';
@@ -69,6 +69,51 @@ function accessLogSummary(a) {
     a.agents.length ? list('Top user agents', a.agents) : null);
 }
 
+// A made-up sshd log for practice. Documentation addresses only (RFC 5737 / RFC 3849),
+// so nothing here points at a real machine.
+export const SSH_SAMPLE = [
+  ...['root', 'admin', 'test', 'oracle', 'ubuntu', 'pi'].flatMap((u, i) => [
+    `Nov 16 03:12:0${i} web1 sshd[2211]: Invalid user ${u} from 203.0.113.9 port 5012${i}`,
+    `Nov 16 03:12:0${i} web1 sshd[2211]: Failed password for invalid user ${u} from 203.0.113.9 port 5012${i} ssh2`,
+  ]),
+  'Nov 16 03:12:09 web1 sshd[2211]: Connection closed by invalid user pi 203.0.113.9 port 50126 [preauth]',
+  ...Array.from({ length: 11 }, (_, i) => `Nov 16 03:40:${String(10 + i * 3).padStart(2, '0')} web1 sshd[2290]: Failed password for deploy from 198.51.100.7 port 4410${i % 10} ssh2`),
+  'Nov 16 03:41:02 web1 sshd[2290]: Accepted password for deploy from 198.51.100.7 port 44111 ssh2',
+  'Nov 16 08:02:45 web1 sshd[3104]: Accepted publickey for jamie from 2001:db8::25 port 51515 ssh2: ED25519 SHA256:exampleKeyFingerprint',
+  'Nov 16 08:15:30 web1 sshd[3120]: Failed password for jamie from 2001:db8::25 port 51600 ssh2',
+].join('\n');
+
+const SSH_NEXT = [
+  ['Turn off password logins (keys only)', 'https://man.openbsd.org/sshd_config#PasswordAuthentication'],
+  ['Stop direct root logins', 'https://man.openbsd.org/sshd_config#PermitRootLogin'],
+  ['Block repeat offenders automatically (Fail2ban)', 'https://github.com/fail2ban/fail2ban'],
+];
+const FLAG_TITLES = { guessing: 'Password guessing from one source', spraying: 'Password spraying', 'accepted-after-failures': 'Worth checking' };
+
+/** Totals, flags (decided in parseAuthLog) and accepted logins for a recognised sshd log. */
+function authLogSummary(a) {
+  const list = (label, items) => el('div', {}, el('h3', {}, label), items.length
+    ? el('ol', { class: 'plain-list' }, ...items.map((i) => el('li', { class: 'mono' }, `${i.value} \u00d7 ${i.count}`)))
+    : el('p', { class: 'hint' }, 'None'));
+  const acceptedNote = a.acceptedCount > a.accepted.length ? ` (first ${a.accepted.length} shown)` : '';
+  const worried = a.flags.some((f) => f.kind === 'accepted-after-failures');
+  return el('section', { class: 'auth-log' },
+    el('h3', {}, 'SSH logins'),
+    el('p', { class: 'hint' }, `${a.matched} of ${a.lines} lines are sshd lines, from ${a.first} to ${a.last} (the log has no year or time zone).`),
+    el('p', {}, `${a.failed} failed ${a.failed === 1 ? 'login' : 'logins'}, ${a.acceptedCount} accepted, ${a.invalidUsers} for usernames that don't exist on this server`,
+      a.maxAuth ? `, ${a.maxAuth} cut off for too many tries.` : '.'),
+    a.flags.length
+      ? el('div', {}, ...a.flags.map((f) => notice(f.kind === 'accepted-after-failures' ? 'bad' : 'warn', el('strong', {}, `${FLAG_TITLES[f.kind]}: `), f.reason)))
+      : el('p', { class: 'hint' }, `No pattern flagged (a flag needs ${SSH_FLAGS.guessingFailures}+ failures or ${SSH_FLAGS.sprayUsers}+ usernames from one IP, or a login after failures).`),
+    el('div', { class: 'tools pair' }, list('Top IPs by failed logins', a.ips), list('Top usernames tried', a.users)),
+    el('div', {}, el('h3', {}, `Accepted logins${acceptedNote}`), a.accepted.length
+      ? el('ol', { class: 'plain-list' }, ...a.accepted.map((r) => el('li', { class: 'mono' }, `${r.time} \u2014 ${r.user} (${r.method}) from ${r.ip}`)))
+      : el('p', { class: 'hint' }, 'None')),
+    el('p', { class: 'hint' }, 'Next steps: ',
+      ...SSH_NEXT.flatMap(([label, href], i) => [i ? ' \u00b7 ' : '', el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, label)]),
+      ...(worried ? [' \u00b7 ', el('a', { href: './reference.html#what-now' }, 'If a login wasn\u2019t you: what to do now')] : [])));
+}
+
 async function run() {
   const out = $('ioc-result');
   const text = $('ioc-input').value;
@@ -108,6 +153,8 @@ async function run() {
   }
   const access = logMode ? parseAccessLog(text, { lineFilter: $('ioc-filter').value }) : null;
   if (access) parts.push(accessLogSummary(access));
+  const auth = logMode && !access ? parseAuthLog(text, { lineFilter: $('ioc-filter').value }) : null;
+  if (auth) parts.push(authLogSummary(auth));
   if (logMode && r.total) {
     parts.push(el('div', { class: 'tools pair' },
       topIps([...(r.groups.ipv4 || []), ...(r.groups.ipv6 || [])]),
@@ -123,6 +170,13 @@ $('ioc-form').addEventListener('submit', (ev) => {
 });
 $('ioc-log').addEventListener('change', () => {
   $('ioc-filter-row').hidden = !$('ioc-log').checked;
+});
+$('ioc-sample').addEventListener('click', () => {
+  $('ioc-input').value = SSH_SAMPLE;
+  $('ioc-log').checked = true;
+  $('ioc-filter-row').hidden = false;
+  $('ioc-filter').value = '';
+  run();
 });
 $('ioc-clear').addEventListener('click', () => {
   $('ioc-input').value = '';

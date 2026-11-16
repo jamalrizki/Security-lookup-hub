@@ -295,6 +295,143 @@ export function parseAccessLog(input, { lineFilter = '' } = {}) {
   };
 }
 
+// ---------- SSH auth logs (IOC extractor, log mode) ----------
+
+// Classic syslog lines from sshd (Debian/Ubuntu /var/log/auth.log, RHEL /var/log/secure):
+//   Nov 16 03:12:01 web1 sshd[2211]: Failed password for invalid user admin from 203.0.113.9 port 50122 ssh2
+// Newer OpenSSH logs as "sshd-session[pid]". journalctl and RFC 3339 timestamps are a later slice.
+const SYSLOG_SSHD = /^([A-Z][a-z]{2} {1,2}\d{1,2} \d{2}:\d{2}:\d{2}) \S+ sshd(?:-session)?\[\d+\]: (.*)$/;
+const IP_PART = '([0-9A-Fa-f:.]{2,45})';
+const SSH_MSG = {
+  failed: new RegExp(`^Failed (\\S+) for (invalid user )?(\\S*) from ${IP_PART} port \\d+`),
+  accepted: new RegExp(`^Accepted (\\S+) for (\\S+) from ${IP_PART} port \\d+`),
+  invalid: new RegExp(`^Invalid user (\\S*) from ${IP_PART}(?: port \\d+)?\\s*$`),
+  maxAuth: new RegExp(`^error: maximum authentication attempts exceeded for (?:invalid user )?(\\S*) from ${IP_PART} port \\d+`),
+  closed: new RegExp(`^(?:Connection closed|Disconnected from) (?:by )?(?:authenticating |invalid )?user (\\S*) ${IP_PART} port \\d+ \\[preauth\\]`),
+};
+// rsyslog folds identical lines: "message repeated 3 times: [ Failed password for root from … ]"
+const REPEATED = /^message repeated (\d{1,6}) times: \[ ?(.*?) ?\]$/;
+
+/** The thresholds behind the flags, kept here so the page and tests use the same numbers. */
+export const SSH_FLAGS = Object.freeze({
+  guessingFailures: 10, // one source IP with at least this many failed logins
+  sprayUsers: 5, // one source IP trying at least this many different usernames
+});
+export const MAX_SSH_USER = 32;
+const MAX_ACCEPTED_ROWS = 50;
+
+/** A real IPv4 or IPv6 address (sshd prints them bare), else null. */
+function sshIp(s) {
+  if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(s)) return s.split('.').every((o) => Number(o) <= 255) ? s : null;
+  if (!s.includes(':')) return null;
+  try {
+    return new URL(`http://[${s}]/`).hostname.slice(1, -1);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Counts from an sshd auth log, or null when at most half of the non-empty
+ * lines are syslog sshd lines (log mode then works as before). Usernames are
+ * cut to 32 characters. Flags are decided here with SSH_FLAGS, each with its
+ * reason; "worth checking" is an accepted login from an IP that failed earlier
+ * in the same paste. Same text limit and line filter as extractIocs.
+ */
+export function parseAuthLog(input, { lineFilter = '' } = {}) {
+  let lines = String(input).slice(0, MAX_TEXT).split(/\r?\n/).filter((l) => l.trim());
+  if (lineFilter) {
+    const f = lineFilter.toLowerCase();
+    lines = lines.filter((l) => l.toLowerCase().includes(f));
+  }
+  if (!lines.length) return null;
+  const user = (u) => (u || '(empty)').slice(0, MAX_SSH_USER);
+  const fails = new Map(); // ip -> failed logins
+  const usersByIp = new Map(); // ip -> Set of usernames tried
+  const userCounts = new Map(); // username -> failed logins
+  const accepted = [];
+  const flagged = [];
+  let matched = 0;
+  let failed = 0;
+  let invalidUsers = 0;
+  let maxAuth = 0;
+  let acceptedTotal = 0;
+  let first = null;
+  let last = null;
+  const tried = (ip, u) => {
+    if (!usersByIp.has(ip)) usersByIp.set(ip, new Set());
+    usersByIp.get(ip).add(u);
+  };
+  for (const line of lines) {
+    const s = SYSLOG_SSHD.exec(line);
+    if (!s) continue;
+    matched += 1;
+    if (!first) first = s[1];
+    last = s[1];
+    let msg = s[2];
+    let times = 1;
+    const rep = REPEATED.exec(msg);
+    if (rep) {
+      times = Number(rep[1]);
+      msg = rep[2];
+    }
+    let m;
+    if ((m = SSH_MSG.failed.exec(msg))) {
+      const ip = sshIp(m[4]);
+      if (!ip) continue;
+      const u = user(m[3]);
+      failed += times;
+      fails.set(ip, (fails.get(ip) || 0) + times);
+      userCounts.set(u, (userCounts.get(u) || 0) + times);
+      tried(ip, u);
+    } else if ((m = SSH_MSG.accepted.exec(msg))) {
+      const ip = sshIp(m[3]);
+      if (!ip) continue;
+      const row = { time: s[1], user: user(m[2]), method: m[1].slice(0, 40), ip, failedBefore: fails.get(ip) || 0 };
+      acceptedTotal += times;
+      if (accepted.length < MAX_ACCEPTED_ROWS) accepted.push(row);
+      if (row.failedBefore && flagged.length < MAX_ACCEPTED_ROWS) flagged.push(row);
+    } else if ((m = SSH_MSG.invalid.exec(msg))) {
+      const ip = sshIp(m[2]);
+      if (!ip) continue;
+      invalidUsers += times;
+      tried(ip, user(m[1]));
+    } else if ((m = SSH_MSG.maxAuth.exec(msg))) {
+      if (sshIp(m[2])) maxAuth += times;
+    }
+  }
+  if (matched * 2 <= lines.length) return null;
+
+  const flags = [];
+  for (const [ip, n] of [...fails].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))) {
+    if (n >= SSH_FLAGS.guessingFailures) {
+      flags.push({ kind: 'guessing', ip, count: n, reason: `${ip} failed to log in ${n} times (${SSH_FLAGS.guessingFailures} or more is treated as password guessing).` });
+    }
+  }
+  for (const [ip, set] of [...usersByIp].sort((a, b) => b[1].size - a[1].size || a[0].localeCompare(b[0]))) {
+    if (set.size >= SSH_FLAGS.sprayUsers) {
+      flags.push({ kind: 'spraying', ip, count: set.size, reason: `${ip} tried ${set.size} different usernames (${SSH_FLAGS.sprayUsers} or more is treated as password spraying).` });
+    }
+  }
+  for (const a of flagged) {
+    flags.push({ kind: 'accepted-after-failures', ip: a.ip, count: a.failedBefore, reason: `${a.user} logged in from ${a.ip} at ${a.time} after ${a.failedBefore} failed ${a.failedBefore === 1 ? 'try' : 'tries'} from that address. Check whether this was you or someone you know.` });
+  }
+  return {
+    lines: lines.length,
+    matched,
+    first,
+    last,
+    failed,
+    invalidUsers,
+    maxAuth,
+    acceptedCount: acceptedTotal,
+    accepted,
+    ips: top(fails),
+    users: top(userCounts),
+    flags,
+  };
+}
+
 /** CSV with a header row; every field quoted, and formula-leading cells neutralised for spreadsheets. */
 export function toCsv(rows) {
   const cell = (v) => {
