@@ -27,7 +27,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
   <script type="module" src="js/chrome.js?v=a86f7c4c00"></script>
-  <link rel="stylesheet" href="css/style.css?v=a9cff45346">
+  <link rel="stylesheet" href="css/style.css?v=783ac45dcf">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/study.js"></script>
 </head>
@@ -81,36 +81,43 @@
       <div id="study-exams"></div>
     </section>
 
-    <section id="ports-practice" class="search-block" aria-labelledby="pdrill-h">
-      <h2 id="pdrill-h">Ports practice</h2>
-      <p class="hint">Random questions for Network+ and Security+: which port, what runs there, TCP or UDP, and the encrypted version. Checked against the hub’s <a href="reference.html#ports">ports list</a>. Your score is not saved anywhere.</p>
-      <label class="small"><input id="pdrill-exam" type="checkbox" checked> Exam ports only</label>
-      <p id="pdrill-question" class="mono" aria-live="polite"></p>
-      <form id="pdrill-form" class="row" autocomplete="off">
-        <input id="pdrill-answer" type="text" class="mono-input" spellcheck="false" maxlength="40" aria-label="Your answer" placeholder="Your answer">
-        <button type="submit">Check</button>
-      </form>
-      <div class="row">
-        <button type="button" id="pdrill-reveal" class="secondary small">Show answer</button>
-        <button type="button" id="pdrill-next" class="secondary small">Next question</button>
-        <button type="button" id="pdrill-show" class="secondary small">Show in the list</button>
-      </div>
-      <div id="pdrill-result" class="result" aria-live="polite"></div>
-      <p id="pdrill-score" class="hint" aria-live="polite"></p>
-    </section>
-
-    <section id="acronyms-practice" class="search-block" aria-labelledby="adrill-h">
-      <h2 id="adrill-h">Acronyms practice</h2>
-      <p class="hint">Multiple-choice questions for Security+, CySA+ and CISSP: what an acronym stands for, or which acronym a plain sentence describes. Checked against the hub’s <a href="reference.html#acronyms">acronyms list</a>. Your score is not saved anywhere.</p>
-      <p id="adrill-question" aria-live="polite"></p>
-      <div id="adrill-options" class="row" role="group" aria-labelledby="adrill-question"></div>
-      <div class="row">
-        <button type="button" id="adrill-reveal" class="secondary small">Show answer</button>
-        <button type="button" id="adrill-next" class="secondary small">Next question</button>
-        <button type="button" id="adrill-show" class="secondary small">Show in the list</button>
-      </div>
-      <div id="adrill-result" class="result" aria-live="polite"></div>
-      <p id="adrill-score" class="hint" aria-live="polite"></p>
+    <section id="quizzes" class="search-block" aria-labelledby="quizzes-h">
+      <h2 id="quizzes-h">Ports and acronyms quizzes</h2>
+      <p class="hint">Pick a quiz to open it.</p>
+      <details class="exam" id="ports-practice">
+        <summary><span class="exam-name">Ports practice</span><span class="exam-count">Network+ · Security+</span></summary>
+        <div class="exam-body">
+          <p class="hint">Random questions for Network+ and Security+: which port, what runs there, TCP or UDP, and the encrypted version. Checked against the hub’s <a href="reference.html#ports">ports list</a>. Your score is not saved anywhere.</p>
+          <label class="small"><input id="pdrill-exam" type="checkbox" checked> Exam ports only</label>
+          <p id="pdrill-question" class="mono" aria-live="polite"></p>
+          <form id="pdrill-form" class="row" autocomplete="off">
+            <input id="pdrill-answer" type="text" class="mono-input" spellcheck="false" maxlength="40" aria-label="Your answer" placeholder="Your answer">
+            <button type="submit">Check</button>
+          </form>
+          <div class="row">
+            <button type="button" id="pdrill-reveal" class="secondary small">Show answer</button>
+            <button type="button" id="pdrill-next" class="secondary small">Next question</button>
+            <button type="button" id="pdrill-show" class="secondary small">Show in the list</button>
+          </div>
+          <div id="pdrill-result" class="result" aria-live="polite"></div>
+          <p id="pdrill-score" class="hint" aria-live="polite"></p>
+        </div>
+      </details>
+      <details class="exam" id="acronyms-practice">
+        <summary><span class="exam-name">Acronyms practice</span><span class="exam-count">Security+ · CySA+ · CISSP</span></summary>
+        <div class="exam-body">
+          <p class="hint">Multiple-choice questions for Security+, CySA+ and CISSP: what an acronym stands for, or which acronym a plain sentence describes. Checked against the hub’s <a href="reference.html#acronyms">acronyms list</a>. Your score is not saved anywhere.</p>
+          <p id="adrill-question" aria-live="polite"></p>
+          <div id="adrill-options" class="row" role="group" aria-labelledby="adrill-question"></div>
+          <div class="row">
+            <button type="button" id="adrill-reveal" class="secondary small">Show answer</button>
+            <button type="button" id="adrill-next" class="secondary small">Next question</button>
+            <button type="button" id="adrill-show" class="secondary small">Show in the list</button>
+          </div>
+          <div id="adrill-result" class="result" aria-live="polite"></div>
+          <p id="adrill-score" class="hint" aria-live="polite"></p>
+        </div>
+      </details>
     </section>
 
     <p class="hint">More practice and lookups: <a href="analyze.html#subnet-practice">subnetting practice</a> on Analyze, and the <a href="reference.html#ports">ports</a>, <a href="reference.html#acronyms">acronyms</a> and <a href="reference.html#events">Windows event IDs</a> lookups on Reference.</p>

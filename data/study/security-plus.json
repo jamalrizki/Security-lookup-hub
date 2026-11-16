@@ -1,0 +1,2325 @@
+{
+ "questions": [
+  {
+   "q": "When using the end‑of‑chapter review questions in the study guide, what minimum score should you achieve before moving on to the next chapter?",
+   "options": [
+    "100% correct",
+    "70% correct",
+    "80% correct",
+    "90% correct"
+   ],
+   "answer": 3,
+   "why": "The guide recommends achieving 90% or higher on review questions before proceeding."
+  },
+  {
+   "q": "Which of the following correctly orders CompTIA’s entry‑level, bridge, and advanced certifications?",
+   "options": [
+    "Security+ → CASP → CSA+",
+    "Security+ → CSA+ → CASP",
+    "CASP → Security+ → CSA+",
+    "CSA+ → Security+ → CASP"
+   ],
+   "answer": 1,
+   "why": "Security+ is entry‑level, CSA+ bridges to the advanced CASP certification."
+  },
+  {
+   "q": "The primary skills validated by the CSA+ certification involve:",
+   "options": [
+    "Managing cryptographic key lifecycles",
+    "Designing secure network topologies",
+    "Configuring firewall rule sets",
+    "Operating threat detection tools, analyzing data, and identifying vulnerabilities"
+   ],
+   "answer": 3,
+   "why": "CSA+ focuses on using detection tools, data analysis, and interpreting results to find vulnerabilities, threats, and risks."
+  },
+  {
+   "q": "Which statement most accurately describes a performance‑based question on the Security+ exam?",
+   "options": [
+    "Complete a task in a simulated environment and be graded on the result.",
+    "Select the best definition from a list of choices.",
+    "Rank a set of security controls by importance.",
+    "Identify a typographical error in a sentence."
+   ],
+   "answer": 0,
+   "why": "Performance‑based questions require the candidate to actually perform a task, often in a simulated lab, rather than just select an answer."
+  },
+  {
+   "q": "Which format is NOT listed as a type of performance‑based question in the passage?",
+   "options": [
+    "Matching items from one list to another.",
+    "A scenario that leads to a simulated task.",
+    "Drag‑and‑drop construction of a network diagram.",
+    "Fill‑in‑the‑blank with the best answer."
+   ],
+   "answer": 2,
+   "why": "The passage mentions fill‑in‑the‑blank, matching, and scenario‑based simulated tasks, but does not mention a drag‑and‑drop network diagram."
+  },
+  {
+   "q": "According to the recommended study process, what should a candidate do right after completing the initial assessment test?",
+   "options": [
+    "Review the explanations for any wrong answers and note the chapters covering that material.",
+    "Take a full practice exam immediately.",
+    "Skip the chapters that seem easy and focus on new topics.",
+    "Memorize all electronic flashcards without revisiting the text."
+   ],
+   "answer": 0,
+   "why": "The passage advises reviewing explanations for incorrect answers and noting the chapters where that material is covered as the next step."
+  },
+  {
+   "q": "A financial services firm experiences a total power loss at its primary data center. Management needs a backup location that can resume critical services within minutes and already has the latest data replicated. Which recovery site type best fits this requirement?",
+   "options": [
+    "Cold site",
+    "Warm site",
+    "Hot site",
+    "Mobile recovery unit"
+   ],
+   "answer": 2,
+   "why": "A hot site is fully equipped with current data and can take over operations almost instantly, unlike warm or cold sites."
+  },
+  {
+   "q": "Before discarding several hard drives that store confidential personal information, a company must ensure the data cannot be recovered. Which destruction method is specifically designed to erase magnetic media permanently?",
+   "options": [
+    "Shredding the drives into small pieces",
+    "Wiping the drives using a secure erase tool",
+    "Degaussing the drives",
+    "Purging the drives with software overwrites"
+   ],
+   "answer": 2,
+   "why": "Degaussing uses a strong magnetic field to disrupt the magnetic domains on the media, rendering the data unrecoverable."
+  },
+  {
+   "q": "An engineer is selecting a block‑cipher mode for a new application that must guarantee both confidentiality and integrity of transmitted data. Which mode should be chosen?",
+   "options": [
+    "Counter (CTR) mode",
+    "Galois/Counter Mode (GCM)",
+    "Electronic Codebook (ECB)",
+    "Cipher Block Chaining (CBC)"
+   ],
+   "answer": 1,
+   "why": "GCM provides authenticated encryption, delivering both confidentiality and integrity, whereas CBC, ECB, and CTR only provide confidentiality."
+  },
+  {
+   "q": "A journalist wants to embed a confidential note inside a digital photograph so that the image looks unchanged to anyone who intercepts it. Which term best describes this technique?",
+   "options": [
+    "Steganography",
+    "Tokenization",
+    "Encryption",
+    "Hashing"
+   ],
+   "answer": 0,
+   "why": "Steganography hides a message within another medium, such as an image, without altering its appearance."
+  },
+  {
+   "q": "A security consultant is asked to assess a company's network by only monitoring traffic and not attempting to exploit any discovered vulnerabilities. What type of testing is being performed?",
+   "options": [
+    "Intrusive testing",
+    "Red team exercise",
+    "Nonintrusive testing",
+    "Social engineering"
+   ],
+   "answer": 2,
+   "why": "Nonintrusive (passive) testing observes the environment without actively trying to break in."
+  },
+  {
+   "q": "An IoT sensor with a low‑power processor needs to encrypt data before sending it to the cloud. Which cryptographic approach is most suitable for this constraint?",
+   "options": [
+    "Elliptic Curve Cryptography",
+    "Triple DES",
+    "Diffie‑Hellman",
+    "RSA"
+   ],
+   "answer": 0,
+   "why": "ECC provides strong security with smaller key sizes, making it ideal for devices with limited processing power."
+  },
+  {
+   "q": "A company's critical database is valued at $20,000. The exposure factor for a ransomware attack is assessed at 30%. What is the Single Loss Expectancy (SLE) for this scenario?",
+   "options": [
+    "$200",
+    "$60,000",
+    "$6,000",
+    "$2,000"
+   ],
+   "answer": 2,
+   "why": "SLE = Asset Value × Exposure Factor = $20,000 × 0.30 = $6,000."
+  },
+  {
+   "q": "A vulnerability is expected to cause a loss of $5,000 each time it is exploited. If the Annualized Rate of Occurrence (ARO) is 0.2, what is the Annual Loss Expectancy (ALE)?",
+   "options": [
+    "$10,000",
+    "$1,000",
+    "$25,000",
+    "$500"
+   ],
+   "answer": 1,
+   "why": "ALE = SLE × ARO = $5,000 × 0.2 = $1,000."
+  },
+  {
+   "q": "Which statement best describes how a Data Loss Prevention (DLP) system relates to an Intrusion Prevention System (IPS)?",
+   "options": [
+    "Both primarily function by filtering network ports like a traditional firewall.",
+    "Both inspect data or traffic content to block unauthorized disclosure or malicious activity.",
+    "Both automatically encrypt all data at rest and in transit.",
+    "Both replace the need for antivirus software on endpoints."
+   ],
+   "answer": 1,
+   "why": "DLP inspects data on devices and network for unauthorized transfer, similar to how IPS inspects traffic for malicious content."
+  },
+  {
+   "q": "What defines the risk acceptance strategy in an organization’s risk management process?",
+   "options": [
+    "Recognizing an identified risk and consciously deciding to take no further action.",
+    "Eliminating the activity that creates the risk entirely.",
+    "Implementing additional controls to lower the risk to an acceptable level.",
+    "Transferring the risk to a third party, such as an insurance carrier."
+   ],
+   "answer": 0,
+   "why": "Risk acceptance means the risk is known, its impact understood, and the organization opts to do nothing because mitigation costs exceed the potential harm."
+  },
+  {
+   "q": "Which approach most effectively maintains security awareness among employees?",
+   "options": [
+    "Holding a single, mandatory training session each year.",
+    "Establishing measurable training goals and regularly repeating security messages.",
+    "Providing training only to senior management and executives.",
+    "Expecting employees to independently research security best practices."
+   ],
+   "answer": 1,
+   "why": "Setting clear training objectives and repeatedly delivering messages ensures a high percentage of staff stay informed about security best practices."
+  },
+  {
+   "q": "In a security policy document, which section is intended to give readers a brief background and clarify to whom the policy applies?",
+   "options": [
+    "The policy overview statement",
+    "The exception statement",
+    "The accountability statement",
+    "The scope statement"
+   ],
+   "answer": 3,
+   "why": "The scope statement provides background and defines the audience for the policy."
+  },
+  {
+   "q": "Which part of a policy explicitly identifies the position responsible for enforcement and outlines the penalties for non‑compliance?",
+   "options": [
+    "Policy overview statement",
+    "Accountability statement",
+    "Policy statement",
+    "Scope statement"
+   ],
+   "answer": 1,
+   "why": "The accountability statement names the responsible role and states consequences for violations."
+  },
+  {
+   "q": "When an organization needs to allow a controlled deviation from an established policy, which statement should be consulted?",
+   "options": [
+    "Policy overview statement",
+    "Accountability statement",
+    "Exception statement",
+    "Scope statement"
+   ],
+   "answer": 2,
+   "why": "The exception statement provides the process and contacts for deviating from the policy."
+  },
+  {
+   "q": "Jordan holds a CompTIA Security+ certification that expires in two years. Which action must Jordan take to keep the certification active?",
+   "options": [
+    "Submit a yearly performance review to the employer.",
+    "Retake the Security+ exam before the expiration date.",
+    "Earn the required number of Continuing Education Units (CEUs) within the certification cycle.",
+    "Attend an annual CompTIA conference and submit the attendance certificate."
+   ],
+   "answer": 2,
+   "why": "CompTIA certifications are maintained by earning a set number of CEUs during the certification period."
+  },
+  {
+   "q": "A senior analyst leaves the company and completes an exit interview. Which follow‑up step provides the greatest security benefit?",
+   "options": [
+    "Review the interview for any security concerns and adjust policies accordingly.",
+    "Discard the interview notes and focus on onboarding new staff.",
+    "Immediately revoke all user accounts, even those unrelated to the departing analyst.",
+    "Offer the departing analyst temporary admin rights to finish pending work."
+   ],
+   "answer": 0,
+   "why": "Exit interviews can reveal security issues; reviewing them helps identify needed changes."
+  },
+  {
+   "q": "A temporary contractor is being added to the organization’s user groups. According to the least‑privilege principle, which permission should the contractor NOT receive?",
+   "options": [
+    "Read‑only access to the internal knowledge base.",
+    "Permission to submit help‑desk tickets.",
+    "View access to non‑sensitive system logs.",
+    "Ability to install software on corporate workstations."
+   ],
+   "answer": 3,
+   "why": "Least privilege means granting only necessary rights; a temporary contractor does not need software‑installation privileges."
+  },
+  {
+   "q": "When preparing a request for additional security funding, which benefit of conducting a Business Impact Analysis (BIA) is most persuasive to management?",
+   "options": [
+    "It defines the user access control policies for each department.",
+    "It outlines the steps required to achieve compliance with regulatory standards.",
+    "It creates an inventory of all hardware and software assets across the organization.",
+    "It quantifies the financial loss that could result from system outages, providing a clear justification for the investment."
+   ],
+   "answer": 3,
+   "why": "A BIA documents the impact and cost of outages, helping justify budget requests by showing potential loss."
+  },
+  {
+   "q": "A company is assessing the risk of prolonged utility disruptions after a major natural disaster. Which scenario would likely cause the longest operational interruption according to the passage?",
+   "options": [
+    "A temporary loss of electricity lasting a few hours.",
+    "A major earthquake that disables electricity, natural gas, and water for weeks or months.",
+    "A brief water supply interruption lasting a day.",
+    "Intermittent internet connectivity due to ISP maintenance."
+   ],
+   "answer": 1,
+   "why": "The passage notes that large earthquakes can knock out electricity, gas, and water for extended periods, leading to prolonged downtime."
+  },
+  {
+   "q": "An organization’s network depends on a single router for all external communications. Which change directly eliminates this single point of failure?",
+   "options": [
+    "Deploying a second router in parallel to provide redundancy.",
+    "Updating the router’s firmware to the latest version.",
+    "Implementing a VPN solution for remote access.",
+    "Installing a firewall on the existing router."
+   ],
+   "answer": 0,
+   "why": "Adding a redundant router removes the single point of failure, as recommended in the passage."
+  },
+  {
+   "q": "A startup needs the fastest possible disk performance for its video editing workstation and is willing to accept data loss if a drive fails. Which RAID configuration should they implement?",
+   "options": [
+    "RAID 1 (mirroring)",
+    "RAID 10 (mirrored striping)",
+    "RAID 5 (parity)",
+    "RAID 0 (striping)"
+   ],
+   "answer": 3,
+   "why": "RAID 0 stripes data across drives for maximum speed but provides no fault tolerance; a single drive failure makes the array unusable."
+  },
+  {
+   "q": "Two 2‑TB drives are configured in a RAID 1 array. After the array is built, how much storage is available for user data?",
+   "options": [
+    "4 TB",
+    "3 TB",
+    "2 TB",
+    "1 TB"
+   ],
+   "answer": 2,
+   "why": "RAID 1 mirrors data, so usable capacity is half the combined drive size; 2 TB + 2 TB yields 2 TB of usable space."
+  },
+  {
+   "q": "Which statement accurately differentiates RAID 1 mirroring from RAID 1 duplexing?",
+   "options": [
+    "Mirroring doubles the total storage capacity compared to the raw disk size.",
+    "Duplexing employs two separate controller cards and writes to both disks simultaneously, giving faster writes.",
+    "Duplexing adds parity information to provide error correction.",
+    "Mirroring uses two controller cards while duplexing uses a single controller."
+   ],
+   "answer": 1,
+   "why": "In duplexing, each disk is attached to its own controller and receives data at the same time, resulting in higher write performance than standard mirroring."
+  },
+  {
+   "q": "A financial firm knows that storing client data on a third‑party cloud service could expose it to a breach, but the cost of an on‑premises solution is prohibitive. Management decides to continue using the cloud despite the risk. Which risk‑response strategy best describes this decision?",
+   "options": [
+    "Risk acceptance",
+    "Risk transference",
+    "Risk avoidance",
+    "Risk mitigation"
+   ],
+   "answer": 0,
+   "why": "The firm acknowledges the risk, understands the potential impact, and chooses to live with it, which is the definition of risk acceptance."
+  },
+  {
+   "q": "An organization places its public‑facing web server in a network segment that only permits inbound HTTP/HTTPS traffic from the Internet and restricts any direct access to internal systems. What is this isolated segment called?",
+   "options": [
+    "DMZ",
+    "Intranet",
+    "Guest network",
+    "Extranet"
+   ],
+   "answer": 0,
+   "why": "A DMZ (demilitarized zone) isolates public services from the internal network while allowing limited external access."
+  },
+  {
+   "q": "During system startup, the firmware verifies the digital signatures of the BIOS and operating‑system loader before allowing them to run. Which security mechanism is being employed?",
+   "options": [
+    "Trusted Platform Module (TPM)",
+    "Full‑disk encryption (FDE)",
+    "Hardware security module (HSM)",
+    "Secure boot"
+   ],
+   "answer": 3,
+   "why": "Secure boot checks cryptographic signatures of boot components to ensure only trusted code is executed."
+  },
+  {
+   "q": "Which of the following is NOT one of the 14 practice areas identified in NIST Special Publication 800‑14?",
+   "options": [
+    "Vulnerability Scanning",
+    "Physical and Environmental Security",
+    "Logical Access Control",
+    "Audit Trails"
+   ],
+   "answer": 0,
+   "why": "The 14 practice areas include Physical and Environmental Security, Logical Access Control, and Audit Trails, but Vulnerability Scanning is not listed."
+  },
+  {
+   "q": "What is the main purpose of the three levels defined in NIST SP 800‑53 Revision 4?",
+   "options": [
+    "To separate controls into hardware, software, and procedural groups",
+    "To categorize controls based on organization size",
+    "To rank controls by implementation cost",
+    "To specify the minimum set of controls required for varying impact levels"
+   ],
+   "answer": 3,
+   "why": "SP 800‑53 defines three levels of minimum security controls, indicating the baseline controls needed for different risk or impact levels."
+  },
+  {
+   "q": "The NIST SP 800‑82 guide focuses on security for which of the following environments?",
+   "options": [
+    "Mobile device management solutions",
+    "Industrial control systems such as SCADA and PLCs",
+    "Wireless LAN infrastructures",
+    "Cloud computing platforms"
+   ],
+   "answer": 1,
+   "why": "SP 800‑82 is a guide specifically for industrial control system security, covering SCADA and PLC environments."
+  },
+  {
+   "q": "A retail chain wants its top suppliers to use the same ordering application that its stores use, but the suppliers are outside the company. What term best describes the network segment that will be created for these suppliers?",
+   "options": [
+    "VPN",
+    "Intranet",
+    "DMZ",
+    "Extranet"
+   ],
+   "answer": 3,
+   "why": "An extranet extends part of an internal network to external partners, matching the described scenario."
+  },
+  {
+   "q": "A company has legacy laptops that cannot support WPA2. Which approach best maintains overall network security while still allowing those devices wireless access?",
+   "options": [
+    "Allow them on the same SSID with a weaker protocol",
+    "Disable wireless access for those laptops",
+    "Create a separate wireless network isolated from the primary one",
+    "Replace all laptops immediately"
+   ],
+   "answer": 2,
+   "why": "Segregating older devices onto a distinct wireless network isolates them, preventing a weakly protected segment from compromising the main network."
+  },
+  {
+   "q": "An organization segments its network into three zones: a public DMZ, a restricted internal network, and a highly secure segment for sensitive data. According to best‑practice architecture, where should firewalls be deployed?",
+   "options": [
+    "Only at the edge of the network, between the Internet and the DMZ",
+    "Only on the routers that connect the zones, without separate firewall devices",
+    "Between each adjacent zone, such as DMZ‑to‑internal and internal‑to‑secure",
+    "Only inside the highly secure segment to protect the most critical assets"
+   ],
+   "answer": 2,
+   "why": "Firewalls belong at every junction between network zones to control traffic flow between each segment."
+  },
+  {
+   "q": "A security analyst wants to implement a log‑correlation system for multiple firewalls across the enterprise. Which statement about the placement of this system is most accurate?",
+   "options": [
+    "It should be placed behind the perimeter firewall to prevent log tampering",
+    "It can reside on any server that has network access to the firewalls’ log repositories",
+    "It must be installed on the same hardware as each firewall to read logs in real time",
+    "It must be located in the DMZ to receive logs directly from external firewalls"
+   ],
+   "answer": 1,
+   "why": "A correlation engine only needs network access to firewall logs; it does not need to be physically adjacent to the firewalls."
+  },
+  {
+   "q": "A company runs a pair of web servers in its DMZ and a pair of database servers in an internal subnet. Where should the load balancer for each server pair be positioned?",
+   "options": [
+    "Both load balancers should be placed in the DMZ to simplify management",
+    "The web‑server load balancer should be in the internal subnet, and the database load balancer in the DMZ",
+    "The web‑server load balancer belongs in the DMZ, while the database load balancer sits in the internal subnet",
+    "Both load balancers should be placed behind the internal firewall for added security"
+   ],
+   "answer": 2,
+   "why": "Load balancers are placed in the same network segment as the servers they serve: web servers in the DMZ, database servers in the internal network."
+  },
+  {
+   "q": "A large organization needs to apply a critical security patch to its web servers. Which of the following sequences best follows the recommended patch management process?",
+   "options": [
+    "Apply the patch to a single test server and, if no issues arise, schedule the full deployment for the next fiscal quarter.",
+    "Install the patch on a single production server and, if it works, consider the rollout complete.",
+    "First test the patch on an identical system, then apply it to a small group of live servers, wait to observe results, and finally roll it out to the remaining servers.",
+    "Deploy the patch to all production servers at once to minimize exposure."
+   ],
+   "answer": 2,
+   "why": "The recommended process is test on an identical system, then a limited rollout with a wait period before full deployment."
+  },
+  {
+   "q": "During a patch rollout, an administrator notices that the newly patched application is crashing. According to best practices, what should have been prepared beforehand?",
+   "options": [
+    "An upgrade of the server's hardware components.",
+    "A new firewall rule to block the affected application.",
+    "A documented backout plan to revert the system to its pre‑patch state.",
+    "A mandatory user training session on the new features."
+   ],
+   "answer": 2,
+   "why": "A backout (rollback) plan is essential to restore operations if a patch causes problems."
+  },
+  {
+   "q": "Which statement best illustrates the principle of \"least functionality\" when configuring a secure system?",
+   "options": [
+    "Installing all optional software packages to ensure maximum capability.",
+    "Granting every user administrative privileges to simplify management.",
+    "Leaving default settings unchanged to avoid configuration errors.",
+    "Disabling all unnecessary services and only enabling features required for the system’s purpose."
+   ],
+   "answer": 3,
+   "why": "Least functionality means configuring the system to perform only the tasks it needs, disabling unnecessary services."
+  },
+  {
+   "q": "Which characteristic correctly differentiates a stateful firewall from a stateless firewall?",
+   "options": [
+    "A stateful firewall keeps track of active connections and permits return traffic based on that state, whereas a stateless firewall evaluates each packet in isolation.",
+    "A stateful firewall blocks all inbound traffic by default, while a stateless firewall allows all inbound traffic.",
+    "A stateful firewall inspects only packet headers, while a stateless firewall also inspects payload data.",
+    "A stateful firewall operates solely at layer 2, while a stateless firewall functions at layer 3."
+   ],
+   "answer": 0,
+   "why": "Stateful firewalls maintain connection tables to allow return traffic; stateless firewalls make decisions per packet without context."
+  },
+  {
+   "q": "A remote worker uses a VPN to access corporate resources. Which VPN configuration ensures that only traffic destined for the corporate network traverses the encrypted tunnel?",
+   "options": [
+    "Dual‑homed tunnel, which creates two simultaneous VPN connections for redundancy.",
+    "Full tunnel, which routes all Internet and corporate traffic through the VPN.",
+    "Split tunnel, which routes only corporate‑subnet traffic through the VPN while other traffic uses the local Internet connection.",
+    "Proxy tunnel, which forwards traffic through an application‑level proxy instead of a VPN."
+   ],
+   "answer": 2,
+   "why": "Split tunneling sends only traffic bound for corporate subnets through the VPN; all other traffic goes directly to the Internet."
+  },
+  {
+   "q": "When deploying an intrusion detection/prevention system, which placement allows the device to actively block malicious packets?",
+   "options": [
+    "Tap mode deployment that mirrors traffic to a separate analysis server.",
+    "Passive NIDS placed on a network tap, which only monitors traffic.",
+    "Out‑of‑band sensor connected to a SPAN port, which only receives copies of traffic.",
+    "Inline NIPS positioned directly in the traffic flow, capable of dropping or rejecting packets."
+   ],
+   "answer": 3,
+   "why": "An inline NIPS sits in the traffic path and can intervene to block or reject malicious packets, unlike passive monitoring."
+  },
+  {
+   "q": "Which firewall technology keeps track of an entire communication session and can inspect connectionless protocols such as UDP?",
+   "options": [
+    "Web proxy",
+    "Stateful packet inspection firewall",
+    "Network address translation device",
+    "Stateless packet filter"
+   ],
+   "answer": 1,
+   "why": "Stateful packet inspection maintains session state, allowing it to evaluate the full conversation, even for connectionless protocols."
+  },
+  {
+   "q": "What kind of attack is most likely to exhaust a stateful firewall's state table, causing it to fail or reboot?",
+   "options": [
+    "ARP spoofing",
+    "Ping of death",
+    "Port scanning",
+    "SYN flood"
+   ],
+   "answer": 3,
+   "why": "A SYN flood creates many half‑open connections that fill the firewall's state table, leading to denial of service."
+  },
+  {
+   "q": "Which statement accurately reflects a benefit and a drawback of using a Unified Threat Management (UTM) appliance?",
+   "options": [
+    "It requires multiple vendors to provide all security functions.",
+    "It simplifies management but can become a single point of failure.",
+    "It cannot perform URL filtering or content inspection.",
+    "It always improves performance with no disadvantages."
+   ],
+   "answer": 1,
+   "why": "UTMs combine many security functions, reducing complexity, but they also introduce a single point of failure and vendor dependence."
+  },
+  {
+   "q": "Which description most accurately reflects an always‑on VPN commonly used with mobile devices?",
+   "options": [
+    "A VPN that relies on a one‑time password for every connection attempt",
+    "A VPN that requires the user to start a new session each time they need connectivity",
+    "A VPN that automatically authenticates the user and keeps a continuous, persistent tunnel",
+    "A VPN that encrypts only traffic from selected applications while leaving other traffic unprotected"
+   ],
+   "answer": 2,
+   "why": "An always‑on VPN maintains an authenticated, persistent connection so the user can access resources without manually reconnecting."
+  },
+  {
+   "q": "A company needs a solution that watches network traffic, identifies possible intrusions, and notifies staff without actively stopping the traffic. Which technology fulfills this need?",
+   "options": [
+    "Intrusion Prevention System (IPS)",
+    "Intrusion Detection System (IDS)",
+    "Stateful firewall",
+    "VPN concentrator"
+   ],
+   "answer": 1,
+   "why": "An IDS monitors and reports suspicious activity but does not take direct action to block traffic."
+  },
+  {
+   "q": "How does an Intrusion Detection System (IDS) differ from an Intrusion Prevention System (IPS)?",
+   "options": [
+    "The IDS is installed solely on endpoints, while the IPS is placed only on perimeter routers",
+    "The IDS encrypts traffic for analysis, while the IPS decrypts traffic before inspection",
+    "The IDS generates alerts only; the IPS can automatically block or terminate malicious connections",
+    "The IDS can block malicious packets, whereas the IPS only logs events"
+   ],
+   "answer": 2,
+   "why": "IDS provides detection and alerting; IPS goes a step further by taking automatic preventive actions such as blocking traffic."
+  },
+  {
+   "q": "Which kind of audit checks that user accounts were set up correctly and that privilege creep isn't happening?",
+   "options": [
+    "Escalation audit",
+    "Usage audit",
+    "Report audit",
+    "Privilege audit"
+   ],
+   "answer": 3,
+   "why": "A privilege audit compares each user's and group's assigned rights against policy, which is how extra rights that crept in over time get caught. A usage audit looks at how resources are being used."
+  },
+  {
+   "q": "Which physical access control lets only one or two people through at a time?",
+   "options": [
+    "Mantrap (access control vestibule)",
+    "Security zone",
+    "Perimeter fence",
+    "Checkpoint"
+   ],
+   "answer": 0,
+   "why": "A mantrap is a small space with two doors where only one opens at a time, so a small number of people can be checked before the inner door releases."
+  },
+  {
+   "q": "Which of these is a set of voluntary standards that govern public-key cryptography?",
+   "options": [
+    "PKI",
+    "ISA",
+    "PKCS",
+    "SSL"
+   ],
+   "answer": 2,
+   "why": "The Public-Key Cryptography Standards are voluntary specifications, such as PKCS #12 for key and certificate files. PKI is the overall infrastructure, not a standards set."
+  },
+  {
+   "q": "Which term names the point of maximum tolerable data loss, measured in time, after a major incident?",
+   "options": [
+    "RTO",
+    "ARO",
+    "RPO",
+    "MTBF"
+   ],
+   "answer": 2,
+   "why": "The recovery point objective is how far back the restored data may go; the recovery time objective is how long the restore may take. ARO is how often a risk is expected to occur each year."
+  },
+  {
+   "q": "Which type of exercise has the team talk through possible security incidents in a low-stress setting, without touching live systems?",
+   "options": [
+    "Tabletop exercise",
+    "Red-team engagement",
+    "White-box test",
+    "Black-hat exercise"
+   ],
+   "answer": 0,
+   "why": "A tabletop exercise is a discussion-based walk-through of a scenario. Nothing is attacked or changed, so it is low stress and cheap to run."
+  },
+  {
+   "q": "You want a dedicated cryptoprocessor to strengthen key handling in a PKI. Which device is that?",
+   "options": [
+    "MTU",
+    "OCSP responder",
+    "HSM",
+    "PIV card"
+   ],
+   "answer": 2,
+   "why": "A hardware security module is a tamper-resistant device that generates, stores and uses cryptographic keys. OCSP checks certificate status and PIV is a smart card for people."
+  },
+  {
+   "q": "Which network design places public-facing servers where outside users can reach them while shielding the internal LAN?",
+   "options": [
+    "NAT",
+    "VLAN",
+    "DMZ (screened subnet)",
+    "Router"
+   ],
+   "answer": 2,
+   "why": "A DMZ is a separate segment between the internet and the inside network. Outside users reach the servers in it, but a compromise there doesn't give direct access to the LAN."
+  },
+  {
+   "q": "Which arrangement keeps a copy of a private key with a trusted third party so it can be recovered if the owner loses it?",
+   "options": [
+    "Key escrow",
+    "Key rollover",
+    "Perfect forward secrecy",
+    "Key stretching"
+   ],
+   "answer": 0,
+   "why": "Key escrow stores keys with a trusted party so encrypted data can be recovered when a key is lost, or when an authorised party needs access."
+  },
+  {
+   "q": "Which attack is designed to overwhelm a particular protocol or service with traffic?",
+   "options": [
+    "Backdoor",
+    "On-path attack",
+    "Flood (denial of service)",
+    "Spoofing"
+   ],
+   "answer": 2,
+   "why": "A flood sends more requests than the service can handle so legitimate users are denied. Spoofing fakes an identity and a backdoor bypasses normal authentication."
+  },
+  {
+   "q": "In an intrusion detection system, which component gathers the raw data?",
+   "options": [
+    "Analyzer",
+    "Sensor",
+    "Data source",
+    "Event"
+   ],
+   "answer": 1,
+   "why": "Sensors collect data from the network or host and pass it to the analyzer, which looks for signs of trouble."
+  },
+  {
+   "q": "What is included in an SSID broadcast?",
+   "options": [
+    "Default DNS servers",
+    "The access point's MAC address",
+    "DHCP settings",
+    "The network name"
+   ],
+   "answer": 3,
+   "why": "The SSID is the wireless network's name. Beacon frames advertise it so clients can find and join the network."
+  },
+  {
+   "q": "Which goal of information security is about making sure data is accurate and hasn't been altered?",
+   "options": [
+    "Accountability",
+    "Integrity",
+    "Availability",
+    "Confidentiality"
+   ],
+   "answer": 1,
+   "why": "Integrity means information is correct and unchanged except by authorised means. Confidentiality is about privacy and availability about access when needed."
+  },
+  {
+   "q": "Which PKI mechanism lets a client check a certificate's validity immediately, instead of downloading a list?",
+   "options": [
+    "CSR",
+    "MD5",
+    "OCSP",
+    "CRL"
+   ],
+   "answer": 2,
+   "why": "The Online Certificate Status Protocol answers a query about one certificate in real time. A certificate revocation list is a periodically published file."
+  },
+  {
+   "q": "TKIP wraps WEP encryption with a per-packet key based on things like the device's MAC address and a packet serial number. How large is that key?",
+   "options": [
+    "512-bit",
+    "64-bit",
+    "256-bit",
+    "128-bit"
+   ],
+   "answer": 3,
+   "why": "TKIP's wrapper uses a 128-bit key mixed per packet, which was a quick fix for WEP's weak keys until WPA2 and CCMP replaced it."
+  },
+  {
+   "q": "A user received a file called invoice.doc from a stranger over instant messaging and the system has behaved oddly since. What most likely happened?",
+   "options": [
+    "The hard drive is failing",
+    "The user is imagining the problem",
+    "The user downloaded malware through the IM client",
+    "The system is suffering power surges"
+   ],
+   "answer": 2,
+   "why": "A file sent by an unknown contact that is followed by strange behaviour points to malware. Double extensions such as .doc.vbs often hide a script behind a document name."
+  },
+  {
+   "q": "Which mechanism allows or denies access to a network resource based on the IP address of the sender?",
+   "options": [
+    "Port blocking",
+    "Hardening",
+    "NDS",
+    "Access control list (ACL)"
+   ],
+   "answer": 3,
+   "why": "ACLs on routers and firewalls list which addresses may reach which resources. Port blocking works on port numbers, not on who is asking."
+  },
+  {
+   "q": "Virtualisation without a hypervisor can be done with which technology?",
+   "options": [
+    "Wrappers",
+    "Sinks",
+    "Portals",
+    "Containers"
+   ],
+   "answer": 3,
+   "why": "Containers share the host's kernel and isolate applications in their own space, so no hypervisor or separate guest OS is needed."
+  },
+  {
+   "q": "Which kind of malware exists mainly to copy and spread itself to other systems?",
+   "options": [
+    "Trojan horse",
+    "Virus",
+    "Logic bomb",
+    "Worm"
+   ],
+   "answer": 3,
+   "why": "A worm spreads on its own across networks. A virus needs a host file to run, a Trojan hides inside something that looks useful, and a logic bomb waits for a trigger."
+  },
+  {
+   "q": "Someone arrives at the front desk claiming to be a service technician and wants to discuss the current server configuration. What kind of attack might this be?",
+   "options": [
+    "Social engineering",
+    "Perimeter screening",
+    "Access control attack",
+    "Behavioural engineering"
+   ],
+   "answer": 0,
+   "why": "Social engineering uses persuasion and pretexts to get information or access out of people, rather than attacking the technology."
+  },
+  {
+   "q": "Which attack uses a Trojan to manipulate calls between a browser and its security functions while showing the user the transaction they expected?",
+   "options": [
+    "PKCS #12",
+    "Man-in-the-browser (MITB)",
+    "SDN",
+    "Perfect forward secrecy"
+   ],
+   "answer": 1,
+   "why": "A man-in-the-browser Trojan changes transactions as they are formed inside the browser, while the display still shows what the user intended."
+  },
+  {
+   "q": "Which system actively blocks suspicious traffic and notifies you of security problems on an internet-connected network?",
+   "options": [
+    "IPS",
+    "VPN",
+    "Router",
+    "Network monitor"
+   ],
+   "answer": 0,
+   "why": "An intrusion prevention system sits inline, watches traffic and takes action against unusual activity, unlike a firewall's static rules or a passive monitor."
+  },
+  {
+   "q": "What is the name for the documented record of every step taken with evidence, from collection onward?",
+   "options": [
+    "The three As",
+    "Security policy",
+    "Chain of custody",
+    "Security investigation"
+   ],
+   "answer": 2,
+   "why": "Chain of custody records who handled evidence, when, where and why, so its integrity can be shown later."
+  },
+  {
+   "q": "Which technique hides one message inside another, such as text inside an image file?",
+   "options": [
+    "Hashing",
+    "Symmetric encryption",
+    "Steganography",
+    "Key stretching"
+   ],
+   "answer": 2,
+   "why": "Steganography conceals the existence of a message. Encryption scrambles a message but doesn't hide that it exists."
+  },
+  {
+   "q": "A security test that observes systems passively rather than trying to break in is called what?",
+   "options": [
+    "Intrusive testing",
+    "Non-intrusive testing",
+    "Credentialed testing",
+    "Black-box testing"
+   ],
+   "answer": 1,
+   "why": "Non-intrusive testing gathers information without exploiting anything, so it can't disrupt production. Intrusive testing attempts actual exploitation."
+  },
+  {
+   "q": "A company rolling out smartphones must use asymmetric encryption on devices with limited processing power. Which should you recommend?",
+   "options": [
+    "SHA",
+    "PKI",
+    "MD5",
+    "ECC"
+   ],
+   "answer": 3,
+   "why": "Elliptic curve cryptography gives strong asymmetric security with shorter keys and less computation, which suits phones and other small devices."
+  },
+  {
+   "q": "Which backup method generally finishes fastest?",
+   "options": [
+    "Differential backup",
+    "Incremental backup",
+    "Archival backup",
+    "Full backup"
+   ],
+   "answer": 1,
+   "why": "An incremental backup copies only what changed since the last backup of any kind, so it has the least to write. Restores take longer because every increment is needed."
+  },
+  {
+   "q": "You want to grant access based on a scan of a person's retina. Which method uses a physical characteristic to establish identity?",
+   "options": [
+    "Smart card",
+    "CHAP",
+    "Identification and authentication",
+    "Biometrics"
+   ],
+   "answer": 3,
+   "why": "Biometrics identify a person by a physical trait such as a retina, fingerprint or face. A smart card is something you have, not something you are."
+  },
+  {
+   "q": "Which access control method is based on the job a person holds in the organisation?",
+   "options": [
+    "DAC",
+    "MAC",
+    "ABAC",
+    "RBAC"
+   ],
+   "answer": 3,
+   "why": "Role-based access control assigns permissions to roles, and people get the permissions of their role. ABAC weighs attributes of the whole request."
+  },
+  {
+   "q": "What is the process of examining a computer system for evidence about an event called?",
+   "options": [
+    "Baselining",
+    "Vulnerability scanning",
+    "Penetration testing",
+    "Computer forensics"
+   ],
+   "answer": 3,
+   "why": "Computer forensics collects and analyses evidence from systems in a way that preserves it for later use, including in court."
+  },
+  {
+   "q": "You are writing a manual that lists the documents describing how a given task should be done. Which type of document gives specific advice on accomplishing a task?",
+   "options": [
+    "Standards",
+    "Guidelines",
+    "Policies",
+    "Business impact analysis"
+   ],
+   "answer": 1,
+   "why": "Guidelines offer advice on how to accomplish a task. Policies set the expectation, and standards say what must be met."
+  },
+  {
+   "q": "Your primary servers are worth $2 million and sit in one building. A tornado is expected to level the building once every 60 years. What is the SLE?",
+   "options": [
+    "$2 million",
+    "$33,333.33",
+    "$1 million",
+    "$500,000"
+   ],
+   "answer": 0,
+   "why": "Single loss expectancy is the asset value times the exposure factor. The building is levelled, so the whole $2 million is lost in a single event."
+  },
+  {
+   "q": "Servers worth $2 million are expected to be destroyed by a tornado once every 60 years. What is the ALE?",
+   "options": [
+    "$2 million",
+    "$16,666.67",
+    "$500,000",
+    "$33,333.33"
+   ],
+   "answer": 3,
+   "why": "Annualised loss expectancy is SLE times ARO: $2,000,000 times 1/60 is $33,333.33 a year."
+  },
+  {
+   "q": "A tornado is expected to destroy a building once every 60 years. What is the ARO?",
+   "options": [
+    "5",
+    "1",
+    "16.7",
+    "0.0167"
+   ],
+   "answer": 3,
+   "why": "Annualised rate of occurrence is how many times a year the event is expected: 1 divided by 60 is about 0.0167."
+  },
+  {
+   "q": "Which risk strategy identifies a risk and then decides to stop doing the activity that causes it?",
+   "options": [
+    "Risk transference",
+    "Risk avoidance",
+    "Risk acceptance",
+    "Risk mitigation"
+   ],
+   "answer": 1,
+   "why": "Avoidance removes the risk by not engaging in the activity at all. Mitigation reduces it, transference shares it, and acceptance lives with it."
+  },
+  {
+   "q": "Which part of a policy might include an escalation contact for the person handling a situation?",
+   "options": [
+    "The scope statement",
+    "The accountability statement",
+    "The exception statement",
+    "The overview statement"
+   ],
+   "answer": 2,
+   "why": "An exception statement covers how situations outside the policy are handled, including whom to contact. The scope says who the policy covers and accountability says who enforces it."
+  },
+  {
+   "q": "Which policy is designed to reduce the risk of fraud by making sure no single person controls a whole sensitive process?",
+   "options": [
+    "Acceptable use",
+    "Separation of duties",
+    "Physical access control",
+    "Least privilege"
+   ],
+   "answer": 1,
+   "why": "Separation of duties splits a sensitive task, such as approving and paying an invoice, between people, so committing fraud would require collusion."
+  },
+  {
+   "q": "What are events called that were flagged as incidents but turned out to be nothing to worry about?",
+   "options": [
+    "False positives",
+    "Non-incidents",
+    "Error flags",
+    "False negatives"
+   ],
+   "answer": 0,
+   "why": "A false positive is an alert that fires when nothing is wrong. A false negative is the dangerous case: a real event that goes unflagged."
+  },
+  {
+   "q": "Which risk strategy shares some of the burden with another party, such as buying insurance?",
+   "options": [
+    "Risk acceptance",
+    "Risk avoidance",
+    "Risk deterrence",
+    "Risk transference"
+   ],
+   "answer": 3,
+   "why": "Transference moves part of the cost of a risk to someone else, such as an insurer or a cloud provider, without removing the risk itself."
+  },
+  {
+   "q": "Which document, used with the risk assessment, gives the organisation an accurate picture of what it faces if systems fail?",
+   "options": [
+    "RAC",
+    "RMG",
+    "Business impact analysis (BIA)",
+    "ALE"
+   ],
+   "answer": 2,
+   "why": "The BIA identifies critical functions and what their loss would cost, which with the risk assessment shows the real exposure."
+  },
+  {
+   "q": "Which part of a policy says who is responsible for making sure the policy is enforced?",
+   "options": [
+    "The overview statement",
+    "The scope statement",
+    "The exception statement",
+    "The accountability statement"
+   ],
+   "answer": 3,
+   "why": "The accountability section names who enforces the policy and who answers for violations. Scope defines what and whom the policy covers."
+  },
+  {
+   "q": "Any step taken to reduce a risk is an example of which strategy?",
+   "options": [
+    "Risk transference",
+    "Risk avoidance",
+    "Risk acceptance",
+    "Risk mitigation"
+   ],
+   "answer": 3,
+   "why": "Mitigation reduces the likelihood or impact of a risk, for example by adding a control. Avoidance stops the activity entirely."
+  },
+  {
+   "q": "If the SLE is $4,000 and the event is expected ten times a year, what is the ALE?",
+   "options": [
+    "$40,000",
+    "$4,000",
+    "$400,000",
+    "$400"
+   ],
+   "answer": 0,
+   "why": "ALE equals SLE times ARO: $4,000 times 10 occurrences a year is $40,000."
+  },
+  {
+   "q": "Which policy describes how employees may use company systems and resources, software and hardware alike?",
+   "options": [
+    "Physical access control",
+    "Separation of duties",
+    "Least privilege",
+    "Acceptable use policy"
+   ],
+   "answer": 3,
+   "why": "An acceptable use policy sets out what staff may and may not do with company equipment and services, and what happens if they break the rules."
+  },
+  {
+   "q": "Separation of duties means an embezzler would need to recruit others. What is an agreement between two or more people to commit fraud called?",
+   "options": [
+    "Escalation",
+    "Misappropriation",
+    "Misuse",
+    "Collusion"
+   ],
+   "answer": 3,
+   "why": "Collusion is when people cooperate to commit fraud. Separation of duties is valuable precisely because it forces a would-be fraudster to find accomplices."
+  },
+  {
+   "q": "Which agreement spells out the technical and security requirements for connecting two organisations' systems?",
+   "options": [
+    "Interconnection security agreement (ISA)",
+    "MOU",
+    "BPA",
+    "MOA"
+   ],
+   "answer": 0,
+   "why": "An ISA covers the technical details of an interconnection: what is connected, how it's secured and who maintains it. An MOU records intent without binding detail."
+  },
+  {
+   "q": "If the SLE is $25,000 and the event is expected once every four years, what is the ALE?",
+   "options": [
+    "$25,000",
+    "$12,500",
+    "$100,000",
+    "$6,250"
+   ],
+   "answer": 3,
+   "why": "ARO is 1/4, or 0.25. ALE equals SLE times ARO: $25,000 times 0.25 is $6,250."
+  },
+  {
+   "q": "Which principle says users get only the permissions needed to do their job and nothing more?",
+   "options": [
+    "Separation of duties",
+    "Acceptable use",
+    "Least privilege",
+    "Physical access control"
+   ],
+   "answer": 2,
+   "why": "Least privilege limits each account to what the role needs, which reduces the damage a mistake or a compromised account can do."
+  },
+  {
+   "q": "In which risk strategy do those involved understand the potential cost or damage and agree to live with it?",
+   "options": [
+    "Risk acceptance",
+    "Risk mitigation",
+    "Risk avoidance",
+    "Risk transference"
+   ],
+   "answer": 0,
+   "why": "Acceptance is a deliberate decision to tolerate an identified risk, usually because treating it would cost more than the expected loss."
+  },
+  {
+   "q": "A periodic update that bundles fixes for problems in one version of a product is called what?",
+   "options": [
+    "Hotfix",
+    "Overhaul",
+    "Service pack",
+    "Security advisory"
+   ],
+   "answer": 2,
+   "why": "A service pack collects many fixes into one tested release. A hotfix is a single urgent fix for one problem."
+  },
+  {
+   "q": "What is a system that is deliberately set up to be attacked, so intruders can be studied, called?",
+   "options": [
+    "Honeypot",
+    "Spoofing system",
+    "Decoy router",
+    "Bastion host"
+   ],
+   "answer": 0,
+   "why": "A honeypot looks attractive and has no business use, so any activity on it is suspicious and can be watched safely."
+  },
+  {
+   "q": "Making an operating system or application as secure as it can be, by removing unneeded services and tightening settings, is called what?",
+   "options": [
+    "Baselining",
+    "Reinforcing",
+    "Stabilising",
+    "Hardening"
+   ],
+   "answer": 3,
+   "why": "Hardening removes unnecessary software, closes ports and applies secure configuration. Baselining records the resulting standard."
+  },
+  {
+   "q": "A company wants its web server reachable by outside users without exposing the rest of the network. Where should it go?",
+   "options": [
+    "In a honeynet",
+    "On the guest network segment",
+    "Outside the network entirely",
+    "In a DMZ"
+   ],
+   "answer": 3,
+   "why": "A DMZ is a segment designed for public-facing systems. The firewall allows inbound traffic to it but still blocks direct access to the internal network."
+  },
+  {
+   "q": "Which US standard describes 8 principles and 14 practices for developing security policies?",
+   "options": [
+    "NIST SP 800-12",
+    "ISO/IEC 27001",
+    "NIST SP 800-14",
+    "ISA/IEC 62443"
+   ],
+   "answer": 2,
+   "why": "NIST Special Publication 800-14 sets out generally accepted principles and practices for securing IT systems. SP 800-12 is an introduction to computer security."
+  },
+  {
+   "q": "A mechanism automatically encrypts and decrypts the whole hard drive of every laptop. What is this?",
+   "options": [
+    "Full disk encryption (FDE)",
+    "AES",
+    "SED",
+    "TPM"
+   ],
+   "answer": 0,
+   "why": "FDE encrypts the entire drive transparently. AES is the algorithm it typically uses, a TPM may hold the key, and a self-encrypting drive does it in hardware."
+  },
+  {
+   "q": "A company uses the same vendor's antivirus everywhere it needs one. Is this a good decision?",
+   "options": [
+    "No, it violates control diversity",
+    "No, it violates vendor diversity",
+    "Yes, consistency is more secure",
+    "Yes, it makes licensing cheaper"
+   ],
+   "answer": 1,
+   "why": "Relying on one vendor means a flaw or missed signature in that product affects every system. Vendor diversity avoids a single point of failure."
+  },
+  {
+   "q": "You worry that your backup files could become infected with malware. Which approach protects them best?",
+   "options": [
+    "A VLAN",
+    "An air gap",
+    "A DMZ",
+    "A stateful firewall"
+   ],
+   "answer": 1,
+   "why": "An air-gapped backup has no network connection, so malware can't reach it. The other options still leave a network path to the backups."
+  },
+  {
+   "q": "Your boss orders a packet filter installed by the end of the week. What does a packet filter do?",
+   "options": [
+    "Eliminates collisions on the network",
+    "Allows all packets to enter the network",
+    "Blocks unauthorised packets from entering the network",
+    "Allows all packets to leave the network"
+   ],
+   "answer": 2,
+   "why": "A packet-filtering firewall checks each packet's headers against rules and drops those that aren't permitted."
+  },
+  {
+   "q": "Which device keeps a table of destinations in a network and forwards traffic toward them?",
+   "options": [
+    "Firewall",
+    "Modem",
+    "Hub",
+    "Router"
+   ],
+   "answer": 3,
+   "why": "Routers hold routing tables that map destination networks to next hops. Hubs just repeat signals, and firewalls filter rather than route."
+  },
+  {
+   "q": "The network has slowed as more clients were added. Which device is primarily a tool to improve network efficiency?",
+   "options": [
+    "Hub",
+    "PBX",
+    "Switch",
+    "Router"
+   ],
+   "answer": 2,
+   "why": "A switch sends frames only to the port where the destination is, cutting collisions and wasted traffic. A hub repeats everything to every port."
+  },
+  {
+   "q": "Which protocol isn't itself a tunnelling protocol but is used by tunnelling protocols to secure traffic?",
+   "options": [
+    "L2F",
+    "IPSec",
+    "PPTP",
+    "L2TP"
+   ],
+   "answer": 1,
+   "why": "IPSec provides encryption and authentication; L2TP, for example, tunnels and relies on IPSec for its security."
+  },
+  {
+   "q": "Which component, hardware or software, shifts work from one device to another so no single server is overwhelmed?",
+   "options": [
+    "Switch",
+    "Hub",
+    "Load balancer",
+    "Proxy"
+   ],
+   "answer": 2,
+   "why": "A load balancer spreads requests across several servers. A proxy forwards requests on behalf of clients but doesn't distribute load."
+  },
+  {
+   "q": "Which IDS approach analyses traffic with algorithms that learn what is normal and flag deviations?",
+   "options": [
+    "Heuristic",
+    "Statistical",
+    "Algebraic",
+    "Signature-based"
+   ],
+   "answer": 0,
+   "why": "Heuristic (behaviour-based) detection uses algorithms and learned baselines to spot unusual traffic, including attacks with no known signature."
+  },
+  {
+   "q": "Which device offloads public-key encryption work to a separate hardware card?",
+   "options": [
+    "Proxy firewall",
+    "SSL accelerator",
+    "SIEM",
+    "Load balancer"
+   ],
+   "answer": 1,
+   "why": "An SSL/TLS accelerator does the expensive handshake cryptography in dedicated hardware so servers can handle more connections."
+  },
+  {
+   "q": "Which kind of storage ensures that once information is written it cannot be modified?",
+   "options": [
+    "ROM",
+    "WORM",
+    "NAC",
+    "DLP"
+   ],
+   "answer": 1,
+   "why": "Write-once, read-many media lets data be written a single time, which is why it suits logs and records that must not be altered."
+  },
+  {
+   "q": "In which two modes can IPSec operate?",
+   "options": [
+    "Tunnel and transport",
+    "Tunnel and storage",
+    "At-rest and in-use",
+    "Transport and storage"
+   ],
+   "answer": 0,
+   "why": "Transport mode protects the payload only, between hosts; tunnel mode wraps the entire original packet, which is how site-to-site VPNs work."
+  },
+  {
+   "q": "With which VPN configuration are only some requests sent through the encrypted tunnel while the rest go straight to the internet?",
+   "options": [
+    "Split tunnel",
+    "Full tunnel",
+    "Hybrid tunnel",
+    "Partial tunnel"
+   ],
+   "answer": 0,
+   "why": "Split tunnelling routes only corporate traffic through the VPN. A full tunnel sends everything through it, which is more secure but slower."
+  },
+  {
+   "q": "Which load-balancing schedule sends the first request to the first server, the second to the second, and so on?",
+   "options": [
+    "Sequential",
+    "Affinity",
+    "Round-robin",
+    "Progressive"
+   ],
+   "answer": 2,
+   "why": "Round-robin rotates through the servers in order. Affinity scheduling keeps sending a given client to the same server."
+  },
+  {
+   "q": "In which load balancer configuration are two or more balancers handling requests at the same time?",
+   "options": [
+    "Equal-partner",
+    "Cooperative-sharing",
+    "Active-passive",
+    "Active-active"
+   ],
+   "answer": 3,
+   "why": "Active-active means all balancers work at once. In active-passive, one waits as a standby and takes over only if the active one fails."
+  },
+  {
+   "q": "Which devices decrypt TLS traffic, inspect it, and re-encrypt it before sending it on?",
+   "options": [
+    "SSL/TLS decryptors",
+    "SSL gateways",
+    "SSL accelerators",
+    "SSL filters"
+   ],
+   "answer": 0,
+   "why": "A TLS decryptor (inspection appliance) opens encrypted traffic so it can be examined for threats, then encrypts it again toward its destination."
+  },
+  {
+   "q": "Which chip on a motherboard can store cryptographic keys, passwords and certificates?",
+   "options": [
+    "TPM",
+    "HSM",
+    "MTP",
+    "PMH"
+   ],
+   "answer": 0,
+   "why": "A Trusted Platform Module is a chip built into the system that stores keys securely and supports features such as disk encryption and secure boot."
+  },
+  {
+   "q": "Which access point feature allows or denies clients based on their hardware address?",
+   "options": [
+    "WORM",
+    "MAC filtering",
+    "Round-robin",
+    "Unified threat management"
+   ],
+   "answer": 1,
+   "why": "MAC filtering lists which hardware addresses may connect. It's easy to bypass by spoofing an allowed address, so it's a weak control on its own."
+  },
+  {
+   "q": "Which devices split a larger network into sections by sitting between two physical segments and managing the traffic between them?",
+   "options": [
+    "Proxies",
+    "Load balancers",
+    "Accelerators",
+    "Bridges"
+   ],
+   "answer": 3,
+   "why": "A bridge connects two segments and forwards frames between them only when needed, keeping local traffic local."
+  },
+  {
+   "q": "Several switches on a network begin to confuse each other about which segment a host is on. What problem is this?",
+   "options": [
+    "Dead zones",
+    "Backdoors",
+    "Loops",
+    "Collisions"
+   ],
+   "answer": 2,
+   "why": "A switching loop occurs when there is more than one path between switches, so frames circle endlessly and the MAC tables keep changing."
+  },
+  {
+   "q": "Which technology prevents switching loops by assigning values to interfaces and controlling which links forward traffic?",
+   "options": [
+    "SSID",
+    "BRD",
+    "Spanning Tree Protocol (STP)",
+    "ESSID"
+   ],
+   "answer": 2,
+   "why": "STP works out a loop-free topology and blocks redundant links, bringing them back only if an active link fails."
+  },
+  {
+   "q": "A new technician asks what least privilege means. What is its basic premise?",
+   "options": [
+    "Never give management more permissions than users",
+    "Regularly remove a permission to see if anyone notices",
+    "Always assign tasks to the admin with the fewest permissions",
+    "Give users only the permissions they need to do their work and no more"
+   ],
+   "answer": 3,
+   "why": "Least privilege limits accounts to the access their role needs, so mistakes and compromised accounts do less damage."
+  },
+  {
+   "q": "Management wants access requirements relaxed a little. Which access model gives owners some flexibility to share their information?",
+   "options": [
+    "RBAC",
+    "MAC",
+    "DAC",
+    "MLAC"
+   ],
+   "answer": 2,
+   "why": "In discretionary access control the owner of a resource decides who may access it. Mandatory access control fixes access by labels and can't be changed by users."
+  },
+  {
+   "q": "LDAP is an example of which of the following?",
+   "options": [
+    "A file server",
+    "A tiered application development environment",
+    "An intrusion detection system",
+    "A directory access protocol"
+   ],
+   "answer": 3,
+   "why": "The Lightweight Directory Access Protocol queries and updates directory services such as Active Directory. Securing it means using LDAPS or signing."
+  },
+  {
+   "q": "You must recommend an access method based on pre-established rules that users themselves cannot change. Which is it?",
+   "options": [
+    "Kerberos",
+    "RBAC",
+    "DAC",
+    "MAC"
+   ],
+   "answer": 3,
+   "why": "Mandatory access control uses labels and clearances set by the system. Users can't grant access to others, unlike in DAC."
+  },
+  {
+   "q": "An office administrator is being trained to perform server backups. Which access control method fits this best?",
+   "options": [
+    "Security tokens",
+    "MAC",
+    "RBAC",
+    "DAC"
+   ],
+   "answer": 2,
+   "why": "Role-based access control lets you give the backup operator role exactly the rights backups need, and assign that role to the person."
+  },
+  {
+   "q": "Which authentication method uses a key distribution centre to authenticate users, programs or systems?",
+   "options": [
+    "Smart cards",
+    "Biometrics",
+    "Kerberos",
+    "CHAP"
+   ],
+   "answer": 2,
+   "why": "Kerberos has a KDC that issues tickets, so a client proves its identity once and uses tickets to reach services without sending a password again."
+  },
+  {
+   "q": "Which authentication method requires more than one authentication process for a single logon?",
+   "options": [
+    "Biometrics",
+    "Multifactor",
+    "Kerberos",
+    "Smart card"
+   ],
+   "answer": 1,
+   "why": "Multifactor authentication combines factors of different types, such as a password plus a hardware token, so one stolen credential isn't enough."
+  },
+  {
+   "q": "Access to a medical database must be authenticated for each session, with credentials valid only for that session. Which method provides this?",
+   "options": [
+    "Tokens",
+    "Certificates",
+    "Smart cards",
+    "Kerberos"
+   ],
+   "answer": 0,
+   "why": "Session tokens are issued at login and expire with the session, so they can't be reused later. Certificates and smart cards are long-lived credentials."
+  },
+  {
+   "q": "What is it called when two or more parties authenticate each other?",
+   "options": [
+    "Tunnelling",
+    "Single sign-on",
+    "Mutual authentication",
+    "Multifactor authentication"
+   ],
+   "answer": 2,
+   "why": "In mutual authentication both sides prove who they are, such as a client checking the server's certificate while the server checks the client's."
+  },
+  {
+   "q": "A new child domain has adopted all the trust relationships its parent had with other domains in the forest. What makes that happen?",
+   "options": [
+    "XML access",
+    "LDAP access",
+    "Transitive trust",
+    "Fuzzing"
+   ],
+   "answer": 2,
+   "why": "A transitive trust flows through: if A trusts B and B trusts C, then A trusts C. Forest trusts are transitive by default."
+  },
+  {
+   "q": "Which smart card does the US Department of Defense issue as a general identification and authentication card?",
+   "options": [
+    "POV",
+    "PIV",
+    "DLP",
+    "CAC"
+   ],
+   "answer": 3,
+   "why": "The Common Access Card is the DoD's smart card for military personnel, contractors and civilian staff. PIV cards serve other federal agencies."
+  },
+  {
+   "q": "A small financial institution wants an authentication protocol that periodically re-authenticates clients during a session. Which fits?",
+   "options": [
+    "Kerberos",
+    "SPAP",
+    "PAP",
+    "CHAP"
+   ],
+   "answer": 3,
+   "why": "The Challenge Handshake Authentication Protocol re-challenges the client at intervals, so a hijacked session can't continue indefinitely."
+  },
+  {
+   "q": "You know the IP address of the mail server that originated an email. Which command shows the complete path to that address?",
+   "options": [
+    "tracert",
+    "nslookup",
+    "ping -a",
+    "arp"
+   ],
+   "answer": 0,
+   "why": "tracert (traceroute on Linux) lists each hop between you and the destination. ping tests reachability, and nslookup resolves names."
+  },
+  {
+   "q": "Which authentication system was developed at MIT and uses tickets?",
+   "options": [
+    "MS-CHAP",
+    "Kerberos",
+    "OATH",
+    "CHAP"
+   ],
+   "answer": 1,
+   "why": "Kerberos came from MIT's Project Athena. Its KDC issues tickets that clients present to services instead of passwords."
+  },
+  {
+   "q": "When choosing a biometric system, what should be a goal?",
+   "options": [
+    "A high false rejection rate and low false acceptance rate",
+    "A high false acceptance rate and low false rejection rate",
+    "A low crossover error rate",
+    "A high crossover error rate"
+   ],
+   "answer": 2,
+   "why": "The crossover error rate is where false acceptances and false rejections are equal; the lower it is, the more accurate the system overall."
+  },
+  {
+   "q": "Which technology is most associated with web-based single sign-on and authorisation?",
+   "options": [
+    "PIV",
+    "CHAP",
+    "RBAC",
+    "SAML"
+   ],
+   "answer": 3,
+   "why": "The Security Assertion Markup Language passes authentication and authorisation assertions between an identity provider and web applications."
+  },
+  {
+   "q": "An access control mechanism considers the whole context of a request: user, resource, time, location and more. What is this?",
+   "options": [
+    "ABAC",
+    "DAC",
+    "MAC",
+    "RBAC"
+   ],
+   "answer": 0,
+   "why": "Attribute-based access control makes decisions from attributes of the subject, object and environment, not just a role or a label."
+  },
+  {
+   "q": "A system requires a password, a PIN and the user's date of birth. How should it be described?",
+   "options": [
+    "Three factor",
+    "Two factor",
+    "Single factor",
+    "Strong authentication"
+   ],
+   "answer": 2,
+   "why": "All three are things the user knows, so they are one factor repeated. Multifactor needs different types: something you know, have or are."
+  },
+  {
+   "q": "An initialisation vector attack is most associated with which wireless protocol?",
+   "options": [
+    "WPA2",
+    "WEP",
+    "WPA",
+    "WAP"
+   ],
+   "answer": 1,
+   "why": "WEP uses a short 24-bit IV that repeats quickly, letting an attacker collect enough traffic to recover the key."
+  },
+  {
+   "q": "How large is the initialisation vector that WEP uses?",
+   "options": [
+    "6-bit",
+    "24-bit",
+    "56-bit",
+    "128-bit"
+   ],
+   "answer": 1,
+   "why": "WEP's 24-bit IV is far too small; on a busy network it repeats within hours, which is a core reason WEP is broken."
+  },
+  {
+   "q": "Which technology sends data between phones held very close together, such as for tap payments?",
+   "options": [
+    "RFID",
+    "WPS",
+    "Bluetooth",
+    "NFC"
+   ],
+   "answer": 3,
+   "why": "Near field communication works over a few centimetres. RFID is used to track tags and Bluetooth reaches several metres."
+  },
+  {
+   "q": "Which feature simplifies joining a network by letting the administrator push a button on the router to admit a new device?",
+   "options": [
+    "WPA",
+    "WEP",
+    "WTLS",
+    "WPS"
+   ],
+   "answer": 3,
+   "why": "Wi-Fi Protected Setup uses a button press or PIN. Its PIN method is weak and brute-forceable, so WPS is best disabled."
+  },
+  {
+   "q": "Which technology identifies and tracks tags attached to objects?",
+   "options": [
+    "IV",
+    "DSC",
+    "NFC",
+    "RFID"
+   ],
+   "answer": 3,
+   "why": "Radio-frequency identification reads small tags, with or without their own power, to track goods, badges and equipment."
+  },
+  {
+   "q": "Which attack records part of a session and plays it back later to convince a host it is still talking to the original client?",
+   "options": [
+    "Duplication",
+    "Echo",
+    "Replay",
+    "Downgrade"
+   ],
+   "answer": 2,
+   "why": "A replay attack reuses captured traffic. Timestamps, nonces and session tokens that expire defeat it."
+  },
+  {
+   "q": "Which standard defines port-based network access control, used for wireless and wired authentication?",
+   "options": [
+    "802.11n",
+    "802.11g",
+    "802.1s",
+    "802.1X"
+   ],
+   "answer": 3,
+   "why": "IEEE 802.1X makes a client authenticate, often through RADIUS, before its switch port or wireless association carries normal traffic."
+  },
+  {
+   "q": "Which attack sends unsolicited messages to a device over Bluetooth?",
+   "options": [
+    "Bluejacking",
+    "Bluebugging",
+    "Bluesnarfing",
+    "Bluesmacking"
+   ],
+   "answer": 0,
+   "why": "Bluejacking pushes unwanted messages to a nearby device. Bluesnarfing goes further and steals data over the Bluetooth connection."
+  },
+  {
+   "q": "A hotel guest's free Wi-Fi keeps dropping, and the desk suggests the paid premium Wi-Fi instead. What attack could this scenario represent?",
+   "options": [
+    "Upselling",
+    "Disassociation",
+    "Jamming",
+    "Evil twin"
+   ],
+   "answer": 1,
+   "why": "A disassociation (deauthentication) attack sends forged management frames that knock clients off a network, which can push them to a different one."
+  },
+  {
+   "q": "Frustrated by weak signal, an employee brings in his own access point and connects it to the office network. What is this?",
+   "options": [
+    "A temporal AP",
+    "A captive portal",
+    "An evil twin",
+    "A rogue access point"
+   ],
+   "answer": 3,
+   "why": "A rogue AP is any access point connected without approval. It bypasses the organisation's wireless security and gives attackers a way in."
+  },
+  {
+   "q": "While setting up a small office access point, the owner has to enter a PIN within 60 seconds. What is this process?",
+   "options": [
+    "Wi-Fi Protected Access",
+    "Wi-Fi Protected Setup",
+    "Wi-Fi Authentication Protection",
+    "Wired Equivalent Privacy"
+   ],
+   "answer": 1,
+   "why": "WPS enrols devices with a PIN or button press. The 8-digit PIN can be brute-forced, so WPS should be turned off."
+  },
+  {
+   "q": "Which early wireless security protocol tried to give wireless networks the same security as a wired network?",
+   "options": [
+    "WEP",
+    "802.1X",
+    "WPA3",
+    "WPA2"
+   ],
+   "answer": 0,
+   "why": "Wired Equivalent Privacy was named for that goal, but its RC4 use and small IVs make it easy to break; it should never be used today."
+  },
+  {
+   "q": "A neighbouring tenant appears to be using radio interference to disrupt a company's wireless network. What is this called?",
+   "options": [
+    "Cramming",
+    "Jamming",
+    "Shoving",
+    "Blocking"
+   ],
+   "answer": 1,
+   "why": "Jamming deliberately floods the frequency with noise so legitimate signals can't get through; it's a denial-of-service attack on wireless."
+  },
+  {
+   "q": "What is a disassociation attack more commonly called?",
+   "options": [
+    "Denial attack",
+    "Decertification attack",
+    "Disconfirmation attack",
+    "Deauthentication attack"
+   ],
+   "answer": 3,
+   "why": "The attacker spoofs deauthentication frames from the access point, forcing clients to drop off and reconnect, often to capture the handshake."
+  },
+  {
+   "q": "What is the simplest way to reduce the exposure of the many Bluetooth devices on your network?",
+   "options": [
+    "Block communication",
+    "Turn off announcements",
+    "Don't leave them set to discoverable",
+    "Disable transmit power"
+   ],
+   "answer": 2,
+   "why": "A device in discoverable mode advertises itself to everyone nearby. Turning discoverability off makes it far harder to target."
+  },
+  {
+   "q": "Gaining unauthorised access to data through a Bluetooth connection is called what?",
+   "options": [
+    "Bluerunning",
+    "Bluejacking",
+    "Bluelining",
+    "Bluesnarfing"
+   ],
+   "answer": 3,
+   "why": "Bluesnarfing steals contacts, messages or files over Bluetooth. Bluejacking only sends unwanted messages."
+  },
+  {
+   "q": "A client insists on turning off SSID broadcast to stop people finding his network, though you've explained it's weak security. What is this called?",
+   "options": [
+    "Veiling",
+    "Masking",
+    "Shrouding",
+    "Cloaking"
+   ],
+   "answer": 3,
+   "why": "SSID cloaking hides the network name from beacons. It's trivial to recover from client traffic, so it's not real security."
+  },
+  {
+   "q": "Which attack uses a rogue access point that poses as a legitimate wireless provider to intercept what users send?",
+   "options": [
+    "Evil twin",
+    "Collision",
+    "WPS attack",
+    "NFC spoofing"
+   ],
+   "answer": 0,
+   "why": "An evil twin copies a real network's name so users connect to it, letting the attacker see their traffic."
+  },
+  {
+   "q": "In which cloud service model can the customer provision resources and deploy and run their own operating systems and software?",
+   "options": [
+    "SaaS",
+    "PaaS",
+    "CaaS",
+    "IaaS"
+   ],
+   "answer": 3,
+   "why": "Infrastructure as a service hands over virtual machines, storage and networking. The customer runs the OS and everything above it."
+  },
+  {
+   "q": "Which cloud delivery model is operated by a single organisation, so it can sit behind its own firewall?",
+   "options": [
+    "Public",
+    "Private",
+    "Hybrid",
+    "Community"
+   ],
+   "answer": 1,
+   "why": "A private cloud serves one organisation, whether hosted in-house or by a provider; it's the most controllable and usually the most expensive."
+  },
+  {
+   "q": "Which cloud service model gives the customer the infrastructure to build and host applications without managing the OS?",
+   "options": [
+    "CaaS",
+    "SaaS",
+    "PaaS",
+    "IaaS"
+   ],
+   "answer": 2,
+   "why": "Platform as a service supplies the runtime, database and tools; developers deploy code and the provider runs the platform underneath."
+  },
+  {
+   "q": "Which delivery model is best described as a pool of services and resources delivered across the internet by a provider?",
+   "options": [
+    "Private",
+    "Community",
+    "Public",
+    "Hybrid"
+   ],
+   "answer": 2,
+   "why": "A public cloud offers shared resources to anyone over the internet, with the provider owning and operating everything."
+  },
+  {
+   "q": "Which cloud service model lets the customer use applications the provider runs, over the internet?",
+   "options": [
+    "IaaS",
+    "CaaS",
+    "SaaS",
+    "PaaS"
+   ],
+   "answer": 2,
+   "why": "Software as a service is the finished application, such as webmail or an online office suite; the provider handles everything below it."
+  },
+  {
+   "q": "Which cloud delivery model is shared by several organisations with common interests and IT needs?",
+   "options": [
+    "Hybrid",
+    "Public",
+    "Community",
+    "Private"
+   ],
+   "answer": 2,
+   "why": "A community cloud serves a group with shared requirements, such as hospitals that must meet the same regulations."
+  },
+  {
+   "q": "Which delivery model combines two or more other cloud models?",
+   "options": [
+    "Public",
+    "Hybrid",
+    "Community",
+    "Private"
+   ],
+   "answer": 1,
+   "why": "A hybrid cloud mixes models, most often a private cloud for sensitive work and a public cloud for the rest."
+  },
+  {
+   "q": "With which subscription model do small organisations get security that would be too expensive to build on their own?",
+   "options": [
+    "PaaS",
+    "XaaS",
+    "WaaS",
+    "Security as a service (SECaaS)"
+   ],
+   "answer": 3,
+   "why": "SECaaS delivers services such as monitoring, filtering and identity management from a provider, with the cost spread across many customers."
+  },
+  {
+   "q": "Which on-premises or cloud-based systems enforce security policy between users and cloud services?",
+   "options": [
+    "Flood guards",
+    "Virtual desktops",
+    "Cloud access security brokers",
+    "Feature slugs"
+   ],
+   "answer": 2,
+   "why": "A CASB sits between users and cloud apps to apply policies such as access control, encryption and data loss prevention."
+  },
+  {
+   "q": "Which feature of cloud computing provisions and de-provisions resources dynamically as demand changes?",
+   "options": [
+    "Sandboxing",
+    "CMDB",
+    "Multitenancy",
+    "Elasticity"
+   ],
+   "answer": 3,
+   "why": "Elasticity lets capacity grow and shrink automatically with load, so customers pay for what they use."
+  },
+  {
+   "q": "What is it called when an application is restricted to a safe, isolated area of the system?",
+   "options": [
+    "Fencing",
+    "Sandboxing",
+    "Bastioning",
+    "Multitenancy"
+   ],
+   "answer": 1,
+   "why": "A sandbox contains an application so it can't affect the rest of the system, which is also how suspicious files are examined safely."
+  },
+  {
+   "q": "Which term describes hosting data from more than one customer on the same equipment?",
+   "options": [
+    "Elasticity",
+    "Bastioning",
+    "Multitenancy",
+    "Duplexing"
+   ],
+   "answer": 2,
+   "why": "In a multitenant cloud, customers share hardware with logical separation between them, which is why isolation controls matter."
+  },
+  {
+   "q": "In a public cloud, who is accountable for the security and privacy of the outsourced service?",
+   "options": [
+    "Both the cloud provider and the organisation",
+    "No one",
+    "The organisation alone",
+    "The cloud provider alone"
+   ],
+   "answer": 0,
+   "why": "Responsibility is shared: the provider secures the infrastructure and the customer remains accountable for its data, access and configuration."
+  },
+  {
+   "q": "A virtual data centre is full of over-provisioned machines that stay running long after they're needed. What is this problem called?",
+   "options": [
+    "VM escape",
+    "Type I virtualisation",
+    "VM sprawl",
+    "VM digress"
+   ],
+   "answer": 2,
+   "why": "VM sprawl is the uncontrolled growth of virtual machines without proper lifecycle management, wasting resources and leaving unpatched systems around."
+  },
+  {
+   "q": "Although a hybrid cloud could be any mix, it's usually a combination of which two models?",
+   "options": [
+    "Public and private",
+    "Public and community",
+    "Private and community",
+    "Two or more communities"
+   ],
+   "answer": 0,
+   "why": "The common hybrid pattern keeps sensitive workloads in a private cloud and uses a public cloud for capacity or less sensitive services."
+  },
+  {
+   "q": "Which type of hypervisor is known as bare metal?",
+   "options": [
+    "Type I",
+    "Type III",
+    "Type II",
+    "Type IV"
+   ],
+   "answer": 0,
+   "why": "A Type I hypervisor runs directly on the hardware without a host operating system. A Type II hypervisor runs as an application on a host OS."
+  },
+  {
+   "q": "Which type of hypervisor is known as hosted?",
+   "options": [
+    "Type I",
+    "Type IV",
+    "Type III",
+    "Type II"
+   ],
+   "answer": 3,
+   "why": "A Type II hypervisor runs on top of a normal operating system, like a desktop virtualisation product. Type I runs directly on the hardware."
+  },
+  {
+   "q": "When your servers become too busy, extra traffic is handed off to a cloud provider's resources. What is this called?",
+   "options": [
+    "Cloud bursting",
+    "Multitenancy",
+    "Latency",
+    "Peaking"
+   ],
+   "answer": 0,
+   "why": "Cloud bursting lets a private environment overflow into a public cloud during peaks, paying only for the extra capacity used."
+  },
+  {
+   "q": "Which protocol family is used to prioritise and balance network traffic so important flows get through first?",
+   "options": [
+    "ESX",
+    "IFNC",
+    "QoS",
+    "IBJ"
+   ],
+   "answer": 2,
+   "why": "Quality of service marks and queues traffic by priority, so voice or critical application traffic isn't starved by bulk transfers."
+  },
+  {
+   "q": "What is the machine on which virtualisation software runs called?",
+   "options": [
+    "A node",
+    "A workstation",
+    "The host",
+    "The guest"
+   ],
+   "answer": 2,
+   "why": "The host is the physical machine running the hypervisor; the virtual machines on it are guests."
+  },
+  {
+   "q": "Establishing a standard level of security that systems are measured against is called what?",
+   "options": [
+    "Baselining",
+    "Hardening",
+    "Methods research",
+    "Security evaluation"
+   ],
+   "answer": 0,
+   "why": "A baseline is the agreed minimum configuration. Hardening is the work of reaching it, and audits check for deviation from it."
+  },
+  {
+   "q": "Which type of testing checks whether an application copes properly with unexpected input?",
+   "options": [
+    "Unit testing",
+    "Fuzzing",
+    "Stress testing",
+    "Integration testing"
+   ],
+   "answer": 1,
+   "why": "Fuzz testing feeds random or malformed data to an application to find crashes and input-handling flaws. Stress testing measures behaviour under load."
+  },
+  {
+   "q": "A database administrator wants to start with a good configuration. Which is a fundamental database configuration concern?",
+   "options": [
+    "Stress testing",
+    "Input validation",
+    "Fuzz testing",
+    "Normalisation"
+   ],
+   "answer": 3,
+   "why": "Normalisation organises tables to remove redundancy and inconsistency. Input validation belongs to the application layer."
+  },
+  {
+   "q": "Which resource is most helpful for addressing widely known, documented web application vulnerabilities?",
+   "options": [
+    "OWASP",
+    "NIST",
+    "CERT",
+    "ISO"
+   ],
+   "answer": 0,
+   "why": "The Open Worldwide Application Security Project publishes the Top 10 web application risks and guidance on fixing them."
+  },
+  {
+   "q": "Which application model places an intermediary server between the end user and the database?",
+   "options": [
+    "One-tiered",
+    "Two-tiered",
+    "Relational",
+    "Three-tiered"
+   ],
+   "answer": 3,
+   "why": "In a three-tier design the client talks to an application server, which talks to the database, so the database is never exposed directly."
+  },
+  {
+   "q": "What is a bundle of one or more system fixes released as a single product called?",
+   "options": [
+    "System install",
+    "Service pack",
+    "Patch",
+    "Hotfix"
+   ],
+   "answer": 1,
+   "why": "A service pack rolls up many fixes and is tested as a whole. A hotfix is one quick fix for one problem."
+  },
+  {
+   "q": "What is it called when a repair is applied to an operating system while the system keeps running?",
+   "options": [
+    "Upgrade",
+    "Service pack installation",
+    "File update",
+    "Hotfix"
+   ],
+   "answer": 3,
+   "why": "A hotfix is applied to a live system to address a specific issue without a full reinstall; some still need a reboot to take effect."
+  },
+  {
+   "q": "A developer made a minor change to an e-commerce application and it works. Which type of testing matters most now?",
+   "options": [
+    "Regression testing",
+    "Stress testing",
+    "Static testing",
+    "Unit testing"
+   ],
+   "answer": 0,
+   "why": "Regression testing checks that the change hasn't broken anything that used to work, which is the main risk of even small edits."
+  },
+  {
+   "q": "What is the primary type of database used in applications today?",
+   "options": [
+    "Archival",
+    "Network",
+    "Hierarchical",
+    "Relational"
+   ],
+   "answer": 3,
+   "why": "Relational databases store data in tables linked by keys and are queried with SQL; they underpin most business applications."
+  },
+  {
+   "q": "You want a user to be able to delete a file but not grant permissions to others. Which permission level should you assign?",
+   "options": [
+    "Modify",
+    "Administrator",
+    "Delete",
+    "Full Control"
+   ],
+   "answer": 0,
+   "why": "Modify allows reading, writing and deleting but not changing permissions. Full Control includes changing permissions and ownership."
+  },
+  {
+   "q": "Which measure is most important against SQL injection on an e-commerce server?",
+   "options": [
+    "Input validation",
+    "An IPS",
+    "Agile programming",
+    "Stress testing"
+   ],
+   "answer": 0,
+   "why": "Validating and parameterising input keeps user data from being treated as SQL. An IPS may catch some attempts but doesn't fix the flaw."
+  },
+  {
+   "q": "A manufacturer of insulin pumps is worried about their security. Which measure would help most?",
+   "options": [
+    "Ensure the devices have been fuzz tested",
+    "Ensure the devices have been stress tested",
+    "Ensure the devices use full disk encryption",
+    "Ensure all communications with the device are encrypted"
+   ],
+   "answer": 3,
+   "why": "The main risk to a connected medical device is someone intercepting or injecting commands, so encrypting its communications matters most."
+  },
+  {
+   "q": "A vulnerability scan found a flaw in a third-party module and an update is available. What is the best approach?",
+   "options": [
+    "Apply the update immediately to production",
+    "Apply the update on a test server first, then to production if it works",
+    "Submit a request for comments",
+    "Document the issue and wait"
+   ],
+   "answer": 1,
+   "why": "Testing first catches updates that break the application. Change management means fixes go through test before production."
+  },
+  {
+   "q": "Which is the most secure way to run a legacy application that needs a legacy operating system?",
+   "options": [
+    "Stress testing",
+    "Putting it on an encrypted drive",
+    "Dynamic testing",
+    "Sandboxing"
+   ],
+   "answer": 3,
+   "why": "Isolating the old system in a sandbox or VM with limited network access contains it, since the OS itself can't be made secure."
+  },
+  {
+   "q": "Which issue is a specific concern for multithreaded applications?",
+   "options": [
+    "Race conditions",
+    "Input validation",
+    "Unit testing",
+    "Memory overflow"
+   ],
+   "answer": 0,
+   "why": "When threads access shared data at the same time, the result depends on timing. Race conditions can corrupt data or open security holes."
+  },
+  {
+   "q": "A project has very clearly defined requirements that are unlikely to change. Which development model fits best?",
+   "options": [
+    "Extreme Programming",
+    "Waterfall",
+    "Agile",
+    "Scrum"
+   ],
+   "answer": 1,
+   "why": "Waterfall completes each phase before the next, which works when requirements are fixed. Agile methods suit changing requirements."
+  },
+  {
+   "q": "Which of these does not describe a hashing algorithm?",
+   "options": [
+    "Variable-length input with fixed-length output",
+    "Collision resistance",
+    "One-way",
+    "Long key size"
+   ],
+   "answer": 3,
+   "why": "Hashing uses no key at all; it is a one-way function that maps any input to a fixed-length digest and should make collisions hard to find."
+  },
+  {
+   "q": "Which US agency is primarily responsible for cryptographic standards for general government use?",
+   "options": [
+    "IEEE",
+    "NSA",
+    "NIST",
+    "ITU"
+   ],
+   "answer": 2,
+   "why": "The National Institute of Standards and Technology publishes FIPS and SP 800 standards such as AES and SHA. The NSA focuses on national security systems."
+  },
+  {
+   "q": "Which is the most widely used asymmetric algorithm today?",
+   "options": [
+    "3DES",
+    "AES",
+    "SHA",
+    "RSA"
+   ],
+   "answer": 3,
+   "why": "RSA is the common public-key algorithm for key exchange and signatures. AES and 3DES are symmetric, and SHA is a hash."
+  },
+  {
+   "q": "The process of proposing a new standard or method on the internet is referred to by which acronym?",
+   "options": [
+    "X.509",
+    "WBS",
+    "RFC",
+    "IEEE"
+   ],
+   "answer": 2,
+   "why": "A Request for Comments is the IETF's document series; protocols become standards through published RFCs."
+  },
+  {
+   "q": "Phone logs show a call to a competitor was placed from Mary's desk while she was the only one working, though she denies making it. What do the records provide?",
+   "options": [
+    "Non-repudiation",
+    "Authentication",
+    "Integrity",
+    "Confidentiality"
+   ],
+   "answer": 0,
+   "why": "Non-repudiation is evidence that prevents someone from credibly denying an action. Logs tied to a person and time serve that purpose."
+  },
+  {
+   "q": "A company wants stronger security than SSL and the ability to use additional security protocols. Which protocol is similar to SSL but offers that?",
+   "options": [
+    "X.509",
+    "SSH",
+    "TLS",
+    "RSH"
+   ],
+   "answer": 2,
+   "why": "Transport Layer Security is SSL's successor, with stronger cipher suites and negotiation. SSH secures remote shells rather than web traffic."
+  },
+  {
+   "q": "In cryptography, what does MAC stand for?",
+   "options": [
+    "Media access control",
+    "Multiple advisory committees",
+    "Mandatory access control",
+    "Message authentication code"
+   ],
+   "answer": 3,
+   "why": "A message authentication code is a keyed checksum that proves a message's integrity and origin. The other expansions belong to networking and access control."
+  },
+  {
+   "q": "A firm generates all keys centrally. What problem does a centralised key-generating process create?",
+   "options": [
+    "Private key security",
+    "Key transmission",
+    "Certificate revocation",
+    "Network security"
+   ],
+   "answer": 0,
+   "why": "If a central system creates private keys, it has seen every key, so a compromise there exposes everyone. Private keys are best generated where they'll be used."
+  },
+  {
+   "q": "You need to encrypt your hard drive. Which algorithm is the best choice?",
+   "options": [
+    "SHA",
+    "DES",
+    "RSA",
+    "AES"
+   ],
+   "answer": 3,
+   "why": "AES is the modern symmetric standard, fast and secure for bulk data. DES is obsolete, RSA is too slow for whole disks, and SHA is a hash."
+  },
+  {
+   "q": "What is the primary organisation that issues and maintains certificates called?",
+   "options": [
+    "CRL",
+    "Certificate authority (CA)",
+    "Registration authority (RA)",
+    "Local registration authority (LRA)"
+   ],
+   "answer": 1,
+   "why": "A CA signs and issues certificates and maintains their status. An RA verifies identities on the CA's behalf but doesn't sign."
+  },
+  {
+   "q": "After a breach a certificate must be permanently revoked. What is commonly used to publish that revocation?",
+   "options": [
+    "CRA",
+    "CYA",
+    "PKI",
+    "CRL"
+   ],
+   "answer": 3,
+   "why": "A certificate revocation list, published by the CA, lists serial numbers of certificates that must no longer be trusted."
+  },
+  {
+   "q": "Which organisation verifies an individual's identity before a certificate is issued in a PKI?",
+   "options": [
+    "PKE",
+    "SHA",
+    "Local registration authority only",
+    "Registration authority (RA)"
+   ],
+   "answer": 3,
+   "why": "The RA checks identity and passes the approved request to the CA, which issues the certificate."
+  },
+  {
+   "q": "An employee is on leave for six weeks and you've been told to suspend her key. Which statement is true?",
+   "options": [
+    "Suspended keys must be revoked before use",
+    "Suspending keys is bad practice",
+    "Suspended keys don't expire",
+    "Suspended keys can be reactivated"
+   ],
+   "answer": 3,
+   "why": "Suspension is temporary: the certificate is put on hold and can be restored, unlike revocation, which is permanent."
+  }
+ ]
+}

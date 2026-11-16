@@ -641,6 +641,8 @@ fieldset.segments { margin: 0; padding: 0; border: 0; min-width: 0; }
 .qa-list { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
 .qa-card { display: grid; gap: 10px; padding: 16px; border: 1px solid var(--line); min-width: 0; }
 .qa-card > * { margin: 0; }
+.qa-pager { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 14px; }
+.qa-range { color: var(--muted-2); font-size: 13px; min-width: 0; }
 .qa-q { font-weight: 700; line-height: 1.5; }
 .qa-options { display: grid; gap: 8px; }
 .qa-options button { text-align: left; text-transform: none; letter-spacing: 0; font-size: 14px; line-height: 1.4; white-space: normal; }

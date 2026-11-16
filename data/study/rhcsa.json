@@ -1,0 +1,848 @@
+{
+ "questions": [
+  {
+   "task": "Install the httpd web server package using DNF and configure it to start automatically at boot.",
+   "steps": [
+    "sudo dnf install -y httpd",
+    "sudo systemctl enable httpd",
+    "sudo systemctl start httpd"
+   ],
+   "check": "Run 'rpm -q httpd' to confirm the package is installed and 'systemctl is-enabled --quiet httpd' should return no output (exit status 0), indicating the service is enabled."
+  },
+  {
+   "task": "Switch SELinux from enforcing to permissive mode and verify the change.",
+   "steps": [
+    "sudo setenforce 0",
+    "sudo sed -i 's/^SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config"
+   ],
+   "check": "Execute 'getenforce' – it should output 'Permissive'. Also, after a reboot, 'getenforce' should still show 'Permissive', confirming the persistent configuration."
+  },
+  {
+   "task": "Configure a static IP address on the RHEL 9 VM that matches the NAT subnet used by VMware Workstation Player (e.g., 192.168.219.0/24).",
+   "steps": [
+    "Determine the NAT subnet used by VMware (e.g., on the host run: cat /etc/vmware/vmnet8/nat/nat.conf | grep subnet). Assume it is 192.168.219.0/24 for this exercise.",
+    "Log in to the RHEL 9 VM as root or with sudo privileges.",
+    "Identify the network interface name (usually ens33 or eth0): ip link show",
+    "Create or edit the interface configuration file, e.g.: sudo vi /etc/sysconfig/network-scripts/ifcfg-ens33",
+    "Add or modify the following lines in the file:",
+    "BOOTPROTO=static",
+    "ONBOOT=yes",
+    "IPADDR=192.168.219.100",
+    "PREFIX=24",
+    "GATEWAY=192.168.219.2",
+    "DNS1=8.8.8.8",
+    "Save and exit the editor.",
+    "Restart the network service: sudo systemctl restart NetworkManager",
+    "Verify the new address: ip a show dev ens33"
+   ],
+   "check": "The command `ip a` should display the interface with the address 192.168.219.100/24, and `ping -c 3 192.168.219.2` should succeed, confirming connectivity to the NAT gateway."
+  },
+  {
+   "task": "Create a new VMware Workstation Player virtual machine named \"server1\" for RHEL 9, allocate a 20 GB virtual disk, and attach the RHEL 9 installation ISO.",
+   "steps": [
+    "Open VMware Workstation Player.",
+    "Choose **File → New Virtual Machine** to launch the New Virtual Machine Wizard.",
+    "Select **I will install the operating system later** and click **Next**.",
+    "For the guest operating system, choose **Linux** and then **Red Hat Enterprise Linux 9 64-bit**, then click **Next**.",
+    "Enter **server1** as the virtual machine name and choose a location for the VM files, then click **Next**.",
+    "Set the virtual disk size to **20 GB**, select **Store virtual disk as a single file**, and click **Next**.",
+    "Click **Finish** to create the VM (it will appear in the player in a Powered Off state).",
+    "Select the newly created **server1** VM and click **Edit virtual machine settings**.",
+    "In the hardware list, select **CD/DVD (SATA)**, ensure **Connect at power on** is checked, then click **Browse** and locate the downloaded **RHEL-9.x.x-x86_64-dvd.iso** file.",
+    "Click **OK** to close the settings window.",
+    "With the VM still selected, click **Power on this virtual machine**."
+   ],
+   "check": "The virtual machine should power on and display the Red Hat Enterprise Linux 9 installer screen, confirming that the VM was created with the correct OS type, disk size, and ISO attached."
+  },
+  {
+   "task": "Navigate to your own home directory and the root user's home directory using the tilde (~) shortcut and verify you are in the correct locations.",
+   "steps": [
+    "log in as a regular user (e.g., mj)",
+    "cd ~",
+    "pwd",
+    "ls ~",
+    "su - root",
+    "cd ~",
+    "pwd",
+    "ls ~"
+   ],
+   "check": "The first pwd should output /home/mj and the second pwd should output /root. The ls ~ for the regular user should list files in /home/mj, while the ls ~ for root should display at least the file anaconda-ks.cfg."
+  },
+  {
+   "task": "Demonstrate the use of absolute and relative paths by listing the contents of the /home directory from the root directory.",
+   "steps": [
+    "cd /",
+    "ls home",
+    "ls /home"
+   ],
+   "check": "Both ls commands should produce identical listings of the /home directory, confirming that \"home\" (relative) and \"/home\" (absolute) refer to the same location when the current directory is \"/\"."
+  },
+  {
+   "task": "Add a new regular user entry to /etc/passwd using vipw by copying the root line and editing the fields to create user \"tweedle\" with UID 1001, GID 1001, comment \"Tweedle Dee\", and home directory \"/home/tweedle\".",
+   "steps": [
+    "su -",
+    "vipw",
+    "Esc",
+    "G",
+    "yy",
+    "p",
+    "Esc",
+    "0",
+    "i",
+    "tweedle:x:1001:1001:Tweedle Dee:/home/tweedle:/bin/bash",
+    "Esc",
+    ":wq"
+   ],
+   "check": "grep '^tweedle:' /etc/passwd && awk -F: '$1==\"tweedle\" {print $3,$4,$5,$6}' /etc/passwd | grep -q '^1001 1001 Tweedle Dee /home/tweedle$'"
+  },
+  {
+   "task": "Edit /etc/shadow with vipw -s to create a matching shadow entry for the newly added user \"tweedle\" and verify the entry exists.",
+   "steps": [
+    "vipw -s",
+    "Esc",
+    "G",
+    "yy",
+    "p",
+    "Esc",
+    "0",
+    "i",
+    "tweedle:!:18295:0:99999:7:::",
+    "Esc",
+    ":wq"
+   ],
+   "check": "grep '^tweedle:' /etc/shadow"
+  },
+  {
+   "task": "Create a new static Ethernet connection profile named \"eth0-work\" for interface eth0, configure its IP settings, bring it up, and verify the static address is in use.",
+   "steps": [
+    "nmcli con show",
+    "nmcli con add con-name \"eth0-work\" type ethernet ifname eth0",
+    "nmcli con mod \"eth0-work\" ipv4.addresses 192.168.20.100/24",
+    "nmcli con mod \"eth0-work\" ipv4.gateway 192.168.20.1",
+    "nmcli con mod \"eth0-work\" +ipv4.dns 192.168.20.1",
+    "nmcli con mod \"eth0-work\" ipv4.method manual",
+    "nmcli con up \"eth0-work\"",
+    "ip addr show eth0"
+   ],
+   "check": "The output of `ip addr show eth0` must contain the line `inet 192.168.20.100/24` and `ip route` must show a default route via `192.168.20.1`."
+  },
+  {
+   "task": "Back up the current NetworkManager connection file for eth0, change the connection to use DHCP via the text UI (nmtui), and confirm the change with a diff and nmcli output.",
+   "steps": [
+    "nmcli con show | grep eth0",
+    "CON_NAME=$(nmcli -g name con show | grep -i eth0 | head -n1)",
+    "sudo cp \"/etc/NetworkManager/system-connections/${CON_NAME}\" \"/etc/NetworkManager/system-connections/${CON_NAME}.bak\"",
+    "sudo nmtui",
+    "# In the nmtui interface: select \"Edit a connection\", choose the $CON_NAME entry, set \"IPv4 CONFIGURATION\" to \"Automatic (DHCP)\", press <OK>, then <Back>, and finally <Quit>.",
+    "sudo diff \"/etc/NetworkManager/system-connections/${CON_NAME}.bak\" \"/etc/NetworkManager/system-connections/${CON_NAME}\"",
+    "nmcli con show \"$CON_NAME\" | grep ipv4.method"
+   ],
+   "check": "The `diff` command must show changes in the file where `ipv4.method=auto` replaces a previous static setting, and `nmcli con show \"$CON_NAME\"` must display `ipv4.method: auto`. Additionally, `ip addr show eth0` should now show an address obtained from DHCP rather than the previous static address."
+  },
+  {
+   "task": "Uninstall a package and verify that a modified configuration file is saved with a .rpmsave extension",
+   "steps": [
+    "curl -O http://download-ib01.fedoraproject.org/pub/fedora/linux/releases/38/Everything/x86_64/os/Packages/w/wget-1.21.3-1.fc38.x86_64.rpm",
+    "sudo rpm -ivh wget-1.21.3-1.fc38.x86_64.rpm",
+    "sudo cp /etc/wgetrc /etc/wgetrc.backup",
+    "echo \"# Test comment added by RHCSA practice\" | sudo tee -a /etc/wgetrc",
+    "sudo rpm -e wget",
+    "ls -l /etc/wgetrc.rpmsave"
+   ],
+   "check": "The file /etc/wgetrc.rpmsave should exist (showing the original configuration saved) and \"rpm -q wget\" should report that the package is not installed."
+  },
+  {
+   "task": "Install an RPM directly from a remote URL using rpm and confirm the installation",
+   "steps": [
+    "sudo rpm -ivh http://download-ib01.fedoraproject.org/pub/fedora/linux/releases/38/Everything/x86_64/os/Packages/f/fortune-mod-1.99.1-2.fc38.x86_64.rpm",
+    "rpm -q fortune-mod"
+   ],
+   "check": "The command \"rpm -q fortune-mod\" should output the package name and version, indicating the package was successfully installed from the remote location."
+  },
+  {
+   "task": "List all available module streams on the system.",
+   "steps": [
+    "sudo dnf module list"
+   ],
+   "check": "The command output displays a table with a \"Name\" column containing entries such as \"nodejs\" and a \"Stream\" column showing versions like \"18\"."
+  },
+  {
+   "task": "Install the Node.js 18 module stream (default profile) and verify the installed version.",
+   "steps": [
+    "sudo dnf module enable nodejs:18 -y",
+    "sudo dnf module install nodejs:18 -y",
+    "node -v"
+   ],
+   "check": "The output of `node -v` starts with \"v18.\" indicating that Node.js version 18 is installed."
+  },
+  {
+   "task": "Show the backward‑compatible runlevel target links and verify which systemd targets they point to",
+   "steps": [
+    "ls -l /usr/lib/systemd/system/runlevel?.target"
+   ],
+   "check": "The command lists files runlevel0.target … runlevel6.target, each as a symbolic link; for example, runlevel0.target → poweroff.target, runlevel1.target → rescue.target, runlevel3.target → multi-user.target, runlevel5.target → graphical.target, etc."
+  },
+  {
+   "task": "Display all units that are pulled in when the graphical target starts",
+   "steps": [
+    "systemctl list-dependencies graphical.target"
+   ],
+   "check": "The output shows a tree of units required by graphical.target, including display‑manager.service, network.target, sound.target, and other services that constitute a full graphical multi‑user system."
+  },
+  {
+   "task": "Create a regular user and verify that it receives a UID/GID in the normal user range, gets a home directory, and is assigned a private group with the same ID as the user.",
+   "steps": [
+    "grep '^USERGROUPS_ENAB' /etc/login.defs",
+    "useradd alice",
+    "grep '^alice:' /etc/passwd",
+    "ls -ld /home/alice",
+    "id -u alice",
+    "id -g alice",
+    "id -gn alice"
+   ],
+   "check": "The grep of USERGROUPS_ENAB should show 'yes'. The /etc/passwd line for alice must have a UID between 1000 and 60000. The directory /home/alice must exist, be owned by alice:alice, and have permissions 700 (default). The primary group name returned by 'id -gn alice' must be the same as the username, and the numeric GID returned by 'id -g alice' must equal the UID returned by 'id -u alice'."
+  },
+  {
+   "task": "Create a system account using the -r option and confirm that it receives a UID/GID in the system range and does not get a home directory.",
+   "steps": [
+    "grep '^SYS_UID_MIN' /etc/login.defs",
+    "grep '^SYS_UID_MAX' /etc/login.defs",
+    "useradd -r sysacct",
+    "grep '^sysacct:' /etc/passwd",
+    "test -d /home/sysacct && echo \"Home exists\" || echo \"No home\"",
+    "id -u sysacct",
+    "id -g sysacct",
+    "getent group $(id -gn sysacct)"
+   ],
+   "check": "The SYS_UID_MIN and SYS_UID_MAX lines should show values 201 and 999. The /etc/passwd entry for sysacct must have a UID between 201 and 999. The test for /home/sysacct should report \"No home\" (i.e., the directory does not exist). The UID and GID reported by id must both be within the 201‑999 range, and the group entry retrieved by getent must exist."
+  },
+  {
+   "task": "Provide default files for new users by copying /usr/share/doc/bash into /etc/skel and verify that a newly created user receives those files in their home directory.",
+   "steps": [
+    "cp -a /usr/share/doc/bash /etc/skel/",
+    "useradd infouser",
+    "echo changeme | passwd --stdin infouser",
+    "ls -lR /home/infouser"
+   ],
+   "check": "The directory /home/infouser/bash (and its contents) exists and is identical to /usr/share/doc/bash; you can confirm with: diff -r /usr/share/doc/bash /home/infouser/bash"
+  },
+  {
+   "task": "Lock a user account, verify the lock in /etc/shadow, then unlock it and set an expiration date of 2000-01-01.",
+   "steps": [
+    "useradd testlock",
+    "echo changeme | passwd --stdin testlock",
+    "usermod -L testlock",
+    "grep '^testlock' /etc/shadow | cut -d: -f2",
+    "usermod -U testlock",
+    "usermod -e 2000-01-01 testlock",
+    "grep '^testlock' /etc/shadow"
+   ],
+   "check": "After the lock step, the password field for testlock in /etc/shadow starts with an exclamation mark (!). After unlocking, the exclamation mark is removed. The final grep shows the 8th field (expiration) set to the numeric value representing 2000-01-01 (e.g., 9497)."
+  },
+  {
+   "task": "Verify that the /bin directory is a symbolic link to /usr/bin on RHEL 9.",
+   "steps": [
+    "ls -ld /bin",
+    "readlink -f /bin"
+   ],
+   "check": "The first command shows that /bin is a symlink (e.g., \"lrwxrwxrwx ... /bin -> /usr/bin\"). The second command outputs \"/usr/bin\", confirming the link target."
+  },
+  {
+   "task": "Create a 20 MiB file, format it as ext4, and mount it on /mnt to practise using the /mnt mount point.",
+   "steps": [
+    "dd if=/dev/zero of=/tmp/tmpfs.img bs=1M count=20",
+    "mkfs.ext4 -F /tmp/tmpfs.img",
+    "mkdir -p /mnt/tmpmount",
+    "mount -o loop /tmp/tmpfs.img /mnt/tmpmount",
+    "df -h /mnt/tmpmount"
+   ],
+   "check": "The df output shows a filesystem of about 20 MiB mounted on /mnt/tmpmount, confirming the mount succeeded."
+  },
+  {
+   "task": "List all configured partitions on the system.",
+   "steps": [
+    "fdisk -l"
+   ],
+   "check": "The command output displays a table of partitions for each attached disk (e.g., /dev/sda, /dev/sdb) confirming that fdisk listed all partitions."
+  },
+  {
+   "task": "Create an XFS filesystem on /dev/sdb3, mount it at /mnt/data, and make the mount persistent via /etc/fstab.",
+   "steps": [
+    "sudo mkfs.xfs /dev/sdb3",
+    "sudo mkdir -p /mnt/data",
+    "sudo mount /dev/sdb3 /mnt/data",
+    "echo \"/dev/sdb3 /mnt/data xfs defaults 0 0\" | sudo tee -a /etc/fstab",
+    "sudo mount -a"
+   ],
+   "check": "The directory /mnt/data is a mount point (mountpoint -q /mnt/data) and `df -T | grep /mnt/data` shows the filesystem type as xfs. Additionally, `grep /dev/sdb3 /etc/fstab` confirms the entry was added."
+  },
+  {
+   "task": "Disable a SELinux boolean temporarily, then enable it permanently so the change survives a reboot, and verify each state.",
+   "steps": [
+    "# getsebool -a | grep httpd_enable_cgi",
+    "# setsebool httpd_enable_cgi off",
+    "# getsebool httpd_enable_cgi",
+    "# setsebool -P httpd_enable_cgi on",
+    "# getsebool httpd_enable_cgi"
+   ],
+   "check": "The first getsebool after the temporary change should show 'httpd_enable_cgi --> off'. After the -P command, getsebool should show 'httpd_enable_cgi --> on', and the setting will be stored in /etc/selinux/ (e.g., /etc/selinux/targeted/booleans.local), confirming it will persist across reboots."
+  },
+  {
+   "task": "Display the SELinux context of a file, change its type to one appropriate for a web server, and confirm the new context is applied.",
+   "steps": [
+    "# touch /tmp/webtest.txt",
+    "# ls -Z /tmp/webtest.txt",
+    "# chcon -t httpd_sys_content_t /tmp/webtest.txt",
+    "# ls -Z /tmp/webtest.txt"
+   ],
+   "check": "The first ls -Z should show a default type such as 'default_t'. After chcon, the second ls -Z must display the type 'httpd_sys_content_t' for /tmp/webtest.txt, confirming the context change."
+  },
+  {
+   "task": "Switch the system to the 'throughput-performance' tuned profile and verify that it is active, then restore the originally recommended profile.",
+   "steps": [
+    "# tuned-adm recommend > /tmp/original_profile.txt",
+    "# original=$(cat /tmp/original_profile.txt | awk '{print $NF}')",
+    "# tuned-adm profile throughput-performance",
+    "# tuned-adm active",
+    "# if [ \"$(tuned-adm active | awk '{print $NF}')\" != \"throughput-performance\" ]; then echo \"Profile not active\"; exit 1; fi",
+    "# tuned-adm profile $original",
+    "# tuned-adm active"
+   ],
+   "check": "The output of the first 'tuned-adm active' command should contain 'throughput-performance'. After restoring, the final 'tuned-adm active' output should match the profile saved in /tmp/original_profile.txt."
+  },
+  {
+   "task": "Create a gzip‑compressed tar archive of the /etc directory, verify the archive, and extract it to /tmp/etc‑backup.",
+   "steps": [
+    "# tar -czf /tmp/etc_backup.tar.gz /etc",
+    "# ls -l /tmp/etc_backup.tar.gz",
+    "# tar -tzf /tmp/etc_backup.tar.gz | wc -l > /tmp/filecount_before.txt",
+    "# mkdir -p /tmp/etc-backup",
+    "# tar -xzf /tmp/etc_backup.tar.gz -C /tmp/etc-backup",
+    "# find /tmp/etc-backup/etc -type f | wc -l > /tmp/filecount_after.txt",
+    "# diff /tmp/filecount_before.txt /tmp/filecount_after.txt"
+   ],
+   "check": "The archive file /tmp/etc_backup.tar.gz must exist and be non‑empty. The file counts before and after extraction should be identical (diff returns no differences), confirming a successful archive and extraction."
+  },
+  {
+   "task": "Enable persistent systemd journal storage and verify that logs survive a reboot",
+   "steps": [
+    "sudo mkdir -p /var/log/journal",
+    "sudo sed -i 's/^#\\?Storage=.*/Storage=persistent/' /etc/systemd/journald.conf",
+    "sudo systemctl restart systemd-journald",
+    "sudo systemctl status systemd-journald",
+    "ls -l /var/log/journal",
+    "sudo reboot now",
+    "journalctl -b -1 -n 5"
+   ],
+   "check": "The directory /var/log/journal exists and contains binary journal files, and after the reboot 'journalctl -b -1' displays log entries from the previous boot, confirming persistence."
+  },
+  {
+   "task": "Compare reading the binary lastlog file directly with using the lastlog command",
+   "steps": [
+    "sudo cat /var/log/lastlog | head -c 64 | hexdump -C",
+    "sudo lastlog | head -n 5",
+    "man lastlog | grep -i '/var/log/lastlog' -A2"
+   ],
+   "check": "The 'cat' (or hexdump) output is unreadable binary data, while the 'lastlog' command prints a readable table of users and their last login times. The man page confirms that lastlog reads from /var/log/lastlog."
+  },
+  {
+   "task": "Build a Python web server container image and run it, exposing it on host port 8000.",
+   "steps": [
+    "echo \"Welcome to our simple webserver!\" > index.html",
+    "cat > Containerfile <<'EOF'\nFROM python:3-alpine\nWORKDIR /app\nCOPY index.html /app/\nEXPOSE 8000\nCMD [\"python\", \"-m\", \"http.server\", \"8000\"]\nEOF",
+    "podman build -t python-webserver .",
+    "podman images | grep python-webserver",
+    "podman run -d --name simple-webserver -p 8000:8000 python-webserver",
+    "podman ps -a | grep simple-webserver",
+    "curl http://localhost:8000"
+   ],
+   "check": "The 'podman images' output lists an image named 'python-webserver', 'podman ps' shows a container named 'simple-webserver' with status 'Up', and the curl command returns the exact text 'Welcome to our simple webserver!'."
+  },
+  {
+   "task": "Stop the running simple-webserver container.",
+   "steps": [
+    "podman stop simple-webserver",
+    "podman ps -a | grep simple-webserver"
+   ],
+   "check": "The container 'simple-webserver' appears in 'podman ps -a' with a status of 'Exited' (or not listed in 'podman ps' without -a)."
+  },
+  {
+   "task": "Configure hostname, root password, register the system, install Apache, and set up a custom DocumentRoot on port 8234.",
+   "steps": [
+    "hostnamectl set-hostname tester1.example.com",
+    "echo -e \"changeme\\nchangeme\" | passwd root",
+    "subscription-manager register --username <RHN_user> --password <RHN_pass>",
+    "subscription-manager attach --auto",
+    "dnf install -y httpd",
+    "sed -i 's|^DocumentRoot \".*\"|DocumentRoot \"/html\"|' /etc/httpd/conf/httpd.conf",
+    "sed -i 's|^Listen .*|Listen 8234|' /etc/httpd/conf/httpd.conf",
+    "echo -e '\\n<Directory \"/html\">\\n    Require all granted\\n</Directory>' >> /etc/httpd/conf/httpd.conf",
+    "mkdir -p /html",
+    "echo \"Success!\" > /html/index.html",
+    "systemctl enable --now httpd"
+   ],
+   "check": "hostname -f should output 'tester1.example.com'; 'su - root' should accept password 'changeme'; 'subscription-manager status' should show an attached subscription; 'ss -tlnp | grep 8234' should list httpd listening on 0.0.0.0:8234; 'curl http://localhost:8234' should return 'Success!'."
+  },
+  {
+   "task": "Open firewall and add SELinux rules so the Apache service can serve content on the custom port 8234 and the /html directory.",
+   "steps": [
+    "firewall-cmd --add-port=8234/tcp --permanent",
+    "firewall-cmd --reload",
+    "semanage port -a -t http_port_t -p tcp 8234 || semanage port -m -t http_port_t -p tcp 8234",
+    "semanage fcontext -a -t httpd_sys_content_t \"/html(/.*)?\"",
+    "restorecon -R /html"
+   ],
+   "check": "firewall-cmd --list-ports should include '8234/tcp'; 'semanage port -l | grep 8234' should show type 'http_port_t'; 'ls -Zd /html' should display SELinux context 'httpd_sys_content_t'; 'curl http://localhost:8234' should still return 'Success!'."
+  },
+  {
+   "task": "Create a user named alice with UID 2001 whose supplementary group is wheel, and set her password to redhat.",
+   "steps": [
+    "useradd -u 2001 -G wheel alice",
+    "echo 'redhat' | passwd --stdin alice"
+   ],
+   "check": "id alice shows uid=2001 and wheel among the groups; su - alice works with the password."
+  },
+  {
+   "task": "Create a group named sysadmins with GID 3000, and add the existing user bob to it without removing his other groups.",
+   "steps": [
+    "groupadd -g 3000 sysadmins",
+    "usermod -aG sysadmins bob"
+   ],
+   "check": "getent group sysadmins shows GID 3000 and bob as a member; id bob still lists his old groups."
+  },
+  {
+   "task": "Create the user svcbackup with no interactive login shell.",
+   "steps": [
+    "useradd -s /sbin/nologin svcbackup"
+   ],
+   "check": "getent passwd svcbackup ends in /sbin/nologin; su - svcbackup refuses to start a shell."
+  },
+  {
+   "task": "Force the user carol to change her password at next login and make her password expire every 90 days.",
+   "steps": [
+    "chage -d 0 carol",
+    "chage -M 90 carol"
+   ],
+   "check": "chage -l carol shows 'password must be changed' and Maximum number of days between password change: 90."
+  },
+  {
+   "task": "Make every new user account created from now on have a password that expires after 60 days.",
+   "steps": [
+    "Edit /etc/login.defs and set:  PASS_MAX_DAYS   60"
+   ],
+   "check": "Create a test user, then chage -l testuser shows a maximum of 60 days."
+  },
+  {
+   "task": "Allow members of the group sysadmins to run any command with sudo, using a drop-in file.",
+   "steps": [
+    "visudo -f /etc/sudoers.d/sysadmins",
+    "Add the line:  %sysadmins ALL=(ALL) ALL"
+   ],
+   "check": "As a member of sysadmins, sudo -l lists (ALL) ALL; visudo -c reports the files parse OK."
+  },
+  {
+   "task": "Create the directory /shared/projects owned by group sysadmins, where group members can create files, new files inherit the group, and users can delete only their own files.",
+   "steps": [
+    "mkdir -p /shared/projects",
+    "chgrp sysadmins /shared/projects",
+    "chmod 3770 /shared/projects   (setgid 2000 + sticky 1000 + rwxrwx---)"
+   ],
+   "check": "ls -ld /shared/projects shows drwxrws--T; a file created by a member is owned by group sysadmins."
+  },
+  {
+   "task": "Give user dave read and write access to /shared/projects/plan.txt with an ACL, without changing its owner or group.",
+   "steps": [
+    "setfacl -m u:dave:rw /shared/projects/plan.txt"
+   ],
+   "check": "getfacl /shared/projects/plan.txt shows user:dave:rw-; ls -l shows a + after the permissions."
+  },
+  {
+   "task": "Make new files created in /shared/projects automatically readable by user dave (a default ACL).",
+   "steps": [
+    "setfacl -m d:u:dave:r /shared/projects"
+   ],
+   "check": "getfacl /shared/projects shows default:user:dave:r--; a newly created file there shows user:dave:r--."
+  },
+  {
+   "task": "Find all files on the system owned by user alice and copy them, keeping their paths' attributes, into /root/alice-files.",
+   "steps": [
+    "mkdir /root/alice-files",
+    "find / -user alice -type f -exec cp -a {} /root/alice-files/ \\; 2>/dev/null"
+   ],
+   "check": "ls -l /root/alice-files lists alice's files with the original owner and timestamps."
+  },
+  {
+   "task": "Write every line containing the word 'ssh' (any case) from /etc/services into /root/ssh-lines.txt, keeping the original order.",
+   "steps": [
+    "grep -i ssh /etc/services > /root/ssh-lines.txt"
+   ],
+   "check": "cat /root/ssh-lines.txt shows only matching lines; grep -ivc ssh /root/ssh-lines.txt prints 0."
+  },
+  {
+   "task": "Create a gzip-compressed tar archive of /etc named /root/etc-backup.tar.gz.",
+   "steps": [
+    "tar -czf /root/etc-backup.tar.gz /etc"
+   ],
+   "check": "tar -tzf /root/etc-backup.tar.gz | head lists etc/ paths; file /root/etc-backup.tar.gz says gzip compressed data."
+  },
+  {
+   "task": "Create a bzip2-compressed archive of /var/log/ named /root/logs.tar.bz2, then extract it into /tmp/logs-restore.",
+   "steps": [
+    "tar -cjf /root/logs.tar.bz2 /var/log",
+    "mkdir /tmp/logs-restore",
+    "tar -xjf /root/logs.tar.bz2 -C /tmp/logs-restore"
+   ],
+   "check": "ls /tmp/logs-restore/var/log shows the log files."
+  },
+  {
+   "task": "Create a hard link /root/hosts-hard and a symbolic link /root/hosts-soft, both pointing to /etc/hosts.",
+   "steps": [
+    "ln /etc/hosts /root/hosts-hard",
+    "ln -s /etc/hosts /root/hosts-soft"
+   ],
+   "check": "ls -li shows /root/hosts-hard with the same inode as /etc/hosts; ls -l shows hosts-soft -> /etc/hosts."
+  },
+  {
+   "task": "Make the system boot into the multi-user text target by default instead of the graphical target.",
+   "steps": [
+    "systemctl set-default multi-user.target"
+   ],
+   "check": "systemctl get-default prints multi-user.target; after a reboot no graphical login appears."
+  },
+  {
+   "task": "Reset a forgotten root password at boot.",
+   "steps": [
+    "Reboot; at the GRUB menu press e on the kernel entry",
+    "Append rd.break to the line starting with linux, then press Ctrl+X",
+    "mount -o remount,rw /sysroot",
+    "chroot /sysroot",
+    "passwd root",
+    "touch /.autorelabel",
+    "exit; exit"
+   ],
+   "check": "The system relabels SELinux contexts and reboots; root can log in with the new password."
+  },
+  {
+   "task": "Make the httpd service start now and at every boot.",
+   "steps": [
+    "dnf install -y httpd",
+    "systemctl enable --now httpd"
+   ],
+   "check": "systemctl is-enabled httpd prints enabled and systemctl is-active httpd prints active."
+  },
+  {
+   "task": "Stop the cups service and prevent anything from starting it again, even as a dependency.",
+   "steps": [
+    "systemctl stop cups",
+    "systemctl mask cups"
+   ],
+   "check": "systemctl status cups shows 'masked'; systemctl start cups fails with 'Unit cups.service is masked'."
+  },
+  {
+   "task": "Show only error-level messages and worse from the current boot's journal.",
+   "steps": [
+    "journalctl -b -p err"
+   ],
+   "check": "The output contains only err, crit, alert and emerg priority entries from this boot."
+  },
+  {
+   "task": "Make the systemd journal persistent so logs survive a reboot.",
+   "steps": [
+    "mkdir -p /var/log/journal",
+    "In /etc/systemd/journald.conf set  Storage=persistent",
+    "systemctl restart systemd-journald"
+   ],
+   "check": "After a reboot, journalctl --list-boots lists more than one boot."
+  },
+  {
+   "task": "Schedule a cron job for user alice that runs /usr/local/bin/report.sh at 14:30 every weekday.",
+   "steps": [
+    "crontab -e -u alice",
+    "Add the line:  30 14 * * 1-5 /usr/local/bin/report.sh"
+   ],
+   "check": "crontab -l -u alice shows the line."
+  },
+  {
+   "task": "Schedule a one-time job that writes the date into /tmp/at-test at 23:00 tonight.",
+   "steps": [
+    "dnf install -y at; systemctl enable --now atd",
+    "echo 'date > /tmp/at-test' | at 23:00"
+   ],
+   "check": "atq lists the job with tonight's date and 23:00."
+  },
+  {
+   "task": "Set the system's time zone to America/Chicago and make sure time is synchronised with NTP.",
+   "steps": [
+    "timedatectl set-timezone America/Chicago",
+    "systemctl enable --now chronyd",
+    "timedatectl set-ntp true"
+   ],
+   "check": "timedatectl shows Time zone: America/Chicago and System clock synchronized: yes."
+  },
+  {
+   "task": "Configure chrony to use the time server classroom.example.com.",
+   "steps": [
+    "In /etc/chrony.conf replace the pool line with:  server classroom.example.com iburst",
+    "systemctl restart chronyd"
+   ],
+   "check": "chronyc sources shows classroom.example.com, marked with * once it is selected."
+  },
+  {
+   "task": "Set the hostname permanently to server1.example.com.",
+   "steps": [
+    "hostnamectl set-hostname server1.example.com"
+   ],
+   "check": "hostnamectl shows Static hostname: server1.example.com; cat /etc/hostname matches."
+  },
+  {
+   "task": "Give the connection on interface eth0 the static address 192.168.10.20/24 with gateway 192.168.10.1 and DNS server 192.168.10.1.",
+   "steps": [
+    "nmcli con mod eth0 ipv4.method manual ipv4.addresses 192.168.10.20/24 ipv4.gateway 192.168.10.1 ipv4.dns 192.168.10.1",
+    "nmcli con up eth0"
+   ],
+   "check": "ip addr show eth0 shows 192.168.10.20/24, ip route shows default via 192.168.10.1, and cat /etc/resolv.conf lists the DNS server."
+  },
+  {
+   "task": "Add a second IPv4 address, 192.168.10.21/24, to the eth0 connection without removing the first.",
+   "steps": [
+    "nmcli con mod eth0 +ipv4.addresses 192.168.10.21/24",
+    "nmcli con up eth0"
+   ],
+   "check": "ip addr show eth0 lists both addresses."
+  },
+  {
+   "task": "Open the firewall permanently for HTTP and HTTPS in the default zone.",
+   "steps": [
+    "firewall-cmd --permanent --add-service=http --add-service=https",
+    "firewall-cmd --reload"
+   ],
+   "check": "firewall-cmd --list-services shows http and https."
+  },
+  {
+   "task": "Open TCP port 8080 permanently in the firewall.",
+   "steps": [
+    "firewall-cmd --permanent --add-port=8080/tcp",
+    "firewall-cmd --reload"
+   ],
+   "check": "firewall-cmd --list-ports shows 8080/tcp."
+  },
+  {
+   "task": "Let httpd serve content from a non-default port, 82, with SELinux enforcing.",
+   "steps": [
+    "semanage port -a -t http_port_t -p tcp 82",
+    "Set  Listen 82  in /etc/httpd/conf/httpd.conf",
+    "firewall-cmd --permanent --add-port=82/tcp; firewall-cmd --reload",
+    "systemctl restart httpd"
+   ],
+   "check": "semanage port -l | grep http_port_t includes 82; curl http://localhost:82 returns the page."
+  },
+  {
+   "task": "Serve web content from /web instead of /var/www/html, with SELinux allowing it.",
+   "steps": [
+    "mkdir /web; echo hello > /web/index.html",
+    "semanage fcontext -a -t httpd_sys_content_t '/web(/.*)?'",
+    "restorecon -Rv /web",
+    "Set DocumentRoot \"/web\" and a matching <Directory \"/web\"> block in httpd.conf",
+    "systemctl restart httpd"
+   ],
+   "check": "ls -Zd /web shows httpd_sys_content_t; curl http://localhost/ returns hello."
+  },
+  {
+   "task": "Make sure SELinux is in enforcing mode now and after every reboot.",
+   "steps": [
+    "setenforce 1",
+    "In /etc/selinux/config set  SELINUX=enforcing"
+   ],
+   "check": "getenforce prints Enforcing, and grep ^SELINUX= /etc/selinux/config shows enforcing."
+  },
+  {
+   "task": "Allow httpd to read users' home directories (public_html) by turning on the right SELinux boolean permanently.",
+   "steps": [
+    "setsebool -P httpd_enable_homedirs on"
+   ],
+   "check": "getsebool httpd_enable_homedirs prints on, and it stays on after a reboot."
+  },
+  {
+   "task": "Find out why SELinux denied something recently.",
+   "steps": [
+    "ausearch -m AVC -ts recent",
+    "Or: grep AVC /var/log/audit/audit.log | tail"
+   ],
+   "check": "The AVC lines name the process, the target file's context and the permission denied, which points to a fcontext, port or boolean fix."
+  },
+  {
+   "task": "Configure SSH so root cannot log in with a password, while key logins still work.",
+   "steps": [
+    "In /etc/ssh/sshd_config (or a file in /etc/ssh/sshd_config.d/) set  PermitRootLogin prohibit-password",
+    "systemctl reload sshd"
+   ],
+   "check": "sshd -T | grep permitrootlogin shows prohibit-password; a password login as root is refused."
+  },
+  {
+   "task": "Set up key-based SSH login from your account to server2 as user alice.",
+   "steps": [
+    "ssh-keygen -t ed25519   (accept the defaults)",
+    "ssh-copy-id alice@server2"
+   ],
+   "check": "ssh alice@server2 logs in without asking for alice's password."
+  },
+  {
+   "task": "Create a 1 GiB partition on /dev/vdb with a GPT label.",
+   "steps": [
+    "parted /dev/vdb mklabel gpt",
+    "parted /dev/vdb mkpart primary 1MiB 1025MiB",
+    "udevadm settle"
+   ],
+   "check": "lsblk /dev/vdb shows vdb1 at about 1G; parted /dev/vdb print shows a gpt partition table."
+  },
+  {
+   "task": "Format /dev/vdb1 as XFS and mount it at /data, by UUID, so it survives a reboot.",
+   "steps": [
+    "mkfs.xfs /dev/vdb1",
+    "mkdir /data",
+    "blkid /dev/vdb1   (copy the UUID)",
+    "Add to /etc/fstab:  UUID=<the UUID>  /data  xfs  defaults  0 0",
+    "systemctl daemon-reload",
+    "mount -a"
+   ],
+   "check": "findmnt /data shows it mounted. Running mount -a without errors proves the fstab line is valid, so the system won't stop at boot."
+  },
+  {
+   "task": "Add a 512 MiB swap partition on /dev/vdb2 and enable it persistently.",
+   "steps": [
+    "parted /dev/vdb mkpart primary linux-swap 1025MiB 1537MiB",
+    "mkswap /dev/vdb2",
+    "Add to /etc/fstab:  UUID=<UUID from blkid>  none  swap  defaults  0 0",
+    "swapon -a"
+   ],
+   "check": "swapon --show lists /dev/vdb2 at about 512M; free -h shows the extra swap."
+  },
+  {
+   "task": "Create a volume group vgdata from /dev/vdc and a 2 GiB logical volume lvweb in it, formatted ext4 and mounted at /srv/web persistently.",
+   "steps": [
+    "pvcreate /dev/vdc",
+    "vgcreate vgdata /dev/vdc",
+    "lvcreate -n lvweb -L 2G vgdata",
+    "mkfs.ext4 /dev/vgdata/lvweb",
+    "mkdir /srv/web",
+    "Add to /etc/fstab:  /dev/vgdata/lvweb  /srv/web  ext4  defaults  0 0",
+    "systemctl daemon-reload; mount -a"
+   ],
+   "check": "lvs shows lvweb at 2.00g; df -h /srv/web shows about 2G mounted."
+  },
+  {
+   "task": "Create a volume group with 16 MiB physical extents, and a logical volume of exactly 50 extents.",
+   "steps": [
+    "vgcreate -s 16M vgext /dev/vdd",
+    "lvcreate -n lvext -l 50 vgext"
+   ],
+   "check": "vgdisplay vgext shows PE Size 16.00 MiB; lvdisplay shows Current LE 50 (800 MiB)."
+  },
+  {
+   "task": "Grow the logical volume /dev/vgdata/lvweb by 500 MiB and grow its filesystem in the same step.",
+   "steps": [
+    "lvextend -r -L +500M /dev/vgdata/lvweb"
+   ],
+   "check": "lvs shows the larger size and df -h /srv/web shows the filesystem grew; -r ran resize2fs or xfs_growfs for you."
+  },
+  {
+   "task": "Add a new disk /dev/vde to the volume group vgdata to give it more space.",
+   "steps": [
+    "pvcreate /dev/vde",
+    "vgextend vgdata /dev/vde"
+   ],
+   "check": "pvs shows /dev/vde in vgdata and vgs shows more free space."
+  },
+  {
+   "task": "Mount the NFS export server2:/exports/home at /mnt/home persistently.",
+   "steps": [
+    "dnf install -y nfs-utils",
+    "mkdir /mnt/home",
+    "Add to /etc/fstab:  server2:/exports/home  /mnt/home  nfs  defaults,_netdev  0 0",
+    "systemctl daemon-reload; mount -a"
+   ],
+   "check": "findmnt /mnt/home shows type nfs4 and the files are visible."
+  },
+  {
+   "task": "Set up autofs so /remote/projects mounts server2:/exports/projects on demand.",
+   "steps": [
+    "dnf install -y autofs nfs-utils",
+    "Create /etc/auto.master.d/remote.autofs containing:  /remote  /etc/auto.remote",
+    "Create /etc/auto.remote containing:  projects  -rw  server2:/exports/projects",
+    "systemctl enable --now autofs"
+   ],
+   "check": "ls /remote/projects triggers the mount and lists the files; mount | grep projects shows it."
+  },
+  {
+   "task": "Configure the system to use a local DNF repository at http://repo.example.com/BaseOS and AppStream.",
+   "steps": [
+    "Create /etc/yum.repos.d/local.repo with two sections, each with name=, baseurl=http://repo.example.com/BaseOS (and /AppStream), enabled=1 and gpgcheck=0 (or gpgkey=)",
+    "dnf clean all"
+   ],
+   "check": "dnf repolist shows both repositories with package counts."
+  },
+  {
+   "task": "Install the package that provides the semanage command when you don't know its name.",
+   "steps": [
+    "dnf provides '*/semanage'",
+    "dnf install -y policycoreutils-python-utils"
+   ],
+   "check": "semanage --help runs."
+  },
+  {
+   "task": "Find the largest process by memory use and lower the priority of PID 1234 to niceness 10.",
+   "steps": [
+    "ps aux --sort=-%mem | head -2",
+    "renice -n 10 -p 1234"
+   ],
+   "check": "ps -o pid,ni,cmd -p 1234 shows NI 10."
+  },
+  {
+   "task": "Activate the tuned profile the system recommends.",
+   "steps": [
+    "dnf install -y tuned; systemctl enable --now tuned",
+    "tuned-adm recommend",
+    "tuned-adm profile <recommended profile>"
+   ],
+   "check": "tuned-adm active shows the recommended profile."
+  },
+  {
+   "task": "Run a rootless container as user alice from the image registry.access.redhat.com/ubi9/httpd-24, named web, publishing host port 8080 to container port 8080, and make it start at boot as a systemd user service.",
+   "steps": [
+    "As alice: podman run -d --name web -p 8080:8080 registry.access.redhat.com/ubi9/httpd-24",
+    "mkdir -p ~/.config/systemd/user; cd ~/.config/systemd/user",
+    "podman generate systemd --name web --files --new (or write a Quadlet .container file)",
+    "systemctl --user daemon-reload; systemctl --user enable --now container-web.service",
+    "As root: loginctl enable-linger alice"
+   ],
+   "check": "podman ps shows web; curl localhost:8080 answers; after a reboot the container is running without alice logging in."
+  },
+  {
+   "task": "Run a container that stores its web content in /home/alice/www on the host, with SELinux allowing the access.",
+   "steps": [
+    "mkdir -p ~/www; echo hi > ~/www/index.html",
+    "podman run -d --name web2 -p 8081:8080 -v ~/www:/var/www/html:Z registry.access.redhat.com/ubi9/httpd-24"
+   ],
+   "check": "curl localhost:8081 returns hi; ls -Zd ~/www shows a container_file_t context."
+  },
+  {
+   "task": "Write a script /usr/local/bin/findbig.sh that lists files under the directory given as its first argument that are larger than 10 MiB.",
+   "steps": [
+    "#!/bin/bash",
+    "find \"$1\" -type f -size +10M",
+    "chmod +x /usr/local/bin/findbig.sh"
+   ],
+   "check": "findbig.sh /var prints only files over 10 MiB; it handles directory names with spaces because $1 is quoted."
+  },
+  {
+   "task": "Write a script that creates the users listed one per line in /root/users.txt, skipping any that already exist.",
+   "steps": [
+    "#!/bin/bash",
+    "while read -r u; do",
+    "  id \"$u\" &>/dev/null || useradd \"$u\"",
+    "done < /root/users.txt"
+   ],
+   "check": "Every name in the file appears in getent passwd; running the script again produces no errors."
+  }
+ ]
+}

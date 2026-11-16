@@ -1,0 +1,1830 @@
+{
+ "questions": [
+  {
+   "q": "Why do many employers consider the Network+ certification valuable when hiring IT staff?",
+   "options": [
+    "It guarantees the employee can design and manage data centers.",
+    "It is a mandatory credential for every IT position.",
+    "It proves the candidate has deep knowledge of a single vendor's products.",
+    "It demonstrates a vendor‑independent baseline of networking knowledge."
+   ],
+   "answer": 3,
+   "why": "The passage states Network+ is vendor‑independent and recognized as a baseline of networking information, which is why employers value it."
+  },
+  {
+   "q": "What is the most direct career benefit mentioned for earning the Network+ certification?",
+   "options": [
+    "Higher salary, greater responsibility, and more advancement opportunities.",
+    "Free access to networking hardware.",
+    "Elimination of all future training requirements.",
+    "Automatic promotion to a managerial role."
+   ],
+   "answer": 0,
+   "why": "The text links certification to advancement, prestige, and a fatter paycheck, indicating higher earnings and career growth."
+  },
+  {
+   "q": "Which statement about scheduling the Network+ exam is correct?",
+   "options": [
+    "Exam fees are identical worldwide, regardless of CompTIA membership.",
+    "Candidates must book the exam at least 12 weeks in advance.",
+    "Exams are only offered on the first Monday of each month.",
+    "Pearson VUE is the exclusive provider of the Network+ exam."
+   ],
+   "answer": 3,
+   "why": "The passage notes that Pearson VUE is the sole Network+ exam provider."
+  },
+  {
+   "q": "Which of the following actions would actually reduce the security posture of a network device rather than harden it?",
+   "options": [
+    "Disabling services that are not required",
+    "Opening all unused TCP ports",
+    "Removing unnecessary applications",
+    "Applying the latest firmware patches"
+   ],
+   "answer": 1,
+   "why": "Opening unused ports expands the attack surface, which is opposite to hardening practices."
+  },
+  {
+   "q": "A brand‑new operating system is released and attackers begin exploiting a flaw that has no vendor patch yet. This scenario is an example of:",
+   "options": [
+    "A replay attack",
+    "A zero‑day attack",
+    "A known vulnerability",
+    "A man‑in‑the‑middle attack"
+   ],
+   "answer": 1,
+   "why": "A zero‑day attack exploits a vulnerability that is unknown to the vendor and has no fix."
+  },
+  {
+   "q": "An admin needs to identify the hosts that generate the highest traffic volumes on the corporate LAN. Which monitoring technology should be deployed?",
+   "options": [
+    "NetFlow export",
+    "Syslog event logging",
+    "DHCP lease monitoring",
+    "SNMP trap collection"
+   ],
+   "answer": 0,
+   "why": "NetFlow provides detailed flow records that allow identification of top talkers on a network."
+  },
+  {
+   "q": "A small company's network includes a computer that stores employee documents, a printer, and a machine that routes incoming and outgoing email. Which server role is responsible for handling the email traffic?",
+   "options": [
+    "File server",
+    "Proxy server",
+    "Print server",
+    "Mail server"
+   ],
+   "answer": 3,
+   "why": "The mail server is dedicated to managing email functions, sending and receiving messages for the network."
+  },
+  {
+   "q": "An organization plans to install a new server to host its internal web applications. Why is it generally better to assign this server to run only the web application service rather than multiple unrelated services?",
+   "options": [
+    "It simplifies the backup process for the server.",
+    "It reduces the number of software licenses required.",
+    "It concentrates resources on one task, improving overall performance.",
+    "It enables users to access the server remotely more easily."
+   ],
+   "answer": 2,
+   "why": "Dedicated servers focus CPU, memory, and storage on a single workload, which typically yields better performance than multitasking servers."
+  },
+  {
+   "q": "When comparing a typical client workstation to a server that supports dozens of users, which hardware attribute must be significantly more powerful in the server?",
+   "options": [
+    "CPU processing power",
+    "Screen resolution",
+    "Number of USB ports",
+    "Wireless antenna gain"
+   ],
+   "answer": 0,
+   "why": "Servers need considerably superior CPUs to handle the workload of many client requests, as stated in the passage."
+  },
+  {
+   "q": "A company installs a dedicated wireless link between two bridge devices, each located on a different building, to allow the computers in those buildings to communicate. Which network topology best describes this link?",
+   "options": [
+    "Point‑to‑point",
+    "Mesh",
+    "Star",
+    "Point‑to‑multipoint"
+   ],
+   "answer": 0,
+   "why": "A single dedicated connection between two endpoints is the definition of a point‑to‑point topology."
+  },
+  {
+   "q": "A corporate headquarters router is directly connected to routers at three remote branch offices, and all routers share the same network address space. What topology does this configuration represent?",
+   "options": [
+    "Star",
+    "Point‑to‑multipoint",
+    "Bus",
+    "Ring"
+   ],
+   "answer": 1,
+   "why": "One central router linked to multiple remote routers forms a point‑to‑multipoint topology, where one point connects to many points."
+  },
+  {
+   "q": "In a campus network, a LAN switch is arranged physically in a star layout, while the data traffic on the cabling follows a bus‑style logical pattern. How is this network best described?",
+   "options": [
+    "Linear topology",
+    "Mesh topology",
+    "Hybrid topology",
+    "Tree topology"
+   ],
+   "answer": 2,
+   "why": "Combining two different physical or logical topologies (star physical, bus logical) creates a hybrid topology."
+  },
+  {
+   "q": "What is the primary purpose of the OSI Application layer in relation to user programs?",
+   "options": [
+    "It determines the physical medium and signal encoding for data transmission.",
+    "It provides an interface that lets application processes send and receive data through the protocol stack.",
+    "It segments data into frames and adds MAC addresses for delivery.",
+    "It routes packets between different networks based on IP addresses."
+   ],
+   "answer": 1,
+   "why": "The Application layer acts as the bridge between application software (or APIs) and the lower layers, allowing programs to transmit data over the network."
+  },
+  {
+   "q": "A user opens a saved HTML file in a web browser while the computer is completely disconnected from any network. Which OSI layer is NOT engaged during this operation?",
+   "options": [
+    "Network layer",
+    "Data Link layer",
+    "Application layer",
+    "Transport layer"
+   ],
+   "answer": 2,
+   "why": "The passage states the Application layer is only invoked when network access is needed; viewing a local file does not involve the Application layer."
+  },
+  {
+   "q": "Which activity is most likely performed by the Application layer during an FTP session?",
+   "options": [
+    "Choosing the next hop for an IP packet",
+    "Modulating bits for transmission over the physical medium",
+    "Calculating the CRC for an Ethernet frame",
+    "Negotiating file‑transfer parameters such as mode and data type"
+   ],
+   "answer": 3,
+   "why": "Negotiating FTP parameters is an Application‑layer function, handling protocol‑specific details for the user’s file transfer."
+  },
+  {
+   "q": "Which statement correctly differentiates a physical topology from a logical topology?",
+   "options": [
+    "Physical topology is only relevant for star networks, while logical topology applies only to mesh networks.",
+    "Physical topology defines the IP addressing scheme used, and logical topology defines the cable types.",
+    "Physical topology describes the actual cabling layout, while logical topology describes how data moves across the network.",
+    "Physical topology refers to wireless signal patterns, whereas logical topology refers to Ethernet cable connections."
+   ],
+   "answer": 2,
+   "why": "Physical topology is the real-world cable arrangement; logical topology describes the data flow pattern."
+  },
+  {
+   "q": "During encapsulation, which protocol data unit is generated immediately before the data is turned into bits for transmission on the medium?",
+   "options": [
+    "Datagram",
+    "Segment",
+    "Packet",
+    "Frame"
+   ],
+   "answer": 3,
+   "why": "Frames are the last PDU created before they are encoded into bits for transmission over the physical medium."
+  },
+  {
+   "q": "What type of address is added to a packet header to allow the packet to be routed across an internetwork?",
+   "options": [
+    "Port number",
+    "Subnet mask",
+    "MAC (hardware) address",
+    "IP (logical) address"
+   ],
+   "answer": 3,
+   "why": "A packet carries a logical (IP) address in its header so routers can forward it across multiple networks."
+  },
+  {
+   "q": "An office needs to connect workstations on a single floor, about 80 m apart. Which connector type should be used for this LAN segment?",
+   "options": [
+    "DB‑9",
+    "RJ‑45",
+    "BNC",
+    "RJ‑48c"
+   ],
+   "answer": 1,
+   "why": "RJ‑45 is the standard connector for short‑distance LANs (up to ~100 m) and uses unshielded twisted‑pair, whereas RJ‑48c is used for long‑distance T1 WAN links."
+  },
+  {
+   "q": "During a Gigabit Ethernet installation a technician only tests two of the four twisted‑pair groups. What is the most likely outcome for the link?",
+   "options": [
+    "The link will fail due to a connector mismatch.",
+    "The link will negotiate at 1 Gbps.",
+    "The link will be limited to 100 Mbps.",
+    "The link will operate with higher latency but full speed."
+   ],
+   "answer": 2,
+   "why": "Gigabit Ethernet over UTP requires all four pairs; using only two pairs prevents the link from reaching 1 Gbps, so it falls back to 100 Mbps."
+  },
+  {
+   "q": "A network designer must choose fiber for a 5‑km run while keeping costs low. Which core material is the appropriate choice?",
+   "options": [
+    "Copper cable",
+    "Coaxial cable",
+    "Glass (silica) fiber",
+    "Plastic optical fiber (POF)"
+   ],
+   "answer": 2,
+   "why": "Glass (silica) fiber can transmit light over many kilometers, whereas plastic fiber is cheaper but limited to much shorter distances."
+  },
+  {
+   "q": "A technician is testing a newly installed Ethernet cable that will connect two switches. Which statement best describes what a basic cable tester can determine about this cable?",
+   "options": [
+    "The maximum data rate the cable can support under gigabit Ethernet",
+    "That the tester can only be used on fiber‑optic cables, not copper UTP",
+    "The ability of the tester to automatically re‑terminate the cable to correct pinouts",
+    "Whether the cable is wired as a straight‑through or crossover and if any conductors are open, shorted, or mis‑wired"
+   ],
+   "answer": 3,
+   "why": "A simple cable tester verifies pin‑to‑pin continuity, identifies straight‑through vs crossover wiring, and detects opens or shorts."
+  },
+  {
+   "q": "When installing a 1000Base‑T (Gigabit) UTP link, which of the following statements about the cabling is correct?",
+   "options": [
+    "A crossover cable is required for any gigabit Ethernet connection",
+    "All four twisted‑pair pairs are used simultaneously for full‑duplex communication",
+    "Pin 1 on one end must be connected to pin 3 on the opposite end for proper operation",
+    "Only two of the eight conductors are used for data transmission, the rest are spares"
+   ],
+   "answer": 1,
+   "why": "Gigabit UTP uses all four pairs at once, allowing simultaneous transmission on each pair."
+  },
+  {
+   "q": "A network administrator must connect a laptop’s serial port to the console port of a Cisco router. Which cable should be used for this purpose?",
+   "options": [
+    "A multimode fiber patch cable",
+    "A standard straight‑through Ethernet cable",
+    "A rolled (rollover) cable with an RJ‑45 to DB‑9 adapter",
+    "A crossover Ethernet cable"
+   ],
+   "answer": 2,
+   "why": "Rolled (rollover) cables are used to connect a host’s serial interface to a router’s console port."
+  },
+  {
+   "q": "Which of the following best describes the difference between baud rate and bits per second (bps)?",
+   "options": [
+    "bps is a legacy term replaced by baud rate because it is less precise.",
+    "One baud equals one signal state change per second, whereas bps counts the actual bits transmitted, which may be more than one per state change.",
+    "Baud is only used for wireless communications, while bps applies to wired networks.",
+    "Baud rate measures the number of bits transmitted per second, while bps measures voltage levels."
+   ],
+   "answer": 1,
+   "why": "A baud is a single state change per second; bps measures the number of bits transmitted, which can be multiple bits per state."
+  },
+  {
+   "q": "In the context of electromagnetic waves, what does the term \"wavelength\" refer to?",
+   "options": [
+    "The number of cycles a wave completes in one second.",
+    "The time it takes for a wave to travel a fixed distance.",
+    "The height of the wave's peak above its average level.",
+    "The distance between two consecutive peaks (or troughs) of the wave."
+   ],
+   "answer": 3,
+   "why": "Wavelength is defined as the distance between successive peaks (high points) of a wave."
+  },
+  {
+   "q": "Which statement accurately characterizes half‑duplex Ethernet operation?",
+   "options": [
+    "It operates on a single wire pair and cannot transmit and receive simultaneously.",
+    "It requires fiber‑optic cabling to function correctly.",
+    "It permits sending and receiving at the same time on a single pair using CSMA/CD.",
+    "It uses separate transmit and receive pairs to allow simultaneous communication."
+   ],
+   "answer": 0,
+   "why": "Half‑duplex Ethernet uses one wire pair and cannot send and receive at the same time; CSMA/CD handles collisions."
+  },
+  {
+   "q": "To achieve the data rates required for 25GBase‑T and 40GBase‑T, which cabling category must be installed?",
+   "options": [
+    "Coaxial RG‑6",
+    "Category 8",
+    "Multimode fiber (OM3)",
+    "Category 5e"
+   ],
+   "answer": 1,
+   "why": "Category 8 cabling is specified to support the high‑speed 25GBase‑T and 40GBase‑T Ethernet standards."
+  },
+  {
+   "q": "What is the maximum allowed segment length for a 40GBase‑T Ethernet link?",
+   "options": [
+    "30 meters",
+    "55 meters",
+    "200 meters",
+    "100 meters"
+   ],
+   "answer": 0,
+   "why": "40GBase‑T is limited to a 30‑meter maximum transmission distance, shorter than most slower Ethernet types."
+  },
+  {
+   "q": "When comparing fiber‑optic cable to UTP for high‑speed Ethernet, which characteristic gives fiber an advantage?",
+   "options": [
+    "It provides Power over Ethernet (PoE) capability",
+    "It can be terminated with RJ‑45 connectors",
+    "It is not affected by electromagnetic interference",
+    "It costs less per foot"
+   ],
+   "answer": 2,
+   "why": "Fiber‑optic cable is immune to EMI, allowing secure, long‑distance high‑speed connections unlike UTP."
+  },
+  {
+   "q": "Before a router can route traffic between networks, which of the following must be configured on each of its interfaces?",
+   "options": [
+    "Assign an IP address to the interface",
+    "Set the duplex mode to auto",
+    "Create a VLAN on the interface",
+    "Enable portfast on the interface"
+   ],
+   "answer": 0,
+   "why": "Routers require an IP address on every active interface to perform layer‑3 routing; the other items are not mandatory for basic routing."
+  },
+  {
+   "q": "A freshly unpacked Cisco switch is powered on with factory defaults. Which statement best describes the state of its Ethernet ports?",
+   "options": [
+    "Ports are enabled and can forward traffic without additional configuration.",
+    "Ports operate at a fixed 100‑Mbps speed until reconfigured.",
+    "All ports are administratively down and must be enabled manually.",
+    "Each port is assigned to a unique VLAN that must be changed."
+   ],
+   "answer": 0,
+   "why": "By default, switch ports are enabled (up) and can be used immediately; no configuration is required for basic connectivity."
+  },
+  {
+   "q": "A workstation with its NIC set to half‑duplex cannot communicate reliably with a switch port configured for full‑duplex. What is the most likely result of this mismatch?",
+   "options": [
+    "The VLAN will be removed from the port",
+    "Increased collisions and frame errors on the link",
+    "Automatic negotiation of a lower speed",
+    "Spanning‑tree protocol will block the port"
+   ],
+   "answer": 1,
+   "why": "A duplex mismatch causes one side to transmit while the other expects half‑duplex, leading to collisions and errors."
+  },
+  {
+   "q": "A network has a DHCP server on 10.10.10.254, but the client PCs are on a different subnet behind a router. Which command should be configured on the router's LAN interface to allow those clients to obtain IP addresses?",
+   "options": [
+    "ip dhcp relay enable",
+    "ip helper-address 10.10.10.254",
+    "ip address dhcp",
+    "ip broadcast forward"
+   ],
+   "answer": 1,
+   "why": "The ip helper-address command tells the router to forward DHCP broadcast packets to the specified DHCP server."
+  },
+  {
+   "q": "Which of the following best describes the primary function of an IP Address Management (IPAM) tool?",
+   "options": [
+    "It provides firewall rule creation based on IP ranges.",
+    "It integrates DHCP and DNS management while tracking address usage and assignment details.",
+    "It replaces the need for a DNS server entirely.",
+    "It only assigns static IP addresses to devices."
+   ],
+   "answer": 1,
+   "why": "IPAM tools combine DHCP and DNS management and keep records of which IPs are in use, who assigned them, and when."
+  },
+  {
+   "q": "Which specialized device is used to convert one type of physical network media to another, such as fiber optic to copper Ethernet?",
+   "options": [
+    "Media converter",
+    "Network Time Protocol server",
+    "Packet shaper",
+    "VPN concentrator"
+   ],
+   "answer": 0,
+   "why": "A media converter changes the physical layer media type, allowing different cabling standards to interoperate."
+  },
+  {
+   "q": "A residential customer is being set up for high‑speed Internet over the existing cable TV infrastructure. Which protocol standard enables voice and data to travel on the same coaxial cable alongside the TV signals?",
+   "options": [
+    "DOCSIS",
+    "Wi‑Fi",
+    "MPLS",
+    "Ethernet"
+   ],
+   "answer": 0,
+   "why": "DOCSIS (Data Over Cable Service Interface Specification) defines how voice, data, and video share the cable network."
+  },
+  {
+   "q": "A telephone company installs a modem on a twisted‑pair line that carries voice calls, video streaming, and Internet traffic simultaneously. Which multiplexing method makes this possible?",
+   "options": [
+    "Time‑division multiplexing",
+    "Packet switching",
+    "Frequency‑division multiplexing",
+    "Circuit switching"
+   ],
+   "answer": 2,
+   "why": "DSL uses a high‑frequency carrier above voice frequencies, which is a form of frequency‑division multiplexing."
+  },
+  {
+   "q": "Users report choppy audio during VoIP calls on a corporate Ethernet network. Which network feature should be configured to improve voice quality?",
+   "options": [
+    "Dynamic Host Configuration Protocol (DHCP)",
+    "Virtual LAN (VLAN) segmentation",
+    "Network Address Translation (NAT)",
+    "Quality of Service (QoS)"
+   ],
+   "answer": 3,
+   "why": "VoIP is sensitive to delay and jitter, so QoS is needed to prioritize voice packets."
+  },
+  {
+   "q": "Which DNS record type is specifically used to map a hostname to an IPv6 address?",
+   "options": [
+    "MX record",
+    "AAAA record",
+    "CNAME record",
+    "A record"
+   ],
+   "answer": 1,
+   "why": "An AAAA record stores the IPv6 address for a domain, while A records are for IPv4, CNAME for aliases, and MX for mail servers."
+  },
+  {
+   "q": "A technician replaces a hub with a switch in a small office network. What change occurs to the network's collision domains?",
+   "options": [
+    "The number of collision domains increases, giving each port its own domain.",
+    "Collision domains are eliminated entirely, leaving only broadcast domains.",
+    "The number of collision domains decreases, merging them into one.",
+    "Collision domains remain unchanged because both devices operate at the same layer."
+   ],
+   "answer": 0,
+   "why": "Switches segment the network at the MAC layer, creating a separate collision domain for each port, unlike hubs which share one collision domain."
+  },
+  {
+   "q": "When a proxy server is placed between a LAN and the Internet, which of the following is NOT a typical benefit of its deployment?",
+   "options": [
+    "It assigns IP addresses to client devices on the LAN.",
+    "It provides an additional point for applying content filtering and security policies.",
+    "It can cache frequently accessed web pages to speed up user access.",
+    "It isolates the internal network from direct exposure to the Internet."
+   ],
+   "answer": 0,
+   "why": "Assigning IP addresses is the role of a DHCP server, not a proxy server; the other options describe common proxy advantages."
+  },
+  {
+   "q": "Which sequence correctly describes the four-step DHCP exchange a client uses to obtain an IP address?",
+   "options": [
+    "Offer, Discover, Acknowledgment, Request",
+    "Discover, Offer, Request, Acknowledgment",
+    "Request, Discover, Offer, Acknowledgment",
+    "Discover, Request, Offer, Acknowledgment"
+   ],
+   "answer": 1,
+   "why": "The DHCP DORA process follows Discover → Offer → Request → Acknowledgment."
+  },
+  {
+   "q": "When a Windows computer uses Automatic Private IP Addressing (APIPA), what subnet mask is automatically applied?",
+   "options": [
+    "255.255.255.0",
+    "255.255.255.255",
+    "255.0.0.0",
+    "255.255.0.0"
+   ],
+   "answer": 3,
+   "why": "APIPA assigns a default Class B mask of 255.255.0.0 to the self‑configured address."
+  },
+  {
+   "q": "Which characteristic accurately describes the Trivial File Transfer Protocol (TFTP)?",
+   "options": [
+    "It supports encrypted file transfers via TLS.",
+    "It operates over UDP port 69 and lacks directory‑browsing capabilities.",
+    "It uses TCP port 21 and provides built‑in authentication.",
+    "It allows users to navigate remote directories before downloading files."
+   ],
+   "answer": 1,
+   "why": "TFTP is a simple UDP‑based protocol on port 69 that can only send and receive files, with no directory browsing or authentication."
+  },
+  {
+   "q": "Which statement correctly describes how UDP handles communication before sending data?",
+   "options": [
+    "It transmits datagrams without establishing a connection first.",
+    "It creates a virtual circuit using SYN and ACK packets.",
+    "It requires the receiver to acknowledge each packet before the next is sent.",
+    "It performs a three‑way handshake to establish a connection."
+   ],
+   "answer": 0,
+   "why": "UDP is connectionless; it sends packets without any handshake or virtual circuit."
+  },
+  {
+   "q": "A developer is writing a lightweight query service that already implements its own error‑checking and retransmission. Which transport protocol should be used to minimize overhead?",
+   "options": [
+    "TCP",
+    "SCTP",
+    "ICMP",
+    "UDP"
+   ],
+   "answer": 3,
+   "why": "Because the application handles reliability, UDP provides the needed low‑overhead, connectionless service."
+  },
+  {
+   "q": "Which set of fields is found in a UDP segment header?",
+   "options": [
+    "Source Port, Destination Port, Sequence Number, Acknowledgment Number",
+    "Source Port, Destination Port, Length, Checksum",
+    "Window Size, Urgent Pointer, Checksum, Options",
+    "Source IP, Destination IP, TTL, Checksum"
+   ],
+   "answer": 1,
+   "why": "A UDP header contains source port, destination port, length, and checksum; it lacks sequencing or acknowledgment fields."
+  },
+  {
+   "q": "Which OSI layer adds the source and destination hardware (MAC) addresses and encapsulates a network‑layer packet into a frame?",
+   "options": [
+    "Physical layer",
+    "Network layer",
+    "Data Link layer",
+    "Transport layer"
+   ],
+   "answer": 2,
+   "why": "The Data Link layer is responsible for framing packets and inserting MAC addresses before the data is placed on the local medium."
+  },
+  {
+   "q": "Before a frame can travel on a cable or wireless link, what does the Physical layer do to the frame?",
+   "options": [
+    "It routes the frame to the appropriate network",
+    "It checks the frame for errors using a CRC",
+    "It adds IP addresses to the frame",
+    "It converts the frame’s bits into a digital (electrical/optical) signal"
+   ],
+   "answer": 3,
+   "why": "The Physical layer encodes the logical 1s and 0s of the frame into a physical signal that can be transmitted over the medium."
+  },
+  {
+   "q": "During de‑encapsulation, once the receiving device’s CRC check (FCS) matches, what is the immediate next action?",
+   "options": [
+    "The frame is discarded and the contained packet is passed to the Network layer",
+    "The device sends an acknowledgment back to the sender",
+    "The device forwards the frame to a router for further routing",
+    "The device re‑encapsulates the data into a new frame for the next hop"
+   ],
+   "answer": 0,
+   "why": "A successful CRC check means the frame is valid; the frame is stripped away and the packet inside is handed up to the Network layer."
+  },
+  {
+   "q": "Which of the following IP addresses is a Class B address?",
+   "options": [
+    "224.0.0.1",
+    "10.45.22.7",
+    "203.0.113.5",
+    "150.12.8.255"
+   ],
+   "answer": 3,
+   "why": "Class B addresses have a first octet between 128 and 191; 150 falls in that range."
+  },
+  {
+   "q": "How many usable host addresses are available in a single Class B network?",
+   "options": [
+    "254",
+    "65,536",
+    "65,534",
+    "16,382"
+   ],
+   "answer": 2,
+   "why": "A Class B network has 16 host bits, minus the all‑0 and all‑1 addresses, yielding 2^16‑2 = 65,534 usable hosts."
+  },
+  {
+   "q": "For the IP address 172.20.45.100 with its default Class B subnet mask, what are the network and broadcast addresses?",
+   "options": [
+    "Network: 172.0.0.0 Broadcast: 172.255.255.255",
+    "Network: 172.20.45.100 Broadcast: 172.20.45.100",
+    "Network: 172.20.0.0 Broadcast: 172.20.255.255",
+    "Network: 172.20.45.0 Broadcast: 172.20.45.255"
+   ],
+   "answer": 2,
+   "why": "In a Class B network the first two octets define the network, so host bits are zero for the network address and all ones for the broadcast address."
+  },
+  {
+   "q": "What is the basic purpose of a local area network?",
+   "options": [
+    "To interconnect networks in several buildings",
+    "To connect computers so they can share resources",
+    "To interconnect 2 to 10 routers",
+    "To make routers unnecessary"
+   ],
+   "answer": 1,
+   "why": "A LAN links hosts in a limited area, typically one building or smaller, so they can share files, printers and services. Connecting separate sites is a WAN's job."
+  },
+  {
+   "q": "You need a topology that is easy to troubleshoot and scales well. Which should you choose?",
+   "options": [
+    "Star",
+    "Mesh",
+    "Ring",
+    "Bus"
+   ],
+   "answer": 0,
+   "why": "In a star, each device has its own link to a central switch, so one bad cable affects one host and adding stations is simple. A bus or ring fails as a whole when a segment breaks."
+  },
+  {
+   "q": "At which layer of the OSI model does IP operate?",
+   "options": [
+    "Application",
+    "Data Link",
+    "Network",
+    "Physical"
+   ],
+   "answer": 2,
+   "why": "IP provides logical addressing and routing, which is layer 3. Ethernet is at the Data Link layer and HTTPS at the Application layer."
+  },
+  {
+   "q": "What is layer 2 of the OSI model called?",
+   "options": [
+    "Application layer",
+    "Network layer",
+    "Transport layer",
+    "Data Link layer"
+   ],
+   "answer": 3,
+   "why": "The Data Link layer frames data for the physical link and handles MAC addressing, error notification and flow control between directly connected devices."
+  },
+  {
+   "q": "Which RG rating of coaxial cable do cable modems use?",
+   "options": [
+    "RG-8",
+    "RG-59",
+    "RG-58",
+    "RG-6"
+   ],
+   "answer": 3,
+   "why": "RG-6 is the thicker coax used for cable TV and cable modem service. RG-58 was used for old thinnet Ethernet."
+  },
+  {
+   "q": "Which twisted-pair cable uses four pairs and is rated for 250 MHz?",
+   "options": [
+    "Category 3 UTP",
+    "Category 5 STP",
+    "Category 5 UTP",
+    "Category 6 UTP"
+   ],
+   "answer": 3,
+   "why": "Cat 6 is rated to 250 MHz and supports gigabit Ethernet over 100 m. Cat 5e is rated to 100 MHz and Cat 3 to 16 MHz."
+  },
+  {
+   "q": "Which cable do you need to connect a hub to a switch?",
+   "options": [
+    "Crossover",
+    "Straight-through",
+    "Rolled",
+    "EtherIP"
+   ],
+   "answer": 0,
+   "why": "Like devices, such as switch to switch or hub to switch, need a crossover cable that swaps the transmit and receive pairs. Hosts to switches use straight-through."
+  },
+  {
+   "q": "Why would you replace a building's hubs with switches?",
+   "options": [
+    "Each switch port is its own collision domain",
+    "The hub cables wore out and switches were cheaper",
+    "Switches break up broadcast domains by default",
+    "Hubs stopped recognising frames"
+   ],
+   "answer": 0,
+   "why": "A hub is one big collision domain shared by every port. A switch gives each port its own, so hosts don't contend with each other. Switches still don't split broadcast domains."
+  },
+  {
+   "q": "Which device connects segments so that each is its own collision domain, while leaving a single broadcast domain?",
+   "options": [
+    "Switch",
+    "Hub",
+    "Modem",
+    "Router"
+   ],
+   "answer": 0,
+   "why": "A switch separates collision domains per port but forwards broadcasts to every port. Only a router (or VLANs) breaks up broadcast domains."
+  },
+  {
+   "q": "Most Application layer protocols use either TCP or UDP. Which of these uses both?",
+   "options": [
+    "Telnet",
+    "Microsoft Word",
+    "DNS",
+    "TCP"
+   ],
+   "answer": 2,
+   "why": "DNS uses UDP for ordinary lookups and TCP for zone transfers between servers and for large responses."
+  },
+  {
+   "q": "At which OSI layer do HTTP, FTP and Telnet operate?",
+   "options": [
+    "Application",
+    "Presentation",
+    "Transport",
+    "Session"
+   ],
+   "answer": 0,
+   "why": "All three are Application layer protocols, even though they ride on TCP at the Transport layer."
+  },
+  {
+   "q": "Which describes an IPv6 anycast address?",
+   "options": [
+    "Packets are delivered to all interfaces sharing the address",
+    "It identifies multiple interfaces, but a packet is delivered to only one of them (one-to-one-of-many)",
+    "It is a type of broadcast",
+    "Traffic goes to the most distant host with that address"
+   ],
+   "answer": 1,
+   "why": "Anycast is assigned to several interfaces, and a packet goes to the nearest one by routing distance. Multicast goes to all of them."
+  },
+  {
+   "q": "Which of these addresses is not allowed on the public internet?",
+   "options": [
+    "11.255.255.1",
+    "8.8.4.4",
+    "10.1.1.1",
+    "172.33.255.0"
+   ],
+   "answer": 2,
+   "why": "RFC 1918 reserves 10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16 for private networks. 172.33.x.x is outside the 172.16–172.31 private range."
+  },
+  {
+   "q": "What is the subnet address for the host 200.10.5.168/28?",
+   "options": [
+    "200.10.5.160",
+    "200.10.5.0",
+    "200.10.5.132",
+    "200.10.5.156"
+   ],
+   "answer": 0,
+   "why": "A /28 has a block size of 16, so subnets start at .0, .16, .32 ... .160, .176. The host .168 falls in the .160 block."
+  },
+  {
+   "q": "How can you verify that the local IP stack on your computer is working?",
+   "options": [
+    "Ping 169.5.3.10",
+    "Ping 127.0.0.1",
+    "Telnet 1.0.0.127",
+    "Ping 127.0.0.0"
+   ],
+   "answer": 1,
+   "why": "127.0.0.1 is the loopback address. A reply proves TCP/IP is installed and working on the host without touching the network."
+  },
+  {
+   "q": "What is the data unit called at the Data Link layer?",
+   "options": [
+    "Frames",
+    "Bits",
+    "Packets",
+    "Segments"
+   ],
+   "answer": 0,
+   "why": "Encapsulation goes data, segments (Transport), packets (Network), frames (Data Link) and bits (Physical)."
+  },
+  {
+   "q": "A Data Link frame carries a packet bound for a remote network. Where must the frame deliver it?",
+   "options": [
+    "To the physical medium",
+    "To another host",
+    "To the switch",
+    "To the router"
+   ],
+   "answer": 3,
+   "why": "A host sends traffic for other networks to its default gateway, so the frame is addressed to the router's MAC address."
+  },
+  {
+   "q": "Which of these is not a distance-vector routing protocol?",
+   "options": [
+    "IGRP",
+    "OSPF",
+    "RIPv2",
+    "RIP"
+   ],
+   "answer": 1,
+   "why": "OSPF and IS-IS are link-state protocols that build a map of the network. RIP, RIPv2 and IGRP are distance-vector and advertise routes by hop count or metric."
+  },
+  {
+   "q": "Which routing protocol combines distance-vector and link-state properties?",
+   "options": [
+    "IS-IS",
+    "OSPF",
+    "RIPv1",
+    "EIGRP"
+   ],
+   "answer": 3,
+   "why": "EIGRP is often called a hybrid or advanced distance-vector protocol: it exchanges routes with neighbours like distance-vector but converges fast like link-state."
+  },
+  {
+   "q": "You need to break up broadcast domains in a layer 2 switched network. What should you do?",
+   "options": [
+    "Flatten the network with more switches",
+    "Implement loop avoidance",
+    "Disable spanning tree on some ports",
+    "Create VLANs"
+   ],
+   "answer": 3,
+   "why": "Each VLAN is its own broadcast domain. Traffic between VLANs then needs a router or layer 3 switch."
+  },
+  {
+   "q": "Why do most switches run Spanning Tree Protocol by default?",
+   "options": [
+    "To prevent switching loops",
+    "To monitor how the network is functioning",
+    "To manage the VLAN database",
+    "To stop forwarding until all devices update"
+   ],
+   "answer": 0,
+   "why": "With redundant links, frames could circle forever. STP blocks redundant paths and unblocks them only when an active link fails."
+  },
+  {
+   "q": "Which statement correctly describes MIMO?",
+   "options": [
+    "A modulation technique that allows more than one data rate",
+    "Several frames are sent by several antennas over several paths and recombined by the receiving antennas",
+    "Small packets are packed into one unit to improve throughput",
+    "Every frame must be acknowledged"
+   ],
+   "answer": 1,
+   "why": "Multiple-input, multiple-output uses several antennas and spatial streams at once, which is how 802.11n and later gain throughput."
+  },
+  {
+   "q": "Which practice helps secure a wireless access point from unauthorised administration?",
+   "options": [
+    "Enable traffic shaping",
+    "Assign the AP a private IP address",
+    "Switch mixed mode to single mode",
+    "Change the default administrator password"
+   ],
+   "answer": 3,
+   "why": "Default admin passwords are published and tried first. Changing the password and the default SSID are basic hardening steps."
+  },
+  {
+   "q": "Which service shows you the top talkers on your network?",
+   "options": [
+    "SNMP",
+    "Syslog",
+    "NetFlow",
+    "SIEM"
+   ],
+   "answer": 2,
+   "why": "NetFlow exports flow records, so a collector can rank which hosts and conversations use the most bandwidth. Syslog carries log messages and SNMP polls device counters."
+  },
+  {
+   "q": "You want to know the normal operating capacity of the whole network. Which measurement gives you the standard to compare against?",
+   "options": [
+    "Utilisation",
+    "Baseline",
+    "Target",
+    "Threshold"
+   ],
+   "answer": 1,
+   "why": "A baseline records normal performance over time, so later readings can be compared to it to spot problems or growth."
+  },
+  {
+   "q": "Which of these is a device hardening technique?",
+   "options": [
+    "Disable unnecessary services",
+    "Add a redundant power supply",
+    "Enable all ports",
+    "Deploy an access control vestibule"
+   ],
+   "answer": 0,
+   "why": "Hardening removes attack surface: unneeded services and applications go, unrequired ports are blocked. A vestibule is physical security."
+  },
+  {
+   "q": "You want users logged out automatically after a period without activity. Which policy do you configure?",
+   "options": [
+    "Password complexity",
+    "Authentication period (session timeout)",
+    "Password history",
+    "Password length"
+   ],
+   "answer": 1,
+   "why": "An idle or session timeout ends a session after a set period, so an unattended workstation doesn't stay logged in."
+  },
+  {
+   "q": "Which protocol provides redundancy for physical routers so hosts keep a working default gateway?",
+   "options": [
+    "FHRP",
+    "NAC",
+    "CMS",
+    "NAT"
+   ],
+   "answer": 0,
+   "why": "First-hop redundancy protocols such as HSRP and VRRP let two routers share a virtual gateway address; if one fails the other takes over."
+  },
+  {
+   "q": "Which method joins several physical switches into a single logical switch?",
+   "options": [
+    "Federating",
+    "Stacking",
+    "Daisy chaining",
+    "Segmenting"
+   ],
+   "answer": 1,
+   "why": "Stacked switches share one management plane and act as one device, with a single configuration and more ports."
+  },
+  {
+   "q": "An attack no one has seen before starts hitting your network in real time. What is it called?",
+   "options": [
+    "RGE",
+    "Right-now attack",
+    "Zero-day",
+    "Nothing special; escalate"
+   ],
+   "answer": 2,
+   "why": "A zero-day exploits a vulnerability the vendor hasn't patched, and often doesn't know about, so there is no signature to detect it."
+  },
+  {
+   "q": "Which database describes each security vulnerability in detail using a number-and-letter identifier?",
+   "options": [
+    "ISACA",
+    "NIST",
+    "WHOIS",
+    "CVE"
+   ],
+   "answer": 3,
+   "why": "Common Vulnerabilities and Exposures assigns IDs like CVE-2024-1234 so everyone refers to the same flaw."
+  },
+  {
+   "q": "Someone phones you claiming a credit card company has problems with your account and asks for your mother's maiden name. What is this?",
+   "options": [
+    "An analog scam",
+    "Phishing (vishing)",
+    "An on-path attack",
+    "A rogue access point"
+   ],
+   "answer": 1,
+   "why": "Phishing uses a pretext to trick a person into giving up information; by phone it is called vishing."
+  },
+  {
+   "q": "Which of these is a denial-of-service attack?",
+   "options": [
+    "SYN flood",
+    "ARP inspection",
+    "Rogue DHCP",
+    "Virus"
+   ],
+   "answer": 0,
+   "why": "A SYN flood opens many half-finished TCP handshakes to exhaust a server's connection table. Ping of Death and Stacheldraht are other DoS tools."
+  },
+  {
+   "q": "Which of these is a form of allow-listing?",
+   "options": [
+    "Implicit allow",
+    "Implicit deny",
+    "Least privilege",
+    "Need to know"
+   ],
+   "answer": 1,
+   "why": "Allow-listing means only explicitly permitted things are allowed and everything else is implicitly denied."
+  },
+  {
+   "q": "You want to grant a group of users the rights their jobs need. Which access control model describes this?",
+   "options": [
+    "RBAC",
+    "BBAC",
+    "MAC",
+    "DAC"
+   ],
+   "answer": 0,
+   "why": "Role-based access control assigns permissions to a role, such as accounts payable, and users inherit them by being in the role."
+  },
+  {
+   "q": "Which of these gives you a graphical desktop over a remote connection?",
+   "options": [
+    "SSH",
+    "RDP",
+    "Syslog",
+    "SNMP"
+   ],
+   "answer": 1,
+   "why": "Remote Desktop Protocol carries a full GUI session. SSH gives a secure command line."
+  },
+  {
+   "q": "Split tunnel and full tunnel are examples of which type of VPN?",
+   "options": [
+    "RDP VPN",
+    "Client-to-site",
+    "Clientless VPN",
+    "Site-to-site"
+   ],
+   "answer": 1,
+   "why": "The tunnel mode decides whether a remote user's non-corporate traffic goes through the VPN too, which is a client-to-site setting."
+  },
+  {
+   "q": "In a biometric system, what is it called when an illegitimate user is allowed in?",
+   "options": [
+    "True negative",
+    "False positive",
+    "False negative",
+    "True positive"
+   ],
+   "answer": 1,
+   "why": "A false positive (false acceptance) admits someone who shouldn't be. A false negative rejects a legitimate user."
+  },
+  {
+   "q": "Which of these is an access control vestibule?",
+   "options": [
+    "Mantrap",
+    "Smart door",
+    "Turnstile",
+    "Trapdoor"
+   ],
+   "answer": 0,
+   "why": "A mantrap, now called an access control vestibule, is a two-door space where only one door opens at a time to stop tailgating."
+  },
+  {
+   "q": "You have just tested your theory to determine the cause of a problem. What is the next step in the troubleshooting methodology?",
+   "options": [
+    "Establish a plan of action to resolve the problem and identify potential effects",
+    "Establish a theory of probable cause",
+    "Question the obvious",
+    "Verify full system functionality"
+   ],
+   "answer": 0,
+   "why": "Once the theory is confirmed, you plan the fix and its side effects, implement it, verify, then document."
+  },
+  {
+   "q": "Which network optimisation technique delays packets that match certain criteria to guarantee bandwidth for other applications?",
+   "options": [
+    "Traffic shaping",
+    "Jitter control",
+    "Access lists",
+    "Load balancing"
+   ],
+   "answer": 0,
+   "why": "Traffic shaping buffers and slows lower-priority traffic so important flows, such as voice, keep the bandwidth they need."
+  },
+  {
+   "q": "Which Application layer protocol gives agents on many devices a message format for talking to network management stations?",
+   "options": [
+    "SPAN",
+    "NetFlow",
+    "SNMP",
+    "Syslog"
+   ],
+   "answer": 2,
+   "why": "Simple Network Management Protocol lets a manager poll device agents and receive traps. Syslog only sends log messages."
+  },
+  {
+   "q": "Which tool can estimate cable length and find the location of a splice or break?",
+   "options": [
+    "Loopback plug",
+    "TDR",
+    "Protocol analyser",
+    "Toner probe"
+   ],
+   "answer": 1,
+   "why": "A time-domain reflectometer sends a pulse and measures reflections, giving the distance to faults and connector loss."
+  },
+  {
+   "q": "Which of these is not a cabling issue?",
+   "options": [
+    "Shorts",
+    "Impedance mismatch",
+    "Crosstalk",
+    "DNS configuration"
+   ],
+   "answer": 3,
+   "why": "Crosstalk, shorts, opens and impedance mismatch are physical-layer faults. DNS problems are a service configuration issue."
+  },
+  {
+   "q": "What is step 7 of the seven-step troubleshooting methodology?",
+   "options": [
+    "Establish a plan of action",
+    "Establish a theory of probable cause",
+    "Document findings, actions, outcomes and lessons learned",
+    "Implement the solution or escalate"
+   ],
+   "answer": 2,
+   "why": "The last step records what happened and what fixed it, so the next person doesn't start from scratch."
+  },
+  {
+   "q": "What is step 4 of the seven-step troubleshooting methodology?",
+   "options": [
+    "Implement the solution or escalate",
+    "Establish a theory of probable cause",
+    "Document findings",
+    "Establish a plan of action to resolve the problem and identify potential effects"
+   ],
+   "answer": 3,
+   "why": "The steps are: identify the problem, theory of probable cause, test the theory, plan of action, implement, verify, document."
+  },
+  {
+   "q": "Which command shows the routing table on a Windows host?",
+   "options": [
+    "show telnet",
+    "route print",
+    "arp -a",
+    "ping"
+   ],
+   "answer": 1,
+   "why": "route print lists the destinations, masks and gateways the host uses. arp -a shows the ARP cache instead."
+  },
+  {
+   "q": "You need centralised authentication for users. Which logical topology should you use?",
+   "options": [
+    "VLANs",
+    "Client-server",
+    "Peer-to-peer",
+    "Mesh"
+   ],
+   "answer": 1,
+   "why": "A client-server network has servers that handle authentication and resources. In peer-to-peer, each computer manages its own."
+  },
+  {
+   "q": "Which physical topology has the most connections and is the least popular for LANs?",
+   "options": [
+    "Mesh",
+    "Bus",
+    "Star",
+    "Ring"
+   ],
+   "answer": 0,
+   "why": "A full mesh links every node to every other, which gives redundancy but needs n(n-1)/2 links, too many for a LAN."
+  },
+  {
+   "q": "In a physical star topology, what happens when one workstation loses its connection?",
+   "options": [
+    "The ring is broken, so no device can communicate",
+    "Two unterminated segments stop all traffic",
+    "Only that workstation loses communication",
+    "That workstation and the central device lose communication"
+   ],
+   "answer": 2,
+   "why": "Each station has its own cable to the central switch, so one failed link affects only that station."
+  },
+  {
+   "q": "Which WAN technology uses labels, which allows voice to be prioritised through the network?",
+   "options": [
+    "MPLS",
+    "Frame Relay",
+    "T1",
+    "VPN"
+   ],
+   "answer": 0,
+   "why": "Multiprotocol Label Switching forwards packets by short labels and supports traffic classes, so voice can get priority."
+  },
+  {
+   "q": "What is a logical grouping of network users and resources called?",
+   "options": [
+    "WAN",
+    "Host",
+    "LAN",
+    "MPLS"
+   ],
+   "answer": 2,
+   "why": "A LAN groups users and resources, usually in one location. A WAN connects LANs across distance."
+  },
+  {
+   "q": "What is a concern when using peer-to-peer networks?",
+   "options": [
+    "Which computer is least busy to act as server",
+    "Security",
+    "Having enough peers",
+    "Where to place the server"
+   ],
+   "answer": 1,
+   "why": "In peer-to-peer, every computer controls its own resources and accounts, so there is no central security or consistent policy."
+  },
+  {
+   "q": "When is a point-to-multipoint network called for?",
+   "options": [
+    "When a central office must communicate with many branch offices",
+    "When only two nodes are connected",
+    "When offices are daisy-chained in a line",
+    "When a full mesh of WAN links exists"
+   ],
+   "answer": 0,
+   "why": "Point-to-multipoint is a hub-and-spoke arrangement: one central site with links to many remote sites."
+  },
+  {
+   "q": "Which of these is an example of a LAN?",
+   "options": [
+    "Two routers linked by a T1",
+    "Ten routers linked by Frame Relay",
+    "Two computers connected to share resources",
+    "Ten buildings linked by fibre over a campus"
+   ],
+   "answer": 2,
+   "why": "A LAN is a group of hosts in a small area sharing resources. Router-to-router links over distance are WAN connections."
+  },
+  {
+   "q": "What is a disadvantage of the star topology?",
+   "options": [
+    "A single failed port takes down the whole network",
+    "It is harder to add stations and troubleshoot",
+    "Hosts must be more expensive than on a bus",
+    "If the central device fails completely, all attached devices lose connectivity"
+   ],
+   "answer": 3,
+   "why": "The central switch is a single point of failure. Otherwise the star is easy to expand and troubleshoot."
+  },
+  {
+   "q": "What is a difference between a LAN and a WAN?",
+   "options": [
+    "WANs never use routers",
+    "WANs cover larger geographical areas",
+    "WANs only use private transport",
+    "LANs cover larger areas"
+   ],
+   "answer": 1,
+   "why": "WANs span cities or countries, usually need routers, and can use private or public carrier links."
+  },
+  {
+   "q": "In which type of network are all computers considered equal, with no central authority?",
+   "options": [
+    "Peer-to-peer",
+    "Hierarchical",
+    "Client-server",
+    "Physical star"
+   ],
+   "answer": 0,
+   "why": "Peer-to-peer networks have no dedicated server; each host shares and controls its own resources."
+  },
+  {
+   "q": "What advantage does client-server architecture have over peer-to-peer?",
+   "options": [
+    "Tighter security, easier maintenance and better organisation",
+    "Fewer cables",
+    "Lower cost",
+    "No need for a network administrator"
+   ],
+   "answer": 0,
+   "why": "Centralised servers mean accounts, permissions and data are managed in one place, which is easier to secure and maintain."
+  },
+  {
+   "q": "You have several LANs that must stay separate but all reach the internet. What is the best solution?",
+   "options": [
+    "Use static IP addresses",
+    "Add more hubs",
+    "Add more switches",
+    "Install a router"
+   ],
+   "answer": 3,
+   "why": "A router connects the separate networks and forwards traffic between them and to the internet, keeping each LAN its own broadcast domain."
+  },
+  {
+   "q": "Which topology gives a direct connection between two routers with one communication path?",
+   "options": [
+    "Mesh",
+    "Bus",
+    "Point-to-point",
+    "Star"
+   ],
+   "answer": 2,
+   "why": "A point-to-point link joins exactly two endpoints, such as a leased line between two routers."
+  },
+  {
+   "q": "Which topology combines two or more physical or logical topologies?",
+   "options": [
+    "Point-to-multipoint",
+    "Star",
+    "Bus",
+    "Hybrid"
+   ],
+   "answer": 3,
+   "why": "Most real networks are hybrids, for example stars connected by a bus backbone."
+  },
+  {
+   "q": "Host 1 sends a SYN to Host 2. What does Host 2 send back?",
+   "options": [
+    "NAK",
+    "SYN/ACK",
+    "SYN",
+    "ACK"
+   ],
+   "answer": 1,
+   "why": "The TCP three-way handshake is SYN, SYN/ACK, ACK. Host 2 acknowledges the SYN and sends its own."
+  },
+  {
+   "q": "At which OSI layer do TCP and UDP reside?",
+   "options": [
+    "Layer 4",
+    "Layer 2",
+    "Layer 1",
+    "Layer 3"
+   ],
+   "answer": 0,
+   "why": "TCP and UDP are Transport layer protocols: TCP is connection-oriented and reliable, UDP is connectionless."
+  },
+  {
+   "q": "Which OSI layer provides an entry point for programs to access the network?",
+   "options": [
+    "Physical",
+    "Transport",
+    "Application",
+    "Network"
+   ],
+   "answer": 2,
+   "why": "The Application layer is where network-aware programs and protocols such as HTTP and SMTP interface with the stack."
+  },
+  {
+   "q": "You click a link on an internet server and get a time-out message. Which layer could be the source?",
+   "options": [
+    "Network",
+    "Application",
+    "Physical",
+    "Transport"
+   ],
+   "answer": 1,
+   "why": "A browser time-out is an Application layer message; the application gave up waiting for a response."
+  },
+  {
+   "q": "Which OSI layer handles code and character-set conversion and recognises data formats?",
+   "options": [
+    "Presentation",
+    "Network",
+    "Session",
+    "Application"
+   ],
+   "answer": 0,
+   "why": "The Presentation layer translates formats, such as ASCII to EBCDIC, and handles encryption and compression."
+  },
+  {
+   "q": "At which layers do bridges, hubs and routers primarily operate, respectively?",
+   "options": [
+    "Data Link, Physical, Network",
+    "Data Link, Data Link, Network",
+    "Physical, Physical, Data Link",
+    "Physical, Data Link, Network"
+   ],
+   "answer": 0,
+   "why": "Bridges and switches work with MAC addresses at layer 2, hubs just repeat signals at layer 1, and routers route at layer 3."
+  },
+  {
+   "q": "Which OSI layer converts data into signals appropriate for the transmission medium?",
+   "options": [
+    "Network",
+    "Physical",
+    "Application",
+    "Data Link"
+   ],
+   "answer": 1,
+   "why": "The Physical layer defines voltages, light pulses and connectors and moves bits across the medium."
+  },
+  {
+   "q": "A receiving host is not getting all the segments it should acknowledge. What can it do to improve reliability?",
+   "options": [
+    "Restart the virtual circuit",
+    "Decrease the sequence number",
+    "Decrease the window size",
+    "Send a different source port"
+   ],
+   "answer": 2,
+   "why": "A smaller window means fewer segments in flight before an acknowledgment is needed, so losses are caught sooner."
+  },
+  {
+   "q": "Which layer 1 device enlarges the area a single LAN segment can cover?",
+   "options": [
+    "Repeater",
+    "Firewall",
+    "Router",
+    "NIC"
+   ],
+   "answer": 0,
+   "why": "A repeater (or hub) regenerates the signal so it can travel further. It doesn't segment anything."
+  },
+  {
+   "q": "At which OSI layer is a data stream segmented?",
+   "options": [
+    "Data Link",
+    "Network",
+    "Physical",
+    "Transport"
+   ],
+   "answer": 3,
+   "why": "The Transport layer breaks application data into segments and, with TCP, numbers and acknowledges them."
+  },
+  {
+   "q": "What is the correct order of encapsulation?",
+   "options": [
+    "Data, frame, packet, segment, bits",
+    "Segment, data, packet, frame, bits",
+    "Data, segment, frame, packet, bits",
+    "Data, segment, packet, frame, bits"
+   ],
+   "answer": 3,
+   "why": "Going down the stack: data at the upper layers, segments at Transport, packets at Network, frames at Data Link and bits at Physical."
+  },
+  {
+   "q": "What is a purpose of segmenting a network with a bridge?",
+   "options": [
+    "To add more IP subnets",
+    "To create more collision domains",
+    "To allow more broadcasts",
+    "To add more broadcast domains"
+   ],
+   "answer": 1,
+   "why": "A bridge splits a segment into separate collision domains, giving each side more usable bandwidth. Broadcasts still cross it."
+  },
+  {
+   "q": "Acknowledgments, sequencing and flow control are characteristics of which OSI layer?",
+   "options": [
+    "Layer 7",
+    "Layer 3",
+    "Layer 4",
+    "Layer 2"
+   ],
+   "answer": 2,
+   "why": "These are Transport layer functions, provided by TCP for reliable delivery."
+  },
+  {
+   "q": "What is the purpose of flow control?",
+   "options": [
+    "To retransmit data when no acknowledgment arrives",
+    "To let the receiver govern how much data the sender transmits",
+    "To set the size of each segment",
+    "To reassemble segments in order"
+   ],
+   "answer": 1,
+   "why": "Flow control, via the TCP window, stops a fast sender from overwhelming a slow receiver's buffers."
+  },
+  {
+   "q": "Which is the highest of these OSI layers?",
+   "options": [
+    "Session",
+    "Presentation",
+    "Transport",
+    "Network"
+   ],
+   "answer": 1,
+   "why": "From the top: Application (7), Presentation (6), Session (5), Transport (4), Network (3), Data Link (2), Physical (1)."
+  },
+  {
+   "q": "Routers perform routing at which OSI layer?",
+   "options": [
+    "Physical",
+    "Transport",
+    "Network",
+    "Data Link"
+   ],
+   "answer": 2,
+   "why": "Routing uses logical (IP) addresses, which are a Network layer function."
+  },
+  {
+   "q": "Which mnemonic gives the OSI layers' first letters from top to bottom?",
+   "options": [
+    "Please Do Not Throw Sausage Pizza Away",
+    "All Day People Should Try New Professions",
+    "All People Seem To Need Data Processing",
+    "Always Should People Never Threaten Dogs"
+   ],
+   "answer": 2,
+   "why": "Application, Presentation, Session, Transport, Network, Data Link, Physical. The sausage pizza one goes bottom to top."
+  },
+  {
+   "q": "Which IEEE standard specifies CSMA/CD?",
+   "options": [
+    "802.5",
+    "802.2",
+    "802.3",
+    "802.11"
+   ],
+   "answer": 2,
+   "why": "802.3 is Ethernet, which used carrier sense multiple access with collision detection on shared media. 802.11 wireless uses CSMA/CA."
+  },
+  {
+   "q": "Why would an administrator use plenum-rated cable?",
+   "options": [
+    "It releases less toxic gas and has a high combustion temperature",
+    "It is cheaper",
+    "It is immune to interference",
+    "It has a low combustion temperature"
+   ],
+   "answer": 0,
+   "why": "Plenum cable is required in air-handling spaces because its jacket doesn't burn easily or give off toxic smoke."
+  },
+  {
+   "q": "Which category rating does not exist for UTP cable?",
+   "options": [
+    "Category 6",
+    "Category 3",
+    "Category 5e",
+    "Category 9"
+   ],
+   "answer": 3,
+   "why": "UTP categories run from 3 through 8. Higher categories support higher frequencies and speeds."
+  },
+  {
+   "q": "What type of connector does UTP cable typically use?",
+   "options": [
+    "RJ-45",
+    "ST",
+    "LC",
+    "BNC"
+   ],
+   "answer": 0,
+   "why": "RJ-45 is the eight-position modular plug for Ethernet over twisted pair. BNC is for coax and ST and LC are fibre connectors."
+  },
+  {
+   "q": "Which cable provides the longest run distance?",
+   "options": [
+    "Multimode fibre",
+    "Category 3 UTP",
+    "Coax",
+    "Single-mode fibre"
+   ],
+   "answer": 3,
+   "why": "Single-mode fibre carries one light path with little dispersion and can run many kilometres; multimode is limited to a few hundred metres."
+  },
+  {
+   "q": "Which pin-out would you use to crimp a cable connecting a host to a switch?",
+   "options": [
+    "Straight-through",
+    "Crossover",
+    "T1 crossover",
+    "Rolled"
+   ],
+   "answer": 0,
+   "why": "Unlike devices, such as a PC and a switch, use a straight-through cable with the same pin-out at both ends."
+  },
+  {
+   "q": "Why is fibre-optic cable immune to EMI and RFI?",
+   "options": [
+    "It transmits digital electrical signals",
+    "It transmits analog signals using electricity",
+    "It transmits analog light",
+    "It transmits digital signals as light pulses"
+   ],
+   "answer": 3,
+   "why": "Light in glass isn't affected by electromagnetic fields, so fibre can run near motors and power lines where copper would pick up noise."
+  },
+  {
+   "q": "What is the main difference between single-mode and multimode fibre?",
+   "options": [
+    "Single-mode runs a shorter distance",
+    "Electrical versus optical signals",
+    "The number of light rays (modes) carried",
+    "The number of digital signals"
+   ],
+   "answer": 2,
+   "why": "Multimode carries many light paths in a wider core, which limits distance. Single-mode carries one, so it goes much further."
+  },
+  {
+   "q": "Which cable should you use for a run longer than 100 metres?",
+   "options": [
+    "Coaxial",
+    "Category 5e",
+    "Category 6",
+    "Fibre-optic"
+   ],
+   "answer": 3,
+   "why": "Twisted-pair Ethernet is limited to 100 m. Fibre handles hundreds of metres to kilometres depending on type."
+  },
+  {
+   "q": "Which of these is a fibre-optic connector?",
+   "options": [
+    "RJ-11",
+    "LC",
+    "BNC",
+    "RJ-45"
+   ],
+   "answer": 1,
+   "why": "LC, SC and ST are fibre connectors. BNC is coax and the RJ types are twisted pair."
+  },
+  {
+   "q": "How many hosts on a half-duplex segment can transmit at one time?",
+   "options": [
+    "One",
+    "Two",
+    "Zero",
+    "Unlimited"
+   ],
+   "answer": 0,
+   "why": "Half-duplex means one direction at a time, so only one host can talk; two at once is a collision."
+  },
+  {
+   "q": "On which cable type does EMI have the least effect?",
+   "options": [
+    "STP",
+    "Fibre-optic",
+    "Coax",
+    "UTP"
+   ],
+   "answer": 1,
+   "why": "Fibre carries light, so electromagnetic interference doesn't affect it at all. Shielded twisted pair only reduces it."
+  },
+  {
+   "q": "How many wires are used in a 100BaseTX transmission?",
+   "options": [
+    "Two",
+    "Six",
+    "Eight",
+    "Four"
+   ],
+   "answer": 3,
+   "why": "100BaseTX uses two pairs, one to transmit and one to receive. 1000BaseT uses all four pairs."
+  },
+  {
+   "q": "A crossover cable is used for all of these except which?",
+   "options": [
+    "Switch to switch",
+    "Host to host",
+    "Hub to switch",
+    "Host to switch"
+   ],
+   "answer": 3,
+   "why": "Like devices need a crossover. A host to a switch is unlike-to-unlike and uses a straight-through cable."
+  },
+  {
+   "q": "What does the demarcation point separate the customer from?",
+   "options": [
+    "The branch office",
+    "The data centre",
+    "Headquarters",
+    "The service provider"
+   ],
+   "answer": 3,
+   "why": "The demarc is where responsibility for the circuit changes from the carrier to the customer."
+  },
+  {
+   "q": "You are making a T568B cable for a Fast Ethernet link. How many pairs does it use?",
+   "options": [
+    "Four",
+    "Two",
+    "Three",
+    "One"
+   ],
+   "answer": 1,
+   "why": "Fast Ethernet (100BaseTX) uses pairs on pins 1-2 and 3-6. All four pairs are wired, but only two carry data."
+  },
+  {
+   "q": "On an Ethernet switched network, which address does one host use to reach another on the same segment?",
+   "options": [
+    "MAC address",
+    "IP address",
+    "Hub address",
+    "Street address"
+   ],
+   "answer": 0,
+   "why": "Within a LAN, frames are delivered by MAC address; ARP finds the MAC for a known IP."
+  },
+  {
+   "q": "Which can run full-duplex at 200 Mbps total over Cat 5e?",
+   "options": [
+    "1000BaseF",
+    "100BaseF",
+    "10BaseT",
+    "100BaseTX"
+   ],
+   "answer": 3,
+   "why": "100BaseTX is 100 Mbps each way, so full-duplex gives 200 Mbps combined. 1000BaseT would be 2 Gbps combined."
+  },
+  {
+   "q": "How many devices in a collision domain must listen when one host talks?",
+   "options": [
+    "Two",
+    "One",
+    "All of them",
+    "Three"
+   ],
+   "answer": 2,
+   "why": "Every device in a collision domain receives every transmission, which is why hubs scale so badly."
+  },
+  {
+   "q": "What does the cable designation 10Base2 mean?",
+   "options": [
+    "Ethernet over thicknet",
+    "Ethernet over fibre",
+    "Ethernet over HDMI",
+    "Ethernet over thinnet coax"
+   ],
+   "answer": 3,
+   "why": "10Base2 was 10 Mbps over thin RG-58 coax, up to about 185 m. 10Base5 was thicknet."
+  },
+  {
+   "q": "Which access method helps wireless devices share bandwidth without two transmitting at once?",
+   "options": [
+    "CSMA/CD",
+    "TCP/IP",
+    "TFTP",
+    "CSMA/CA"
+   ],
+   "answer": 3,
+   "why": "Wireless uses collision avoidance, since a radio can't detect collisions while transmitting. Wired Ethernet used collision detection."
+  },
+  {
+   "q": "What is the maximum distance of 10GBaseSR?",
+   "options": [
+    "About 300 metres over multimode fibre",
+    "10 kilometres",
+    "40 kilometres",
+    "100 metres"
+   ],
+   "answer": 0,
+   "why": "SR is short reach over multimode fibre, up to roughly 300 m on OM3. LR is 10 km over single-mode."
+  },
+  {
+   "q": "How many wire pairs does half-duplex Ethernet use?",
+   "options": [
+    "Two",
+    "None",
+    "One",
+    "Four"
+   ],
+   "answer": 2,
+   "why": "Half-duplex uses a single pair in one direction at a time. Full-duplex uses separate transmit and receive pairs."
+  },
+  {
+   "q": "What is the maximum distance of 10GBaseLR?",
+   "options": [
+    "40 kilometres",
+    "1 kilometre",
+    "300 metres",
+    "10 kilometres"
+   ],
+   "answer": 3,
+   "why": "Long reach runs about 10 km over single-mode fibre. ER (extended reach) goes to 40 km."
+  },
+  {
+   "q": "What is the effective throughput increase with a full-duplex connection?",
+   "options": [
+    "Ten times",
+    "None",
+    "Twice as much",
+    "Four times"
+   ],
+   "answer": 2,
+   "why": "Sending and receiving at the same time doubles usable bandwidth compared with half-duplex."
+  },
+  {
+   "q": "With which device can you not use full-duplex communication?",
+   "options": [
+    "Hub",
+    "Host",
+    "Switch",
+    "Router"
+   ],
+   "answer": 0,
+   "why": "A hub is a shared medium with collisions, so it is half-duplex only. Switch ports can run full-duplex."
+  },
+  {
+   "q": "What is the maximum distance of 1000BaseT?",
+   "options": [
+    "100 metres",
+    "1,024 metres",
+    "1,000 metres",
+    "128 metres"
+   ],
+   "answer": 0,
+   "why": "Gigabit over copper twisted pair, like other BaseT standards, is limited to 100 m including patch cables."
+  },
+  {
+   "q": "What is the purpose of the frame check sequence in an Ethernet frame?",
+   "options": [
+    "Flow control",
+    "Error recovery",
+    "Error detection",
+    "Error correction"
+   ],
+   "answer": 2,
+   "why": "The FCS is a CRC; the receiver recomputes it and discards a frame that doesn't match. Nothing is corrected or retransmitted at this layer."
+  },
+  {
+   "q": "What does the Base in 100BaseTX mean?",
+   "options": [
+    "100 Mbps",
+    "Broadband",
+    "Baseband signalling",
+    "Twisted pair"
+   ],
+   "answer": 2,
+   "why": "Baseband uses the whole cable for one signal. The 100 is the speed and TX is twisted pair."
+  },
+  {
+   "q": "What advantage does a switch have over a hub?",
+   "options": [
+    "It discards frames",
+    "It sends each transmission out every port",
+    "Any two connected devices can collide",
+    "It recognises frame boundaries and destination MAC addresses"
+   ],
+   "answer": 3,
+   "why": "A switch reads the destination MAC and forwards only to the right port, giving each port its own collision domain."
+  },
+  {
+   "q": "What is the primary function of a bridge?",
+   "options": [
+    "Breaks up broadcast domains",
+    "Lets mobile users join a wired network wirelessly",
+    "Breaks up collision domains",
+    "Connects a NIC to a different media type"
+   ],
+   "answer": 2,
+   "why": "A bridge separates collision domains by forwarding frames only when needed. It doesn't stop broadcasts."
+  },
+  {
+   "q": "Which device connects multiple devices together without segmenting the network?",
+   "options": [
+    "Router",
+    "Bridge",
+    "Hub",
+    "Switch"
+   ],
+   "answer": 2,
+   "why": "A hub repeats every signal to every port, so everything attached shares one collision domain."
+  },
+  {
+   "q": "Which device can work at both layers 2 and 3 of the OSI model?",
+   "options": [
+    "Repeater",
+    "Multilayer switch",
+    "Bridge",
+    "Hub"
+   ],
+   "answer": 1,
+   "why": "A layer 3 (multilayer) switch forwards frames by MAC and also routes between VLANs by IP."
+  }
+ ]
+}

@@ -1,241 +1,43 @@
 {
-  "_about": "Study page (study.html): practice by exam, rendered by js/study.js. An exam is multiple choice by default: each question has exactly 4 options, answer (the 0-based index of the right one) and why (one or two plain sentences). An exam with \"format\": \"tasks\" has hands-on tasks instead: task (what to do), steps (commands or lines, in order) and check (how to confirm it worked), for exams done on a live system. tests/study.test.mjs checks the shape.",
-  "note": "A few sample questions per exam for now; more are coming. The RHCSA panel has hands-on tasks: do each one on your own practice VM, then compare.",
-  "exams": [
-    {
-      "id": "security-plus",
-      "name": "Security+",
-      "about": "CompTIA's entry-level security certification: threats, architecture, operations and governance.",
-      "questions": [
-        {
-          "q": "Which of these is an example of multifactor authentication?",
-          "options": [
-            "A password and a PIN",
-            "A fingerprint and a face scan",
-            "A password and a code from an authenticator app",
-            "Two security questions"
-          ],
-          "answer": 2,
-          "why": "Multifactor means factors of different kinds. A password is something you know and the app's code comes from something you have. The other pairs use the same kind twice."
-        },
-        {
-          "q": "A company wants to detect whether a file was changed while it was being transferred. What should it use?",
-          "options": [
-            "Hashing",
-            "Symmetric encryption",
-            "Tokenization",
-            "Steganography"
-          ],
-          "answer": 0,
-          "why": "A hash of the file is compared before and after the transfer; any change to the file changes the hash. That checks integrity. Encryption protects confidentiality instead."
-        },
-        {
-          "q": "Which type of malware encrypts a victim's files and demands payment to unlock them?",
-          "options": [
-            "Spyware",
-            "Rootkit",
-            "Logic bomb",
-            "Ransomware"
-          ],
-          "answer": 3,
-          "why": "Ransomware holds data hostage by encrypting it. Spyware watches the user, a rootkit hides an attacker's presence, and a logic bomb runs when a set condition is met."
-        }
-      ]
-    },
-    {
-      "id": "network-plus",
-      "name": "Network+",
-      "about": "CompTIA's networking certification: addressing, routing and switching, wireless, troubleshooting and network security.",
-      "questions": [
-        {
-          "q": "How many usable host addresses does a /26 IPv4 subnet have?",
-          "options": [
-            "30",
-            "62",
-            "64",
-            "126"
-          ],
-          "answer": 1,
-          "why": "A /26 leaves 6 bits for hosts: 2 to the power of 6 is 64 addresses. Take away the network and broadcast addresses and 62 are usable."
-        },
-        {
-          "q": "Which protocol automatically gives a device its IP address, subnet mask and default gateway?",
-          "options": [
-            "DNS",
-            "ARP",
-            "DHCP",
-            "NTP"
-          ],
-          "answer": 2,
-          "why": "DHCP hands out addressing settings. DNS turns names into addresses, ARP finds the hardware address for an IP address, and NTP sets the clock."
-        },
-        {
-          "q": "Which device's main job is to forward traffic between different IP networks?",
-          "options": [
-            "Router",
-            "Hub",
-            "Wireless access point",
-            "Repeater"
-          ],
-          "answer": 0,
-          "why": "A router works at layer 3 and chooses a path between networks by IP address. A hub and a repeater only repeat signals, and an access point connects wireless devices to one network."
-        }
-      ]
-    },
-    {
-      "id": "cysa-plus",
-      "name": "CySA+",
-      "about": "CompTIA's security analyst certification: detection, vulnerability management and incident response.",
-      "questions": [
-        {
-          "q": "Logs show one source address failing to log in to hundreds of different accounts, trying the same password on each. What is this?",
-          "options": [
-            "Credential stuffing",
-            "Password spraying",
-            "Pass-the-hash",
-            "A brute-force attack on one account"
-          ],
-          "answer": 1,
-          "why": "Password spraying tries one common password across many accounts, which avoids locking any single account. Credential stuffing replays known username and password pairs from a breach."
-        },
-        {
-          "q": "A workstation is confirmed to have malware that is spreading to other machines. In the usual incident response order, what comes next?",
-          "options": [
-            "Lessons learned",
-            "Recovery",
-            "Eradication",
-            "Containment"
-          ],
-          "answer": 3,
-          "why": "After detection and analysis comes containment: isolate the machine to stop the spread. Eradication, recovery and lessons learned follow in that order."
-        },
-        {
-          "q": "What severity rating does a CVSS base score of 9.0 to 10.0 have?",
-          "options": [
-            "Critical",
-            "High",
-            "Medium",
-            "Low"
-          ],
-          "answer": 0,
-          "why": "CVSS rates 9.0 to 10.0 as Critical, 7.0 to 8.9 as High, 4.0 to 6.9 as Medium and 0.1 to 3.9 as Low."
-        }
-      ]
-    },
-    {
-      "id": "pentest-plus",
-      "name": "PenTest+",
-      "about": "CompTIA's penetration testing certification: planning and scoping, reconnaissance, attacks and reporting.",
-      "questions": [
-        {
-          "q": "Before testing starts, which document sets out what the tester may and may not do, such as the targets, the allowed times and the methods?",
-          "options": [
-            "Non-disclosure agreement",
-            "Service-level agreement",
-            "Rules of engagement",
-            "The final report"
-          ],
-          "answer": 2,
-          "why": "The rules of engagement define how the test is carried out and its limits. A non-disclosure agreement only covers confidentiality, and a service-level agreement covers service targets."
-        },
-        {
-          "q": "Which Nmap option runs a TCP SYN (\"half-open\") scan?",
-          "options": [
-            "-sT",
-            "-sS",
-            "-sU",
-            "-sn"
-          ],
-          "answer": 1,
-          "why": "-sS sends a SYN and never completes the handshake. -sT is a full TCP connect scan, -sU scans UDP, and -sn finds live hosts without scanning ports."
-        },
-        {
-          "q": "A tester collects employee names and email addresses from public websites, without sending anything to the target's systems. What is this called?",
-          "options": [
-            "Passive reconnaissance",
-            "Vulnerability scanning",
-            "Enumeration",
-            "Exploitation"
-          ],
-          "answer": 0,
-          "why": "Passive reconnaissance uses public sources and never touches the target. Scanning and enumeration send traffic to the target's systems, and exploitation uses a weakness."
-        }
-      ]
-    },
-    {
-      "id": "linux",
-      "name": "Linux",
-      "about": "General Linux administration on any distribution: the ground CompTIA Linux+ and the Linux Foundation's LFCS cover.",
-      "questions": [
-        {
-          "q": "Which permissions does chmod 750 give a file?",
-          "options": [
-            "Owner read and write; group read; others nothing",
-            "Owner read, write and execute; group read and execute; others nothing",
-            "Owner read, write and execute; group and others read and execute",
-            "Owner read and execute; group read; others nothing"
-          ],
-          "answer": 1,
-          "why": "Each digit adds read (4), write (2) and execute (1). 7 is rwx for the owner, 5 is r-x for the group, and 0 is nothing for everyone else."
-        },
-        {
-          "q": "Which file holds local users' password hashes on a modern Linux system?",
-          "options": [
-            "/etc/passwd",
-            "/etc/group",
-            "/etc/login.defs",
-            "/etc/shadow"
-          ],
-          "answer": 3,
-          "why": "/etc/shadow holds the hashes and password-aging fields and is readable only by root. /etc/passwd is world-readable, so it only has an x where the password used to be."
-        },
-        {
-          "q": "Which command lists the systemd units that failed?",
-          "options": [
-            "systemctl --failed",
-            "journalctl -f",
-            "ps -ef",
-            "systemctl list-timers"
-          ],
-          "answer": 0,
-          "why": "systemctl --failed (short for systemctl list-units --state=failed) shows units in the failed state. journalctl -f follows the log, and ps -ef lists processes."
-        }
-      ]
-    },
-    {
-      "id": "rhcsa",
-      "name": "RHCSA",
-      "format": "tasks",
-      "about": "Red Hat Certified System Administrator (EX200), on RHEL 10. The exam is hands-on: you configure a live system, so these are tasks, not multiple choice.",
-      "questions": [
-        {
-          "task": "Format /dev/vdb1 as XFS and mount it at /data, by UUID, so it survives a reboot.",
-          "steps": [
-            "mkfs.xfs /dev/vdb1",
-            "mkdir /data",
-            "blkid /dev/vdb1   (copy the UUID)",
-            "Add to /etc/fstab:  UUID=<the UUID>  /data  xfs  defaults  0 0",
-            "systemctl daemon-reload",
-            "mount -a"
-          ],
-          "check": "findmnt /data shows it mounted. Running mount -a without errors proves the fstab line is valid, so the system won't stop at boot."
-        },
-        {
-          "task": "Let a web server that SELinux confines as httpd listen on TCP port 8081.",
-          "steps": [
-            "semanage port -a -t http_port_t -p tcp 8081"
-          ],
-          "check": "semanage port -l | grep http_port_t lists 8081. Leave SELinux in enforcing mode; changing the port label is the fix."
-        },
-        {
-          "task": "Permanently allow HTTPS through the firewall.",
-          "steps": [
-            "firewall-cmd --permanent --add-service=https",
-            "firewall-cmd --reload"
-          ],
-          "check": "firewall-cmd --list-services includes https. Without --permanent the rule is lost at the next reload or reboot."
-        }
-      ]
-    }
-  ]
+ "_about": "Study page (study.html), rendered by js/study.js. This file lists the exams; each exam's questions are in its own file (\"file\"), shown ten at a time. An exam is multiple choice by default: each question has exactly 4 options, answer (the 0-based index of the right one) and why (one or two plain sentences). An exam with \"format\": \"tasks\" has hands-on tasks instead: task (what to do), steps (commands or lines, in order) and check (how to confirm it worked). The question files are written by rag/make_questions.mjs from the library's study guides and practice-test books (see README, Study). tests/study.test.mjs checks the shape.",
+ "note": "Questions show ten at a time; use Shuffle for a new order. The RHCSA panel has hands-on tasks: do each one on your own practice VM, then compare.",
+ "exams": [
+  {
+   "id": "security-plus",
+   "name": "Security+",
+   "about": "CompTIA's entry-level security certification: threats, architecture, operations and governance.",
+   "file": "data/study/security-plus.json"
+  },
+  {
+   "id": "network-plus",
+   "name": "Network+",
+   "about": "CompTIA's networking certification: addressing, routing and switching, wireless, troubleshooting and network security.",
+   "file": "data/study/network-plus.json"
+  },
+  {
+   "id": "cysa-plus",
+   "name": "CySA+",
+   "about": "CompTIA's security analyst certification: detection, vulnerability management and incident response.",
+   "file": "data/study/cysa-plus.json"
+  },
+  {
+   "id": "pentest-plus",
+   "name": "PenTest+",
+   "about": "CompTIA's penetration testing certification: planning and scoping, reconnaissance, attacks and reporting.",
+   "file": "data/study/pentest-plus.json"
+  },
+  {
+   "id": "linux",
+   "name": "Linux",
+   "about": "General Linux administration on any distribution: the ground CompTIA Linux+ and the Linux Foundation's LFCS cover.",
+   "file": "data/study/linux.json"
+  },
+  {
+   "id": "rhcsa",
+   "name": "RHCSA",
+   "format": "tasks",
+   "about": "Red Hat Certified System Administrator (EX200), on RHEL 10. The exam is hands-on: you configure a live system, so these are tasks, not multiple choice.",
+   "file": "data/study/rhcsa.json"
+  }
+ ]
 }

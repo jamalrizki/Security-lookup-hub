@@ -1,36 +1,41 @@
-// Study page: data/study.json's shape, grading, and the page in the DOM stand-in.
+// Study page: the exam list and per-exam banks' shape, grading, paging, and the page in the DOM stand-in.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { validQuestion, validTask, checkPick, OPTIONS } from '../js/study.js';
+import { validQuestion, validTask, checkPick, shuffled, OPTIONS, PAGE } from '../js/study.js';
 import { installDom, settle } from './helpers/dom.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = (f) => readFileSync(new URL(f, root), 'utf8');
 const DATA = JSON.parse(read('data/study.json'));
+const bank = (exam) => JSON.parse(read(exam.file)).questions;
+const FIRST = bank(DATA.exams[0]);
 
-test('the exams are there, each with valid questions or tasks', () => {
+test('the exams are there, each with its own file of valid questions or tasks', () => {
   assert.deepEqual(DATA.exams.map((e) => e.name), ['Security+', 'Network+', 'CySA+', 'PenTest+', 'Linux', 'RHCSA']);
   const ids = new Set();
   for (const exam of DATA.exams) {
     assert.match(exam.id, /^[a-z-]+$/);
     assert.ok(!ids.has(exam.id), exam.id);
     ids.add(exam.id);
+    assert.equal(exam.file, `data/study/${exam.id}.json`);
     assert.ok(exam.about.length > 20, exam.id);
-    assert.ok(exam.questions.length >= 3, exam.id);
+    assert.ok(!('questions' in exam), `${exam.id}: questions live in the exam's own file`);
+    const items = bank(exam);
+    assert.ok(items.length >= (exam.format === "tasks" ? 50 : 150), `${exam.id}: ${items.length}`);
     if (exam.format === 'tasks') {
-      for (const t of exam.questions) assert.ok(validTask(t), `${exam.id}: ${t.task}`);
+      for (const t of items) assert.ok(validTask(t), `${exam.id}: ${t.task}`);
       continue;
     }
     const asked = new Set();
-    for (const q of exam.questions) {
+    for (const q of items) {
       assert.ok(validQuestion(q), `${exam.id}: ${q.q}`);
       assert.ok(!asked.has(q.q), `${exam.id}: repeated question`);
       asked.add(q.q);
       assert.ok(q.why.length >= 40 && q.why.length <= 320, `${exam.id}: why length`);
     }
     // The right answer isn't always in the same place.
-    assert.ok(new Set(exam.questions.map((q) => q.answer)).size > 1, `${exam.id}: answer positions`);
+    assert.ok(new Set(items.map((q) => q.answer)).size > 1, `${exam.id}: answer positions`);
   }
 });
 
@@ -44,7 +49,7 @@ test('validQuestion rejects wrong shapes', () => {
 });
 
 test('checkPick grades in code and always gives the reason', () => {
-  const q = DATA.exams[0].questions[0];
+  const q = FIRST[0];
   const right = checkPick(q, q.answer);
   assert.equal(right.correct, true);
   assert.ok(right.text.startsWith('Correct. ') && right.text.endsWith(q.why));
@@ -53,6 +58,15 @@ test('checkPick grades in code and always gives the reason', () => {
   assert.ok(wrong.text.startsWith(`Not quite. The answer is ${'ABCD'[q.answer]}. `));
   for (const bad of [-1, OPTIONS, 1.5, '0', null, undefined]) assert.equal(checkPick(q, bad), null, String(bad));
   assert.equal(checkPick({ q: 'broken' }, 0), null);
+});
+
+test('shuffled keeps every item once and leaves the input alone', () => {
+  const list = [0, 1, 2, 3, 4, 5, 6, 7];
+  const out = shuffled(list, () => 0.999);
+  assert.deepEqual(list, [0, 1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(out.slice().sort((a, b) => a - b), list);
+  assert.notDeepEqual(shuffled(list, () => 0), list);
+  assert.equal(PAGE, 10);
 });
 
 // ---------- The page ----------
@@ -68,6 +82,7 @@ async function loadPage(url = 'https://jamalrizki.github.io/Security-lookup-hub/
   };
   await import(`../js/study.js?page=${++loads}`);
   await settle();
+  await settle();
   return { requests, $: (id) => dom.document.getElementById(id), doc: dom.document };
 }
 afterEach(() => {
@@ -76,14 +91,17 @@ afterEach(() => {
   delete globalThis.fetch;
 });
 
-test('page: one closed panel per exam with its questions; only the hub’s own data is fetched', async () => {
+const shown = (n) => Math.min(PAGE, n);
+
+test('page: one closed panel per exam, ten questions at a time; only the hub’s own data is fetched', async () => {
   const { requests, $, doc } = await loadPage();
-  assert.deepEqual(requests.sort(), ['data/acronyms.json', 'data/ports.json', 'data/study.json']);
+  assert.deepEqual(requests.sort(), ['data/acronyms.json', 'data/ports.json', 'data/study.json', ...DATA.exams.map((e) => e.file)].sort());
   const panels = doc.querySelectorAll('details.exam');
-  assert.deepEqual(panels.map((p) => p.id), DATA.exams.map((e) => `exam-${e.id}`));
+  assert.deepEqual(panels.map((p) => p.id), [...DATA.exams.map((e) => `exam-${e.id}`), 'ports-practice', 'acronyms-practice']);
   assert.ok(panels.every((p) => !p.hasAttribute('open')), 'closed until picked');
-  assert.equal(panels[0].querySelector('summary').textContent, 'Security+3 questions');
-  assert.equal(panels[0].querySelectorAll('li.qa-card').length, DATA.exams[0].questions.length);
+  assert.equal(panels[0].querySelector('summary').textContent, `Security+${FIRST.length} questions`);
+  assert.equal(panels[0].querySelectorAll('li.qa-card').length, shown(FIRST.length));
+  assert.equal(panels[0].querySelector('.qa-range').textContent, `Questions 1–${shown(FIRST.length)} of ${FIRST.length}`);
   assert.equal($('study-note').textContent, DATA.note);
 });
 
@@ -91,31 +109,78 @@ test('page: clicking an answer grades it, marks the right one, locks the card an
   const { doc } = await loadPage();
   const panel = doc.querySelector('details.exam');
   const [first, second] = panel.querySelectorAll('li.qa-card');
-  const q1 = DATA.exams[0].questions[0];
+  const q1 = FIRST[0];
   const wrongIndex = (q1.answer + 1) % OPTIONS;
-  const buttons = first.querySelectorAll('button');
+  const buttons = first.querySelectorAll('.qa-options button');
   assert.equal(buttons[0].textContent, `A. ${q1.options[0]}`);
   buttons[wrongIndex].click();
   assert.ok(first.querySelector('.qa-result').textContent.startsWith('Not quite. The answer is '));
   assert.ok(buttons.every((b) => b.disabled));
   assert.ok(buttons[q1.answer].textContent.startsWith('✔ '));
   for (const b of buttons) b.click(); // locked: no second count
-  const score = () => panel.querySelectorAll('p.hint').at(-1).textContent;
-  assert.match(score(), /^0 of 1 correct so far\. Your score is not saved anywhere\.$/);
-  const q2 = DATA.exams[0].questions[1];
-  second.querySelectorAll('button')[q2.answer].click();
+  const score = () => panel.querySelector('.qa-score').textContent;
+  assert.equal(score(), `0 of 1 correct so far (of ${FIRST.length}). Your score is not saved anywhere.`);
+  const q2 = FIRST[1];
+  second.querySelectorAll('.qa-options button')[q2.answer].click();
   assert.ok(second.querySelector('.qa-result').textContent.startsWith('Correct. '));
   assert.match(score(), /^1 of 2 correct so far/);
 });
 
-test('page: #exam-<id> opens that exam', async () => {
+test('page: Next and Previous page through the bank; an answered card stays locked when it comes back', async () => {
+  const { doc } = await loadPage();
+  const panel = doc.querySelector('details.exam');
+  const pager = panel.querySelector('.qa-pager');
+  const [prev, next, shuffle] = pager.querySelectorAll('button');
+  assert.equal(prev.textContent, `← Previous ${PAGE}`);
+  assert.equal(next.textContent, `Next ${PAGE} →`);
+  assert.equal(shuffle.textContent, 'Shuffle');
+  assert.equal(prev.disabled, true, 'nothing before page 1');
+  const pages = Math.ceil(FIRST.length / PAGE);
+  assert.equal(next.disabled, pages === 1);
+  const q1 = FIRST[0];
+  panel.querySelector('li.qa-card .qa-options button').click();
+  if (pages > 1) {
+    next.click();
+    const cards = panel.querySelectorAll('li.qa-card');
+    assert.equal(cards[0].querySelector('.qa-q').textContent, FIRST[PAGE].q);
+    assert.equal(panel.querySelector('.qa-range').textContent, `Questions ${PAGE + 1}–${Math.min(2 * PAGE, FIRST.length)} of ${FIRST.length}`);
+    assert.equal(panel.querySelector('ol.qa-list').getAttribute('start'), String(PAGE + 1));
+    assert.equal(prev.disabled, false);
+    prev.click();
+  }
+  const back = panel.querySelector('li.qa-card');
+  assert.equal(back.querySelector('.qa-q').textContent, q1.q);
+  assert.ok(back.querySelectorAll('.qa-options button').every((b) => b.disabled), 'still locked');
+  assert.ok(back.querySelector('.qa-result').textContent.length > 10, 'still graded');
+  assert.match(panel.querySelector('.qa-score').textContent, /^\d of 1 correct so far/);
+});
+
+test('page: Shuffle reorders and goes back to the first page, keeping the same questions', async () => {
+  const { doc } = await loadPage();
+  const panel = doc.querySelector('details.exam');
+  const [, , shuffle] = panel.querySelector('.qa-pager').querySelectorAll('button');
+  const texts = () => panel.querySelectorAll('li.qa-card .qa-q').map((p) => p.textContent);
+  const all = new Set(FIRST.map((q) => q.q));
+  shuffle.click();
+  assert.equal(panel.querySelectorAll('li.qa-card').length, shown(FIRST.length));
+  assert.ok(texts().every((t) => all.has(t)));
+  assert.equal(panel.querySelector('ol.qa-list').getAttribute('start'), '1');
+});
+
+test('page: #exam-<id> opens that exam, and the quizzes’ old addresses open their panels', async () => {
   const { $ } = await loadPage('https://jamalrizki.github.io/Security-lookup-hub/study.html#exam-pentest-plus');
   assert.ok($('exam-pentest-plus').hasAttribute('open'));
   assert.ok(!$('exam-security-plus').hasAttribute('open'));
+  dom.restore();
+  const page = await loadPage('https://jamalrizki.github.io/Security-lookup-hub/study.html#ports-practice');
+  assert.ok(page.$('ports-practice').hasAttribute('open'));
+  assert.ok(!page.$('acronyms-practice').hasAttribute('open'));
 });
 
-test('page: both quizzes run here, and "Show in the list" goes to the Reference lookup', async () => {
+test('page: both quizzes run in their panels, and "Show in the list" goes to the Reference lookup', async () => {
   const { $, doc } = await loadPage();
+  assert.equal($('ports-practice').tagName, 'DETAILS');
+  assert.equal($('acronyms-practice').tagName, 'DETAILS');
   assert.ok($('pdrill-question').textContent.length > 5, 'ports quiz asked a question');
   assert.equal($('adrill-options').querySelectorAll('button').length, 4, 'acronyms quiz shows options');
   $('pdrill-show').click();
@@ -123,6 +188,18 @@ test('page: both quizzes run here, and "Show in the list" goes to the Reference 
   const [ports, acronyms] = doc.navigations.map((n) => n.href);
   assert.match(ports, /^\.\/reference\.html#ports=\d{1,5}$/);
   assert.match(acronyms, /^\.\/reference\.html#acronyms=[A-Za-z0-9%&/.+-]{1,60}$/);
+});
+
+test('page: an exam whose file fails still leaves the other panels working', async () => {
+  dom = installDom(read('study.html'), { url: 'https://jamalrizki.github.io/Security-lookup-hub/study.html' });
+  globalThis.fetch = async (input) => (String(input) === DATA.exams[1].file ? new Response('nope', { status: 500 }) : new Response(read(String(input))));
+  await import(`../js/study.js?page=${++loads}`);
+  await settle();
+  await settle();
+  const doc = dom.document;
+  assert.equal(doc.getElementById('exam-network-plus'), null);
+  assert.match(doc.getElementById('study-exams').querySelector('.notice.warn').textContent, /^Could not load the Network\+ questions: HTTP 500$/);
+  assert.equal(doc.getElementById('exam-security-plus').querySelectorAll('li.qa-card').length, shown(FIRST.length));
 });
 
 test('study.html: in the nav, same-origin only, no storage; Reference forwards the quizzes’ old addresses', () => {
@@ -133,7 +210,7 @@ test('study.html: in the nav, same-origin only, no storage; Reference forwards t
   const js = read('js/study.js');
   assert.ok(!/innerHTML|localStorage|sessionStorage/.test(js));
   assert.match(read('js/reference.js'), /location\.hash === '#ports-practice' \|\| location\.hash === '#acronyms-practice'\) location\.replace\(`\.\/study\.html\$\{location\.hash\}`\)/);
-  for (const id of ['exams', 'ports-practice', 'acronyms-practice']) assert.ok(html.includes(`id="${id}"`), id);
+  for (const id of ['exams', 'quizzes', 'ports-practice', 'acronyms-practice']) assert.ok(html.includes(`id="${id}"`), id);
 });
 
 test('validTask rejects wrong shapes', () => {
@@ -144,15 +221,20 @@ test('validTask rejects wrong shapes', () => {
 
 test('page: the RHCSA panel shows tasks with hidden answers, revealed on request', async () => {
   const { $ } = await loadPage();
+  const rhcsa = DATA.exams.find((e) => e.id === 'rhcsa');
+  const tasks = bank(rhcsa);
   const panel = $('exam-rhcsa');
-  assert.match(panel.querySelector('summary').textContent, /^RHCSA3 tasks$/);
+  assert.equal(panel.querySelector('summary').textContent, `RHCSA${tasks.length} tasks`);
+  assert.equal(panel.querySelector('.qa-range').textContent, `Tasks 1–${shown(tasks.length)} of ${tasks.length}`);
+  assert.equal(panel.querySelector('.qa-score'), null, 'tasks are not graded');
   const card = panel.querySelector('li.qa-card');
+  assert.equal(card.querySelector('.qa-q').textContent, tasks[0].task);
   const answer = card.querySelector('.qa-answer');
   assert.equal(answer.hidden, true, 'answer hidden until asked for');
   const show = card.querySelector('button');
   show.click();
   assert.equal(answer.hidden, false);
-  assert.match(answer.textContent, /mkfs\.xfs \/dev\/vdb1/);
-  assert.match(answer.textContent, /Check: findmnt \/data/);
+  assert.ok(answer.textContent.includes(tasks[0].steps[0]));
+  assert.ok(answer.textContent.includes(`Check: ${tasks[0].check}`));
   assert.equal(show.textContent, 'Hide answer');
 });

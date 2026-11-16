@@ -7,6 +7,8 @@ import { startAcronymsDrill } from './acronyms-drill.js';
 
 export const OPTIONS = 4;
 const LETTERS = ['A', 'B', 'C', 'D'];
+/** Questions or tasks shown at a time. */
+export const PAGE = 10;
 
 /** True for a question the page can show: text, 4 options, an answer index and a reason. */
 export function validQuestion(q) {
@@ -22,6 +24,16 @@ export function validTask(t) {
   return Boolean(t) && typeof t.task === 'string' && t.task.trim() !== ''
     && Array.isArray(t.steps) && t.steps.length > 0 && t.steps.every((x) => typeof x === 'string' && x.trim() !== '')
     && typeof t.check === 'string' && t.check.trim() !== '';
+}
+
+/** A shuffled copy (Fisher–Yates); `random` is swappable for tests. */
+export function shuffled(list, random = Math.random) {
+  const out = list.slice();
+  for (let i = out.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
 }
 
 /** Grades one pick: { correct, text }, or null if the pick isn't one of the options. */
@@ -46,20 +58,26 @@ if (globalThis.document?.getElementById('study-exams')) {
   };
 
   // One card: the question, four options to click, then the answer and why.
-  const card = (q, onFirstPick) => {
+  // `picked` is an earlier pick of this question (from another page visit), shown locked.
+  const card = (q, picked, onFirstPick) => {
     const result = el('p', { class: 'qa-result', 'aria-live': 'polite' });
+    const lock = (i) => {
+      const r = checkPick(q, i);
+      for (const other of buttons) other.disabled = true;
+      buttons[q.answer].textContent = `✔ ${LETTERS[q.answer]}. ${q.options[q.answer]}`;
+      result.textContent = r.text;
+      result.className = `qa-result verdict ${r.correct ? 'ok' : 'warn'}`;
+      return r;
+    };
     const buttons = q.options.map((text, i) => {
       const b = el('button', { type: 'button', class: 'secondary' }, `${LETTERS[i]}. ${text}`);
       b.addEventListener('click', () => {
-        const r = checkPick(q, i);
-        for (const other of buttons) other.disabled = true;
-        buttons[q.answer].textContent = `✔ ${LETTERS[q.answer]}. ${q.options[q.answer]}`;
-        result.textContent = r.text;
-        result.className = `qa-result verdict ${r.correct ? 'ok' : 'warn'}`;
-        onFirstPick(r.correct);
+        if (b.disabled) return;
+        onFirstPick(i, lock(i).correct);
       });
       return b;
     });
+    if (picked !== undefined) lock(picked);
     return el('li', { class: 'qa-card' }, el('p', { class: 'qa-q' }, q.q), el('div', { class: 'qa-options' }, ...buttons), result);
   };
 
@@ -76,37 +94,66 @@ if (globalThis.document?.getElementById('study-exams')) {
     return el('li', { class: 'qa-card' }, el('p', { class: 'qa-q' }, t.task), el('div', {}, show), answer);
   };
 
-  const taskPanel = (exam) => {
-    const tasks = exam.questions.filter(validTask);
-    return el('details', { class: 'exam', id: `exam-${exam.id}` },
-      el('summary', {}, el('span', { class: 'exam-name' }, exam.name), el('span', { class: 'exam-count' }, `${tasks.length} task${tasks.length === 1 ? '' : 's'}`)),
-      el('div', { class: 'exam-body' },
-        el('p', { class: 'hint' }, exam.about),
-        el('ol', { class: 'qa-list' }, ...tasks.map(taskCard))));
-  };
-
-  // One accordion panel per exam.
-  const panel = (exam) => {
-    if (exam.format === 'tasks') return taskPanel(exam);
-    const questions = exam.questions.filter(validQuestion);
+  // One accordion panel per exam, showing PAGE items at a time. Picks are kept per
+  // question, so paging back shows answered cards still locked and the score counts once.
+  const panel = (exam, items) => {
+    const tasks = exam.format === 'tasks';
+    const all = items.filter(tasks ? validTask : validQuestion);
+    let order = all.map((_, i) => i);
+    let page = 0;
     let right = 0;
-    let answered = 0;
-    const score = el('p', { class: 'hint', 'aria-live': 'polite' });
-    const count = `${questions.length} question${questions.length === 1 ? '' : 's'}`;
+    const picks = new Map();
+    const list = el('ol', { class: 'qa-list' });
+    const range = el('span', { class: 'qa-range', 'aria-live': 'polite' });
+    const prev = el('button', { type: 'button', class: 'secondary small' }, `← Previous ${PAGE}`);
+    const next = el('button', { type: 'button', class: 'secondary small' }, `Next ${PAGE} →`);
+    const shuffle = el('button', { type: 'button', class: 'secondary small' }, 'Shuffle');
+    const score = el('p', { class: 'hint qa-score', 'aria-live': 'polite' });
+    const pages = () => Math.max(1, Math.ceil(order.length / PAGE));
+
+    const showScore = () => {
+      score.textContent = picks.size ? `${right} of ${picks.size} correct so far (of ${all.length}). Your score is not saved anywhere.` : '';
+    };
+    const render = () => {
+      const from = page * PAGE;
+      const shown = order.slice(from, from + PAGE);
+      list.setAttribute('start', String(from + 1));
+      list.replaceChildren(...shown.map((i) => (tasks ? taskCard(all[i]) : card(all[i], picks.get(i), (pick, correct) => {
+        picks.set(i, pick);
+        if (correct) right += 1;
+        showScore();
+      }))));
+      range.textContent = all.length ? `${tasks ? 'Tasks' : 'Questions'} ${from + 1}–${from + shown.length} of ${all.length}` : '';
+      prev.disabled = page === 0;
+      next.disabled = page >= pages() - 1;
+    };
+    const go = (to, scroll) => {
+      page = Math.min(Math.max(0, to), pages() - 1);
+      render();
+      if (scroll) list.scrollIntoView?.({ block: 'start' });
+    };
+    prev.addEventListener('click', () => go(page - 1, true));
+    next.addEventListener('click', () => go(page + 1, true));
+    shuffle.addEventListener('click', () => {
+      order = shuffled(order);
+      go(0, true);
+    });
+    render();
+
+    const noun = tasks ? 'task' : 'question';
+    const count = `${all.length} ${noun}${all.length === 1 ? '' : 's'}`;
+    const pager = () => el('div', { class: 'qa-pager' }, prev, range, next, shuffle);
     return el('details', { class: 'exam', id: `exam-${exam.id}` },
       el('summary', {}, el('span', { class: 'exam-name' }, exam.name), el('span', { class: 'exam-count' }, count)),
       el('div', { class: 'exam-body' },
         el('p', { class: 'hint' }, exam.about),
-        el('ol', { class: 'qa-list' }, ...questions.map((q) => card(q, (correct) => {
-          answered += 1;
-          if (correct) right += 1;
-          score.textContent = `${right} of ${answered} correct so far. Your score is not saved anywhere.`;
-        }))),
-        score));
+        pager(),
+        list,
+        tasks ? null : score));
   };
 
   const openFromHash = () => {
-    const target = /^#exam-[a-z-]+$/.test(location.hash) ? $(location.hash.slice(1)) : null;
+    const target = /^#(exam-[a-z-]+|ports-practice|acronyms-practice)$/.test(location.hash) ? $(location.hash.slice(1)) : null;
     if (!target) return;
     target.setAttribute('open', '');
     target.scrollIntoView();
@@ -118,9 +165,15 @@ if (globalThis.document?.getElementById('study-exams')) {
     return res.json();
   };
 
-  load('data/study.json').then((data) => {
+  // The exam list, then every exam's own question file. An exam whose file fails
+  // to load still gets a panel, saying so, so the others keep working.
+  load('data/study.json').then(async (data) => {
     $('study-note').textContent = data.note || '';
-    $('study-exams').replaceChildren(...(data.exams || []).map(panel));
+    const exams = (data.exams || []).filter((e) => /^data\/study\/[a-z-]+\.json$/.test(e.file || ''));
+    const files = await Promise.all(exams.map((e) => load(e.file).then((f) => f.questions || [], (err) => err)));
+    $('study-exams').replaceChildren(...exams.map((exam, n) => (files[n] instanceof Error
+      ? el('p', { class: 'notice warn' }, `Could not load the ${exam.name} questions: ${files[n].message}`)
+      : panel(exam, files[n]))));
     openFromHash();
     window.addEventListener('hashchange', openFromHash);
   }).catch((err) => {

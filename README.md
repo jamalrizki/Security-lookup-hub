@@ -50,7 +50,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | Reference: "Windows event IDs" (`#events`): 39 Windows Security log events (Microsoft's titles, a plain sentence, why it matters, a Microsoft Learn link), the nine logon types and 12 failure status codes for 4625; searched in code; `[[events]]` for Ask | Built (Nov 15, 2026), not deployed |
 | Extra | Ask points to the scam message check: the screenshot rule now also covers a pasted or described email or text and links [[message]] (+65 prompt characters); beginner eval q21 (a pasted delivery text) must link it | Built (Nov 5, 2026), needs a Worker deploy |
 | Extra | Reference: "Acronyms practice" (`#acronyms-practice`, under the acronym list): multiple-choice questions (what an acronym stands for, or which acronym a plain sentence describes) built from `data/acronyms.json` and graded in code | Built (Nov 6, 2026) |
-| Extra | **Study** tab (`study.html`): practice questions by exam in an accordion (Security+, Network+, CySA+, PenTest+ and general Linux, multiple choice graded in code; RHCSA as hands-on task cards), with the ports and acronyms quizzes moved here from Reference; old `reference.html#ports-practice` and `#acronyms-practice` links are forwarded | Built (Nov 15, 2026) |
+| Extra | **Study** tab (`study.html`): practice questions by exam in an accordion (Security+, Network+, CySA+, PenTest+ and general Linux, multiple choice graded in code; RHCSA as hands-on task cards), ten at a time with Previous / Next / Shuffle; the banks are written from the library's study guides and practice-test books by `rag/make_questions.mjs`; the ports and acronyms quizzes are accordion panels here too (old `reference.html#ports-practice` and `#acronyms-practice` links are forwarded) | Built (Nov 15, 2026) |
 
 **v4 checks that need the deployed Worker or a real device** (not testable offline): Whisper on Workers AI accepting each browser's recording (Safari's `audio/mp4`, Chrome's and Firefox's WebM/Ogg Opus) and spelling "What's the EPSS score for CVE 2021 44228 and is it in KEV?" correctly; the mic permission prompt on iPhone Safari, Mac Safari, Chrome and Firefox; a real screenshot question to Claude; whether Cloudflare fires `request.signal` when the browser stops a question (`enable_request_signal`); old `/#q=8.8.8.8` links landing on `lookup.html`; no sideways scrolling on a real phone after a hard refresh. The image route also parses up to 2.5 MB of JSON, so watch for CPU-limit errors on the Free plan's per-request CPU budget on the first image questions.
 
@@ -605,7 +605,7 @@ js/voice.js      Ask's voice input: recording, POST /api/transcribe, text insert
 js/ask.js        Ask page: chat layout, Stop and elapsed time, pre-send check, indicator-only offer, #ask= fill, thread, hub/look-up/sources/trace under each answer
 js/render-answer.js   safe Markdown subset -> DOM nodes (text nodes only)
 js/reference.js  Reference page rendering
-js/study.js      Study page: exam question accordion (data/study.json), and wiring for the ports and acronyms quizzes
+js/study.js      Study page: exam question accordion (data/study.json + data/study/*.json), paging, and wiring for the ports and acronyms quizzes
 js/exposure.js   My exposure page rendering (data/exposure.json)
 js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in Node)
 js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
@@ -628,7 +628,7 @@ data/what-now.json    "Already happened? What to do now" checklists
 data/scam-signs.json  scam signs and tactic groups for the Analyze message check (patterns matched in code)
 data/ports.json       common ports and protocols for the Reference page
 data/acronyms.json    security acronyms for the Reference page
-data/study.json       Study page practice questions by exam
+data/study.json       Study page exam list; data/study/<exam>.json hold the questions (written by rag/make_questions.mjs)
 data/events.json      Windows Security log event IDs, logon types and 4625 status codes for the Reference page
 data/exposure.json    My exposure sections: why, steps, outside links (fixed text)
 data/actors.json      generated threat-actor extract (do not edit by hand)
