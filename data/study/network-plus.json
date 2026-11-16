@@ -1,39 +1,6 @@
 {
  "questions": [
   {
-   "q": "Why do many employers consider the Network+ certification valuable when hiring IT staff?",
-   "options": [
-    "It guarantees the employee can design and manage data centers.",
-    "It is a mandatory credential for every IT position.",
-    "It proves the candidate has deep knowledge of a single vendor's products.",
-    "It demonstrates a vendor‑independent baseline of networking knowledge."
-   ],
-   "answer": 3,
-   "why": "The passage states Network+ is vendor‑independent and recognized as a baseline of networking information, which is why employers value it."
-  },
-  {
-   "q": "What is the most direct career benefit mentioned for earning the Network+ certification?",
-   "options": [
-    "Higher salary, greater responsibility, and more advancement opportunities.",
-    "Free access to networking hardware.",
-    "Elimination of all future training requirements.",
-    "Automatic promotion to a managerial role."
-   ],
-   "answer": 0,
-   "why": "The text links certification to advancement, prestige, and a fatter paycheck, indicating higher earnings and career growth."
-  },
-  {
-   "q": "Which statement about scheduling the Network+ exam is correct?",
-   "options": [
-    "Exam fees are identical worldwide, regardless of CompTIA membership.",
-    "Candidates must book the exam at least 12 weeks in advance.",
-    "Exams are only offered on the first Monday of each month.",
-    "Pearson VUE is the exclusive provider of the Network+ exam."
-   ],
-   "answer": 3,
-   "why": "The passage notes that Pearson VUE is the sole Network+ exam provider."
-  },
-  {
    "q": "Which of the following actions would actually reduce the security posture of a network device rather than harden it?",
    "options": [
     "Disabling services that are not required",
@@ -78,28 +45,6 @@
    "why": "The mail server is dedicated to managing email functions, sending and receiving messages for the network."
   },
   {
-   "q": "An organization plans to install a new server to host its internal web applications. Why is it generally better to assign this server to run only the web application service rather than multiple unrelated services?",
-   "options": [
-    "It simplifies the backup process for the server.",
-    "It reduces the number of software licenses required.",
-    "It concentrates resources on one task, improving overall performance.",
-    "It enables users to access the server remotely more easily."
-   ],
-   "answer": 2,
-   "why": "Dedicated servers focus CPU, memory, and storage on a single workload, which typically yields better performance than multitasking servers."
-  },
-  {
-   "q": "When comparing a typical client workstation to a server that supports dozens of users, which hardware attribute must be significantly more powerful in the server?",
-   "options": [
-    "CPU processing power",
-    "Screen resolution",
-    "Number of USB ports",
-    "Wireless antenna gain"
-   ],
-   "answer": 0,
-   "why": "Servers need considerably superior CPUs to handle the workload of many client requests, as stated in the passage."
-  },
-  {
    "q": "A company installs a dedicated wireless link between two bridge devices, each located on a different building, to allow the computers in those buildings to communicate. Which network topology best describes this link?",
    "options": [
     "Point‑to‑point",
@@ -109,17 +54,6 @@
    ],
    "answer": 0,
    "why": "A single dedicated connection between two endpoints is the definition of a point‑to‑point topology."
-  },
-  {
-   "q": "A corporate headquarters router is directly connected to routers at three remote branch offices, and all routers share the same network address space. What topology does this configuration represent?",
-   "options": [
-    "Star",
-    "Point‑to‑multipoint",
-    "Bus",
-    "Ring"
-   ],
-   "answer": 1,
-   "why": "One central router linked to multiple remote routers forms a point‑to‑multipoint topology, where one point connects to many points."
   },
   {
    "q": "In a campus network, a LAN switch is arranged physically in a star layout, while the data traffic on the cabling follows a bus‑style logical pattern. How is this network best described?",
@@ -142,17 +76,6 @@
    ],
    "answer": 1,
    "why": "The Application layer acts as the bridge between application software (or APIs) and the lower layers, allowing programs to transmit data over the network."
-  },
-  {
-   "q": "A user opens a saved HTML file in a web browser while the computer is completely disconnected from any network. Which OSI layer is NOT engaged during this operation?",
-   "options": [
-    "Network layer",
-    "Data Link layer",
-    "Application layer",
-    "Transport layer"
-   ],
-   "answer": 2,
-   "why": "The passage states the Application layer is only invoked when network access is needed; viewing a local file does not involve the Application layer."
   },
   {
    "q": "Which activity is most likely performed by the Application layer during an FTP session?",
@@ -208,28 +131,6 @@
    ],
    "answer": 1,
    "why": "RJ‑45 is the standard connector for short‑distance LANs (up to ~100 m) and uses unshielded twisted‑pair, whereas RJ‑48c is used for long‑distance T1 WAN links."
-  },
-  {
-   "q": "During a Gigabit Ethernet installation a technician only tests two of the four twisted‑pair groups. What is the most likely outcome for the link?",
-   "options": [
-    "The link will fail due to a connector mismatch.",
-    "The link will negotiate at 1 Gbps.",
-    "The link will be limited to 100 Mbps.",
-    "The link will operate with higher latency but full speed."
-   ],
-   "answer": 2,
-   "why": "Gigabit Ethernet over UTP requires all four pairs; using only two pairs prevents the link from reaching 1 Gbps, so it falls back to 100 Mbps."
-  },
-  {
-   "q": "A network designer must choose fiber for a 5‑km run while keeping costs low. Which core material is the appropriate choice?",
-   "options": [
-    "Copper cable",
-    "Coaxial cable",
-    "Glass (silica) fiber",
-    "Plastic optical fiber (POF)"
-   ],
-   "answer": 2,
-   "why": "Glass (silica) fiber can transmit light over many kilometers, whereas plastic fiber is cheaper but limited to much shorter distances."
   },
   {
    "q": "A technician is testing a newly installed Ethernet cable that will connect two switches. Which statement best describes what a basic cable tester can determine about this cable?",
@@ -549,17 +450,6 @@
    ],
    "answer": 3,
    "why": "The Physical layer encodes the logical 1s and 0s of the frame into a physical signal that can be transmitted over the medium."
-  },
-  {
-   "q": "During de‑encapsulation, once the receiving device’s CRC check (FCS) matches, what is the immediate next action?",
-   "options": [
-    "The frame is discarded and the contained packet is passed to the Network layer",
-    "The device sends an acknowledgment back to the sender",
-    "The device forwards the frame to a router for further routing",
-    "The device re‑encapsulates the data into a new frame for the next hop"
-   ],
-   "answer": 0,
-   "why": "A successful CRC check means the frame is valid; the frame is stripped away and the packet inside is handed up to the Network layer."
   },
   {
    "q": "Which of the following IP addresses is a Class B address?",
@@ -1825,6 +1715,3493 @@
    ],
    "answer": 1,
    "why": "A layer 3 (multilayer) switch forwards frames by MAC and also routes between VLANs by IP."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 10.0.6.104/30?",
+   "options": [
+    "10.0.6.104",
+    "10.0.6.108",
+    "10.0.6.107",
+    "10.0.6.96"
+   ],
+   "answer": 0,
+   "why": "A /30 has a block size of 4 in the last octet, so subnets start at multiples of 4. 10.0.6.104 falls in the block that starts at 10.0.6.104."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 172.16.62.178/30?",
+   "options": [
+    "172.16.62.179",
+    "172.16.62.176",
+    "172.16.62.180",
+    "172.16.62.168"
+   ],
+   "answer": 1,
+   "why": "A /30 has a block size of 4 in the last octet, so subnets start at multiples of 4. 172.16.62.178 falls in the block that starts at 172.16.62.176."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 10.0.188.138/26?",
+   "options": [
+    "10.0.188.128",
+    "10.0.188.191",
+    "10.0.188.192",
+    "10.0.188.0"
+   ],
+   "answer": 0,
+   "why": "A /26 has a block size of 64 in the last octet, so subnets start at multiples of 64. 10.0.188.138 falls in the block that starts at 10.0.188.128."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 192.168.189.157/25?",
+   "options": [
+    "192.168.189.0",
+    "192.168.190.0",
+    "192.168.189.255",
+    "192.168.189.128"
+   ],
+   "answer": 3,
+   "why": "A /25 has a block size of 128 in the last octet, so subnets start at multiples of 128. 192.168.189.157 falls in the block that starts at 192.168.189.128."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 10.0.151.43/29?",
+   "options": [
+    "10.0.151.32",
+    "10.0.151.48",
+    "10.0.151.40",
+    "10.0.151.47"
+   ],
+   "answer": 2,
+   "why": "A /29 has a block size of 8 in the last octet, so subnets start at multiples of 8. 10.0.151.43 falls in the block that starts at 10.0.151.40."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 10.0.7.161/28?",
+   "options": [
+    "10.0.7.175",
+    "10.0.7.176",
+    "10.0.7.160",
+    "10.0.7.128"
+   ],
+   "answer": 2,
+   "why": "A /28 has a block size of 16 in the last octet, so subnets start at multiples of 16. 10.0.7.161 falls in the block that starts at 10.0.7.160."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 10.0.59.144/25?",
+   "options": [
+    "10.0.59.0",
+    "10.0.59.128",
+    "10.0.60.0",
+    "10.0.59.255"
+   ],
+   "answer": 1,
+   "why": "A /25 has a block size of 128 in the last octet, so subnets start at multiples of 128. 10.0.59.144 falls in the block that starts at 10.0.59.128."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 192.168.6.204/29?",
+   "options": [
+    "192.168.6.207",
+    "192.168.6.200",
+    "192.168.6.208",
+    "192.168.6.192"
+   ],
+   "answer": 1,
+   "why": "A /29 has a block size of 8 in the last octet, so subnets start at multiples of 8. 192.168.6.204 falls in the block that starts at 192.168.6.200."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 10.0.183.78/29?",
+   "options": [
+    "10.0.183.72",
+    "10.0.183.64",
+    "10.0.183.80",
+    "10.0.183.79"
+   ],
+   "answer": 0,
+   "why": "A /29 has a block size of 8 in the last octet, so subnets start at multiples of 8. 10.0.183.78 falls in the block that starts at 10.0.183.72."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 192.168.139.130/30?",
+   "options": [
+    "192.168.139.132",
+    "192.168.139.128",
+    "192.168.139.120",
+    "192.168.139.131"
+   ],
+   "answer": 1,
+   "why": "A /30 has a block size of 4 in the last octet, so subnets start at multiples of 4. 192.168.139.130 falls in the block that starts at 192.168.139.128."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 10.0.115.0/28?",
+   "options": [
+    "10.0.115.15",
+    "10.0.115.0",
+    "10.0.115.16",
+    "10.0.114.224"
+   ],
+   "answer": 1,
+   "why": "A /28 has a block size of 16 in the last octet, so subnets start at multiples of 16. 10.0.115.0 falls in the block that starts at 10.0.115.0."
+  },
+  {
+   "q": "What is the network (subnet) address of the host 172.16.207.55/29?",
+   "options": [
+    "172.16.207.55",
+    "172.16.207.48",
+    "172.16.207.56",
+    "172.16.207.32"
+   ],
+   "answer": 1,
+   "why": "A /29 has a block size of 8 in the last octet, so subnets start at multiples of 8. 172.16.207.55 falls in the block that starts at 172.16.207.48."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.194.66/26?",
+   "options": [
+    "192.168.194.64",
+    "192.168.194.191",
+    "192.168.194.127",
+    "192.168.194.126"
+   ],
+   "answer": 2,
+   "why": "The /26 block containing 192.168.194.66 runs from 192.168.194.64 to 192.168.194.127; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.178.186/27?",
+   "options": [
+    "192.168.178.223",
+    "192.168.178.190",
+    "192.168.178.160",
+    "192.168.178.191"
+   ],
+   "answer": 3,
+   "why": "The /27 block containing 192.168.178.186 runs from 192.168.178.160 to 192.168.178.191; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.87.27/29?",
+   "options": [
+    "192.168.87.30",
+    "192.168.87.39",
+    "192.168.87.24",
+    "192.168.87.31"
+   ],
+   "answer": 3,
+   "why": "The /29 block containing 192.168.87.27 runs from 192.168.87.24 to 192.168.87.31; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.39.206/28?",
+   "options": [
+    "192.168.39.206",
+    "192.168.39.223",
+    "192.168.39.192",
+    "192.168.39.207"
+   ],
+   "answer": 3,
+   "why": "The /28 block containing 192.168.39.206 runs from 192.168.39.192 to 192.168.39.207; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.245.12/27?",
+   "options": [
+    "192.168.245.63",
+    "192.168.245.0",
+    "192.168.245.30",
+    "192.168.245.31"
+   ],
+   "answer": 3,
+   "why": "The /27 block containing 192.168.245.12 runs from 192.168.245.0 to 192.168.245.31; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.26.43/28?",
+   "options": [
+    "192.168.26.46",
+    "192.168.26.32",
+    "192.168.26.63",
+    "192.168.26.47"
+   ],
+   "answer": 3,
+   "why": "The /28 block containing 192.168.26.43 runs from 192.168.26.32 to 192.168.26.47; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.97.67/26?",
+   "options": [
+    "192.168.97.191",
+    "192.168.97.127",
+    "192.168.97.126",
+    "192.168.97.64"
+   ],
+   "answer": 1,
+   "why": "The /26 block containing 192.168.97.67 runs from 192.168.97.64 to 192.168.97.127; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.91.231/26?",
+   "options": [
+    "192.168.91.255",
+    "192.168.91.254",
+    "192.168.92.63",
+    "192.168.91.192"
+   ],
+   "answer": 0,
+   "why": "The /26 block containing 192.168.91.231 runs from 192.168.91.192 to 192.168.91.255; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.154.142/28?",
+   "options": [
+    "192.168.154.143",
+    "192.168.154.128",
+    "192.168.154.159",
+    "192.168.154.142"
+   ],
+   "answer": 0,
+   "why": "The /28 block containing 192.168.154.142 runs from 192.168.154.128 to 192.168.154.143; the last address is the broadcast."
+  },
+  {
+   "q": "What is the broadcast address of the subnet containing 192.168.206.160/28?",
+   "options": [
+    "192.168.206.160",
+    "192.168.206.191",
+    "192.168.206.175",
+    "192.168.206.174"
+   ],
+   "answer": 2,
+   "why": "The /28 block containing 192.168.206.160 runs from 192.168.206.160 to 192.168.206.175; the last address is the broadcast."
+  },
+  {
+   "q": "How many usable host addresses does a /22 subnet provide?",
+   "options": [
+    "510",
+    "1,022",
+    "1,024",
+    "2,046"
+   ],
+   "answer": 1,
+   "why": "A /22 leaves 10 host bits: 2^10 = 1,024 addresses, minus the network and broadcast addresses, gives 1,022."
+  },
+  {
+   "q": "How many usable host addresses does a /23 subnet provide?",
+   "options": [
+    "512",
+    "1,022",
+    "254",
+    "510"
+   ],
+   "answer": 3,
+   "why": "A /23 leaves 9 host bits: 2^9 = 512 addresses, minus the network and broadcast addresses, gives 510."
+  },
+  {
+   "q": "How many usable host addresses does a /24 subnet provide?",
+   "options": [
+    "126",
+    "256",
+    "510",
+    "254"
+   ],
+   "answer": 3,
+   "why": "A /24 leaves 8 host bits: 2^8 = 256 addresses, minus the network and broadcast addresses, gives 254."
+  },
+  {
+   "q": "How many usable host addresses does a /25 subnet provide?",
+   "options": [
+    "254",
+    "62",
+    "128",
+    "126"
+   ],
+   "answer": 3,
+   "why": "A /25 leaves 7 host bits: 2^7 = 128 addresses, minus the network and broadcast addresses, gives 126."
+  },
+  {
+   "q": "How many usable host addresses does a /26 subnet provide?",
+   "options": [
+    "62",
+    "64",
+    "30",
+    "126"
+   ],
+   "answer": 0,
+   "why": "A /26 leaves 6 host bits: 2^6 = 64 addresses, minus the network and broadcast addresses, gives 62."
+  },
+  {
+   "q": "How many usable host addresses does a /27 subnet provide?",
+   "options": [
+    "14",
+    "62",
+    "32",
+    "30"
+   ],
+   "answer": 3,
+   "why": "A /27 leaves 5 host bits: 2^5 = 32 addresses, minus the network and broadcast addresses, gives 30."
+  },
+  {
+   "q": "How many usable host addresses does a /28 subnet provide?",
+   "options": [
+    "16",
+    "30",
+    "6",
+    "14"
+   ],
+   "answer": 3,
+   "why": "A /28 leaves 4 host bits: 2^4 = 16 addresses, minus the network and broadcast addresses, gives 14."
+  },
+  {
+   "q": "How many usable host addresses does a /29 subnet provide?",
+   "options": [
+    "8",
+    "14",
+    "2",
+    "6"
+   ],
+   "answer": 3,
+   "why": "A /29 leaves 3 host bits: 2^3 = 8 addresses, minus the network and broadcast addresses, gives 6."
+  },
+  {
+   "q": "How many usable host addresses does a /30 subnet provide?",
+   "options": [
+    "6",
+    "1",
+    "2",
+    "4"
+   ],
+   "answer": 2,
+   "why": "A /30 leaves 2 host bits: 2^2 = 4 addresses, minus the network and broadcast addresses, gives 2."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /19?",
+   "options": [
+    "255.255.192.0",
+    "255.255.248.0",
+    "255.255.240.0",
+    "255.255.224.0"
+   ],
+   "answer": 3,
+   "why": "/19 means 19 one-bits in the mask, which is 255.255.224.0."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /20?",
+   "options": [
+    "255.255.240.0",
+    "255.255.224.0",
+    "255.255.248.0",
+    "255.255.252.0"
+   ],
+   "answer": 0,
+   "why": "/20 means 20 one-bits in the mask, which is 255.255.240.0."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /21?",
+   "options": [
+    "255.255.248.0",
+    "255.255.240.0",
+    "255.255.254.0",
+    "255.255.252.0"
+   ],
+   "answer": 0,
+   "why": "/21 means 21 one-bits in the mask, which is 255.255.248.0."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /22?",
+   "options": [
+    "255.255.255.0",
+    "255.255.254.0",
+    "255.255.252.0",
+    "255.255.248.0"
+   ],
+   "answer": 2,
+   "why": "/22 means 22 one-bits in the mask, which is 255.255.252.0."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /23?",
+   "options": [
+    "255.255.254.0",
+    "255.255.255.0",
+    "255.255.252.0",
+    "255.255.255.128"
+   ],
+   "answer": 0,
+   "why": "/23 means 23 one-bits in the mask, which is 255.255.254.0."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /25?",
+   "options": [
+    "255.255.255.0",
+    "255.255.255.192",
+    "255.255.255.224",
+    "255.255.255.128"
+   ],
+   "answer": 3,
+   "why": "/25 means 25 one-bits in the mask, which is 255.255.255.128."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /26?",
+   "options": [
+    "255.255.255.128",
+    "255.255.255.192",
+    "255.255.255.240",
+    "255.255.255.224"
+   ],
+   "answer": 1,
+   "why": "/26 means 26 one-bits in the mask, which is 255.255.255.192."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /27?",
+   "options": [
+    "255.255.255.240",
+    "255.255.255.224",
+    "255.255.255.248",
+    "255.255.255.192"
+   ],
+   "answer": 1,
+   "why": "/27 means 27 one-bits in the mask, which is 255.255.255.224."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /28?",
+   "options": [
+    "255.255.255.224",
+    "255.255.255.252",
+    "255.255.255.240",
+    "255.255.255.248"
+   ],
+   "answer": 2,
+   "why": "/28 means 28 one-bits in the mask, which is 255.255.255.240."
+  },
+  {
+   "q": "Which subnet mask is equivalent to /29?",
+   "options": [
+    "255.255.255.252",
+    "255.255.255.254",
+    "255.255.255.248",
+    "255.255.255.240"
+   ],
+   "answer": 2,
+   "why": "/29 means 29 one-bits in the mask, which is 255.255.255.248."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 5 usable host addresses?",
+   "options": [
+    "/30",
+    "/31",
+    "/28",
+    "/29"
+   ],
+   "answer": 3,
+   "why": "/29 gives 6 usable hosts; /30 gives only 2, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 12 usable host addresses?",
+   "options": [
+    "/30",
+    "/27",
+    "/29",
+    "/28"
+   ],
+   "answer": 3,
+   "why": "/28 gives 14 usable hosts; /29 gives only 6, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 25 usable host addresses?",
+   "options": [
+    "/29",
+    "/26",
+    "/27",
+    "/28"
+   ],
+   "answer": 2,
+   "why": "/27 gives 30 usable hosts; /28 gives only 14, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 50 usable host addresses?",
+   "options": [
+    "/27",
+    "/25",
+    "/28",
+    "/26"
+   ],
+   "answer": 3,
+   "why": "/26 gives 62 usable hosts; /27 gives only 30, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 60 usable host addresses?",
+   "options": [
+    "/27",
+    "/25",
+    "/28",
+    "/26"
+   ],
+   "answer": 3,
+   "why": "/26 gives 62 usable hosts; /27 gives only 30, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 100 usable host addresses?",
+   "options": [
+    "/27",
+    "/25",
+    "/26",
+    "/24"
+   ],
+   "answer": 1,
+   "why": "/25 gives 126 usable hosts; /26 gives only 62, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 120 usable host addresses?",
+   "options": [
+    "/26",
+    "/24",
+    "/27",
+    "/25"
+   ],
+   "answer": 3,
+   "why": "/25 gives 126 usable hosts; /26 gives only 62, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 200 usable host addresses?",
+   "options": [
+    "/23",
+    "/24",
+    "/25",
+    "/26"
+   ],
+   "answer": 1,
+   "why": "/24 gives 254 usable hosts; /25 gives only 126, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 500 usable host addresses?",
+   "options": [
+    "/25",
+    "/22",
+    "/23",
+    "/24"
+   ],
+   "answer": 2,
+   "why": "/23 gives 510 usable hosts; /24 gives only 254, which is too few."
+  },
+  {
+   "q": "What is the smallest subnet that provides at least 1000 usable host addresses?",
+   "options": [
+    "/23",
+    "/22",
+    "/21",
+    "/24"
+   ],
+   "answer": 1,
+   "why": "/22 gives 1022 usable hosts; /23 gives only 510, which is too few."
+  },
+  {
+   "q": "Which port does SSH use?",
+   "options": [
+    "21",
+    "25",
+    "22",
+    "23"
+   ],
+   "answer": 2,
+   "why": "SSH uses TCP 22. Telnet is 23, FTP control 21 and SMTP 25."
+  },
+  {
+   "q": "Which port does DNS use for standard queries?",
+   "options": [
+    "53",
+    "67",
+    "123",
+    "161"
+   ],
+   "answer": 0,
+   "why": "DNS uses port 53, UDP for most queries and TCP for zone transfers and large replies."
+  },
+  {
+   "q": "Which ports does DHCP use?",
+   "options": [
+    "TCP 80 and 443",
+    "UDP 161 and 162",
+    "TCP 20 and 21",
+    "UDP 67 and 68"
+   ],
+   "answer": 3,
+   "why": "The DHCP server listens on 67 and clients use 68."
+  },
+  {
+   "q": "Which port does RDP use?",
+   "options": [
+    "1433",
+    "5900",
+    "3306",
+    "3389"
+   ],
+   "answer": 3,
+   "why": "Remote Desktop Protocol listens on TCP 3389. 5900 is VNC and 3306 MySQL."
+  },
+  {
+   "q": "Which port does SNMP use for queries?",
+   "options": [
+    "TCP 389",
+    "UDP 514",
+    "UDP 161",
+    "UDP 162"
+   ],
+   "answer": 2,
+   "why": "Managers poll agents on 161; agents send traps to managers on 162."
+  },
+  {
+   "q": "Which port does syslog traditionally use?",
+   "options": [
+    "UDP 69",
+    "UDP 514",
+    "TCP 443",
+    "UDP 161"
+   ],
+   "answer": 1,
+   "why": "Syslog uses UDP 514; secure syslog over TLS commonly uses TCP 6514."
+  },
+  {
+   "q": "Which port does NTP use?",
+   "options": [
+    "UDP 53",
+    "UDP 137",
+    "TCP 110",
+    "UDP 123"
+   ],
+   "answer": 3,
+   "why": "Network Time Protocol uses UDP 123 to synchronise clocks."
+  },
+  {
+   "q": "Which port does SMB use directly over TCP?",
+   "options": [
+    "137",
+    "443",
+    "139",
+    "445"
+   ],
+   "answer": 3,
+   "why": "Modern SMB runs on TCP 445; 137–139 are the older NetBIOS ports."
+  },
+  {
+   "q": "Which port does LDAP use?",
+   "options": [
+    "636",
+    "389",
+    "88",
+    "53"
+   ],
+   "answer": 1,
+   "why": "LDAP uses 389; LDAPS uses 636 and Kerberos uses 88."
+  },
+  {
+   "q": "Which port does IMAP over TLS use?",
+   "options": [
+    "110",
+    "143",
+    "995",
+    "993"
+   ],
+   "answer": 3,
+   "why": "IMAP uses 143 and IMAPS 993. POP3 uses 110 and POP3S 995."
+  },
+  {
+   "q": "Which port does SMTP submission from mail clients usually use?",
+   "options": [
+    "143",
+    "587",
+    "25",
+    "110"
+   ],
+   "answer": 1,
+   "why": "Clients submit mail on 587 with STARTTLS; servers relay to each other on 25."
+  },
+  {
+   "q": "Which port does TFTP use?",
+   "options": [
+    "TCP 21",
+    "UDP 69",
+    "TCP 22",
+    "UDP 161"
+   ],
+   "answer": 1,
+   "why": "TFTP is a simple UDP file transfer with no authentication, often used for device images."
+  },
+  {
+   "q": "Which port does SQL Server use by default?",
+   "options": [
+    "1521",
+    "5432",
+    "3306",
+    "1433"
+   ],
+   "answer": 3,
+   "why": "Microsoft SQL Server uses 1433. MySQL is 3306, Oracle 1521 and PostgreSQL 5432."
+  },
+  {
+   "q": "Which traffic type sends a packet to every host on the local network?",
+   "options": [
+    "Unicast",
+    "Anycast",
+    "Broadcast",
+    "Multicast"
+   ],
+   "answer": 2,
+   "why": "Broadcasts reach all hosts in the broadcast domain, which is why too many can slow a network."
+  },
+  {
+   "q": "Which traffic type is sent to a group of interested receivers?",
+   "options": [
+    "Unicast",
+    "Multicast",
+    "Anycast",
+    "Broadcast"
+   ],
+   "answer": 1,
+   "why": "Multicast is efficient for streaming to many receivers who have joined the group."
+  },
+  {
+   "q": "Which IPv4 range is reserved for multicast?",
+   "options": [
+    "169.254.0.0 to 169.254.255.255",
+    "127.0.0.0 to 127.255.255.255",
+    "224.0.0.0 to 239.255.255.255",
+    "10.0.0.0 to 10.255.255.255"
+   ],
+   "answer": 2,
+   "why": "Class D, 224.0.0.0/4, is reserved for multicast groups."
+  },
+  {
+   "q": "What does an address in 169.254.0.0/16 on a Windows PC usually mean?",
+   "options": [
+    "It is on a VPN",
+    "It couldn't reach a DHCP server and assigned itself an APIPA address",
+    "It has a public address",
+    "It is using a static address"
+   ],
+   "answer": 1,
+   "why": "APIPA lets local communication continue, but the PC won't reach other networks."
+  },
+  {
+   "q": "Which IPv4 address is the loopback address?",
+   "options": [
+    "0.0.0.0",
+    "255.255.255.255",
+    "127.0.0.1",
+    "192.168.0.1"
+   ],
+   "answer": 2,
+   "why": "127.0.0.0/8 is loopback; traffic to it never leaves the host."
+  },
+  {
+   "q": "Which RFC 1918 range is a single class B-sized block of private addresses?",
+   "options": [
+    "10.0.0.0/8",
+    "192.168.0.0/16",
+    "172.16.0.0/12",
+    "100.64.0.0/10"
+   ],
+   "answer": 2,
+   "why": "172.16.0.0 to 172.31.255.255 is the /12 private range."
+  },
+  {
+   "q": "What is the 100.64.0.0/10 range used for?",
+   "options": [
+    "Loopback",
+    "Carrier-grade NAT shared address space",
+    "Documentation",
+    "Multicast"
+   ],
+   "answer": 1,
+   "why": "ISPs use it between their NAT devices and customers."
+  },
+  {
+   "q": "How long is an IPv6 address?",
+   "options": [
+    "48 bits",
+    "32 bits",
+    "128 bits",
+    "64 bits"
+   ],
+   "answer": 2,
+   "why": "IPv6 addresses are 128 bits, written as eight groups of four hex digits."
+  },
+  {
+   "q": "Which IPv6 address type begins with fe80::?",
+   "options": [
+    "Global unicast",
+    "Link-local",
+    "Unique local",
+    "Multicast"
+   ],
+   "answer": 1,
+   "why": "Link-local addresses are created automatically and only work on the local link."
+  },
+  {
+   "q": "Which is the IPv6 loopback address?",
+   "options": [
+    "::1",
+    "ff02::1",
+    "::",
+    "fe80::1"
+   ],
+   "answer": 0,
+   "why": "::1 is loopback; :: alone means unspecified."
+  },
+  {
+   "q": "What does SLAAC let an IPv6 host do?",
+   "options": [
+    "Use NAT",
+    "Configure its own address from the router's advertised prefix",
+    "Disable IPv6",
+    "Get an address from DHCPv4"
+   ],
+   "answer": 1,
+   "why": "Stateless address autoconfiguration needs no DHCP server for the address."
+  },
+  {
+   "q": "Which IPv6 addresses start with fc00::/7 (usually fd)?",
+   "options": [
+    "Unique local addresses",
+    "Global unicast",
+    "Link-local addresses",
+    "Multicast"
+   ],
+   "answer": 0,
+   "why": "ULAs are like private IPv4 ranges, routable inside an organisation but not on the internet."
+  },
+  {
+   "q": "How can you shorten 2001:0db8:0000:0000:0000:0000:0000:0001?",
+   "options": [
+    "2001:db8:0:1",
+    "2001:db8::1",
+    "2001:db8:1",
+    "2001::db8::1"
+   ],
+   "answer": 1,
+   "why": "Drop leading zeros in each group and replace one run of zero groups with ::, used once only."
+  },
+  {
+   "q": "What replaced ARP in IPv6?",
+   "options": [
+    "ICMPv4",
+    "RARP",
+    "Neighbor Discovery Protocol",
+    "DHCPv6"
+   ],
+   "answer": 2,
+   "why": "NDP uses ICMPv6 messages to find neighbours' link-layer addresses and routers."
+  },
+  {
+   "q": "What is dual stack?",
+   "options": [
+    "Two routers in parallel",
+    "Running IPv4 and IPv6 at the same time on devices",
+    "Two VLANs on one port",
+    "Two DNS servers"
+   ],
+   "answer": 1,
+   "why": "Dual stack lets a network move to IPv6 while still supporting IPv4."
+  },
+  {
+   "q": "What is tunnelling in IPv6 transition?",
+   "options": [
+    "Splitting subnets",
+    "Encrypting IPv6",
+    "Carrying IPv6 packets inside IPv4 across networks that only support IPv4",
+    "Converting MAC addresses"
+   ],
+   "answer": 2,
+   "why": "Methods such as 6to4 wrap IPv6 in IPv4 headers."
+  },
+  {
+   "q": "What does NAT do?",
+   "options": [
+    "Assigns IP addresses",
+    "Encrypts traffic",
+    "Translates private internal addresses to public addresses",
+    "Resolves names"
+   ],
+   "answer": 2,
+   "why": "NAT lets many private hosts share public addresses."
+  },
+  {
+   "q": "What is PAT (port address translation)?",
+   "options": [
+    "Assigning ports to VLANs",
+    "Encrypting ports",
+    "One-to-one address mapping",
+    "Many internal hosts share one public IP, distinguished by port numbers"
+   ],
+   "answer": 3,
+   "why": "PAT, also called NAT overload, is what most home routers do."
+  },
+  {
+   "q": "What is static NAT used for?",
+   "options": [
+    "Sharing one address among many hosts",
+    "Assigning addresses dynamically",
+    "Blocking ports",
+    "Mapping one internal address permanently to one public address, such as for a server"
+   ],
+   "answer": 3,
+   "why": "Static NAT lets outside users reach an internal server at a fixed public address."
+  },
+  {
+   "q": "What is a default route?",
+   "options": [
+    "The route used when no more specific route matches, often 0.0.0.0/0",
+    "A route for multicast",
+    "A route to the loopback",
+    "The first route configured"
+   ],
+   "answer": 0,
+   "why": "Traffic for unknown destinations goes to the default gateway."
+  },
+  {
+   "q": "When a router has several routes to a destination, which does it choose first?",
+   "options": [
+    "The most specific route (longest prefix match)",
+    "A random route",
+    "The route added first",
+    "The route with the highest metric"
+   ],
+   "answer": 0,
+   "why": "A /24 route beats a /16 route for an address inside both."
+  },
+  {
+   "q": "What is administrative distance?",
+   "options": [
+    "The physical distance between routers",
+    "The number of hops",
+    "A rating of how trustworthy a routing source is; lower is preferred",
+    "The link bandwidth"
+   ],
+   "answer": 2,
+   "why": "When two protocols offer the same route, the one with lower AD wins, such as OSPF over RIP."
+  },
+  {
+   "q": "Which routing protocol is used between organisations on the internet?",
+   "options": [
+    "RIP",
+    "EIGRP",
+    "BGP",
+    "OSPF"
+   ],
+   "answer": 2,
+   "why": "BGP is the path-vector protocol that exchanges routes between autonomous systems."
+  },
+  {
+   "q": "What metric does OSPF use?",
+   "options": [
+    "Cost, based on link bandwidth",
+    "Delay only",
+    "Hop count",
+    "Load only"
+   ],
+   "answer": 0,
+   "why": "Faster links get lower costs, so OSPF prefers higher-bandwidth paths."
+  },
+  {
+   "q": "What is the maximum hop count for RIP?",
+   "options": [
+    "255",
+    "16 usable",
+    "15",
+    "100"
+   ],
+   "answer": 2,
+   "why": "RIP treats 16 as unreachable, which limits it to small networks."
+  },
+  {
+   "q": "What is an OSPF area 0?",
+   "options": [
+    "The backbone area that other areas connect to",
+    "A stub area",
+    "An area with no routers",
+    "The default VLAN"
+   ],
+   "answer": 0,
+   "why": "All OSPF areas must connect to area 0 for routes to pass between them."
+  },
+  {
+   "q": "Which is a link-state protocol?",
+   "options": [
+    "BGP",
+    "OSPF",
+    "RIP",
+    "RIPv2"
+   ],
+   "answer": 1,
+   "why": "Link-state routers share topology information and each calculates the best paths."
+  },
+  {
+   "q": "What does a first hop redundancy protocol such as VRRP provide?",
+   "options": [
+    "A shared virtual gateway address that moves to a backup router if the main one fails",
+    "Encrypted routing updates",
+    "Faster routing",
+    "VLAN tagging"
+   ],
+   "answer": 0,
+   "why": "Hosts keep the same default gateway even when a router goes down."
+  },
+  {
+   "q": "What is a virtual IP (VIP)?",
+   "options": [
+    "An address not tied to one physical interface, shared by devices for redundancy or load balancing",
+    "A loopback address",
+    "An IPv6 address",
+    "A VPN user's address"
+   ],
+   "answer": 0,
+   "why": "VIPs are used by FHRPs and load balancers so services stay at one address."
+  },
+  {
+   "q": "What is a subinterface used for in router-on-a-stick?",
+   "options": [
+    "Connecting a console cable",
+    "Encrypting traffic",
+    "Adding a second ISP",
+    "Routing between VLANs over one physical link using 802.1Q tags"
+   ],
+   "answer": 3,
+   "why": "Each subinterface handles one VLAN on the trunk to the switch."
+  },
+  {
+   "q": "What does 802.1Q define?",
+   "options": [
+    "Wireless encryption",
+    "VLAN tagging on trunk links",
+    "Port-based authentication",
+    "Link aggregation"
+   ],
+   "answer": 1,
+   "why": "802.1Q inserts a tag with the VLAN ID into Ethernet frames on trunks."
+  },
+  {
+   "q": "What is a native VLAN?",
+   "options": [
+    "The VLAN for management only",
+    "The default voice VLAN",
+    "The VLAN whose traffic crosses a trunk untagged",
+    "A VLAN with no ports"
+   ],
+   "answer": 2,
+   "why": "Native VLANs should match on both ends and usually be changed from VLAN 1 for security."
+  },
+  {
+   "q": "What is a voice VLAN?",
+   "options": [
+    "A VLAN for printers",
+    "A VLAN with no traffic",
+    "A VLAN for wireless",
+    "A separate VLAN for IP phones so voice traffic can be prioritised"
+   ],
+   "answer": 3,
+   "why": "A switch port can carry a PC's data VLAN and the phone's voice VLAN together."
+  },
+  {
+   "q": "What is the difference between an access port and a trunk port?",
+   "options": [
+    "Trunks connect only to PCs",
+    "An access port carries one VLAN; a trunk carries many VLANs with tags",
+    "Access ports are faster",
+    "There is no difference"
+   ],
+   "answer": 1,
+   "why": "End devices connect to access ports; switches connect to each other with trunks."
+  },
+  {
+   "q": "What does link aggregation (LACP) do?",
+   "options": [
+    "Blocks redundant links",
+    "Splits one link into VLANs",
+    "Encrypts links",
+    "Combines several physical links into one logical link for bandwidth and redundancy"
+   ],
+   "answer": 3,
+   "why": "If one member link fails, traffic continues on the others."
+  },
+  {
+   "q": "What does Spanning Tree Protocol select first?",
+   "options": [
+    "A root bridge",
+    "A DNS server",
+    "A DHCP server",
+    "A default gateway"
+   ],
+   "answer": 0,
+   "why": "The switch with the lowest bridge ID becomes root, and paths are calculated from it."
+  },
+  {
+   "q": "What is the main advantage of Rapid STP (802.1w) over original STP?",
+   "options": [
+    "It encrypts traffic",
+    "It removes the need for VLANs",
+    "It doubles bandwidth",
+    "Much faster convergence after topology changes"
+   ],
+   "answer": 3,
+   "why": "RSTP converges in seconds instead of 30 to 50 seconds."
+  },
+  {
+   "q": "What are jumbo frames?",
+   "options": [
+    "Ethernet frames larger than the standard 1500-byte MTU, often 9000 bytes",
+    "Very small frames",
+    "Wireless frames",
+    "Frames with errors"
+   ],
+   "answer": 0,
+   "why": "Jumbo frames reduce overhead for storage traffic, but every device on the path must support them."
+  },
+  {
+   "q": "What happens if a packet is larger than a link's MTU and can't be fragmented?",
+   "options": [
+    "It is sent faster",
+    "It is dropped, often causing connection problems",
+    "It is encrypted",
+    "It is converted to UDP"
+   ],
+   "answer": 1,
+   "why": "Path MTU mismatches can make some sites load while large transfers hang."
+  },
+  {
+   "q": "Which 802.11 standard is Wi-Fi 6?",
+   "options": [
+    "802.11ac",
+    "802.11ax",
+    "802.11n",
+    "802.11g"
+   ],
+   "answer": 1,
+   "why": "Wi-Fi 6 is 802.11ax; Wi-Fi 5 is 802.11ac and Wi-Fi 4 is 802.11n."
+  },
+  {
+   "q": "Which frequency band did Wi-Fi 6E add?",
+   "options": [
+    "5 GHz",
+    "60 GHz",
+    "6 GHz",
+    "2.4 GHz"
+   ],
+   "answer": 2,
+   "why": "6 GHz offers many more clean channels than 2.4 or 5 GHz."
+  },
+  {
+   "q": "Which 2.4 GHz channels don't overlap in North America?",
+   "options": [
+    "1, 2 and 3",
+    "2, 7 and 12",
+    "1, 6 and 11",
+    "1, 5 and 9"
+   ],
+   "answer": 2,
+   "why": "Using only 1, 6 and 11 avoids adjacent-channel interference."
+  },
+  {
+   "q": "What is a benefit of the 5 GHz band over 2.4 GHz?",
+   "options": [
+    "Works with older devices only",
+    "Longer range",
+    "Better wall penetration",
+    "More channels and less interference"
+   ],
+   "answer": 3,
+   "why": "5 GHz has more non-overlapping channels, but its range is shorter."
+  },
+  {
+   "q": "What is channel bonding in Wi-Fi?",
+   "options": [
+    "Using one channel for all APs",
+    "Splitting a channel",
+    "Locking channels with a password",
+    "Combining adjacent channels into a wider one for more throughput"
+   ],
+   "answer": 3,
+   "why": "40, 80 or 160 MHz channels are faster but use more spectrum and can increase interference."
+  },
+  {
+   "q": "What is the difference between an SSID and a BSSID?",
+   "options": [
+    "The SSID is the network name; the BSSID is the MAC address of a specific AP radio",
+    "SSID is the AP's IP address",
+    "They are the same",
+    "BSSID is the password"
+   ],
+   "answer": 0,
+   "why": "Many APs can share one SSID (an ESS), but each radio has its own BSSID."
+  },
+  {
+   "q": "What is an ESSID?",
+   "options": [
+    "An AP's serial number",
+    "An encrypted SSID",
+    "One network name used across multiple APs so clients can roam",
+    "A hidden network"
+   ],
+   "answer": 2,
+   "why": "An extended service set lets users move between APs without changing networks."
+  },
+  {
+   "q": "What is ad hoc wireless mode?",
+   "options": [
+    "Wireless mesh backhaul",
+    "Devices connect directly to each other without an AP",
+    "APs connect to each other only",
+    "Clients connect through an AP"
+   ],
+   "answer": 1,
+   "why": "Infrastructure mode uses APs; ad hoc is peer-to-peer."
+  },
+  {
+   "q": "What is a wireless mesh network?",
+   "options": [
+    "A single AP network",
+    "A wired backbone",
+    "A network with no APs",
+    "APs connect to each other wirelessly to extend coverage"
+   ],
+   "answer": 3,
+   "why": "Mesh nodes relay traffic, which helps where running cables is hard."
+  },
+  {
+   "q": "Which antenna type sends signal in all horizontal directions?",
+   "options": [
+    "Omnidirectional",
+    "Patch",
+    "Parabolic",
+    "Yagi"
+   ],
+   "answer": 0,
+   "why": "Omnidirectional antennas suit open offices; directional antennas focus signal one way."
+  },
+  {
+   "q": "Which antenna type is best for a point-to-point link between buildings?",
+   "options": [
+    "Directional (Yagi or parabolic)",
+    "Dipole only",
+    "Omnidirectional",
+    "Internal laptop antenna"
+   ],
+   "answer": 0,
+   "why": "Focusing energy in one direction increases range and reduces interference."
+  },
+  {
+   "q": "Which wireless security is strongest for a home network?",
+   "options": [
+    "WPA3-Personal",
+    "WEP",
+    "WPA2-TKIP",
+    "Open with MAC filtering"
+   ],
+   "answer": 0,
+   "why": "WPA3-Personal uses SAE, which resists offline password cracking."
+  },
+  {
+   "q": "What is a captive portal?",
+   "options": [
+    "A hidden SSID",
+    "A VPN login",
+    "A firewall for APs",
+    "A web page users must use to log in or accept terms before getting network access"
+   ],
+   "answer": 3,
+   "why": "Hotels and guest networks commonly use captive portals."
+  },
+  {
+   "q": "What is a wireless LAN controller?",
+   "options": [
+    "A single home router",
+    "A device that centrally manages many access points",
+    "A wireless range extender",
+    "A network cable tester"
+   ],
+   "answer": 1,
+   "why": "Controllers push configuration, manage roaming and monitor all APs from one place."
+  },
+  {
+   "q": "What does a site survey determine?",
+   "options": [
+    "The building's power usage",
+    "The number of users only",
+    "Where APs should go and what coverage and interference exist",
+    "The cost of internet service"
+   ],
+   "answer": 2,
+   "why": "Surveys produce heat maps showing signal strength across the area."
+  },
+  {
+   "q": "What is the main purpose of a patch panel?",
+   "options": [
+    "Terminating cable runs in one place so connections can be changed with patch cables",
+    "Powering devices",
+    "Filtering traffic",
+    "Routing traffic"
+   ],
+   "answer": 0,
+   "why": "Patch panels keep cabling organised and make moves and changes easy."
+  },
+  {
+   "q": "What is a 110 block used for?",
+   "options": [
+    "Terminating twisted-pair cable, often for telephone and data",
+    "Powering switches",
+    "Fiber splicing",
+    "Mounting servers"
+   ],
+   "answer": 0,
+   "why": "Wires are punched down into a 110 block with a punch-down tool."
+  },
+  {
+   "q": "What is an SFP module?",
+   "options": [
+    "A cooling fan",
+    "A rack shelf",
+    "A power supply",
+    "A hot-swappable transceiver that lets a switch port use fiber or copper"
+   ],
+   "answer": 3,
+   "why": "Small form-factor pluggables let you choose the media and distance per port."
+  },
+  {
+   "q": "What does a fiber connector type LC look like compared with SC?",
+   "options": [
+    "LC is copper",
+    "LC is a small, latching connector; SC is larger and square with push-pull",
+    "LC is threaded; SC is a bayonet",
+    "They are identical"
+   ],
+   "answer": 1,
+   "why": "LC's small size suits high-density panels."
+  },
+  {
+   "q": "What is the main difference between UPC and APC fiber connectors?",
+   "options": [
+    "APC is for copper",
+    "APC has an angled end face that reduces back reflection",
+    "They are interchangeable",
+    "UPC is angled"
+   ],
+   "answer": 1,
+   "why": "APC connectors are usually green; UPC are usually blue. Mixing them causes loss."
+  },
+  {
+   "q": "What is PoE used for?",
+   "options": [
+    "Testing cables",
+    "Increasing speed",
+    "Delivering power to devices like phones, cameras and APs over Ethernet cable",
+    "Encrypting Ethernet"
+   ],
+   "answer": 2,
+   "why": "PoE removes the need for separate power cables at each device."
+  },
+  {
+   "q": "How much power can 802.3at (PoE+) supply per port?",
+   "options": [
+    "Up to about 30 watts",
+    "Up to 5 watts",
+    "Up to 90 watts",
+    "Up to 15.4 watts"
+   ],
+   "answer": 0,
+   "why": "802.3af gives 15.4 W, 802.3at 30 W and 802.3bt up to 60 or 90 W."
+  },
+  {
+   "q": "Why are servers mounted in racks measured in U?",
+   "options": [
+    "U means usage",
+    "U is the number of ports",
+    "U stands for uplink",
+    "One rack unit is 1.75 inches of vertical space"
+   ],
+   "answer": 3,
+   "why": "A 2U server takes 3.5 inches of rack height."
+  },
+  {
+   "q": "What is hot aisle/cold aisle?",
+   "options": [
+    "Arranging racks so cool air enters fronts and hot exhaust is collected from the backs",
+    "Separating staff areas",
+    "Labelling cables",
+    "Grouping servers by age"
+   ],
+   "answer": 0,
+   "why": "It stops hot and cold air mixing and improves cooling efficiency."
+  },
+  {
+   "q": "Why monitor humidity in a server room?",
+   "options": [
+    "It isn't important",
+    "It affects network speed",
+    "It changes IP addresses",
+    "Too low causes static discharge; too high causes condensation"
+   ],
+   "answer": 3,
+   "why": "Keeping humidity in range protects equipment."
+  },
+  {
+   "q": "What is the purpose of a physical network diagram?",
+   "options": [
+    "Listing software versions",
+    "Showing user accounts",
+    "Showing IP addressing and routing",
+    "Showing where devices and cables are physically located"
+   ],
+   "answer": 3,
+   "why": "Logical diagrams show addressing and flows; physical diagrams show real locations."
+  },
+  {
+   "q": "What is a logical network diagram?",
+   "options": [
+    "A floor plan of cable runs",
+    "A list of serial numbers",
+    "A diagram showing IP subnets, VLANs and how traffic flows",
+    "A rack layout"
+   ],
+   "answer": 2,
+   "why": "Logical diagrams help with troubleshooting routing and segmentation."
+  },
+  {
+   "q": "What is an IDF?",
+   "options": [
+    "The main data centre",
+    "An ISP connection point",
+    "An intermediate distribution frame, a wiring closet serving part of a building",
+    "A firewall"
+   ],
+   "answer": 2,
+   "why": "IDFs connect back to the main distribution frame (MDF)."
+  },
+  {
+   "q": "What does a baseline help network administrators do?",
+   "options": [
+    "Write policies",
+    "Spot abnormal performance by comparing with normal behaviour",
+    "Assign IP addresses",
+    "Buy hardware"
+   ],
+   "answer": 1,
+   "why": "If utilisation is far above baseline, something has changed."
+  },
+  {
+   "q": "What is an SNMP MIB?",
+   "options": [
+    "An encryption key",
+    "A type of trap",
+    "A firewall rule",
+    "A database describing the objects a device can report"
+   ],
+   "answer": 3,
+   "why": "Managers use MIB object IDs (OIDs) to query values like interface counters."
+  },
+  {
+   "q": "What is an SNMP trap?",
+   "options": [
+    "A query from the manager",
+    "A password",
+    "An unsolicited alert sent from a device to the manager",
+    "A firewall rule"
+   ],
+   "answer": 2,
+   "why": "Traps tell the manager about events like a link going down."
+  },
+  {
+   "q": "Which SNMP version supports authentication and encryption?",
+   "options": [
+    "All versions",
+    "SNMPv2c",
+    "SNMPv3",
+    "SNMPv1"
+   ],
+   "answer": 2,
+   "why": "v1 and v2c use plain-text community strings."
+  },
+  {
+   "q": "What is port mirroring (SPAN)?",
+   "options": [
+    "Assigning a port to a VLAN",
+    "Combining ports",
+    "Copying a port's traffic to another port for analysis",
+    "Blocking a port"
+   ],
+   "answer": 2,
+   "why": "A packet analyser on the mirror port can see the traffic without being in line."
+  },
+  {
+   "q": "What is a network tap?",
+   "options": [
+    "A software firewall",
+    "A hardware device that copies traffic passing through a link",
+    "A cable tester",
+    "A router"
+   ],
+   "answer": 1,
+   "why": "Taps give a complete copy of traffic, including errors, without depending on switch resources."
+  },
+  {
+   "q": "What does a packet capture show that NetFlow doesn't?",
+   "options": [
+    "Session durations",
+    "Byte counts",
+    "The actual packet contents",
+    "Who talked to whom"
+   ],
+   "answer": 2,
+   "why": "Flows are summaries; captures show the full packets."
+  },
+  {
+   "q": "What is jitter?",
+   "options": [
+    "Bandwidth",
+    "Lost packets",
+    "Total delay",
+    "Variation in packet delay"
+   ],
+   "answer": 3,
+   "why": "High jitter causes choppy voice and video, which jitter buffers try to smooth."
+  },
+  {
+   "q": "What is latency?",
+   "options": [
+    "The amount of data per second",
+    "The time it takes data to travel from source to destination",
+    "The variation in delay",
+    "The number of errors"
+   ],
+   "answer": 1,
+   "why": "High latency makes interactive applications feel slow."
+  },
+  {
+   "q": "What is the difference between bandwidth and throughput?",
+   "options": [
+    "Bandwidth is the maximum capacity; throughput is the actual data rate achieved",
+    "They are identical",
+    "Bandwidth measures delay",
+    "Throughput is always higher"
+   ],
+   "answer": 0,
+   "why": "Overhead, congestion and errors make throughput lower than bandwidth."
+  },
+  {
+   "q": "What does QoS DSCP marking do?",
+   "options": [
+    "Routes packets",
+    "Labels packets with a priority so devices can treat them differently",
+    "Encrypts packets",
+    "Compresses packets"
+   ],
+   "answer": 1,
+   "why": "Voice is often marked EF so it gets priority queuing."
+  },
+  {
+   "q": "What is a DHCP reservation?",
+   "options": [
+    "A pool of addresses",
+    "A DNS record",
+    "A fixed address always given to a specific device's MAC address",
+    "A failed lease"
+   ],
+   "answer": 2,
+   "why": "Reservations give consistent addresses to printers or servers while still using DHCP."
+  },
+  {
+   "q": "What is a DHCP scope?",
+   "options": [
+    "A DNS zone",
+    "The server's location",
+    "The range of addresses and settings a DHCP server hands out for a subnet",
+    "The lease length only"
+   ],
+   "answer": 2,
+   "why": "Scopes include the address pool, mask, gateway and DNS options."
+  },
+  {
+   "q": "What does a DHCP lease time control?",
+   "options": [
+    "The DNS cache time",
+    "How long a client may use an address before renewing",
+    "How long the server stays up",
+    "How fast addresses are assigned"
+   ],
+   "answer": 1,
+   "why": "Short leases suit busy guest networks; long leases suit stable office networks."
+  },
+  {
+   "q": "Why would you configure a DHCP relay (IP helper)?",
+   "options": [
+    "To give static addresses",
+    "To encrypt DHCP",
+    "To forward DHCP broadcasts from one subnet to a server on another",
+    "To block DHCP"
+   ],
+   "answer": 2,
+   "why": "Broadcasts don't cross routers, so the relay forwards them to the central server."
+  },
+  {
+   "q": "Which DNS record maps a name to an IPv4 address?",
+   "options": [
+    "PTR",
+    "MX",
+    "A",
+    "AAAA"
+   ],
+   "answer": 2,
+   "why": "A records map a name to IPv4; AAAA records map to IPv6."
+  },
+  {
+   "q": "Which DNS record gives an alias pointing to another name?",
+   "options": [
+    "A",
+    "TXT",
+    "NS",
+    "CNAME"
+   ],
+   "answer": 3,
+   "why": "For example, www can be a CNAME for the main host name."
+  },
+  {
+   "q": "Which DNS record identifies a domain's mail servers?",
+   "options": [
+    "SRV",
+    "SOA",
+    "NS",
+    "MX"
+   ],
+   "answer": 3,
+   "why": "MX records list mail servers with priorities."
+  },
+  {
+   "q": "Which DNS record is used for reverse lookups?",
+   "options": [
+    "CNAME",
+    "MX",
+    "PTR",
+    "A"
+   ],
+   "answer": 2,
+   "why": "PTR records map an IP address back to a name."
+  },
+  {
+   "q": "Which DNS record holds text such as SPF policies?",
+   "options": [
+    "CNAME",
+    "TXT",
+    "A",
+    "MX"
+   ],
+   "answer": 1,
+   "why": "TXT records store SPF, DKIM keys and domain verification strings."
+  },
+  {
+   "q": "Which DNS record lists the authoritative name servers for a zone?",
+   "options": [
+    "SOA",
+    "MX",
+    "PTR",
+    "NS"
+   ],
+   "answer": 3,
+   "why": "NS records delegate a zone to its authoritative servers."
+  },
+  {
+   "q": "What is the SOA record?",
+   "options": [
+    "A mail record",
+    "A text record",
+    "An alias",
+    "The start of authority record with zone details such as serial number and timers"
+   ],
+   "answer": 3,
+   "why": "Secondary servers check the SOA serial to know when to transfer the zone."
+  },
+  {
+   "q": "What does an SRV record do?",
+   "options": [
+    "Lists mail servers",
+    "Maps names to IPv6",
+    "Identifies the host and port for a specific service",
+    "Stores SPF data"
+   ],
+   "answer": 2,
+   "why": "Services like SIP and Active Directory use SRV records to find servers."
+  },
+  {
+   "q": "What is DNS TTL?",
+   "options": [
+    "The record's priority",
+    "How long a record may be cached before it must be looked up again",
+    "Time to log",
+    "The number of DNS servers"
+   ],
+   "answer": 1,
+   "why": "Lower TTLs make changes take effect faster but increase query load."
+  },
+  {
+   "q": "What is the difference between a recursive and an iterative DNS query?",
+   "options": [
+    "They are the same",
+    "Iterative is always encrypted",
+    "Recursive only works locally",
+    "Recursive asks the server to find the full answer; iterative gets referrals to follow"
+   ],
+   "answer": 3,
+   "why": "Clients usually ask a resolver recursively; resolvers query root and TLD servers iteratively."
+  },
+  {
+   "q": "What is an authoritative DNS server?",
+   "options": [
+    "A server that holds the original records for a zone",
+    "A client's local resolver",
+    "A root server only",
+    "A server that only caches"
+   ],
+   "answer": 0,
+   "why": "Authoritative answers come from the zone's own servers, not a cache."
+  },
+  {
+   "q": "What is PTP used for?",
+   "options": [
+    "Encrypting files",
+    "Transferring files",
+    "Very precise clock synchronisation, more accurate than NTP",
+    "Printing"
+   ],
+   "answer": 2,
+   "why": "Precision Time Protocol is used where microsecond accuracy matters."
+  },
+  {
+   "q": "What is an NTP stratum?",
+   "options": [
+    "A level showing distance from the reference clock; stratum 1 is closest",
+    "A time zone",
+    "An encryption level",
+    "A network layer"
+   ],
+   "answer": 0,
+   "why": "Stratum 0 is the reference clock, stratum 1 servers connect to it directly, and so on."
+  },
+  {
+   "q": "What is out-of-band management?",
+   "options": [
+    "Using wireless only",
+    "Managing devices through a separate network or connection from production traffic",
+    "Managing devices through the normal network",
+    "Managing from the cloud"
+   ],
+   "answer": 1,
+   "why": "If the production network fails, out-of-band access still works."
+  },
+  {
+   "q": "What is a console connection used for?",
+   "options": [
+    "Direct local configuration of a network device through its console port",
+    "Wireless access",
+    "Remote file transfer",
+    "High-speed data transfer"
+   ],
+   "answer": 0,
+   "why": "Console access works even when the device has no network configuration."
+  },
+  {
+   "q": "Why use SSH instead of Telnet to manage switches?",
+   "options": [
+    "SSH encrypts the session, including passwords",
+    "SSH is faster",
+    "Telnet is not supported",
+    "SSH needs no authentication"
+   ],
+   "answer": 0,
+   "why": "Telnet sends everything, passwords included, in clear text."
+  },
+  {
+   "q": "What is a site-to-site VPN?",
+   "options": [
+    "A clientless VPN",
+    "A VPN connecting two networks, such as offices, through gateways",
+    "A VPN for one remote user",
+    "A wireless network"
+   ],
+   "answer": 1,
+   "why": "Users at each site don't need VPN software; the gateways handle the tunnel."
+  },
+  {
+   "q": "What is a full tunnel VPN?",
+   "options": [
+    "No traffic is encrypted",
+    "Only DNS uses the VPN",
+    "All client traffic, including internet traffic, goes through the VPN",
+    "Only corporate traffic uses the VPN"
+   ],
+   "answer": 2,
+   "why": "Full tunnels let the company inspect all traffic but add load and latency."
+  },
+  {
+   "q": "What is an API used for in network management?",
+   "options": [
+    "Letting software configure and query devices programmatically",
+    "Powering devices",
+    "Physically connecting devices",
+    "Cooling devices"
+   ],
+   "answer": 0,
+   "why": "APIs support automation tools and controllers."
+  },
+  {
+   "q": "What is a VXLAN used for?",
+   "options": [
+    "Assigning IP addresses",
+    "Replacing IP",
+    "Extending layer 2 networks across a layer 3 network",
+    "Encrypting wireless"
+   ],
+   "answer": 2,
+   "why": "VXLAN encapsulates frames in UDP, allowing millions of segments in data centres."
+  },
+  {
+   "q": "What is zero trust architecture in networking?",
+   "options": [
+    "Every access request is verified regardless of network location",
+    "Blocking all traffic",
+    "Trusting all internal traffic",
+    "Using only VPNs"
+   ],
+   "answer": 0,
+   "why": "Being inside the network doesn't grant trust by itself."
+  },
+  {
+   "q": "What is a VPC in cloud networking?",
+   "options": [
+    "A VPN client",
+    "A virtual private cloud, an isolated network for your cloud resources",
+    "A virtual phone call",
+    "A VLAN priority code"
+   ],
+   "answer": 1,
+   "why": "VPCs have their own subnets, routing and security controls."
+  },
+  {
+   "q": "What is a cloud internet gateway used for?",
+   "options": [
+    "Connecting two VLANs",
+    "Hosting DNS only",
+    "Assigning MAC addresses",
+    "Allowing resources in a VPC to reach the internet"
+   ],
+   "answer": 3,
+   "why": "Public subnets route to the internet gateway; private subnets usually use NAT."
+  },
+  {
+   "q": "What is a NAT gateway in the cloud?",
+   "options": [
+    "Lets instances in private subnets reach the internet without being reachable from it",
+    "Balances load",
+    "Lets the internet reach private instances",
+    "Encrypts traffic"
+   ],
+   "answer": 0,
+   "why": "Outbound updates work while inbound connections are blocked."
+  },
+  {
+   "q": "What is VPC peering?",
+   "options": [
+    "Connecting two VPCs so they can communicate privately",
+    "Connecting a VPC to the internet",
+    "Deleting a VPC",
+    "Copying a VPC"
+   ],
+   "answer": 0,
+   "why": "Peered VPCs route traffic between them without going over the internet."
+  },
+  {
+   "q": "What is a network security group (or security list) in the cloud?",
+   "options": [
+    "A group of admins",
+    "A VPN",
+    "A backup policy",
+    "Rules that allow or deny traffic to cloud resources"
+   ],
+   "answer": 3,
+   "why": "They act as virtual firewalls at the subnet or instance level."
+  },
+  {
+   "q": "What is cloud elasticity?",
+   "options": [
+    "Fixed capacity",
+    "Using stretchy cables",
+    "Automatically adding or removing resources as demand changes",
+    "Manual scaling only"
+   ],
+   "answer": 2,
+   "why": "Elasticity lets you pay for what you use and handle spikes."
+  },
+  {
+   "q": "What is multitenancy in the cloud?",
+   "options": [
+    "One customer per server",
+    "Multiple customers sharing the same physical infrastructure, logically separated",
+    "Multiple data centres",
+    "Many users on one account"
+   ],
+   "answer": 1,
+   "why": "Isolation between tenants is a key security responsibility for providers."
+  },
+  {
+   "q": "What does a direct cloud connection (like Direct Connect or ExpressRoute) provide?",
+   "options": [
+    "A private, dedicated link from your network to the cloud provider",
+    "Free bandwidth",
+    "Faster public internet",
+    "Wireless access"
+   ],
+   "answer": 0,
+   "why": "Private links give more consistent performance than VPNs over the internet."
+  },
+  {
+   "q": "What is a content delivery network (CDN)?",
+   "options": [
+    "A VPN service",
+    "Servers around the world that cache content close to users",
+    "A DNS server only",
+    "A local file server"
+   ],
+   "answer": 1,
+   "why": "CDNs reduce latency and absorb traffic spikes."
+  },
+  {
+   "q": "What is the first step of the CompTIA troubleshooting methodology?",
+   "options": [
+    "Identify the problem",
+    "Implement a solution",
+    "Document findings",
+    "Establish a theory"
+   ],
+   "answer": 0,
+   "why": "Gather information, question users, identify symptoms and determine what changed."
+  },
+  {
+   "q": "During troubleshooting, what should you do if your theory is not confirmed?",
+   "options": [
+    "Replace all hardware",
+    "Document and close the ticket",
+    "Establish a new theory or escalate",
+    "Implement the fix anyway"
+   ],
+   "answer": 2,
+   "why": "Unconfirmed theories mean going back to step 2 or asking for help."
+  },
+  {
+   "q": "What does 'question the obvious' mean in troubleshooting?",
+   "options": [
+    "Check simple causes first, such as cables and power",
+    "Replace equipment immediately",
+    "Ignore users' reports",
+    "Skip documentation"
+   ],
+   "answer": 0,
+   "why": "Many problems turn out to be unplugged cables or switched-off devices."
+  },
+  {
+   "q": "Which tool checks which wires in a cable are connected correctly?",
+   "options": [
+    "Spectrum analyser",
+    "Cable tester",
+    "Protocol analyser",
+    "Loopback adapter"
+   ],
+   "answer": 1,
+   "why": "Cable testers find opens, shorts and miswires."
+  },
+  {
+   "q": "Which tool finds a specific cable among many in a bundle or wall?",
+   "options": [
+    "Toner and probe",
+    "Multimeter only",
+    "Light meter",
+    "OTDR"
+   ],
+   "answer": 0,
+   "why": "The toner sends a signal down the cable and the probe detects it at the other end."
+  },
+  {
+   "q": "Which tool measures signal loss and locates faults on fiber?",
+   "options": [
+    "OTDR",
+    "Toner probe",
+    "Cable crimper",
+    "Punch-down tool"
+   ],
+   "answer": 0,
+   "why": "An optical time-domain reflectometer shows the distance to breaks and bad splices."
+  },
+  {
+   "q": "What does a Wi-Fi analyser show?",
+   "options": [
+    "Firewall rules",
+    "Disk space",
+    "Nearby networks, channels, signal strength and interference",
+    "Cable lengths"
+   ],
+   "answer": 2,
+   "why": "It helps choose less crowded channels and spot rogue APs."
+  },
+  {
+   "q": "Which tool shows radio interference from non-Wi-Fi sources such as microwaves?",
+   "options": [
+    "Toner probe",
+    "Cable tester",
+    "Spectrum analyser",
+    "Protocol analyser"
+   ],
+   "answer": 2,
+   "why": "Spectrum analysers see all RF energy, not just Wi-Fi frames."
+  },
+  {
+   "q": "What is a loopback plug used for?",
+   "options": [
+    "Powering a device",
+    "Extending a cable",
+    "Testing a network port by sending its signal back to itself",
+    "Splitting a signal"
+   ],
+   "answer": 2,
+   "why": "If the port works with the loopback, the problem is elsewhere."
+  },
+  {
+   "q": "Which command shows the path packets take to a destination on Windows?",
+   "options": [
+    "tracert",
+    "netstat",
+    "ping",
+    "ipconfig"
+   ],
+   "answer": 0,
+   "why": "tracert lists each router hop and its response time."
+  },
+  {
+   "q": "Which command shows a Windows host's IP configuration including DNS servers?",
+   "options": [
+    "route print",
+    "arp -a",
+    "ipconfig /all",
+    "ipconfig /release"
+   ],
+   "answer": 2,
+   "why": "/all adds MAC address, DHCP and DNS details."
+  },
+  {
+   "q": "Which command releases and renews a DHCP address on Windows?",
+   "options": [
+    "nslookup",
+    "ipconfig /flushdns",
+    "ipconfig /release then ipconfig /renew",
+    "netstat -r"
+   ],
+   "answer": 2,
+   "why": "Releasing and renewing gets a fresh lease from the DHCP server."
+  },
+  {
+   "q": "Which command clears the DNS cache on Windows?",
+   "options": [
+    "nslookup /clear",
+    "ipconfig /flushdns",
+    "ipconfig /renew",
+    "arp -d"
+   ],
+   "answer": 1,
+   "why": "Flushing the cache forces new lookups, which helps after DNS changes."
+  },
+  {
+   "q": "Which command shows listening ports and active connections?",
+   "options": [
+    "tracert",
+    "ping",
+    "netstat",
+    "nslookup"
+   ],
+   "answer": 2,
+   "why": "netstat -an lists every connection and listening port."
+  },
+  {
+   "q": "Which command queries DNS servers directly to test name resolution?",
+   "options": [
+    "arp",
+    "nslookup or dig",
+    "ping",
+    "route"
+   ],
+   "answer": 1,
+   "why": "These tools show exactly which records a DNS server returns."
+  },
+  {
+   "q": "Which Linux command shows network interfaces and addresses?",
+   "options": [
+    "tracert",
+    "netstat -r",
+    "ip addr",
+    "ipconfig"
+   ],
+   "answer": 2,
+   "why": "ip addr (or ifconfig on older systems) lists interfaces and addresses."
+  },
+  {
+   "q": "Which command shows the MAC addresses a host has learned for local IPs?",
+   "options": [
+    "nslookup",
+    "ping -t",
+    "arp -a",
+    "netstat -s"
+   ],
+   "answer": 2,
+   "why": "arp -a shows the ARP cache of IP-to-MAC mappings."
+  },
+  {
+   "q": "Which command on a Cisco switch shows the MAC address table?",
+   "options": [
+    "show vlan",
+    "show running-config",
+    "show ip route",
+    "show mac address-table"
+   ],
+   "answer": 3,
+   "why": "It lists which MAC addresses are on which ports and VLANs."
+  },
+  {
+   "q": "Which Cisco command shows interface status and errors?",
+   "options": [
+    "show users",
+    "show version",
+    "show clock",
+    "show interfaces"
+   ],
+   "answer": 3,
+   "why": "It shows up/down status, speed, duplex and error counters such as CRC errors."
+  },
+  {
+   "q": "Users report slow speeds and a switch interface shows many CRC errors. What is the most likely cause?",
+   "options": [
+    "A damaged cable or bad connector",
+    "A wrong default gateway",
+    "An expired DHCP lease",
+    "A DNS misconfiguration"
+   ],
+   "answer": 0,
+   "why": "CRC errors mean frames arrive corrupted, which almost always points to physical layer problems."
+  },
+  {
+   "q": "One side of a link is set to full duplex and the other to half duplex. What symptom appears?",
+   "options": [
+    "Late collisions and poor performance",
+    "No link light at all",
+    "Wrong IP address",
+    "DNS failures"
+   ],
+   "answer": 0,
+   "why": "Duplex mismatches cause collisions on the half-duplex side and slow, unreliable transfers."
+  },
+  {
+   "q": "A cable run of 120 metres of Cat 6 gives an unreliable connection. Why?",
+   "options": [
+    "Cat 6 can't carry gigabit",
+    "The switch needs a firmware update",
+    "The cable is too thick",
+    "It exceeds the 100-metre limit for twisted-pair Ethernet"
+   ],
+   "answer": 3,
+   "why": "Signal attenuation beyond 100 metres causes errors; use fiber or add a switch in between."
+  },
+  {
+   "q": "What is crosstalk?",
+   "options": [
+    "A DNS conflict",
+    "A routing loop",
+    "Signal from one wire pair interfering with another",
+    "Two users talking on one phone"
+   ],
+   "answer": 2,
+   "why": "Untwisting too much of a pair at the connector increases crosstalk."
+  },
+  {
+   "q": "What causes attenuation in a cable?",
+   "options": [
+    "Signal strength weakening over distance",
+    "Wrong subnet mask",
+    "Too many VLANs",
+    "DNS caching"
+   ],
+   "answer": 0,
+   "why": "All media lose strength over distance, which is why each has a maximum length."
+  },
+  {
+   "q": "A newly installed fiber link shows no light at the far end. What should be checked first?",
+   "options": [
+    "The DHCP scope",
+    "Whether transmit and receive strands are swapped",
+    "The DNS server",
+    "The VLAN ID"
+   ],
+   "answer": 1,
+   "why": "A TX/RX reversal is one of the most common fiber installation mistakes."
+  },
+  {
+   "q": "What is a dirty fiber connector likely to cause?",
+   "options": [
+    "Expired certificates",
+    "High signal loss and link errors",
+    "Wrong VLAN assignment",
+    "IP conflicts"
+   ],
+   "answer": 1,
+   "why": "Dust on the end face blocks light; connectors should be cleaned and inspected before use."
+  },
+  {
+   "q": "Which problem occurs when single-mode and multimode fiber are mixed on one link?",
+   "options": [
+    "VLAN mismatches",
+    "Excessive signal loss due to a core size mismatch",
+    "Faster speeds",
+    "DNS errors"
+   ],
+   "answer": 1,
+   "why": "The different core diameters don't match, so much of the light is lost."
+  },
+  {
+   "q": "A switch port's LED is amber or off after connecting a PC. What does this suggest?",
+   "options": [
+    "A DHCP issue",
+    "A browser problem",
+    "A physical link problem or a disabled port",
+    "A DNS issue"
+   ],
+   "answer": 2,
+   "why": "Link lights show layer 1 status; no link means checking the cable, port and NIC."
+  },
+  {
+   "q": "Two devices on a network have the same IP address. What symptom appears?",
+   "options": [
+    "Encrypted traffic",
+    "Intermittent connectivity for one or both devices",
+    "No effect",
+    "Faster speeds"
+   ],
+   "answer": 1,
+   "why": "Each device keeps claiming the address in ARP, so traffic goes to whichever answered last."
+  },
+  {
+   "q": "Users can reach websites by IP address but not by name. What is the likely cause?",
+   "options": [
+    "A cabling fault",
+    "A duplex mismatch",
+    "A VLAN mismatch",
+    "A DNS problem"
+   ],
+   "answer": 3,
+   "why": "If IP connectivity works but names fail, name resolution is the broken piece."
+  },
+  {
+   "q": "A PC can reach local devices but not the internet. What should be checked first?",
+   "options": [
+    "The DNS TTL",
+    "The monitor cable",
+    "The default gateway setting",
+    "The MAC address table"
+   ],
+   "answer": 2,
+   "why": "Traffic for other networks goes to the default gateway; a wrong or missing one blocks it."
+  },
+  {
+   "q": "A user has a 169.254.x.x address. What is the most likely problem?",
+   "options": [
+    "The PC couldn't get an address from DHCP",
+    "The DNS server is down",
+    "The PC has a static IP",
+    "The firewall is blocking HTTPS"
+   ],
+   "answer": 0,
+   "why": "APIPA addresses mean DHCP failed, so check the DHCP server, scope and connectivity."
+  },
+  {
+   "q": "The DHCP scope has run out of addresses. What is the symptom?",
+   "options": [
+    "All devices lose DNS",
+    "Cables fail",
+    "New devices can't get an address",
+    "Speeds double"
+   ],
+   "answer": 2,
+   "why": "Shorter leases, a larger scope or cleaning up stale leases fixes exhaustion."
+  },
+  {
+   "q": "A rogue DHCP server is on the network. What will clients experience?",
+   "options": [
+    "Wrong IP settings such as an incorrect gateway, breaking connectivity",
+    "Faster speeds",
+    "Stronger encryption",
+    "Nothing"
+   ],
+   "answer": 0,
+   "why": "DHCP snooping on switches stops untrusted ports from answering DHCP requests."
+  },
+  {
+   "q": "After a VLAN change, a PC can't reach its usual servers. What is the likely cause?",
+   "options": [
+    "The port is in the wrong VLAN",
+    "The monitor is unplugged",
+    "The CPU is slow",
+    "The DNS cache is full"
+   ],
+   "answer": 0,
+   "why": "A port in the wrong VLAN puts the PC on a different subnet from its servers."
+  },
+  {
+   "q": "What is a broadcast storm?",
+   "options": [
+    "A thunderstorm affecting Wi-Fi",
+    "Broadcasts multiplying endlessly, often due to a switching loop",
+    "A DNS flood",
+    "A DDoS from the internet"
+   ],
+   "answer": 1,
+   "why": "Loops make broadcasts circle forever and can bring a network down; STP prevents this."
+  },
+  {
+   "q": "Why might a routing loop occur?",
+   "options": [
+    "Too many VLANs",
+    "A missing DNS record",
+    "A faulty cable",
+    "Routers have inconsistent routes that send packets back and forth"
+   ],
+   "answer": 3,
+   "why": "TTL eventually discards looping packets, but performance suffers until routes converge."
+  },
+  {
+   "q": "What does an asymmetric route problem mean?",
+   "options": [
+    "A route with no metric",
+    "A default route",
+    "Traffic goes out one path and returns another, which can break stateful firewalls",
+    "A route to a printer"
+   ],
+   "answer": 2,
+   "why": "A firewall that only sees one direction of a session may drop the return traffic."
+  },
+  {
+   "q": "Users on one floor have weak Wi-Fi. What is the likely cause?",
+   "options": [
+    "Too few access points or obstacles blocking signal",
+    "An expired certificate",
+    "A duplex mismatch",
+    "A wrong DNS server"
+   ],
+   "answer": 0,
+   "why": "Walls, floors and distance weaken signals; a site survey shows where APs are needed."
+  },
+  {
+   "q": "Many APs use the same 2.4 GHz channel in an office. What problem results?",
+   "options": [
+    "Stronger encryption",
+    "No effect",
+    "Co-channel interference and slower performance",
+    "Longer range"
+   ],
+   "answer": 2,
+   "why": "APs on the same channel share airtime, so planning channels 1, 6 and 11 helps."
+  },
+  {
+   "q": "A laptop shows full Wi-Fi signal but very slow speed. What could be the cause?",
+   "options": [
+    "A broken screen",
+    "A disabled NIC",
+    "A wrong IP address",
+    "Interference or a congested channel"
+   ],
+   "answer": 3,
+   "why": "Signal strength isn't everything; noise and contention reduce throughput."
+  },
+  {
+   "q": "What is RSSI in wireless?",
+   "options": [
+    "An encryption type",
+    "A wireless standard",
+    "A measure of received signal strength",
+    "A routing protocol"
+   ],
+   "answer": 2,
+   "why": "Values closer to 0 dBm are stronger; -67 dBm is a common target for good performance."
+  },
+  {
+   "q": "What is the effect of an AP's transmit power being set too high?",
+   "options": [
+    "Fewer clients connect",
+    "Better encryption",
+    "Longer battery life",
+    "Clients may stick to a distant AP instead of roaming to a nearer one"
+   ],
+   "answer": 3,
+   "why": "Power that's too high also increases interference with neighbouring APs."
+  },
+  {
+   "q": "What is a client 'sticking' to an AP called?",
+   "options": [
+    "A routing loop",
+    "Jitter",
+    "A sticky client roaming problem",
+    "A broadcast storm"
+   ],
+   "answer": 2,
+   "why": "The device keeps a weak connection instead of roaming, causing poor performance."
+  },
+  {
+   "q": "Clients fail to connect after an AP was changed to WPA3 only. Why might this happen?",
+   "options": [
+    "Older devices don't support WPA3",
+    "WPA3 needs DHCP",
+    "WPA3 needs a new cable",
+    "WPA3 blocks DNS"
+   ],
+   "answer": 0,
+   "why": "WPA3 transition mode supports both WPA2 and WPA3 clients during migration."
+  },
+  {
+   "q": "What is the likely cause if wireless clients connect but can't get past a captive portal?",
+   "options": [
+    "The portal or authentication service is failing",
+    "The channel width is too narrow",
+    "The cable is cut",
+    "The DNS TTL is too long"
+   ],
+   "answer": 0,
+   "why": "Clients associate to Wi-Fi but stay restricted until the portal authenticates them."
+  },
+  {
+   "q": "What is the purpose of a network change management process?",
+   "options": [
+    "Speeding up all changes",
+    "Avoiding documentation",
+    "Ensuring changes are reviewed, approved, tested and documented",
+    "Letting anyone change devices"
+   ],
+   "answer": 2,
+   "why": "Uncontrolled changes are a leading cause of outages."
+  },
+  {
+   "q": "What is configuration management for network devices?",
+   "options": [
+    "Buying new devices",
+    "Tracking and controlling device configurations and versions",
+    "Cleaning devices",
+    "Setting user passwords"
+   ],
+   "answer": 1,
+   "why": "Saved configurations make it easy to restore or compare after problems."
+  },
+  {
+   "q": "Why back up network device configurations?",
+   "options": [
+    "To save disk space",
+    "To change the IP address",
+    "To speed up the device",
+    "To restore quickly after failure or a bad change"
+   ],
+   "answer": 3,
+   "why": "A replacement switch can be restored from the saved configuration in minutes."
+  },
+  {
+   "q": "What is the difference between running-config and startup-config on a Cisco device?",
+   "options": [
+    "Running is active in memory; startup loads at boot",
+    "They are identical",
+    "Startup is in RAM",
+    "Running is on the console only"
+   ],
+   "answer": 0,
+   "why": "Changes are lost at reboot unless the running config is saved to startup."
+  },
+  {
+   "q": "What is asset lifecycle management?",
+   "options": [
+    "Changing passwords",
+    "Managing devices from purchase through support to disposal",
+    "Monitoring traffic",
+    "Assigning VLANs"
+   ],
+   "answer": 1,
+   "why": "Knowing when devices reach end of support avoids running unpatched equipment."
+  },
+  {
+   "q": "What does end-of-support mean for a network device?",
+   "options": [
+    "The device is brand new",
+    "The warranty is extended",
+    "The device is faster",
+    "The vendor no longer provides updates or help"
+   ],
+   "answer": 3,
+   "why": "Unsupported devices get no security fixes and should be replaced."
+  },
+  {
+   "q": "What is an SLA in network services?",
+   "options": [
+    "A cabling standard",
+    "A switch configuration",
+    "A routing protocol",
+    "An agreement defining service levels, such as uptime, with a provider"
+   ],
+   "answer": 3,
+   "why": "SLAs set expectations and remedies when providers miss targets."
+  },
+  {
+   "q": "What is the purpose of a standard operating procedure (SOP)?",
+   "options": [
+    "A legal contract",
+    "A network diagram",
+    "Documented steps so tasks are done consistently",
+    "A firewall rule"
+   ],
+   "answer": 2,
+   "why": "SOPs reduce errors and help new staff work correctly."
+  },
+  {
+   "q": "What does an IP address management (IPAM) system track?",
+   "options": [
+    "IP address allocations, subnets and usage",
+    "Power usage",
+    "Software licences",
+    "Employee schedules"
+   ],
+   "answer": 0,
+   "why": "IPAM prevents conflicts and shows which addresses are free."
+  },
+  {
+   "q": "What is the main purpose of a network access control list (ACL) on a router?",
+   "options": [
+    "Assigning IP addresses",
+    "Resolving names",
+    "Encrypting traffic",
+    "Permitting or denying traffic based on rules"
+   ],
+   "answer": 3,
+   "why": "ACLs filter by address, protocol and port."
+  },
+  {
+   "q": "What is implicit deny in an ACL?",
+   "options": [
+    "Denies only UDP",
+    "Traffic not explicitly permitted is blocked by default",
+    "The first rule always denies",
+    "All traffic is allowed"
+   ],
+   "answer": 1,
+   "why": "Every ACL ends with an invisible deny-all rule."
+  },
+  {
+   "q": "Why does the order of ACL rules matter?",
+   "options": [
+    "Rules are processed top to bottom and the first match wins",
+    "Order doesn't matter",
+    "Rules are processed randomly",
+    "Only the last rule counts"
+   ],
+   "answer": 0,
+   "why": "A broad permit above a specific deny would let the traffic through."
+  },
+  {
+   "q": "What is a screened subnet used for in network design?",
+   "options": [
+    "Hosting public-facing servers separated from the internal network",
+    "Guest Wi-Fi only",
+    "Isolating printers",
+    "Storing backups"
+   ],
+   "answer": 0,
+   "why": "Firewalls control traffic between the internet, the screened subnet and the internal network."
+  },
+  {
+   "q": "What is the purpose of a guest network?",
+   "options": [
+    "Giving visitors internet access while keeping them off internal systems",
+    "Admin access only",
+    "Faster internal access",
+    "A backup network"
+   ],
+   "answer": 0,
+   "why": "Guest networks are isolated, often with a captive portal and bandwidth limits."
+  },
+  {
+   "q": "What is defence in depth?",
+   "options": [
+    "Relying on one strong firewall",
+    "Using several layers of security controls",
+    "Using only encryption",
+    "Hiding the network"
+   ],
+   "answer": 1,
+   "why": "If one control fails, others still protect the network."
+  },
+  {
+   "q": "What is an IoT security concern on corporate networks?",
+   "options": [
+    "Devices often have weak security and should be segmented",
+    "They need Windows",
+    "They are too expensive",
+    "They use too much power"
+   ],
+   "answer": 0,
+   "why": "Putting IoT devices on their own VLAN limits damage if one is compromised."
+  },
+  {
+   "q": "What is MAC spoofing?",
+   "options": [
+    "Changing a device's MAC address to impersonate another",
+    "Flooding a switch",
+    "Cracking Wi-Fi keys",
+    "Blocking DHCP"
+   ],
+   "answer": 0,
+   "why": "Spoofing can bypass MAC filters, which is why they're weak on their own."
+  },
+  {
+   "q": "What is VLAN hopping?",
+   "options": [
+    "Gaining access to traffic on another VLAN, such as through switch spoofing or double tagging",
+    "Moving a port to a new VLAN legitimately",
+    "Creating new VLANs",
+    "Load balancing between VLANs"
+   ],
+   "answer": 0,
+   "why": "Disabling auto-trunking and changing the native VLAN prevent it."
+  },
+  {
+   "q": "How do you prevent switch spoofing VLAN hopping attacks?",
+   "options": [
+    "Use VLAN 1 for everything",
+    "Turn off STP",
+    "Disable dynamic trunking negotiation on access ports",
+    "Enable all trunks"
+   ],
+   "answer": 2,
+   "why": "Access ports should be fixed as access, so a device can't negotiate a trunk."
+  },
+  {
+   "q": "What is DNS poisoning?",
+   "options": [
+    "Inserting false DNS records so users go to malicious sites",
+    "Encrypting DNS",
+    "Deleting a DNS server",
+    "Slowing DNS queries"
+   ],
+   "answer": 0,
+   "why": "DNSSEC and secure resolvers help prevent it."
+  },
+  {
+   "q": "What is an on-path attack in networking?",
+   "options": [
+    "An attacker intercepting traffic between two parties",
+    "A DNS outage",
+    "A routing loop",
+    "A cabling fault"
+   ],
+   "answer": 0,
+   "why": "ARP poisoning and evil twin APs are common ways to get on-path."
+  },
+  {
+   "q": "What is a deauthentication attack?",
+   "options": [
+    "Blocking DHCP",
+    "Forcing wireless clients to disconnect using forged management frames",
+    "Removing user accounts",
+    "Expiring certificates"
+   ],
+   "answer": 1,
+   "why": "802.11w protected management frames defend against it."
+  },
+  {
+   "q": "What is a rogue access point?",
+   "options": [
+    "An AP on the wrong channel",
+    "An AP with no clients",
+    "An unauthorised AP connected to the network",
+    "A backup AP"
+   ],
+   "answer": 2,
+   "why": "Rogue APs bypass security; wireless IDS and NAC help find them."
+  },
+  {
+   "q": "What is DHCP snooping?",
+   "options": [
+    "Monitoring DNS queries",
+    "Assigning static IPs",
+    "Logging users",
+    "A switch feature that blocks DHCP replies from untrusted ports"
+   ],
+   "answer": 3,
+   "why": "Only ports leading to real DHCP servers are trusted, stopping rogue servers."
+  },
+  {
+   "q": "What is dynamic ARP inspection?",
+   "options": [
+    "Disabling ARP",
+    "Clearing the ARP cache",
+    "Speeding up ARP",
+    "Validating ARP packets against trusted bindings to stop ARP spoofing"
+   ],
+   "answer": 3,
+   "why": "DAI uses the DHCP snooping table to drop forged ARP replies."
+  },
+  {
+   "q": "What is the purpose of BPDU guard?",
+   "options": [
+    "Assigning VLANs",
+    "Speeding up STP",
+    "Shutting a port that receives STP messages where only end devices should be",
+    "Encrypting STP"
+   ],
+   "answer": 2,
+   "why": "It stops someone plugging in a switch that could disrupt the spanning tree."
+  },
+  {
+   "q": "What is the purpose of root guard?",
+   "options": [
+    "Encrypting traffic",
+    "Preventing another switch from becoming the STP root bridge on that port",
+    "Blocking DNS root servers",
+    "Protecting the root password"
+   ],
+   "answer": 1,
+   "why": "It keeps the intended root bridge in place."
+  },
+  {
+   "q": "What is a DDoS attack?",
+   "options": [
+    "A single user guessing passwords",
+    "A cable fault",
+    "Many systems flooding a target to make it unavailable",
+    "A DNS misconfiguration"
+   ],
+   "answer": 2,
+   "why": "Botnets generate massive traffic; providers and scrubbing services help absorb it."
+  },
+  {
+   "q": "Which control best protects management interfaces of network devices?",
+   "options": [
+    "Restricting access to a management VLAN and using SSH with strong authentication",
+    "Allowing Telnet from anywhere",
+    "Publishing the management IP",
+    "Leaving default passwords"
+   ],
+   "answer": 0,
+   "why": "Isolated management networks and encrypted protocols limit who can reach devices."
+  },
+  {
+   "q": "What does AAA with TACACS+ provide for network devices?",
+   "options": [
+    "Routing",
+    "IP addressing",
+    "Centralised authentication, authorisation and accounting for admin access",
+    "Wireless encryption"
+   ],
+   "answer": 2,
+   "why": "TACACS+ encrypts the whole payload and separates authorisation, suiting device administration."
+  },
+  {
+   "q": "What is the difference between RADIUS and TACACS+?",
+   "options": [
+    "RADIUS combines authentication and authorisation and is common for network access; TACACS+ separates them and suits device admin",
+    "They are identical",
+    "RADIUS encrypts everything",
+    "TACACS+ is only for Wi-Fi"
+   ],
+   "answer": 0,
+   "why": "RADIUS encrypts only the password; TACACS+ encrypts the entire payload."
+  },
+  {
+   "q": "What is geofencing as a network control?",
+   "options": [
+    "A wireless channel plan",
+    "A fence around the server room",
+    "Allowing or blocking access based on location",
+    "A VLAN"
+   ],
+   "answer": 2,
+   "why": "Access might be blocked from countries where the company doesn't operate."
+  },
+  {
+   "q": "What is a honeypot used for in network security?",
+   "options": [
+    "Luring attackers to detect and study them",
+    "Hosting websites",
+    "Speeding up traffic",
+    "Storing backups"
+   ],
+   "answer": 0,
+   "why": "No legitimate traffic should reach a honeypot, so any connection is suspicious."
+  },
+  {
+   "q": "What is the main difference between an IDS and an IPS?",
+   "options": [
+    "They are identical",
+    "IDS works only on wireless",
+    "An IPS can block traffic inline; an IDS only alerts",
+    "An IDS blocks; an IPS alerts"
+   ],
+   "answer": 2,
+   "why": "IPS sits in the traffic path, so false positives can block legitimate traffic."
+  },
+  {
+   "q": "What is a signature-based IDS?",
+   "options": [
+    "Detection that matches traffic against known attack patterns",
+    "Detection by user reports",
+    "Detection by cable testers",
+    "Detection based on baseline behaviour"
+   ],
+   "answer": 0,
+   "why": "Signatures catch known attacks but miss new ones."
+  },
+  {
+   "q": "What is anomaly-based detection?",
+   "options": [
+    "Blocking all traffic",
+    "Matching known signatures",
+    "Flagging traffic that differs from a learned normal baseline",
+    "Scanning for open ports"
+   ],
+   "answer": 2,
+   "why": "It can catch new attacks but may produce more false positives."
+  },
+  {
+   "q": "What is the purpose of disaster recovery testing?",
+   "options": [
+    "Buying new equipment",
+    "Training sales staff",
+    "Breaking production systems",
+    "Proving that recovery plans actually work before a real disaster"
+   ],
+   "answer": 3,
+   "why": "Untested plans often fail when they're really needed."
+  },
+  {
+   "q": "What does RPO measure in network disaster recovery?",
+   "options": [
+    "The time to restore service",
+    "The maximum acceptable data loss measured in time",
+    "The cost of an outage",
+    "The network speed"
+   ],
+   "answer": 1,
+   "why": "An RPO of one hour means backups or replication must happen at least hourly."
+  },
+  {
+   "q": "What is MTTR?",
+   "options": [
+    "Maximum transfer rate",
+    "Minimum time to route",
+    "Mean time between failures",
+    "Mean time to repair or recover after a failure"
+   ],
+   "answer": 3,
+   "why": "Lower MTTR means services come back faster."
+  },
+  {
+   "q": "What is a hot site in network disaster recovery?",
+   "options": [
+    "A site with hardware but no data",
+    "An empty building",
+    "A fully equipped site with current data, ready to take over almost immediately",
+    "A mobile trailer only"
+   ],
+   "answer": 2,
+   "why": "Hot sites are the most expensive but give the fastest recovery."
+  },
+  {
+   "q": "What is active-active redundancy?",
+   "options": [
+    "One system waits on standby",
+    "No redundancy",
+    "Systems take turns daily",
+    "All redundant systems handle traffic at the same time"
+   ],
+   "answer": 3,
+   "why": "Active-active uses all capacity and keeps working if one fails."
+  },
+  {
+   "q": "What is active-passive redundancy?",
+   "options": [
+    "All systems share the load",
+    "A standby system takes over only if the active one fails",
+    "Systems never fail over",
+    "Backups run hourly"
+   ],
+   "answer": 1,
+   "why": "The passive unit sits idle until needed."
+  },
+  {
+   "q": "What is a WAN?",
+   "options": [
+    "A network in one room",
+    "A wireless network only",
+    "A network connecting sites over a large geographic area",
+    "A storage network"
+   ],
+   "answer": 2,
+   "why": "WAN links connect offices across cities or countries."
+  },
+  {
+   "q": "What is MPLS?",
+   "options": [
+    "A provider WAN technology that forwards traffic using labels",
+    "A wireless standard",
+    "A VPN client",
+    "A routing protocol for LANs"
+   ],
+   "answer": 0,
+   "why": "MPLS offers predictable performance and supports traffic classes."
+  },
+  {
+   "q": "What is a leased line?",
+   "options": [
+    "A satellite connection",
+    "A wireless link",
+    "A shared internet connection",
+    "A dedicated point-to-point circuit rented from a provider"
+   ],
+   "answer": 3,
+   "why": "Leased lines give dedicated, consistent bandwidth."
+  },
+  {
+   "q": "What is DSL?",
+   "options": [
+    "Internet by satellite",
+    "Internet over cable TV lines",
+    "Fiber to the home",
+    "Internet access over telephone lines"
+   ],
+   "answer": 3,
+   "why": "Speed drops with distance from the provider's equipment."
+  },
+  {
+   "q": "What is the main drawback of satellite internet for real-time apps?",
+   "options": [
+    "Too much bandwidth",
+    "High latency",
+    "Needs DSL",
+    "Needs fiber"
+   ],
+   "answer": 1,
+   "why": "Geostationary satellite links add hundreds of milliseconds of delay; low-earth-orbit systems are better."
+  },
+  {
+   "q": "What is 5G's main benefit for business connectivity?",
+   "options": [
+    "Needs fiber to each device",
+    "Works only indoors",
+    "Only carries voice",
+    "High speeds and low latency over cellular networks"
+   ],
+   "answer": 3,
+   "why": "5G can serve as a primary or backup WAN link."
+  },
+  {
+   "q": "What is a demarc point?",
+   "options": [
+    "Where the service provider's responsibility ends and the customer's begins",
+    "A firewall rule",
+    "The core switch",
+    "A VLAN boundary"
+   ],
+   "answer": 0,
+   "why": "Troubleshooting often starts by checking whether a fault is before or after the demarc."
+  },
+  {
+   "q": "What is a smart jack?",
+   "options": [
+    "A provider device at the demarc that allows remote testing of the line",
+    "A patch cable",
+    "A smart power outlet",
+    "A wireless AP"
+   ],
+   "answer": 0,
+   "why": "The carrier can loop the line back from the smart jack to test it."
+  },
+  {
+   "q": "What does a network load balancer use to decide where to send traffic?",
+   "options": [
+    "Algorithms such as round-robin or least connections",
+    "The MAC address only",
+    "The user's password",
+    "The cable length"
+   ],
+   "answer": 0,
+   "why": "Health checks also stop traffic going to failed servers."
+  },
+  {
+   "q": "What does a proxy server do for web traffic?",
+   "options": [
+    "Powers devices",
+    "Makes requests on behalf of clients and can filter and cache them",
+    "Routes between VLANs",
+    "Assigns IP addresses"
+   ],
+   "answer": 1,
+   "why": "Proxies log browsing and block unwanted sites."
+  },
+  {
+   "q": "What is a VPN concentrator?",
+   "options": [
+    "A load balancer for websites",
+    "A device that handles many VPN connections at once",
+    "A DNS server",
+    "A wireless controller"
+   ],
+   "answer": 1,
+   "why": "Concentrators terminate large numbers of remote access tunnels."
+  },
+  {
+   "q": "What is a layer 3 switch?",
+   "options": [
+    "A switch that can also route between VLANs",
+    "A switch with three ports",
+    "A wireless switch",
+    "A hub"
+   ],
+   "answer": 0,
+   "why": "Layer 3 switches route at hardware speed inside a campus network."
+  },
+  {
+   "q": "What is a unified threat management (UTM) appliance?",
+   "options": [
+    "A cabling tool",
+    "A single device combining firewall, IPS, antivirus and filtering",
+    "A backup system",
+    "A wireless AP"
+   ],
+   "answer": 1,
+   "why": "UTMs simplify small networks but can become a single point of failure."
+  },
+  {
+   "q": "What is network function virtualisation (NFV)?",
+   "options": [
+    "A new wireless standard",
+    "Running network functions like firewalls and routers as software on standard servers",
+    "A routing protocol",
+    "Using faster cables"
+   ],
+   "answer": 1,
+   "why": "NFV replaces dedicated appliances with virtual ones that can be deployed quickly."
+  },
+  {
+   "q": "What is a storage area network (SAN)?",
+   "options": [
+    "A home network",
+    "A VPN",
+    "A dedicated network giving servers block-level access to shared storage",
+    "A wireless network"
+   ],
+   "answer": 2,
+   "why": "SANs use protocols such as Fibre Channel or iSCSI."
+  },
+  {
+   "q": "What is iSCSI?",
+   "options": [
+    "A routing protocol",
+    "A wireless standard",
+    "A cable type",
+    "A protocol carrying SCSI storage commands over IP networks"
+   ],
+   "answer": 3,
+   "why": "iSCSI lets ordinary Ethernet networks carry SAN traffic."
+  },
+  {
+   "q": "What is NAS?",
+   "options": [
+    "File-level storage accessed over the network by protocols like SMB or NFS",
+    "A firewall",
+    "Block storage over Fibre Channel",
+    "A routing device"
+   ],
+   "answer": 0,
+   "why": "Network attached storage serves files; SANs serve blocks."
+  },
+  {
+   "q": "What is the difference between a hub and a switch?",
+   "options": [
+    "A switch repeats to all ports",
+    "A hub routes between networks",
+    "A hub repeats to all ports; a switch forwards frames only to the destination port",
+    "They are identical"
+   ],
+   "answer": 2,
+   "why": "Switches reduce collisions and improve security by not flooding all traffic."
+  },
+  {
+   "q": "What is a bridge?",
+   "options": [
+    "A wireless antenna",
+    "A firewall",
+    "A device that connects two network segments and filters traffic by MAC address",
+    "A router"
+   ],
+   "answer": 2,
+   "why": "Bridges were the predecessors of switches."
+  },
+  {
+   "q": "What is a repeater?",
+   "options": [
+    "A firewall",
+    "A device that regenerates a signal to extend distance",
+    "A switch",
+    "A router"
+   ],
+   "answer": 1,
+   "why": "Repeaters work at layer 1 and don't read addresses."
+  },
+  {
+   "q": "What is a media converter?",
+   "options": [
+    "A router",
+    "A video encoder",
+    "A firewall",
+    "A device that connects different media, such as fiber to copper"
+   ],
+   "answer": 3,
+   "why": "Media converters extend links where copper distance limits are exceeded."
+  },
+  {
+   "q": "What layer does a router operate at?",
+   "options": [
+    "Layer 3",
+    "Layer 7",
+    "Layer 2",
+    "Layer 1"
+   ],
+   "answer": 0,
+   "why": "Routers forward packets between networks using IP addresses."
+  },
+  {
+   "q": "What layer does a traditional switch operate at?",
+   "options": [
+    "Layer 4",
+    "Layer 3",
+    "Layer 1",
+    "Layer 2"
+   ],
+   "answer": 3,
+   "why": "Switches forward frames based on MAC addresses."
+  },
+  {
+   "q": "What does the Transport layer provide?",
+   "options": [
+    "Physical signals",
+    "Encryption only",
+    "End-to-end delivery, ports, and with TCP, reliability",
+    "Routing"
+   ],
+   "answer": 2,
+   "why": "TCP and UDP work at layer 4, using port numbers to reach applications."
+  },
+  {
+   "q": "Which OSI layer manages sessions between applications?",
+   "options": [
+    "Transport",
+    "Presentation",
+    "Application",
+    "Session"
+   ],
+   "answer": 3,
+   "why": "Layer 5 sets up, maintains and ends sessions."
+  },
+  {
+   "q": "What does TCP's three-way handshake establish?",
+   "options": [
+    "A DNS lookup",
+    "A VLAN",
+    "A reliable connection between two hosts",
+    "An IP address"
+   ],
+   "answer": 2,
+   "why": "SYN, SYN/ACK and ACK set up sequence numbers before data flows."
+  },
+  {
+   "q": "What does a TCP RST flag do?",
+   "options": [
+    "Requests encryption",
+    "Starts a connection",
+    "Immediately resets and ends a connection",
+    "Acknowledges data"
+   ],
+   "answer": 2,
+   "why": "A RST in reply to a SYN means the port is closed."
+  },
+  {
+   "q": "What is the purpose of TCP windowing?",
+   "options": [
+    "Encrypting data",
+    "Controlling how much data can be sent before an acknowledgment",
+    "Routing packets",
+    "Assigning ports"
+   ],
+   "answer": 1,
+   "why": "The window size adapts to network conditions and the receiver's capacity."
+  },
+  {
+   "q": "What is ICMP used for?",
+   "options": [
+    "Network diagnostics and error messages, such as ping and unreachable messages",
+    "Transferring files",
+    "Resolving names",
+    "Sending email"
+   ],
+   "answer": 0,
+   "why": "Blocking all ICMP can break path MTU discovery and troubleshooting."
+  },
+  {
+   "q": "What is GRE?",
+   "options": [
+    "A tunnelling protocol that encapsulates packets, often without encryption",
+    "A secure file transfer",
+    "A wireless standard",
+    "A routing metric"
+   ],
+   "answer": 0,
+   "why": "GRE is often paired with IPsec when encryption is needed."
+  },
+  {
+   "q": "What does IPsec's ESP protocol provide?",
+   "options": [
+    "Authentication only, no encryption",
+    "Encryption, integrity and authentication of packets",
+    "Address assignment",
+    "Routing"
+   ],
+   "answer": 1,
+   "why": "AH provides integrity without encryption; ESP adds confidentiality."
+  },
+  {
+   "q": "What is the difference between IPsec transport and tunnel mode?",
+   "options": [
+    "Transport protects the payload; tunnel encapsulates the entire original packet",
+    "Tunnel encrypts only headers",
+    "They are identical",
+    "Transport is for sites"
+   ],
+   "answer": 0,
+   "why": "Site-to-site VPNs use tunnel mode, which hides the original IP headers."
+  },
+  {
+   "q": "What is the main purpose of HTTPS?",
+   "options": [
+    "Assigning IP addresses",
+    "Speeding up web pages",
+    "Encrypting web traffic with TLS",
+    "Compressing images"
+   ],
+   "answer": 2,
+   "why": "TLS protects confidentiality and integrity, and certificates authenticate the server."
+  },
+  {
+   "q": "What is SIP used for?",
+   "options": [
+    "Sending email",
+    "Setting up and managing VoIP calls",
+    "Transferring files",
+    "Routing packets"
+   ],
+   "answer": 1,
+   "why": "SIP signals call setup; RTP carries the audio."
+  },
+  {
+   "q": "What is RTP used for?",
+   "options": [
+    "Signalling calls",
+    "File transfer",
+    "Network management",
+    "Carrying real-time audio and video streams"
+   ],
+   "answer": 3,
+   "why": "RTP runs over UDP because retransmitting late voice packets is pointless."
+  },
+  {
+   "q": "Why does VoIP use UDP rather than TCP for voice?",
+   "options": [
+    "TCP can't carry audio",
+    "UDP is encrypted",
+    "UDP guarantees delivery",
+    "Low latency matters more than retransmitting lost packets"
+   ],
+   "answer": 3,
+   "why": "A retransmitted voice packet would arrive too late to be useful."
+  },
+  {
+   "q": "What does a network baseline report typically include?",
+   "options": [
+    "Employee names",
+    "Normal utilisation, latency and error levels over time",
+    "Software licences",
+    "Office floor plans"
+   ],
+   "answer": 1,
+   "why": "Comparing against the baseline reveals unusual activity or growing demand."
+  },
+  {
+   "q": "What are interface errors such as runts and giants?",
+   "options": [
+    "Large switches",
+    "Frames that are too small or too large, often from collisions or misconfiguration",
+    "Routing loops",
+    "Wireless clients"
+   ],
+   "answer": 1,
+   "why": "Runts often come from collisions; giants from MTU mismatches."
+  },
+  {
+   "q": "What does 'input errors' on an interface usually indicate?",
+   "options": [
+    "Physical problems such as bad cabling or interference",
+    "DNS issues",
+    "Too many users",
+    "Wrong passwords"
+   ],
+   "answer": 0,
+   "why": "Rising input errors point to layer 1 or 2 problems."
+  },
+  {
+   "q": "What is interface discard counting?",
+   "options": [
+    "Frames dropped, often due to congestion or full buffers",
+    "New VLANs",
+    "Frames forwarded",
+    "DNS queries"
+   ],
+   "answer": 0,
+   "why": "Many discards suggest the link is overloaded."
+  },
+  {
+   "q": "What is log aggregation?",
+   "options": [
+    "Deleting old logs",
+    "Collecting logs from many devices into one central system",
+    "Encrypting logs",
+    "Compressing logs"
+   ],
+   "answer": 1,
+   "why": "Central logs make correlation and searching much easier."
+  },
+  {
+   "q": "What is the purpose of syslog severity levels?",
+   "options": [
+    "Counting users",
+    "Ranking messages from emergency (0) to debug (7)",
+    "Encrypting logs",
+    "Routing traffic"
+   ],
+   "answer": 1,
+   "why": "Lower numbers are more severe; filters can forward only important messages."
+  },
+  {
+   "q": "What does a network performance monitoring tool alert on?",
+   "options": [
+    "Expired passwords only",
+    "Thresholds such as high utilisation, latency or device downtime",
+    "Printer ink levels",
+    "New employees"
+   ],
+   "answer": 1,
+   "why": "Alerts let teams respond before users notice problems."
+  },
+  {
+   "q": "What is the purpose of a network topology map tool?",
+   "options": [
+    "Writing policies",
+    "Automatically discovering and drawing how devices connect",
+    "Assigning IPs",
+    "Encrypting traffic"
+   ],
+   "answer": 1,
+   "why": "Discovery tools use protocols like LLDP, CDP and SNMP."
+  },
+  {
+   "q": "What does LLDP do?",
+   "options": [
+    "Blocks loops",
+    "Lets network devices advertise their identity and capabilities to neighbours",
+    "Encrypts links",
+    "Assigns IP addresses"
+   ],
+   "answer": 1,
+   "why": "LLDP is vendor-neutral; CDP is Cisco's equivalent."
+  },
+  {
+   "q": "Why might you disable CDP or LLDP on ports facing untrusted devices?",
+   "options": [
+    "They break DHCP",
+    "They reveal device details that help attackers",
+    "They block VLANs",
+    "They slow the network"
+   ],
+   "answer": 1,
+   "why": "Model, software version and IP information can help an attacker plan."
+  },
+  {
+   "q": "What is a PDU in networking?",
+   "options": [
+    "A switch port",
+    "The unit of data at each layer, such as frame, packet or segment",
+    "A routing protocol",
+    "A power distribution unit only"
+   ],
+   "answer": 1,
+   "why": "PDU can also mean the power strip in a rack; context matters."
+  },
+  {
+   "q": "What does a rack PDU provide?",
+   "options": [
+    "Routing packets",
+    "Distributing power to equipment in a rack",
+    "Network monitoring only",
+    "Cooling servers"
+   ],
+   "answer": 1,
+   "why": "Managed PDUs can report power use and switch outlets remotely."
+  },
+  {
+   "q": "What is a surge protector's role?",
+   "options": [
+    "Providing battery backup",
+    "Protecting equipment from voltage spikes",
+    "Cooling equipment",
+    "Filtering network traffic"
+   ],
+   "answer": 1,
+   "why": "Surges from lightning or the grid can damage electronics."
+  },
+  {
+   "q": "What does a fire suppression system for a data centre often use?",
+   "options": [
+    "Foam",
+    "Sand",
+    "Clean agent gas that doesn't damage electronics",
+    "Water sprinklers only"
+   ],
+   "answer": 2,
+   "why": "Gas systems put out fires without the water damage sprinklers cause."
+  },
+  {
+   "q": "What is the purpose of cable management?",
+   "options": [
+    "Increasing speed",
+    "Assigning VLANs",
+    "Keeping cables organised for airflow, safety and easy troubleshooting",
+    "Encrypting traffic"
+   ],
+   "answer": 2,
+   "why": "Messy cabling blocks airflow and makes changes risky."
+  },
+  {
+   "q": "What is a structured cabling system?",
+   "options": [
+    "A routing design",
+    "A standardised approach to building cabling with patch panels and labelled runs",
+    "Wireless only",
+    "Random cable placement"
+   ],
+   "answer": 1,
+   "why": "Standards such as TIA-568 define how cabling is installed and labelled."
+  },
+  {
+   "q": "Why label both ends of every cable?",
+   "options": [
+    "For warranty reasons only",
+    "To make tracing and troubleshooting faster",
+    "To increase speed",
+    "To meet DNS rules"
+   ],
+   "answer": 1,
+   "why": "Labels save time and prevent unplugging the wrong cable."
   }
  ]
 }

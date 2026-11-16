@@ -22,7 +22,7 @@ test('the exams are there, each with its own file of valid questions or tasks', 
     assert.ok(exam.about.length > 20, exam.id);
     assert.ok(!('questions' in exam), `${exam.id}: questions live in the exam's own file`);
     const items = bank(exam);
-    assert.ok(items.length >= (exam.format === "tasks" ? 50 : 150), `${exam.id}: ${items.length}`);
+    assert.ok(items.length >= (exam.format === "tasks" ? 150 : 140), `${exam.id}: ${items.length}`);
     if (exam.format === 'tasks') {
       for (const t of items) assert.ok(validTask(t), `${exam.id}: ${t.task}`);
       continue;

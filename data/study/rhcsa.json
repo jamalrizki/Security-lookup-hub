@@ -843,6 +843,887 @@
     "done < /root/users.txt"
    ],
    "check": "Every name in the file appears in getent passwd; running the script again produces no errors."
+  },
+  {
+   "task": "Redirect the long listing of /etc into /root/etc-list.txt and any errors into /root/etc-errors.txt.",
+   "steps": [
+    "ls -l /etc > /root/etc-list.txt 2> /root/etc-errors.txt"
+   ],
+   "check": "Both files exist; etc-list.txt contains the listing and etc-errors.txt is empty or holds only errors."
+  },
+  {
+   "task": "Append the current date to /root/log.txt without overwriting what is already there.",
+   "steps": [
+    "date >> /root/log.txt"
+   ],
+   "check": "tail -1 /root/log.txt shows today's date and earlier lines are still present."
+  },
+  {
+   "task": "Find every file under /usr/share/doc whose name ends in .txt and save the list to /root/txtfiles.",
+   "steps": [
+    "find /usr/share/doc -type f -name '*.txt' > /root/txtfiles"
+   ],
+   "check": "wc -l /root/txtfiles shows a count and every line ends in .txt."
+  },
+  {
+   "task": "Find files in /etc modified within the last 7 days.",
+   "steps": [
+    "find /etc -type f -mtime -7"
+   ],
+   "check": "The output lists recently changed files such as edited configuration files."
+  },
+  {
+   "task": "Find all files larger than 50 MiB anywhere on the system.",
+   "steps": [
+    "find / -type f -size +50M 2>/dev/null"
+   ],
+   "check": "ls -lh on each listed file shows a size over 50M."
+  },
+  {
+   "task": "Find all files with the setuid bit set and write them to /root/suid.txt.",
+   "steps": [
+    "find / -perm -4000 -type f 2>/dev/null > /root/suid.txt"
+   ],
+   "check": "ls -l on the listed files shows an s in the owner's execute position."
+  },
+  {
+   "task": "Copy /etc/fstab to /root/fstab.bak, keeping its permissions and timestamps.",
+   "steps": [
+    "cp -a /etc/fstab /root/fstab.bak"
+   ],
+   "check": "ls -l --time-style=full-iso shows the same mode and timestamp on both files."
+  },
+  {
+   "task": "Create the directory tree /projects/2026/q1/reports in one command.",
+   "steps": [
+    "mkdir -p /projects/2026/q1/reports"
+   ],
+   "check": "ls -d /projects/2026/q1/reports confirms it exists."
+  },
+  {
+   "task": "Print only the usernames from /etc/passwd, sorted alphabetically.",
+   "steps": [
+    "cut -d: -f1 /etc/passwd | sort"
+   ],
+   "check": "The output is one username per line in alphabetical order."
+  },
+  {
+   "task": "Count how many users have /bin/bash as their login shell.",
+   "steps": [
+    "grep -c ':/bin/bash$' /etc/passwd"
+   ],
+   "check": "The number matches the bash users listed by grep ':/bin/bash$' /etc/passwd."
+  },
+  {
+   "task": "Show /etc/ssh/sshd_config without comment lines or blank lines.",
+   "steps": [
+    "grep -Ev '^(#|$)' /etc/ssh/sshd_config"
+   ],
+   "check": "Only active configuration lines are displayed."
+  },
+  {
+   "task": "Open the man page for the crontab file format, not the command.",
+   "steps": [
+    "man 5 crontab"
+   ],
+   "check": "The page title shows CRONTAB(5) and describes the time fields."
+  },
+  {
+   "task": "Find which man pages mention 'partition'.",
+   "steps": [
+    "man -k partition   (or apropos partition)",
+    "If nothing is found, run mandb as root to rebuild the index"
+   ],
+   "check": "The output lists commands such as fdisk and parted."
+  },
+  {
+   "task": "Make the file /root/script.sh executable by its owner only.",
+   "steps": [
+    "chmod u+x /root/script.sh"
+   ],
+   "check": "ls -l /root/script.sh shows x only in the owner's permissions."
+  },
+  {
+   "task": "Set permissions on /data/report so the owner can read and write, the group can read, and others have no access.",
+   "steps": [
+    "chmod 640 /data/report"
+   ],
+   "check": "ls -l /data/report shows -rw-r-----."
+  },
+  {
+   "task": "Change the owner of /data/report to alice and its group to finance.",
+   "steps": [
+    "chown alice:finance /data/report"
+   ],
+   "check": "ls -l /data/report shows alice finance."
+  },
+  {
+   "task": "Write a script /usr/local/bin/hello.sh that prints 'Hello, ' followed by the first argument, or 'Hello, world' if none is given.",
+   "steps": [
+    "#!/bin/bash",
+    "name=${1:-world}",
+    "echo \"Hello, $name\"",
+    "chmod +x /usr/local/bin/hello.sh"
+   ],
+   "check": "hello.sh prints Hello, world and hello.sh Sam prints Hello, Sam."
+  },
+  {
+   "task": "Write a script that prints 'root' if run as root and 'not root' otherwise.",
+   "steps": [
+    "#!/bin/bash",
+    "if [ \"$(id -u)\" -eq 0 ]; then",
+    "  echo root",
+    "else",
+    "  echo 'not root'",
+    "fi"
+   ],
+   "check": "Running it with and without sudo prints the two different messages."
+  },
+  {
+   "task": "Write a script that loops over every .conf file in /etc and prints its name and line count.",
+   "steps": [
+    "#!/bin/bash",
+    "for f in /etc/*.conf; do",
+    "  echo \"$f $(wc -l < \"$f\")\"",
+    "done"
+   ],
+   "check": "Each line shows a path and a number, and files with spaces are handled because of the quoting."
+  },
+  {
+   "task": "Write a script that exits with status 1 and an error message if no argument is given.",
+   "steps": [
+    "#!/bin/bash",
+    "if [ $# -eq 0 ]; then",
+    "  echo 'usage: script <name>' >&2",
+    "  exit 1",
+    "fi"
+   ],
+   "check": "Running it without arguments prints the usage to stderr and echo $? shows 1."
+  },
+  {
+   "task": "Write a script that checks whether the file named in $1 exists and prints 'exists' or 'missing'.",
+   "steps": [
+    "#!/bin/bash",
+    "[ -e \"$1\" ] && echo exists || echo missing"
+   ],
+   "check": "It prints exists for /etc/passwd and missing for a path that doesn't exist."
+  },
+  {
+   "task": "Reboot the system cleanly from the command line.",
+   "steps": [
+    "systemctl reboot"
+   ],
+   "check": "The system restarts and journalctl --list-boots shows a new boot."
+  },
+  {
+   "task": "Power off the system cleanly.",
+   "steps": [
+    "systemctl poweroff"
+   ],
+   "check": "The system shuts down after stopping services."
+  },
+  {
+   "task": "Boot the system into the emergency target once to troubleshoot a broken /etc/fstab.",
+   "steps": [
+    "At the GRUB menu press e on the kernel line",
+    "Append systemd.unit=emergency.target and press Ctrl+X",
+    "Enter the root password, then mount -o remount,rw /",
+    "Fix /etc/fstab, then systemctl daemon-reload and reboot"
+   ],
+   "check": "The next normal boot completes and mount -a reports no errors."
+  },
+  {
+   "task": "Switch the running system to the graphical target without rebooting.",
+   "steps": [
+    "systemctl isolate graphical.target"
+   ],
+   "check": "systemctl is-active graphical.target prints active (if a GUI is installed)."
+  },
+  {
+   "task": "Identify the three processes using the most CPU right now.",
+   "steps": [
+    "ps aux --sort=-%cpu | head -4",
+    "Or press P in top"
+   ],
+   "check": "The list shows the top CPU consumers with their PIDs."
+  },
+  {
+   "task": "Terminate the process with PID 2345 gracefully, and force it only if it doesn't exit.",
+   "steps": [
+    "kill 2345",
+    "If still running: kill -9 2345"
+   ],
+   "check": "ps -p 2345 shows no process."
+  },
+  {
+   "task": "Start the command sleep 1000 with a niceness of 15.",
+   "steps": [
+    "nice -n 15 sleep 1000 &"
+   ],
+   "check": "ps -o pid,ni,cmd -C sleep shows NI 15."
+  },
+  {
+   "task": "Show the journal entries for the sshd service from the last hour.",
+   "steps": [
+    "journalctl -u sshd --since '1 hour ago'"
+   ],
+   "check": "Only sshd entries from the last hour appear."
+  },
+  {
+   "task": "Show journal entries from the previous boot.",
+   "steps": [
+    "journalctl -b -1"
+   ],
+   "check": "The entries are from the earlier boot (requires a persistent journal)."
+  },
+  {
+   "task": "Follow new journal messages in real time.",
+   "steps": [
+    "journalctl -f"
+   ],
+   "check": "New log lines appear as events happen; press Ctrl+C to stop."
+  },
+  {
+   "task": "Securely copy /root/report.txt to /tmp on server2 as user alice.",
+   "steps": [
+    "scp /root/report.txt alice@server2:/tmp/"
+   ],
+   "check": "ssh alice@server2 ls -l /tmp/report.txt shows the file."
+  },
+  {
+   "task": "Synchronise /var/www to server2:/backup/www, copying only changed files and preserving attributes.",
+   "steps": [
+    "rsync -av /var/www/ alice@server2:/backup/www/"
+   ],
+   "check": "Running the command again transfers almost nothing because the files already match."
+  },
+  {
+   "task": "Create a 2 GiB logical volume named lvdb in volume group vgdata, formatted XFS and mounted persistently at /db.",
+   "steps": [
+    "lvcreate -n lvdb -L 2G vgdata",
+    "mkfs.xfs /dev/vgdata/lvdb",
+    "mkdir /db",
+    "Add to /etc/fstab:  /dev/vgdata/lvdb  /db  xfs  defaults  0 0",
+    "systemctl daemon-reload; mount -a"
+   ],
+   "check": "lvs shows lvdb at 2.00g and df -h /db shows it mounted."
+  },
+  {
+   "task": "Create a logical volume using 50% of the free space in vgdata.",
+   "steps": [
+    "lvcreate -n lvhalf -l 50%FREE vgdata"
+   ],
+   "check": "lvs shows lvhalf sized at about half of what vgs reported as free."
+  },
+  {
+   "task": "Remove the logical volume /dev/vgdata/lvtemp safely.",
+   "steps": [
+    "umount /dev/vgdata/lvtemp (and remove its /etc/fstab line)",
+    "lvremove /dev/vgdata/lvtemp"
+   ],
+   "check": "lvs no longer lists lvtemp and mount -a reports no errors."
+  },
+  {
+   "task": "Extend volume group vgdata with the new disk /dev/vdd and grow lvdb by 1 GiB including its XFS filesystem.",
+   "steps": [
+    "pvcreate /dev/vdd",
+    "vgextend vgdata /dev/vdd",
+    "lvextend -r -L +1G /dev/vgdata/lvdb"
+   ],
+   "check": "df -h /db shows about 1 GiB more space."
+  },
+  {
+   "task": "Reduce volume group vgdata by removing the empty physical volume /dev/vde.",
+   "steps": [
+    "pvmove /dev/vde   (only if it holds data)",
+    "vgreduce vgdata /dev/vde",
+    "pvremove /dev/vde"
+   ],
+   "check": "pvs no longer shows /dev/vde in vgdata."
+  },
+  {
+   "task": "Show the UUID and filesystem type of every block device.",
+   "steps": [
+    "lsblk -f   (or blkid)"
+   ],
+   "check": "Each formatted partition or LV shows its FSTYPE and UUID."
+  },
+  {
+   "task": "Create an ext4 filesystem with the label DATA on /dev/vdb3 and mount it by label at /mnt/data persistently.",
+   "steps": [
+    "mkfs.ext4 -L DATA /dev/vdb3",
+    "mkdir /mnt/data",
+    "Add to /etc/fstab:  LABEL=DATA  /mnt/data  ext4  defaults  0 0",
+    "systemctl daemon-reload; mount -a"
+   ],
+   "check": "findmnt /mnt/data shows /dev/vdb3 mounted."
+  },
+  {
+   "task": "Create a 1 GiB swap file /swapfile and enable it persistently.",
+   "steps": [
+    "dd if=/dev/zero of=/swapfile bs=1M count=1024",
+    "chmod 600 /swapfile",
+    "mkswap /swapfile",
+    "Add to /etc/fstab:  /swapfile  none  swap  defaults  0 0",
+    "swapon -a"
+   ],
+   "check": "swapon --show lists /swapfile at 1G."
+  },
+  {
+   "task": "Mount an ISO image /root/rhel.iso read-only at /mnt/iso.",
+   "steps": [
+    "mkdir /mnt/iso",
+    "mount -o loop,ro /root/rhel.iso /mnt/iso"
+   ],
+   "check": "ls /mnt/iso shows the ISO's contents, such as BaseOS and AppStream."
+  },
+  {
+   "task": "Configure a local DNF repository from the mounted ISO at /mnt/iso.",
+   "steps": [
+    "Create /etc/yum.repos.d/iso.repo with sections [BaseOS] baseurl=file:///mnt/iso/BaseOS and [AppStream] baseurl=file:///mnt/iso/AppStream, each with enabled=1 and gpgcheck=0"
+   ],
+   "check": "dnf repolist shows both repositories with package counts."
+  },
+  {
+   "task": "Mount /dev/vdb5 at /secure so programs can't be executed from it, persistently.",
+   "steps": [
+    "Add to /etc/fstab:  UUID=<uuid>  /secure  xfs  defaults,noexec  0 0",
+    "systemctl daemon-reload; mount -a"
+   ],
+   "check": "findmnt /secure shows noexec, and running a script from there fails with Permission denied."
+  },
+  {
+   "task": "Unmount /data when it reports 'target is busy'.",
+   "steps": [
+    "fuser -vm /data   (or lsof +D /data) to find processes using it",
+    "Stop those processes or leave that directory",
+    "umount /data"
+   ],
+   "check": "findmnt /data shows nothing."
+  },
+  {
+   "task": "Show which directories under /var use the most space.",
+   "steps": [
+    "du -sh /var/* | sort -h"
+   ],
+   "check": "The largest directory appears at the bottom of the list."
+  },
+  {
+   "task": "Mount the SMB share //fileserver/public at /mnt/public using credentials in a protected file, persistently.",
+   "steps": [
+    "dnf install -y cifs-utils",
+    "Create /root/.smbcred with username= and password= lines; chmod 600 /root/.smbcred",
+    "Add to /etc/fstab:  //fileserver/public  /mnt/public  cifs  credentials=/root/.smbcred,_netdev  0 0",
+    "mkdir /mnt/public; systemctl daemon-reload; mount -a"
+   ],
+   "check": "findmnt /mnt/public shows type cifs."
+  },
+  {
+   "task": "Configure autofs so each user's home directory from server2:/exports/home/<user> mounts on demand under /home/remote.",
+   "steps": [
+    "Create /etc/auto.master.d/home.autofs:  /home/remote  /etc/auto.home",
+    "Create /etc/auto.home:  *  -rw  server2:/exports/home/&",
+    "systemctl enable --now autofs"
+   ],
+   "check": "ls /home/remote/alice mounts and shows alice's files."
+  },
+  {
+   "task": "Show the NFS exports offered by server2.",
+   "steps": [
+    "showmount -e server2"
+   ],
+   "check": "The output lists the exported paths and allowed clients."
+  },
+  {
+   "task": "Install the httpd package and confirm which files it installed.",
+   "steps": [
+    "dnf install -y httpd",
+    "rpm -ql httpd | head"
+   ],
+   "check": "rpm -q httpd prints the installed version."
+  },
+  {
+   "task": "Remove the telnet package if it is installed.",
+   "steps": [
+    "dnf remove -y telnet"
+   ],
+   "check": "rpm -q telnet prints 'package telnet is not installed'."
+  },
+  {
+   "task": "List the available package groups and install the 'Development Tools' group.",
+   "steps": [
+    "dnf group list",
+    "dnf group install -y 'Development Tools'"
+   ],
+   "check": "gcc --version runs after the install."
+  },
+  {
+   "task": "Find out which package provides the file /usr/bin/dig.",
+   "steps": [
+    "dnf provides /usr/bin/dig"
+   ],
+   "check": "The output names bind-utils."
+  },
+  {
+   "task": "Show the history of DNF transactions and undo the most recent one.",
+   "steps": [
+    "dnf history",
+    "dnf history undo last"
+   ],
+   "check": "dnf history shows a new transaction reversing the previous one."
+  },
+  {
+   "task": "Update all packages on the system.",
+   "steps": [
+    "dnf upgrade -y"
+   ],
+   "check": "dnf check-update afterwards reports nothing to update."
+  },
+  {
+   "task": "Enable a systemd service called backup.timer so it runs on schedule from boot.",
+   "steps": [
+    "systemctl enable --now backup.timer"
+   ],
+   "check": "systemctl list-timers shows backup.timer with its next run time."
+  },
+  {
+   "task": "Make sure the sshd service restarts automatically if it crashes by adding a drop-in override.",
+   "steps": [
+    "systemctl edit sshd",
+    "Add:  [Service]  Restart=always",
+    "Save and exit (systemd reloads automatically)"
+   ],
+   "check": "systemctl cat sshd shows the override in /etc/systemd/system/sshd.service.d/override.conf."
+  },
+  {
+   "task": "Schedule a cron job for root that runs /usr/local/bin/cleanup.sh at 03:15 on the first day of every month.",
+   "steps": [
+    "crontab -e",
+    "Add:  15 3 1 * * /usr/local/bin/cleanup.sh"
+   ],
+   "check": "crontab -l shows the line."
+  },
+  {
+   "task": "Schedule a system-wide job in /etc/cron.d that runs a disk report every 30 minutes as root.",
+   "steps": [
+    "Create /etc/cron.d/diskreport containing:  */30 * * * * root /usr/local/bin/diskreport.sh"
+   ],
+   "check": "cat /etc/cron.d/diskreport shows the line with the user field."
+  },
+  {
+   "task": "Prevent user bob from using cron.",
+   "steps": [
+    "echo bob >> /etc/cron.deny"
+   ],
+   "check": "As bob, crontab -e reports that bob is not allowed to use the program."
+  },
+  {
+   "task": "Set the system to boot to the multi-user target and verify it.",
+   "steps": [
+    "systemctl set-default multi-user.target"
+   ],
+   "check": "systemctl get-default prints multi-user.target."
+  },
+  {
+   "task": "Add a kernel argument quiet to all installed kernels persistently.",
+   "steps": [
+    "grubby --update-kernel=ALL --args='quiet'"
+   ],
+   "check": "grubby --info=ALL | grep args shows quiet for each kernel."
+  },
+  {
+   "task": "Configure the system to use chrony with the server time.example.com and confirm it synchronises.",
+   "steps": [
+    "Edit /etc/chrony.conf:  server time.example.com iburst",
+    "systemctl restart chronyd"
+   ],
+   "check": "chronyc sources shows time.example.com marked with *."
+  },
+  {
+   "task": "Create the directory /var/www/html/data and make sure files created there get the httpd content SELinux type.",
+   "steps": [
+    "mkdir -p /var/www/html/data",
+    "restorecon -Rv /var/www/html/data"
+   ],
+   "check": "ls -Zd /var/www/html/data shows httpd_sys_content_t, inherited from the policy for /var/www."
+  },
+  {
+   "task": "Create a new connection named static-eth1 on interface eth1 with address 10.0.0.5/24, gateway 10.0.0.1 and DNS 10.0.0.1.",
+   "steps": [
+    "nmcli con add con-name static-eth1 type ethernet ifname eth1 ipv4.method manual ipv4.addresses 10.0.0.5/24 ipv4.gateway 10.0.0.1 ipv4.dns 10.0.0.1",
+    "nmcli con up static-eth1"
+   ],
+   "check": "ip addr show eth1 shows 10.0.0.5/24 and nmcli con show --active lists static-eth1."
+  },
+  {
+   "task": "Switch the eth0 connection back to DHCP.",
+   "steps": [
+    "nmcli con mod eth0 ipv4.method auto ipv4.addresses '' ipv4.gateway ''",
+    "nmcli con up eth0"
+   ],
+   "check": "ip addr show eth0 shows a dynamically assigned address."
+  },
+  {
+   "task": "Configure an IPv6 address 2001:db8::10/64 on the eth0 connection.",
+   "steps": [
+    "nmcli con mod eth0 ipv6.method manual ipv6.addresses 2001:db8::10/64",
+    "nmcli con up eth0"
+   ],
+   "check": "ip -6 addr show eth0 lists 2001:db8::10/64."
+  },
+  {
+   "task": "Make server1.example.com resolve to 192.168.10.20 locally without DNS.",
+   "steps": [
+    "echo '192.168.10.20 server1.example.com server1' >> /etc/hosts"
+   ],
+   "check": "getent hosts server1 returns 192.168.10.20."
+  },
+  {
+   "task": "Set the DNS search domain to example.com on the eth0 connection.",
+   "steps": [
+    "nmcli con mod eth0 ipv4.dns-search example.com",
+    "nmcli con up eth0"
+   ],
+   "check": "cat /etc/resolv.conf shows search example.com."
+  },
+  {
+   "task": "Test name resolution and show which DNS server answered.",
+   "steps": [
+    "dig server1.example.com",
+    "Or: host server1.example.com"
+   ],
+   "check": "dig's SERVER line shows the resolver that replied."
+  },
+  {
+   "task": "Show the routing table and confirm the default gateway.",
+   "steps": [
+    "ip route"
+   ],
+   "check": "A line starting with default via shows the gateway address."
+  },
+  {
+   "task": "Show which service is listening on TCP port 22.",
+   "steps": [
+    "ss -tlnp | grep :22"
+   ],
+   "check": "The output shows sshd listening on port 22."
+  },
+  {
+   "task": "Permanently allow the SSH service through the firewall in the public zone.",
+   "steps": [
+    "firewall-cmd --permanent --zone=public --add-service=ssh",
+    "firewall-cmd --reload"
+   ],
+   "check": "firewall-cmd --zone=public --list-services includes ssh."
+  },
+  {
+   "task": "Permanently remove the cockpit service from the firewall.",
+   "steps": [
+    "firewall-cmd --permanent --remove-service=cockpit",
+    "firewall-cmd --reload"
+   ],
+   "check": "firewall-cmd --list-services no longer shows cockpit."
+  },
+  {
+   "task": "Allow traffic from the network 10.20.0.0/16 into the trusted zone permanently.",
+   "steps": [
+    "firewall-cmd --permanent --zone=trusted --add-source=10.20.0.0/16",
+    "firewall-cmd --reload"
+   ],
+   "check": "firewall-cmd --zone=trusted --list-sources shows 10.20.0.0/16."
+  },
+  {
+   "task": "Show the active firewall zones and their interfaces.",
+   "steps": [
+    "firewall-cmd --get-active-zones"
+   ],
+   "check": "Each active zone is listed with its interfaces or sources."
+  },
+  {
+   "task": "Create user tom with home directory /srv/tom, comment 'Tom Lee' and UID 3005.",
+   "steps": [
+    "useradd -u 3005 -d /srv/tom -m -c 'Tom Lee' tom"
+   ],
+   "check": "getent passwd tom shows UID 3005, the comment and /srv/tom."
+  },
+  {
+   "task": "Change user tom's primary group to developers.",
+   "steps": [
+    "usermod -g developers tom"
+   ],
+   "check": "id tom shows gid=<developers' GID>(developers)."
+  },
+  {
+   "task": "Rename user tom to thomas.",
+   "steps": [
+    "usermod -l thomas tom",
+    "Optionally move the home: usermod -d /srv/thomas -m thomas"
+   ],
+   "check": "getent passwd thomas exists and getent passwd tom returns nothing."
+  },
+  {
+   "task": "Delete user temp1 and remove the home directory.",
+   "steps": [
+    "userdel -r temp1"
+   ],
+   "check": "getent passwd temp1 returns nothing and /home/temp1 is gone."
+  },
+  {
+   "task": "Set the account expiry date of user contractor to 2026-12-31.",
+   "steps": [
+    "chage -E 2026-12-31 contractor"
+   ],
+   "check": "chage -l contractor shows Account expires: Dec 31, 2026."
+  },
+  {
+   "task": "Require user carol to wait at least 2 days between password changes.",
+   "steps": [
+    "chage -m 2 carol"
+   ],
+   "check": "chage -l carol shows Minimum number of days between password change: 2."
+  },
+  {
+   "task": "Lock user dave's account and later unlock it.",
+   "steps": [
+    "usermod -L dave",
+    "usermod -U dave"
+   ],
+   "check": "passwd -S dave shows LK when locked and PS when unlocked."
+  },
+  {
+   "task": "Rename group devs to engineering.",
+   "steps": [
+    "groupmod -n engineering devs"
+   ],
+   "check": "getent group engineering exists with the old GID."
+  },
+  {
+   "task": "Delete the group oldteam.",
+   "steps": [
+    "groupdel oldteam"
+   ],
+   "check": "getent group oldteam returns nothing (it can't be any user's primary group)."
+  },
+  {
+   "task": "Allow user alice to run only systemctl restart httpd with sudo.",
+   "steps": [
+    "visudo -f /etc/sudoers.d/alice",
+    "Add:  alice ALL=(root) /usr/bin/systemctl restart httpd"
+   ],
+   "check": "As alice, sudo -l lists only that command; other sudo commands are refused."
+  },
+  {
+   "task": "Allow group admins to use sudo without being asked for a password.",
+   "steps": [
+    "visudo -f /etc/sudoers.d/admins",
+    "Add:  %admins ALL=(ALL) NOPASSWD: ALL"
+   ],
+   "check": "A member of admins runs sudo -v without a password prompt."
+  },
+  {
+   "task": "Set default permissions so new files created by user alice are not readable by others (umask 027).",
+   "steps": [
+    "Add  umask 027  to /home/alice/.bashrc"
+   ],
+   "check": "As alice in a new shell, touch test; ls -l test shows -rw-r-----."
+  },
+  {
+   "task": "Remove all ACL entries from /shared/projects/plan.txt.",
+   "steps": [
+    "setfacl -b /shared/projects/plan.txt"
+   ],
+   "check": "getfacl shows only owner, group and other entries, and ls -l shows no +."
+  },
+  {
+   "task": "Give group auditors read-only access to the whole /var/log/app directory tree with ACLs, including new files.",
+   "steps": [
+    "setfacl -R -m g:auditors:rX /var/log/app",
+    "setfacl -R -m d:g:auditors:rX /var/log/app"
+   ],
+   "check": "getfacl /var/log/app shows group:auditors:r-x and a matching default entry."
+  },
+  {
+   "task": "Make the file /etc/important.conf immutable so even root can't change it until the attribute is removed.",
+   "steps": [
+    "chattr +i /etc/important.conf"
+   ],
+   "check": "lsattr shows the i flag and echo test >> /etc/important.conf fails."
+  },
+  {
+   "task": "Change the SELinux type of /srv/site to httpd_sys_content_t permanently.",
+   "steps": [
+    "semanage fcontext -a -t httpd_sys_content_t '/srv/site(/.*)?'",
+    "restorecon -Rv /srv/site"
+   ],
+   "check": "ls -Zd /srv/site shows httpd_sys_content_t, and it survives another restorecon."
+  },
+  {
+   "task": "List the SELinux booleans related to httpd and their current values.",
+   "steps": [
+    "getsebool -a | grep httpd"
+   ],
+   "check": "Each httpd boolean is shown with on or off."
+  },
+  {
+   "task": "Allow httpd scripts to connect to the network permanently.",
+   "steps": [
+    "setsebool -P httpd_can_network_connect on"
+   ],
+   "check": "getsebool httpd_can_network_connect prints on."
+  },
+  {
+   "task": "Allow sshd to listen on port 2222 with SELinux enforcing.",
+   "steps": [
+    "semanage port -a -t ssh_port_t -p tcp 2222",
+    "Set  Port 2222  in /etc/ssh/sshd_config (keep Port 22 too while testing)",
+    "firewall-cmd --permanent --add-port=2222/tcp; firewall-cmd --reload",
+    "systemctl restart sshd"
+   ],
+   "check": "ss -tlnp shows sshd on 2222 and ssh -p 2222 localhost connects."
+  },
+  {
+   "task": "Temporarily set SELinux to permissive mode to test whether it is causing a problem.",
+   "steps": [
+    "setenforce 0",
+    "Test the service, then: setenforce 1"
+   ],
+   "check": "getenforce shows Permissive, then Enforcing again."
+  },
+  {
+   "task": "Set SELinux to permissive persistently across reboots (for troubleshooting only).",
+   "steps": [
+    "In /etc/selinux/config set  SELINUX=permissive"
+   ],
+   "check": "After a reboot, getenforce prints Permissive."
+  },
+  {
+   "task": "Show recent SELinux denials in a readable summary.",
+   "steps": [
+    "ausearch -m AVC -ts today",
+    "Or: journalctl -t setroubleshoot (if setroubleshoot is installed)"
+   ],
+   "check": "The output lists denied actions with source and target contexts."
+  },
+  {
+   "task": "Disable SSH password authentication so only keys work.",
+   "steps": [
+    "In /etc/ssh/sshd_config.d/50-keys.conf set  PasswordAuthentication no",
+    "systemctl reload sshd"
+   ],
+   "check": "sshd -T | grep passwordauthentication shows no; a password login is refused."
+  },
+  {
+   "task": "Search for container images named httpd in the configured registries.",
+   "steps": [
+    "podman search httpd"
+   ],
+   "check": "The output lists matching images with their registries."
+  },
+  {
+   "task": "Pull the image registry.access.redhat.com/ubi9/ubi and list local images.",
+   "steps": [
+    "podman pull registry.access.redhat.com/ubi9/ubi",
+    "podman images"
+   ],
+   "check": "podman images lists ubi9/ubi."
+  },
+  {
+   "task": "Inspect a container image to see its default command and exposed ports without running it.",
+   "steps": [
+    "skopeo inspect docker://registry.access.redhat.com/ubi9/httpd-24",
+    "Or after pulling: podman image inspect <image>"
+   ],
+   "check": "The output shows fields such as Cmd and ExposedPorts."
+  },
+  {
+   "task": "Run an interactive shell in a temporary ubi9 container that is removed on exit.",
+   "steps": [
+    "podman run -it --rm registry.access.redhat.com/ubi9/ubi /bin/bash"
+   ],
+   "check": "You get a container prompt; after exit, podman ps -a doesn't list it."
+  },
+  {
+   "task": "Run a MariaDB container in the background with an environment variable for the root password.",
+   "steps": [
+    "podman run -d --name db -e MYSQL_ROOT_PASSWORD=redhat registry.access.redhat.com/rhel9/mariadb-105"
+   ],
+   "check": "podman ps shows db running and podman logs db shows the server starting."
+  },
+  {
+   "task": "Run a command inside the running container named db.",
+   "steps": [
+    "podman exec -it db mysql -uroot -predhat -e 'show databases;'"
+   ],
+   "check": "The database list prints from inside the container."
+  },
+  {
+   "task": "Stop and remove the container named db.",
+   "steps": [
+    "podman stop db",
+    "podman rm db"
+   ],
+   "check": "podman ps -a no longer lists db."
+  },
+  {
+   "task": "Show the logs of the container named web.",
+   "steps": [
+    "podman logs web"
+   ],
+   "check": "The container's output, such as web server start messages, is displayed."
+  },
+  {
+   "task": "Copy the file /etc/hosts from the host into the running container web at /tmp/hosts.",
+   "steps": [
+    "podman cp /etc/hosts web:/tmp/hosts"
+   ],
+   "check": "podman exec web cat /tmp/hosts shows the file."
+  },
+  {
+   "task": "Run a container with persistent storage at /home/alice/dbdata mapped to /var/lib/mysql, with SELinux allowing it.",
+   "steps": [
+    "mkdir -p ~/dbdata",
+    "podman run -d --name db -e MYSQL_ROOT_PASSWORD=redhat -v ~/dbdata:/var/lib/mysql:Z registry.access.redhat.com/rhel9/mariadb-105"
+   ],
+   "check": "Files appear in ~/dbdata, and they remain after the container is removed and recreated."
+  },
+  {
+   "task": "Create a Quadlet file so a rootless container named web runs as a systemd user service for alice.",
+   "steps": [
+    "mkdir -p ~/.config/containers/systemd",
+    "Create ~/.config/containers/systemd/web.container with [Container] Image=registry.access.redhat.com/ubi9/httpd-24 PublishPort=8080:8080 and [Install] WantedBy=default.target",
+    "systemctl --user daemon-reload; systemctl --user start web",
+    "As root: loginctl enable-linger alice"
+   ],
+   "check": "systemctl --user status web shows active, and it starts at boot without alice logging in."
+  },
+  {
+   "task": "Show how much disk space container images and containers use.",
+   "steps": [
+    "podman system df"
+   ],
+   "check": "The output summarises images, containers and volumes with their sizes."
+  },
+  {
+   "task": "Write a one-line command that prints the number of processes owned by each user, highest first.",
+   "steps": [
+    "ps -eo user= | sort | uniq -c | sort -rn"
+   ],
+   "check": "Each line shows a count followed by a username, largest at the top."
+  },
+  {
+   "task": "Create a tar archive of /home compressed with xz named /root/home.tar.xz.",
+   "steps": [
+    "tar -cJf /root/home.tar.xz /home"
+   ],
+   "check": "tar -tJf /root/home.tar.xz | head lists home/ paths."
+  },
+  {
+   "task": "Extract only etc/hosts from /root/etc-backup.tar.gz into /tmp/restore.",
+   "steps": [
+    "mkdir /tmp/restore",
+    "tar -xzf /root/etc-backup.tar.gz -C /tmp/restore etc/hosts"
+   ],
+   "check": "ls /tmp/restore/etc shows only hosts."
   }
  ]
 }

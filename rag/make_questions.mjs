@@ -191,6 +191,18 @@ export function keepItems(exam, reply, passage) {
   return out;
 }
 
+/**
+ * Items that make no sense on their own or aren't about the subject: references to "the
+ * passage" or book, and questions about the exam itself (renewal, booking, question formats).
+ */
+export const OFF_TOPIC = /\bpassage\b|\bCEUs?\b|continuing education|Pearson VUE|exam voucher|performance.based question|\bthe (Security\+|Network\+|CySA\+|PenTest\+) exam\b|certification (cycle|expires)|\bthe book\b|\bthis chapter\b/i;
+
+/** True for an item to leave out: off-topic, or listed in the reject list (by question text). */
+export function rejected(item, rejects = new Set()) {
+  const text = [item.q ?? item.task, item.why ?? item.check, ...(item.options || [])].join(' ');
+  return OFF_TOPIC.test(text) || rejects.has(words(item.q ?? item.task).join(' '));
+}
+
 const hashInt = (s) => crypto.createHash('sha256').update(s).digest().readUInt32BE(0);
 
 /** Same question with its options in a stable shuffled order (models favour some positions). */
@@ -206,13 +218,13 @@ export function shuffleOptions(q) {
 }
 
 /** All kept items from the generated records, de-duplicated, ready for data/study/<exam>.json. */
-export function assemble(exam, records) {
+export function assemble(exam, records, rejects = new Set()) {
   const seen = new Set();
   const out = [];
   for (const rec of records) {
     for (const item of rec.items || []) {
       const key = words(item.q ?? item.task).join(' ');
-      if (!key || seen.has(key)) continue;
+      if (!key || seen.has(key) || rejected(item, rejects)) continue;
       seen.add(key);
       out.push(exam.format === 'tasks' ? item : shuffleOptions(item));
     }
@@ -226,8 +238,19 @@ const readJsonl = (file) => (fs.existsSync(file)
   ? fs.readFileSync(file, 'utf8').split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean)
   : []);
 
+/**
+ * Questions a review found wrong or ambiguous: security-books/.rag/questions/rejects.json,
+ * { "<exam id>": ["<question text>", ...] }. They stay in the generated records but are
+ * left out of the bank.
+ */
+function loadRejects(examId) {
+  const file = path.join(RAG, 'questions/rejects.json');
+  const list = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8'))[examId] || [] : [];
+  return new Set(list.map((q) => words(q).join(' ')));
+}
+
 function writeBank(examMeta, records) {
-  const items = assemble(examMeta, records);
+  const items = assemble(examMeta, records, loadRejects(examMeta.id));
   if (!items.length) return 0;
   fs.writeFileSync(path.join(ROOT, `data/study/${examMeta.id}.json`), `${JSON.stringify({ questions: items }, null, 1)}\n`);
   return items.length;

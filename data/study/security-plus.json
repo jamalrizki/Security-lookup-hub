@@ -1,72 +1,6 @@
 {
  "questions": [
   {
-   "q": "When using the end‑of‑chapter review questions in the study guide, what minimum score should you achieve before moving on to the next chapter?",
-   "options": [
-    "100% correct",
-    "70% correct",
-    "80% correct",
-    "90% correct"
-   ],
-   "answer": 3,
-   "why": "The guide recommends achieving 90% or higher on review questions before proceeding."
-  },
-  {
-   "q": "Which of the following correctly orders CompTIA’s entry‑level, bridge, and advanced certifications?",
-   "options": [
-    "Security+ → CASP → CSA+",
-    "Security+ → CSA+ → CASP",
-    "CASP → Security+ → CSA+",
-    "CSA+ → Security+ → CASP"
-   ],
-   "answer": 1,
-   "why": "Security+ is entry‑level, CSA+ bridges to the advanced CASP certification."
-  },
-  {
-   "q": "The primary skills validated by the CSA+ certification involve:",
-   "options": [
-    "Managing cryptographic key lifecycles",
-    "Designing secure network topologies",
-    "Configuring firewall rule sets",
-    "Operating threat detection tools, analyzing data, and identifying vulnerabilities"
-   ],
-   "answer": 3,
-   "why": "CSA+ focuses on using detection tools, data analysis, and interpreting results to find vulnerabilities, threats, and risks."
-  },
-  {
-   "q": "Which statement most accurately describes a performance‑based question on the Security+ exam?",
-   "options": [
-    "Complete a task in a simulated environment and be graded on the result.",
-    "Select the best definition from a list of choices.",
-    "Rank a set of security controls by importance.",
-    "Identify a typographical error in a sentence."
-   ],
-   "answer": 0,
-   "why": "Performance‑based questions require the candidate to actually perform a task, often in a simulated lab, rather than just select an answer."
-  },
-  {
-   "q": "Which format is NOT listed as a type of performance‑based question in the passage?",
-   "options": [
-    "Matching items from one list to another.",
-    "A scenario that leads to a simulated task.",
-    "Drag‑and‑drop construction of a network diagram.",
-    "Fill‑in‑the‑blank with the best answer."
-   ],
-   "answer": 2,
-   "why": "The passage mentions fill‑in‑the‑blank, matching, and scenario‑based simulated tasks, but does not mention a drag‑and‑drop network diagram."
-  },
-  {
-   "q": "According to the recommended study process, what should a candidate do right after completing the initial assessment test?",
-   "options": [
-    "Review the explanations for any wrong answers and note the chapters covering that material.",
-    "Take a full practice exam immediately.",
-    "Skip the chapters that seem easy and focus on new topics.",
-    "Memorize all electronic flashcards without revisiting the text."
-   ],
-   "answer": 0,
-   "why": "The passage advises reviewing explanations for incorrect answers and noting the chapters where that material is covered as the next step."
-  },
-  {
    "q": "A financial services firm experiences a total power loss at its primary data center. Management needs a backup location that can resume critical services within minutes and already has the latest data replicated. Which recovery site type best fits this requirement?",
    "options": [
     "Cold site",
@@ -155,17 +89,6 @@
    "why": "ALE = SLE × ARO = $5,000 × 0.2 = $1,000."
   },
   {
-   "q": "Which statement best describes how a Data Loss Prevention (DLP) system relates to an Intrusion Prevention System (IPS)?",
-   "options": [
-    "Both primarily function by filtering network ports like a traditional firewall.",
-    "Both inspect data or traffic content to block unauthorized disclosure or malicious activity.",
-    "Both automatically encrypt all data at rest and in transit.",
-    "Both replace the need for antivirus software on endpoints."
-   ],
-   "answer": 1,
-   "why": "DLP inspects data on devices and network for unauthorized transfer, similar to how IPS inspects traffic for malicious content."
-  },
-  {
    "q": "What defines the risk acceptance strategy in an organization’s risk management process?",
    "options": [
     "Recognizing an identified risk and consciously deciding to take no further action.",
@@ -186,17 +109,6 @@
    ],
    "answer": 1,
    "why": "Setting clear training objectives and repeatedly delivering messages ensures a high percentage of staff stay informed about security best practices."
-  },
-  {
-   "q": "In a security policy document, which section is intended to give readers a brief background and clarify to whom the policy applies?",
-   "options": [
-    "The policy overview statement",
-    "The exception statement",
-    "The accountability statement",
-    "The scope statement"
-   ],
-   "answer": 3,
-   "why": "The scope statement provides background and defines the audience for the policy."
   },
   {
    "q": "Which part of a policy explicitly identifies the position responsible for enforcement and outlines the penalties for non‑compliance?",
@@ -221,28 +133,6 @@
    "why": "The exception statement provides the process and contacts for deviating from the policy."
   },
   {
-   "q": "Jordan holds a CompTIA Security+ certification that expires in two years. Which action must Jordan take to keep the certification active?",
-   "options": [
-    "Submit a yearly performance review to the employer.",
-    "Retake the Security+ exam before the expiration date.",
-    "Earn the required number of Continuing Education Units (CEUs) within the certification cycle.",
-    "Attend an annual CompTIA conference and submit the attendance certificate."
-   ],
-   "answer": 2,
-   "why": "CompTIA certifications are maintained by earning a set number of CEUs during the certification period."
-  },
-  {
-   "q": "A senior analyst leaves the company and completes an exit interview. Which follow‑up step provides the greatest security benefit?",
-   "options": [
-    "Review the interview for any security concerns and adjust policies accordingly.",
-    "Discard the interview notes and focus on onboarding new staff.",
-    "Immediately revoke all user accounts, even those unrelated to the departing analyst.",
-    "Offer the departing analyst temporary admin rights to finish pending work."
-   ],
-   "answer": 0,
-   "why": "Exit interviews can reveal security issues; reviewing them helps identify needed changes."
-  },
-  {
    "q": "A temporary contractor is being added to the organization’s user groups. According to the least‑privilege principle, which permission should the contractor NOT receive?",
    "options": [
     "Read‑only access to the internal knowledge base.",
@@ -265,28 +155,6 @@
    "why": "A BIA documents the impact and cost of outages, helping justify budget requests by showing potential loss."
   },
   {
-   "q": "A company is assessing the risk of prolonged utility disruptions after a major natural disaster. Which scenario would likely cause the longest operational interruption according to the passage?",
-   "options": [
-    "A temporary loss of electricity lasting a few hours.",
-    "A major earthquake that disables electricity, natural gas, and water for weeks or months.",
-    "A brief water supply interruption lasting a day.",
-    "Intermittent internet connectivity due to ISP maintenance."
-   ],
-   "answer": 1,
-   "why": "The passage notes that large earthquakes can knock out electricity, gas, and water for extended periods, leading to prolonged downtime."
-  },
-  {
-   "q": "An organization’s network depends on a single router for all external communications. Which change directly eliminates this single point of failure?",
-   "options": [
-    "Deploying a second router in parallel to provide redundancy.",
-    "Updating the router’s firmware to the latest version.",
-    "Implementing a VPN solution for remote access.",
-    "Installing a firewall on the existing router."
-   ],
-   "answer": 0,
-   "why": "Adding a redundant router removes the single point of failure, as recommended in the passage."
-  },
-  {
    "q": "A startup needs the fastest possible disk performance for its video editing workstation and is willing to accept data loss if a drive fails. Which RAID configuration should they implement?",
    "options": [
     "RAID 1 (mirroring)",
@@ -307,17 +175,6 @@
    ],
    "answer": 2,
    "why": "RAID 1 mirrors data, so usable capacity is half the combined drive size; 2 TB + 2 TB yields 2 TB of usable space."
-  },
-  {
-   "q": "Which statement accurately differentiates RAID 1 mirroring from RAID 1 duplexing?",
-   "options": [
-    "Mirroring doubles the total storage capacity compared to the raw disk size.",
-    "Duplexing employs two separate controller cards and writes to both disks simultaneously, giving faster writes.",
-    "Duplexing adds parity information to provide error correction.",
-    "Mirroring uses two controller cards while duplexing uses a single controller."
-   ],
-   "answer": 1,
-   "why": "In duplexing, each disk is attached to its own controller and receives data at the same time, resulting in higher write performance than standard mirroring."
   },
   {
    "q": "A financial firm knows that storing client data on a third‑party cloud service could expose it to a breach, but the cost of an on‑premises solution is prohibitive. Management decides to continue using the cloud despite the risk. Which risk‑response strategy best describes this decision?",
@@ -351,28 +208,6 @@
    ],
    "answer": 3,
    "why": "Secure boot checks cryptographic signatures of boot components to ensure only trusted code is executed."
-  },
-  {
-   "q": "Which of the following is NOT one of the 14 practice areas identified in NIST Special Publication 800‑14?",
-   "options": [
-    "Vulnerability Scanning",
-    "Physical and Environmental Security",
-    "Logical Access Control",
-    "Audit Trails"
-   ],
-   "answer": 0,
-   "why": "The 14 practice areas include Physical and Environmental Security, Logical Access Control, and Audit Trails, but Vulnerability Scanning is not listed."
-  },
-  {
-   "q": "What is the main purpose of the three levels defined in NIST SP 800‑53 Revision 4?",
-   "options": [
-    "To separate controls into hardware, software, and procedural groups",
-    "To categorize controls based on organization size",
-    "To rank controls by implementation cost",
-    "To specify the minimum set of controls required for varying impact levels"
-   ],
-   "answer": 3,
-   "why": "SP 800‑53 defines three levels of minimum security controls, indicating the baseline controls needed for different risk or impact levels."
   },
   {
    "q": "The NIST SP 800‑82 guide focuses on security for which of the following environments?",
@@ -417,28 +252,6 @@
    ],
    "answer": 2,
    "why": "Firewalls belong at every junction between network zones to control traffic flow between each segment."
-  },
-  {
-   "q": "A security analyst wants to implement a log‑correlation system for multiple firewalls across the enterprise. Which statement about the placement of this system is most accurate?",
-   "options": [
-    "It should be placed behind the perimeter firewall to prevent log tampering",
-    "It can reside on any server that has network access to the firewalls’ log repositories",
-    "It must be installed on the same hardware as each firewall to read logs in real time",
-    "It must be located in the DMZ to receive logs directly from external firewalls"
-   ],
-   "answer": 1,
-   "why": "A correlation engine only needs network access to firewall logs; it does not need to be physically adjacent to the firewalls."
-  },
-  {
-   "q": "A company runs a pair of web servers in its DMZ and a pair of database servers in an internal subnet. Where should the load balancer for each server pair be positioned?",
-   "options": [
-    "Both load balancers should be placed in the DMZ to simplify management",
-    "The web‑server load balancer should be in the internal subnet, and the database load balancer in the DMZ",
-    "The web‑server load balancer belongs in the DMZ, while the database load balancer sits in the internal subnet",
-    "Both load balancers should be placed behind the internal firewall for added security"
-   ],
-   "answer": 2,
-   "why": "Load balancers are placed in the same network segment as the servers they serve: web servers in the DMZ, database servers in the internal network."
   },
   {
    "q": "A large organization needs to apply a critical security patch to its web servers. Which of the following sequences best follows the recommended patch management process?",
@@ -2320,6 +2133,3251 @@
    ],
    "answer": 3,
    "why": "Suspension is temporary: the certificate is put on hold and can be restored, unlike revocation, which is permanent."
+  },
+  {
+   "q": "A policy requires that one person enters a vendor payment and a different person approves it. Which control type is this?",
+   "options": [
+    "Physical deterrent control",
+    "Technical detective control",
+    "Corrective control",
+    "Managerial (administrative) preventive control"
+   ],
+   "answer": 3,
+   "why": "Separation of duties is set by policy (managerial) and stops fraud before it happens (preventive)."
+  },
+  {
+   "q": "Which control type is a warning sign that says 'This area is under video surveillance'?",
+   "options": [
+    "Compensating",
+    "Detective",
+    "Corrective",
+    "Deterrent"
+   ],
+   "answer": 3,
+   "why": "A sign discourages people from trying. The camera itself would be detective."
+  },
+  {
+   "q": "Restoring a server from backup after ransomware is which type of control?",
+   "options": [
+    "Directive",
+    "Preventive",
+    "Deterrent",
+    "Corrective"
+   ],
+   "answer": 3,
+   "why": "Corrective controls fix things after an incident and return systems to normal operation."
+  },
+  {
+   "q": "A legacy system can't be patched, so it is placed on an isolated VLAN with strict ACLs. What type of control is the isolation?",
+   "options": [
+    "Compensating",
+    "Directive",
+    "Deterrent",
+    "Detective"
+   ],
+   "answer": 0,
+   "why": "A compensating control reduces the same risk another way when the normal control can't be used."
+  },
+  {
+   "q": "Which control type is an acceptable use policy that tells staff what they must and must not do?",
+   "options": [
+    "Detective",
+    "Corrective",
+    "Directive",
+    "Compensating"
+   ],
+   "answer": 2,
+   "why": "Directive controls instruct people on expected behaviour, such as policies and procedures."
+  },
+  {
+   "q": "What does the 'accounting' part of AAA provide?",
+   "options": [
+    "Proof of a user's identity",
+    "A record of what users did, such as logs of access and actions",
+    "Decisions about what a user may access",
+    "Encryption of user sessions"
+   ],
+   "answer": 1,
+   "why": "Authentication proves identity, authorisation decides access, and accounting records activity."
+  },
+  {
+   "q": "Which describes authorisation in AAA?",
+   "options": [
+    "Proving who a user is",
+    "Creating a user account",
+    "Deciding what an authenticated user is allowed to do",
+    "Logging what a user did"
+   ],
+   "answer": 2,
+   "why": "Authorisation happens after authentication and grants or denies access to specific resources."
+  },
+  {
+   "q": "In zero trust, which component actually allows or blocks the connection to a resource?",
+   "options": [
+    "Identity provider",
+    "Policy enforcement point",
+    "Policy engine",
+    "Policy administrator"
+   ],
+   "answer": 1,
+   "why": "The engine decides, the administrator relays the decision, and the enforcement point carries it out on the data plane."
+  },
+  {
+   "q": "Zero trust separates the control plane from the data plane. What happens on the control plane?",
+   "options": [
+    "Data storage",
+    "Movement of the user's actual traffic",
+    "Access decisions and policy management",
+    "Physical cabling"
+   ],
+   "answer": 2,
+   "why": "The control plane decides who may access what; the data plane carries the traffic once allowed."
+  },
+  {
+   "q": "What does adaptive identity mean in a zero trust model?",
+   "options": [
+    "Passwords change automatically each day",
+    "Users choose their own permissions",
+    "Access decisions change based on context such as location, device and behaviour",
+    "Everyone gets the same access"
+   ],
+   "answer": 2,
+   "why": "Adaptive identity weighs risk signals at each request and may demand more proof when something looks unusual."
+  },
+  {
+   "q": "Which physical control uses short posts to stop vehicles from reaching a building entrance?",
+   "options": [
+    "Bollards",
+    "Fencing",
+    "Lighting",
+    "Mantraps"
+   ],
+   "answer": 0,
+   "why": "Bollards block vehicles while letting pedestrians pass. Mantraps control people one at a time."
+  },
+  {
+   "q": "What is a honeytoken?",
+   "options": [
+    "A cryptographic key",
+    "Fake data, such as a bogus credential, that alerts when someone uses it",
+    "A one-time password",
+    "A physical security token"
+   ],
+   "answer": 1,
+   "why": "Honeytokens have no legitimate use, so any attempt to use one signals an intruder."
+  },
+  {
+   "q": "What is a honeynet?",
+   "options": [
+    "A wireless guest network",
+    "A list of blocked IPs",
+    "A VPN for security staff",
+    "A network of decoy systems used to study attackers"
+   ],
+   "answer": 3,
+   "why": "A honeynet is several honeypots together, giving attackers a realistic environment to observe."
+  },
+  {
+   "q": "Why should a change request include a backout plan?",
+   "options": [
+    "To notify customers",
+    "So the change can be reversed quickly if it causes problems",
+    "To avoid testing",
+    "To speed up approval"
+   ],
+   "answer": 1,
+   "why": "A tested rollback limits downtime when a change goes wrong."
+  },
+  {
+   "q": "In change management, why is a maintenance window used?",
+   "options": [
+    "To test in production",
+    "To skip approval",
+    "To make changes when the impact on users is lowest",
+    "To bypass logging"
+   ],
+   "answer": 2,
+   "why": "Scheduling changes during agreed low-use periods reduces disruption."
+  },
+  {
+   "q": "A firewall change was approved but nobody updated the network diagrams. Which change management step was missed?",
+   "options": [
+    "Approval",
+    "Testing",
+    "Impact analysis",
+    "Updating documentation"
+   ],
+   "answer": 3,
+   "why": "Diagrams, policies and procedures must be updated so the records match reality."
+  },
+  {
+   "q": "What is the purpose of an allow list in change management for applications?",
+   "options": [
+    "All applications are allowed except listed ones",
+    "Only approved applications can be installed or run",
+    "Applications update themselves",
+    "Users approve their own software"
+   ],
+   "answer": 1,
+   "why": "Allow lists restrict execution to known-good software, blocking anything unapproved."
+  },
+  {
+   "q": "Which statement about symmetric encryption is true?",
+   "options": [
+    "It is used only for signatures",
+    "It uses a public and a private key",
+    "The same key encrypts and decrypts, so key distribution is the main challenge",
+    "It is slower than asymmetric encryption"
+   ],
+   "answer": 2,
+   "why": "Symmetric ciphers like AES are fast but both parties need the same secret key."
+  },
+  {
+   "q": "Why do protocols such as TLS use asymmetric encryption to exchange a symmetric key?",
+   "options": [
+    "It avoids using certificates",
+    "Asymmetric is faster for bulk data",
+    "Symmetric keys can't encrypt data",
+    "Asymmetric solves key exchange; symmetric is faster for bulk data"
+   ],
+   "answer": 3,
+   "why": "This hybrid approach gets safe key exchange and fast data encryption."
+  },
+  {
+   "q": "Which encryption level protects data if a laptop is stolen while powered off?",
+   "options": [
+    "Email encryption",
+    "Full-disk encryption",
+    "Transport encryption",
+    "Database column encryption only"
+   ],
+   "answer": 1,
+   "why": "FDE encrypts the whole drive, so the data is unreadable without the key when the device is off."
+  },
+  {
+   "q": "Which encryption type protects specific sensitive fields, such as card numbers, inside a database?",
+   "options": [
+    "Volume encryption",
+    "Field (column) level encryption",
+    "Full-disk encryption",
+    "Transport encryption"
+   ],
+   "answer": 1,
+   "why": "Column encryption keeps those values encrypted even from users who can query the rest of the table."
+  },
+  {
+   "q": "What is key stretching?",
+   "options": [
+    "Splitting a key across devices",
+    "Rotating keys yearly",
+    "Using longer cables for key servers",
+    "Making a weak password harder to crack by running it through many hashing rounds"
+   ],
+   "answer": 3,
+   "why": "Algorithms like PBKDF2 and bcrypt slow each guess so brute force takes much longer."
+  },
+  {
+   "q": "What makes a hash function suitable for verifying integrity?",
+   "options": [
+    "Its output length matches the input",
+    "It can be reversed with a key",
+    "Any change to the input produces a different fixed-length output",
+    "It compresses files"
+   ],
+   "answer": 2,
+   "why": "Hashes are one-way and change completely with any change to the data."
+  },
+  {
+   "q": "Which is the strongest of these hashing algorithms?",
+   "options": [
+    "MD5",
+    "CRC32",
+    "SHA-1",
+    "SHA-256"
+   ],
+   "answer": 3,
+   "why": "MD5 and SHA-1 have practical collisions and CRC32 isn't cryptographic at all."
+  },
+  {
+   "q": "Alice signs a document. Which key does Bob use to verify the signature?",
+   "options": [
+    "Alice's private key",
+    "Alice's public key",
+    "Bob's public key",
+    "Bob's private key"
+   ],
+   "answer": 1,
+   "why": "Signatures are made with the signer's private key and checked with their public key."
+  },
+  {
+   "q": "What does a blockchain's open public ledger provide?",
+   "options": [
+    "Anonymous web browsing",
+    "Faster encryption",
+    "Private storage for one company",
+    "A shared, tamper-evident record that everyone can verify"
+   ],
+   "answer": 3,
+   "why": "Each block links to the previous one by hash, so altering past records is easy to detect."
+  },
+  {
+   "q": "What is a wildcard certificate?",
+   "options": [
+    "A self-signed certificate",
+    "A certificate for email only",
+    "A certificate with no expiry",
+    "One certificate that covers all subdomains at one level, such as *.example.com"
+   ],
+   "answer": 3,
+   "why": "A wildcard covers www, mail and other names under one domain level but not deeper levels."
+  },
+  {
+   "q": "What does the Subject Alternative Name field in a certificate do?",
+   "options": [
+    "Lists additional names the certificate is valid for",
+    "Stores the private key",
+    "Names the certificate authority",
+    "Sets the expiry date"
+   ],
+   "answer": 0,
+   "why": "SAN entries let one certificate cover several hostnames, such as example.com and www.example.com."
+  },
+  {
+   "q": "What is a root of trust in PKI?",
+   "options": [
+    "A revoked certificate",
+    "An intermediate CA",
+    "A user's private key",
+    "The top-level CA whose certificate is trusted directly"
+   ],
+   "answer": 3,
+   "why": "Trust flows down from the root CA's self-signed certificate through intermediates to server certificates."
+  },
+  {
+   "q": "What is OCSP stapling?",
+   "options": [
+    "The web server attaches a recent signed revocation status to the TLS handshake",
+    "Revoking a certificate automatically",
+    "Combining several certificates into one",
+    "Pinning a certificate in an app"
+   ],
+   "answer": 0,
+   "why": "Stapling saves clients from contacting the CA and protects their privacy."
+  },
+  {
+   "q": "What is a certificate signing request (CSR)?",
+   "options": [
+    "A certificate renewal reminder",
+    "A list of revoked certificates",
+    "A request containing a public key and identity details sent to a CA",
+    "A private key backup"
+   ],
+   "answer": 2,
+   "why": "The applicant generates a key pair, keeps the private key and sends the CSR to be signed."
+  },
+  {
+   "q": "What is a self-signed certificate most appropriate for?",
+   "options": [
+    "Internal testing where trust can be configured manually",
+    "Code signing for public software",
+    "A public e-commerce site",
+    "Email to customers"
+   ],
+   "answer": 0,
+   "why": "Browsers don't trust self-signed certificates by default, so they suit labs and internal use."
+  },
+  {
+   "q": "What does a hardware security module provide that software key storage doesn't?",
+   "options": [
+    "Automatic patching",
+    "Tamper-resistant hardware that keeps keys from ever leaving it",
+    "Free certificates",
+    "Faster internet access"
+   ],
+   "answer": 1,
+   "why": "HSMs perform cryptographic operations inside protected hardware so private keys can't be copied out."
+  },
+  {
+   "q": "What is a secure enclave on a phone or CPU?",
+   "options": [
+    "A VPN tunnel",
+    "An encrypted USB drive",
+    "A locked server room",
+    "An isolated area of the processor that protects sensitive data such as biometric templates"
+   ],
+   "answer": 3,
+   "why": "Enclaves run separately from the main OS, so even a compromised OS can't read their secrets."
+  },
+  {
+   "q": "What does obfuscation do to code?",
+   "options": [
+    "Signs it",
+    "Makes it hard for people to read or reverse-engineer",
+    "Encrypts it for transmission",
+    "Compresses it"
+   ],
+   "answer": 1,
+   "why": "Obfuscation adds confusion but not real security; determined analysts can still work it out."
+  },
+  {
+   "q": "Which attack exploits a program writing more data to memory than it allocated?",
+   "options": [
+    "SQL injection",
+    "Buffer overflow",
+    "Directory traversal",
+    "Cross-site scripting"
+   ],
+   "answer": 1,
+   "why": "Overwriting adjacent memory can crash the program or let attackers run their own code."
+  },
+  {
+   "q": "What is a race condition such as TOCTOU?",
+   "options": [
+    "A DDoS against a website",
+    "A slow network link",
+    "Two users with the same password",
+    "A flaw where something changes between a check and its use"
+   ],
+   "answer": 3,
+   "why": "Time-of-check to time-of-use bugs let attackers swap a file or value after it has been validated."
+  },
+  {
+   "q": "What is memory injection?",
+   "options": [
+    "Inserting malicious code into a running process's memory",
+    "Corrupting a hard drive",
+    "Writing to swap space",
+    "Adding more RAM"
+   ],
+   "answer": 0,
+   "why": "Injected code runs inside a trusted process, which helps malware hide."
+  },
+  {
+   "q": "What is VM escape?",
+   "options": [
+    "Moving a VM to another host",
+    "Deleting a VM",
+    "Taking a VM snapshot",
+    "Code in a virtual machine breaking out to reach the host or other VMs"
+   ],
+   "answer": 3,
+   "why": "It breaks the isolation virtualisation depends on, so hypervisors must be patched promptly."
+  },
+  {
+   "q": "What is resource reuse in virtualisation?",
+   "options": [
+    "Reusing passwords",
+    "Sharing a CPU fairly",
+    "Using the same VM image twice",
+    "Memory or storage from one VM being given to another without being cleared"
+   ],
+   "answer": 3,
+   "why": "If memory isn't wiped before reallocation, another tenant could read leftover data."
+  },
+  {
+   "q": "What is sideloading on a mobile device?",
+   "options": [
+    "Charging from a laptop",
+    "Installing apps from outside the official app store",
+    "Syncing with the cloud",
+    "Using two SIM cards"
+   ],
+   "answer": 1,
+   "why": "Apps outside the store skip its vetting, so they carry a higher risk of malware."
+  },
+  {
+   "q": "What does jailbreaking or rooting a phone do to its security?",
+   "options": [
+    "Enables automatic updates",
+    "Removes built-in protections, making malware easier to install",
+    "Blocks all third-party apps",
+    "Adds stronger encryption"
+   ],
+   "answer": 1,
+   "why": "It gives full control of the OS but bypasses the sandboxing and controls the vendor built in."
+  },
+  {
+   "q": "Which vulnerability arises when a vendor stops releasing security updates for a product?",
+   "options": [
+    "End-of-life (legacy) systems",
+    "Misconfiguration",
+    "Zero-day",
+    "Race condition"
+   ],
+   "answer": 0,
+   "why": "Unsupported systems accumulate known, unpatched flaws."
+  },
+  {
+   "q": "Attackers compromise a software vendor's update server to push malware to customers. What kind of attack is this?",
+   "options": [
+    "Watering hole attack",
+    "Supply chain attack",
+    "Typosquatting",
+    "Pharming"
+   ],
+   "answer": 1,
+   "why": "Customers trust the vendor's updates, so a compromise there reaches many victims at once."
+  },
+  {
+   "q": "Which risk is greatest with default admin credentials left on an IoT camera?",
+   "options": [
+    "It loses Wi-Fi often",
+    "It uses more power",
+    "Anyone who knows the default password can take control of it",
+    "It records in low resolution"
+   ],
+   "answer": 2,
+   "why": "Default credentials are published online and are the first thing attackers try."
+  },
+  {
+   "q": "What is a watering hole attack?",
+   "options": [
+    "Flooding a server with requests",
+    "Phishing by text message",
+    "Guessing passwords",
+    "Infecting a website that the target group often visits"
+   ],
+   "answer": 3,
+   "why": "Attackers compromise a site their targets trust and wait for them to visit."
+  },
+  {
+   "q": "What is typosquatting?",
+   "options": [
+    "Hijacking DNS servers",
+    "Registering domains similar to real ones to catch mistyped URLs",
+    "Spoofing caller ID",
+    "Using stolen certificates"
+   ],
+   "answer": 1,
+   "why": "A user who types examp1e.com lands on a site that may phish or spread malware."
+  },
+  {
+   "q": "What is smishing?",
+   "options": [
+    "Phishing in person",
+    "Phishing by voice call",
+    "Phishing via social media ads",
+    "Phishing by SMS text message"
+   ],
+   "answer": 3,
+   "why": "Smishing texts often contain links to fake login pages or urgent payment demands."
+  },
+  {
+   "q": "What is brand impersonation in social engineering?",
+   "options": [
+    "Creating fake reviews",
+    "Hacking a brand's website",
+    "Registering a trademark",
+    "Pretending to be a well-known company to gain trust"
+   ],
+   "answer": 3,
+   "why": "Messages copy a trusted brand's look so victims follow links or give information."
+  },
+  {
+   "q": "What is a misinformation or disinformation campaign?",
+   "options": [
+    "Scanning a network",
+    "Stealing hardware",
+    "Encrypting data for ransom",
+    "Spreading false information to influence people or damage reputation"
+   ],
+   "answer": 3,
+   "why": "These campaigns target belief and trust rather than systems directly."
+  },
+  {
+   "q": "Which indicator suggests a user account has been compromised?",
+   "options": [
+    "A password changed after a reminder",
+    "A routine software update",
+    "Impossible travel: logins from two distant countries minutes apart",
+    "A user logging in at 9 a.m."
+   ],
+   "answer": 2,
+   "why": "No one can travel that fast, so one of the logins must be someone else."
+  },
+  {
+   "q": "Many accounts suddenly get locked out within minutes. What is the likely cause?",
+   "options": [
+    "A full disk",
+    "A password spraying or brute-force attack",
+    "A software update",
+    "A DNS outage"
+   ],
+   "answer": 1,
+   "why": "Mass lockouts usually mean someone is guessing passwords across accounts."
+  },
+  {
+   "q": "Logs are missing for the exact time a suspicious change was made. What should an analyst suspect?",
+   "options": [
+    "A slow disk",
+    "A normal rotation",
+    "Daylight saving time",
+    "Log tampering by an attacker covering tracks"
+   ],
+   "answer": 3,
+   "why": "Attackers often delete or alter logs; sending logs to a central server prevents this."
+  },
+  {
+   "q": "What does a SIEM alert of 'concurrent session usage' mean?",
+   "options": [
+    "A slow database",
+    "The same account is logged in from multiple places at once",
+    "Too many users on one server",
+    "An expired certificate"
+   ],
+   "answer": 1,
+   "why": "One user rarely needs simultaneous sessions from different locations, so it may mean shared or stolen credentials."
+  },
+  {
+   "q": "What is a credential replay attack?",
+   "options": [
+    "Phishing for passwords",
+    "Guessing passwords",
+    "Cracking hashes offline",
+    "Reusing captured authentication data to log in"
+   ],
+   "answer": 3,
+   "why": "Replayed tokens or hashes work if the protocol doesn't use nonces or timestamps."
+  },
+  {
+   "q": "What is an on-path attack on Wi-Fi often called when a fake access point is used?",
+   "options": [
+    "Bluesnarfing",
+    "War driving",
+    "Evil twin",
+    "Jamming"
+   ],
+   "answer": 2,
+   "why": "The fake AP copies a real SSID so victims connect and their traffic passes through the attacker."
+  },
+  {
+   "q": "What does ARP poisoning allow an attacker on a LAN to do?",
+   "options": [
+    "Change DNS records on the internet",
+    "Bypass MFA",
+    "Redirect traffic by linking their MAC address to another host's IP",
+    "Crack Wi-Fi passwords"
+   ],
+   "answer": 2,
+   "why": "Forged ARP replies make victims send traffic for the gateway to the attacker instead."
+  },
+  {
+   "q": "Which mitigation best limits ARP poisoning on a switched network?",
+   "options": [
+    "Using longer passwords",
+    "Disabling DHCP",
+    "Turning off STP",
+    "Dynamic ARP inspection"
+   ],
+   "answer": 3,
+   "why": "DAI checks ARP packets against DHCP snooping records and drops forged ones."
+  },
+  {
+   "q": "What is MAC flooding?",
+   "options": [
+    "Filling a disk with logs",
+    "Spoofing a MAC address once",
+    "Sending too many emails",
+    "Overloading a switch's MAC table so it floods traffic out every port"
+   ],
+   "answer": 3,
+   "why": "When the table is full, the switch behaves like a hub, letting an attacker sniff traffic."
+  },
+  {
+   "q": "What does a DNS amplification attack exploit?",
+   "options": [
+    "Small queries that produce large responses sent to a spoofed victim address",
+    "Weak DNS passwords",
+    "Expired domain names",
+    "DNS caching on clients"
+   ],
+   "answer": 0,
+   "why": "Open resolvers multiply the attacker's bandwidth many times over."
+  },
+  {
+   "q": "What is a reflected DDoS attack?",
+   "options": [
+    "A DoS using mirrors on wireless",
+    "An attack that reflects malware back to the attacker",
+    "Requests with the victim's spoofed address are sent to third-party servers, whose replies flood the victim",
+    "A single-source flood"
+   ],
+   "answer": 2,
+   "why": "Reflection hides the attacker and, with amplification, increases the traffic volume."
+  },
+  {
+   "q": "What is a pass-the-hash attack?",
+   "options": [
+    "Sending a hash by email",
+    "Cracking a hash with a GPU",
+    "Hashing a file to check integrity",
+    "Using a captured password hash to authenticate without knowing the password"
+   ],
+   "answer": 3,
+   "why": "Some protocols accept the hash itself, so stealing it is as good as stealing the password."
+  },
+  {
+   "q": "What is credential stuffing?",
+   "options": [
+    "Trying username and password pairs leaked from other breaches",
+    "Phishing for credentials",
+    "Guessing one password across many accounts",
+    "Brute-forcing a single account"
+   ],
+   "answer": 0,
+   "why": "It works because people reuse passwords across sites; MFA and unique passwords stop it."
+  },
+  {
+   "q": "Which attack injects malicious script into a page that other users then load from the server?",
+   "options": [
+    "Stored cross-site scripting",
+    "Reflected XSS",
+    "SQL injection",
+    "CSRF"
+   ],
+   "answer": 0,
+   "why": "Stored XSS is saved, for example in a comment, and runs for every visitor."
+  },
+  {
+   "q": "Which control best prevents CSRF attacks?",
+   "options": [
+    "Longer passwords",
+    "Anti-CSRF tokens in forms",
+    "Using HTTP instead of HTTPS",
+    "Disabling JavaScript entirely"
+   ],
+   "answer": 1,
+   "why": "A unique token in each form proves the request came from the real page, not a forged one."
+  },
+  {
+   "q": "What is a replay of a captured cookie to take over someone's web session called?",
+   "options": [
+    "Typosquatting",
+    "Pharming",
+    "Session hijacking",
+    "Clickjacking"
+   ],
+   "answer": 2,
+   "why": "Stealing a valid session cookie lets an attacker act as the user without logging in."
+  },
+  {
+   "q": "What is a downgrade attack?",
+   "options": [
+    "Installing an old OS",
+    "Reducing bandwidth",
+    "Forcing a connection to use an older, weaker protocol or cipher",
+    "Lowering a user's privileges"
+   ],
+   "answer": 2,
+   "why": "Disabling old protocol versions on servers prevents it."
+  },
+  {
+   "q": "What is a birthday attack?",
+   "options": [
+    "Guessing passwords based on birthdays",
+    "Finding two inputs with the same hash faster than brute force",
+    "Phishing with birthday cards",
+    "An attack timed for a holiday"
+   ],
+   "answer": 1,
+   "why": "The birthday paradox means collisions appear sooner than expected, so longer hashes are needed."
+  },
+  {
+   "q": "Which mitigation most reduces the attack surface of a new server?",
+   "options": [
+    "Removing unnecessary software and disabling unused services",
+    "Adding more RAM",
+    "Moving it to a new rack",
+    "Using a bigger disk"
+   ],
+   "answer": 0,
+   "why": "Fewer running services means fewer things to attack."
+  },
+  {
+   "q": "What is the purpose of a secure baseline?",
+   "options": [
+    "The default vendor settings",
+    "A documented standard configuration that systems are built and checked against",
+    "A backup schedule",
+    "The cheapest configuration"
+   ],
+   "answer": 1,
+   "why": "Baselines make systems consistent and let drift from the standard be detected."
+  },
+  {
+   "q": "What does application allow-listing on endpoints prevent?",
+   "options": [
+    "Network scans",
+    "Unapproved programs, including unknown malware, from running",
+    "Updates from installing",
+    "Users from browsing the web"
+   ],
+   "answer": 1,
+   "why": "Only listed programs may execute, which blocks malware that has no signature."
+  },
+  {
+   "q": "What is the main purpose of segmentation in mitigating attacks?",
+   "options": [
+    "Simplifying passwords",
+    "Reducing cabling",
+    "Limiting how far an attacker can move after compromising one area",
+    "Increasing bandwidth"
+   ],
+   "answer": 2,
+   "why": "Segments with controlled paths contain breaches and protect critical systems."
+  },
+  {
+   "q": "What is isolation as a mitigation technique?",
+   "options": [
+    "Training users",
+    "Encrypting files",
+    "Patching software",
+    "Separating a system so it can't communicate with others, such as quarantining an infected host"
+   ],
+   "answer": 3,
+   "why": "Isolation stops spread while the system is investigated or fixed."
+  },
+  {
+   "q": "Which cloud model offers the customer a complete application with nothing to manage but their data and users?",
+   "options": [
+    "IaaS",
+    "On-premises",
+    "PaaS",
+    "SaaS"
+   ],
+   "answer": 3,
+   "why": "With software as a service, the provider runs everything up to the application."
+  },
+  {
+   "q": "What is infrastructure as code (IaC)?",
+   "options": [
+    "Defining and deploying infrastructure from configuration files",
+    "Writing code on servers directly",
+    "Installing servers by hand",
+    "A programming language for routers"
+   ],
+   "answer": 0,
+   "why": "IaC makes builds repeatable and reviewable, and reduces configuration drift."
+  },
+  {
+   "q": "What is a security benefit of serverless computing?",
+   "options": [
+    "The customer controls the OS",
+    "The provider manages and patches the underlying servers",
+    "No code is needed",
+    "It removes all vulnerabilities"
+   ],
+   "answer": 1,
+   "why": "Customers focus on securing their functions and permissions while the provider handles the OS."
+  },
+  {
+   "q": "What is a microservices architecture?",
+   "options": [
+    "A single large program",
+    "A tiny data centre",
+    "An embedded system",
+    "An application built from small, independent services that communicate over APIs"
+   ],
+   "answer": 3,
+   "why": "Each service can be scaled and secured separately, but API security becomes critical."
+  },
+  {
+   "q": "What does software-defined networking (SDN) separate?",
+   "options": [
+    "Wired from wireless",
+    "IPv4 from IPv6",
+    "Users from administrators",
+    "The control plane from the data plane"
+   ],
+   "answer": 3,
+   "why": "A central controller decides how traffic flows while switches simply forward it."
+  },
+  {
+   "q": "Why are industrial control systems such as SCADA hard to secure?",
+   "options": [
+    "They use too much encryption",
+    "They often run legacy software that can't be patched easily and must stay available",
+    "They have no network connections",
+    "They are always cloud-based"
+   ],
+   "answer": 1,
+   "why": "Availability is paramount and downtime for patching is rare, so isolation is a key control."
+  },
+  {
+   "q": "What is a real-time operating system (RTOS) used for?",
+   "options": [
+    "Web servers",
+    "Devices that must respond to events within strict time limits, such as vehicle controls",
+    "Gaming consoles only",
+    "Office desktops"
+   ],
+   "answer": 1,
+   "why": "RTOS devices prioritise predictable timing, and updates can be difficult."
+  },
+  {
+   "q": "What is the main security concern with many IoT devices?",
+   "options": [
+    "They use too much bandwidth",
+    "They require Windows",
+    "Weak defaults, little patching and limited security features",
+    "They are too expensive"
+   ],
+   "answer": 2,
+   "why": "Cheap devices often ship with default passwords and rarely receive updates."
+  },
+  {
+   "q": "What does high availability through clustering provide?",
+   "options": [
+    "Faster backups",
+    "Better passwords",
+    "Stronger encryption",
+    "Another server takes over automatically if one fails"
+   ],
+   "answer": 3,
+   "why": "Clustered servers share the workload or stand by, removing a single point of failure."
+  },
+  {
+   "q": "Which backup approach keeps a copy safe even if ransomware encrypts everything on the network?",
+   "options": [
+    "An offline or immutable backup",
+    "A synced cloud folder",
+    "A mapped network drive",
+    "A second disk in the same server"
+   ],
+   "answer": 0,
+   "why": "Ransomware can encrypt anything it can reach; offline or immutable copies can't be changed."
+  },
+  {
+   "q": "What is the 3-2-1 backup rule?",
+   "options": [
+    "Three backups a day, two a week, one a month",
+    "Three copies of data, on two types of media, with one off-site",
+    "Three servers, two sites, one cloud",
+    "Backups every three, two and one hours"
+   ],
+   "answer": 1,
+   "why": "It protects against device failure, media failure and site disasters."
+  },
+  {
+   "q": "What does a warm site have that a cold site doesn't?",
+   "options": [
+    "Hardware and connectivity ready, needing only current data and setup",
+    "Fully mirrored live data",
+    "Nothing but power and space",
+    "Staff on site 24/7"
+   ],
+   "answer": 0,
+   "why": "A cold site is an empty facility; a hot site is fully live; a warm site is in between."
+  },
+  {
+   "q": "What is geographic dispersion in resilience planning?",
+   "options": [
+    "Storing backups in the same city",
+    "Spreading staff across offices",
+    "Placing data centres far enough apart that one disaster can't affect both",
+    "Using many ISPs in one building"
+   ],
+   "answer": 2,
+   "why": "Distance protects against regional events such as floods or power grid failures."
+  },
+  {
+   "q": "What does a UPS provide during a power cut?",
+   "options": [
+    "Days of power",
+    "Cooling",
+    "Short-term battery power to keep systems running or shut down safely",
+    "Network redundancy"
+   ],
+   "answer": 2,
+   "why": "A UPS bridges the gap until a generator starts or systems shut down cleanly."
+  },
+  {
+   "q": "What is the purpose of a generator in a data centre?",
+   "options": [
+    "Long-term power during an extended outage",
+    "Cooling",
+    "Short-term power for seconds",
+    "Surge protection only"
+   ],
+   "answer": 0,
+   "why": "Generators run for hours or days once started; UPS batteries cover the start-up gap."
+  },
+  {
+   "q": "What is data sovereignty?",
+   "options": [
+    "Data is subject to the laws of the country where it is stored",
+    "Data must be public",
+    "Data belongs to the cloud provider",
+    "Data is encrypted by default"
+   ],
+   "answer": 0,
+   "why": "Storing data abroad may expose it to foreign laws, so location matters for compliance."
+  },
+  {
+   "q": "Which data state is protected by TLS?",
+   "options": [
+    "Data in transit",
+    "Archived data",
+    "Data in use",
+    "Data at rest"
+   ],
+   "answer": 0,
+   "why": "TLS encrypts data moving across networks. Disk encryption protects data at rest."
+  },
+  {
+   "q": "What protects data in use?",
+   "options": [
+    "Secure enclaves and memory protections while data is being processed",
+    "TLS",
+    "Disk encryption",
+    "Backups"
+   ],
+   "answer": 0,
+   "why": "Data being processed sits decrypted in memory, so enclaves and access controls protect it."
+  },
+  {
+   "q": "Which data classification is usually the most restricted in a business?",
+   "options": [
+    "Unclassified",
+    "Confidential or restricted",
+    "Public",
+    "Internal"
+   ],
+   "answer": 1,
+   "why": "The most sensitive data, such as trade secrets or personal data, gets the strictest handling."
+  },
+  {
+   "q": "What is the difference between a data owner and a data custodian?",
+   "options": [
+    "They are the same role",
+    "The owner is always IT",
+    "The custodian sets policy; the owner backs it up",
+    "The owner is accountable for the data; the custodian handles day-to-day protection"
+   ],
+   "answer": 3,
+   "why": "Owners, usually business leaders, decide classification and access; custodians implement it."
+  },
+  {
+   "q": "What does a data processor do under privacy laws like GDPR?",
+   "options": [
+    "Audits the company",
+    "Handles personal data on behalf of a controller",
+    "Is the data subject",
+    "Decides why data is collected"
+   ],
+   "answer": 1,
+   "why": "The controller decides purposes; processors such as cloud providers act on its instructions."
+  },
+  {
+   "q": "What is the right to be forgotten?",
+   "options": [
+    "Anonymous browsing",
+    "A password reset policy",
+    "An individual's right to have their personal data erased",
+    "Deleting old backups automatically"
+   ],
+   "answer": 2,
+   "why": "Under GDPR, people can ask for their data to be deleted when there's no reason to keep it."
+  },
+  {
+   "q": "What is wireless site surveying used for?",
+   "options": [
+    "Encrypting traffic",
+    "Measuring internet speed",
+    "Mapping signal coverage and interference before or after deploying access points",
+    "Finding rogue employees"
+   ],
+   "answer": 2,
+   "why": "Surveys and heat maps show where coverage is weak, overlapping or leaking outside."
+  },
+  {
+   "q": "Which Wi-Fi security mode uses 802.1X and a RADIUS server for individual logins?",
+   "options": [
+    "WPA3-Enterprise",
+    "WEP",
+    "WPA3-Personal",
+    "Open"
+   ],
+   "answer": 0,
+   "why": "Enterprise mode authenticates each user, so one person leaving doesn't require changing a shared key."
+  },
+  {
+   "q": "What is EAP-TLS?",
+   "options": [
+    "An 802.1X method using certificates on both client and server",
+    "A VPN protocol",
+    "A firewall rule type",
+    "A password-only Wi-Fi method"
+   ],
+   "answer": 0,
+   "why": "Mutual certificates make EAP-TLS one of the strongest wireless authentication methods."
+  },
+  {
+   "q": "What does MDM let a company do with a lost phone?",
+   "options": [
+    "Recover deleted texts",
+    "Locate, lock or remotely wipe it",
+    "Block its phone number",
+    "Bill the user"
+   ],
+   "answer": 1,
+   "why": "Remote wipe removes corporate data so it isn't exposed."
+  },
+  {
+   "q": "Which mobile deployment model lets employees use personal phones for work?",
+   "options": [
+    "CYOD",
+    "COBO",
+    "COPE",
+    "BYOD"
+   ],
+   "answer": 3,
+   "why": "Bring your own device saves cost but makes control and privacy harder to balance."
+  },
+  {
+   "q": "What is COPE?",
+   "options": [
+    "Certificate of practice",
+    "Cloud-only policy enforcement",
+    "Corporate-owned, personally enabled devices",
+    "Company-operated phone exchange"
+   ],
+   "answer": 2,
+   "why": "The company owns and manages the device but allows some personal use."
+  },
+  {
+   "q": "What is containerisation on a mobile device?",
+   "options": [
+    "Separating work apps and data from personal ones",
+    "Blocking app installs",
+    "Encrypting the whole phone",
+    "Running Docker on a phone"
+   ],
+   "answer": 0,
+   "why": "A work container can be wiped without touching personal photos and apps."
+  },
+  {
+   "q": "What is input validation?",
+   "options": [
+    "Checking that user input matches what is expected before using it",
+    "Hiding input fields",
+    "Encrypting input",
+    "Logging all input"
+   ],
+   "answer": 0,
+   "why": "Validating type, length and format blocks many injection attacks."
+  },
+  {
+   "q": "What is code signing used for?",
+   "options": [
+    "Licensing software",
+    "Encrypting source code",
+    "Proving software comes from a known publisher and hasn't been altered",
+    "Compressing programs"
+   ],
+   "answer": 2,
+   "why": "The publisher signs with a private key, and the OS checks the signature before running it."
+  },
+  {
+   "q": "What is sandboxing for applications?",
+   "options": [
+    "Running an app in a restricted environment that limits what it can access",
+    "Deleting unused apps",
+    "Backing up apps",
+    "Testing code for errors"
+   ],
+   "answer": 0,
+   "why": "If a sandboxed app is compromised, the damage stays contained."
+  },
+  {
+   "q": "What does static application security testing (SAST) analyse?",
+   "options": [
+    "User passwords",
+    "Network traffic",
+    "A running application's behaviour",
+    "Source code without running it"
+   ],
+   "answer": 3,
+   "why": "SAST finds flaws early in development; DAST tests the running app."
+  },
+  {
+   "q": "Why keep an asset inventory?",
+   "options": [
+    "To count desks",
+    "You can't protect or patch systems you don't know about",
+    "It is required for backups only",
+    "To track electricity"
+   ],
+   "answer": 1,
+   "why": "An accurate inventory is the foundation for vulnerability management and incident response."
+  },
+  {
+   "q": "What should happen to a hard drive at the end of its life if it held sensitive data?",
+   "options": [
+    "Sell it as is",
+    "Sanitise or destroy it and keep a certificate of destruction",
+    "Put it in storage indefinitely",
+    "Format it quickly"
+   ],
+   "answer": 1,
+   "why": "Documented sanitisation or destruction proves the data can't be recovered."
+  },
+  {
+   "q": "What is the purpose of a vulnerability scan's CVSS score?",
+   "options": [
+    "Listing users",
+    "Counting open ports",
+    "Rating how severe a vulnerability is",
+    "Measuring network speed"
+   ],
+   "answer": 2,
+   "why": "CVSS scores from 0 to 10 help prioritise; context such as exposure also matters."
+  },
+  {
+   "q": "What is a bug bounty programme?",
+   "options": [
+    "Paying attackers ransom",
+    "Rewarding outside researchers who responsibly report vulnerabilities",
+    "A software testing tool",
+    "Fines for developers"
+   ],
+   "answer": 1,
+   "why": "Bounties bring many testers to find flaws before criminals do."
+  },
+  {
+   "q": "After a patch is applied, what confirms the vulnerability is fixed?",
+   "options": [
+    "Changing passwords",
+    "Rescanning the system",
+    "Checking the firewall",
+    "Rebooting it"
+   ],
+   "answer": 1,
+   "why": "Validation by rescan shows the fix took effect."
+  },
+  {
+   "q": "What is an exception in vulnerability management?",
+   "options": [
+    "A critical vulnerability",
+    "A documented decision not to fix a vulnerability, often with compensating controls",
+    "A false negative",
+    "A scanner crash"
+   ],
+   "answer": 1,
+   "why": "Exceptions record accepted risk with reasons and a review date."
+  },
+  {
+   "q": "What does file integrity monitoring (FIM) detect?",
+   "options": [
+    "Unauthorised changes to important files",
+    "Expired certificates",
+    "Slow disks",
+    "New user accounts"
+   ],
+   "answer": 0,
+   "why": "FIM compares files to known-good hashes and alerts when system files change."
+  },
+  {
+   "q": "What does DNS filtering do?",
+   "options": [
+    "Speeds up DNS",
+    "Blocks access to known malicious or unwanted domains",
+    "Hosts websites",
+    "Encrypts DNS"
+   ],
+   "answer": 1,
+   "why": "Requests for blocked domains fail or go to a warning page, stopping many threats early."
+  },
+  {
+   "q": "What does a secure email gateway do?",
+   "options": [
+    "Encrypts disks",
+    "Hosts mailboxes",
+    "Filters incoming and outgoing email for spam, phishing and malware",
+    "Manages calendars"
+   ],
+   "answer": 2,
+   "why": "Gateways scan attachments and links before mail reaches users."
+  },
+  {
+   "q": "What does DKIM add to an email?",
+   "options": [
+    "Spam scoring",
+    "Encryption of the body",
+    "A list of allowed senders",
+    "A digital signature proving the message came from the domain and wasn't altered"
+   ],
+   "answer": 3,
+   "why": "Receivers check the signature against the public key published in the domain's DNS."
+  },
+  {
+   "q": "What does XDR add beyond EDR?",
+   "options": [
+    "Correlation of data from endpoints, network, email and cloud together",
+    "Disk encryption",
+    "Only antivirus signatures",
+    "Patch management"
+   ],
+   "answer": 0,
+   "why": "Extended detection and response joins signals across many sources for better detection."
+  },
+  {
+   "q": "What does user and entity behaviour analytics (UEBA) look for?",
+   "options": [
+    "Known malware signatures",
+    "Expired passwords",
+    "Open ports",
+    "Unusual behaviour compared with each user's or device's normal pattern"
+   ],
+   "answer": 3,
+   "why": "Deviations such as odd hours or unusual data volumes can reveal compromised accounts."
+  },
+  {
+   "q": "What is a jump box (jump server) used for?",
+   "options": [
+    "A hardened host admins connect through to reach sensitive systems",
+    "Email filtering",
+    "Backups",
+    "Load balancing"
+   ],
+   "answer": 0,
+   "why": "Funnelling admin access through one monitored point reduces exposure."
+  },
+  {
+   "q": "What does a privileged access management (PAM) tool do?",
+   "options": [
+    "Controls, monitors and often provides temporary admin credentials",
+    "Filters spam",
+    "Tracks assets",
+    "Manages printers"
+   ],
+   "answer": 0,
+   "why": "PAM vaults admin passwords, grants just-in-time access and records sessions."
+  },
+  {
+   "q": "What is just-in-time permissions?",
+   "options": [
+    "Elevated access granted only when needed and removed afterwards",
+    "Guest access",
+    "Permissions that never expire",
+    "Access granted at login"
+   ],
+   "answer": 0,
+   "why": "Standing admin rights are a big risk; temporary elevation shrinks that window."
+  },
+  {
+   "q": "What is federation in identity management?",
+   "options": [
+    "Trusting identities from another organisation's identity provider",
+    "Merging two companies",
+    "Creating local accounts for everyone",
+    "A type of firewall"
+   ],
+   "answer": 0,
+   "why": "Federation lets users log in to partner services with their home credentials."
+  },
+  {
+   "q": "What does OAuth provide?",
+   "options": [
+    "Multifactor authentication",
+    "Encryption of files",
+    "Delegated authorisation so an app can access resources without your password",
+    "Directory storage"
+   ],
+   "answer": 2,
+   "why": "OAuth issues tokens with limited scope, such as letting an app read your calendar."
+  },
+  {
+   "q": "What does OpenID Connect add on top of OAuth?",
+   "options": [
+    "An authentication layer that confirms who the user is",
+    "Encryption of tokens",
+    "A firewall",
+    "Password storage"
+   ],
+   "answer": 0,
+   "why": "OIDC adds an ID token so apps can log users in, not just access their data."
+  },
+  {
+   "q": "Which MFA method is most resistant to phishing?",
+   "options": [
+    "Email codes",
+    "Security questions",
+    "A FIDO2 security key",
+    "SMS codes"
+   ],
+   "answer": 2,
+   "why": "FIDO2 keys check the website's origin, so a fake site can't use them."
+  },
+  {
+   "q": "Why is SMS considered a weak second factor?",
+   "options": [
+    "SMS is too slow",
+    "It needs internet access",
+    "Codes can be intercepted or redirected by SIM swapping",
+    "Phones lack screens"
+   ],
+   "answer": 2,
+   "why": "Attackers who take over a phone number receive the codes."
+  },
+  {
+   "q": "What is the purpose of a password manager?",
+   "options": [
+    "Sharing one password across sites",
+    "Generating and storing unique strong passwords for every account",
+    "Resetting passwords automatically",
+    "Replacing MFA"
+   ],
+   "answer": 1,
+   "why": "Unique passwords stop one breach from exposing every account."
+  },
+  {
+   "q": "What is passwordless authentication?",
+   "options": [
+    "Leaving accounts without protection",
+    "Logging in with something like a passkey or biometric instead of a password",
+    "Using the same password everywhere",
+    "Using only a username"
+   ],
+   "answer": 1,
+   "why": "Passkeys use public-key cryptography, removing passwords that can be phished or reused."
+  },
+  {
+   "q": "What is account provisioning?",
+   "options": [
+    "Auditing logs",
+    "Creating accounts and granting the right access when someone joins",
+    "Deleting accounts",
+    "Backing up accounts"
+   ],
+   "answer": 1,
+   "why": "Good provisioning gives new staff the access their role needs from day one."
+  },
+  {
+   "q": "Why must deprovisioning happen promptly when someone leaves?",
+   "options": [
+    "To free up licences only",
+    "So their access can't be misused after they've gone",
+    "To speed up backups",
+    "To meet a hardware schedule"
+   ],
+   "answer": 1,
+   "why": "Former employees' active accounts are a common route for insider attacks and breaches."
+  },
+  {
+   "q": "What does scripting and automation help security teams do?",
+   "options": [
+    "Skip testing",
+    "Respond consistently and quickly to routine tasks",
+    "Eliminate all staff",
+    "Avoid documentation"
+   ],
+   "answer": 1,
+   "why": "Automation handles repetitive work such as account provisioning and ticket creation with fewer errors."
+  },
+  {
+   "q": "What is a risk of too much automation?",
+   "options": [
+    "It requires no maintenance",
+    "It is always slower",
+    "It removes all risk",
+    "A single faulty script can make widespread mistakes quickly"
+   ],
+   "answer": 3,
+   "why": "Automated actions need testing and oversight because errors spread at machine speed."
+  },
+  {
+   "q": "In incident response, what does eradication involve?",
+   "options": [
+    "Detecting the incident",
+    "Restoring services",
+    "Removing the cause, such as malware and attacker access",
+    "Writing the report"
+   ],
+   "answer": 2,
+   "why": "Eradication follows containment and must finish before recovery."
+  },
+  {
+   "q": "What is the purpose of a tabletop exercise?",
+   "options": [
+    "Walking through an incident scenario in discussion to test the plan",
+    "Installing new hardware",
+    "Testing backups by restoring them",
+    "Running a live attack"
+   ],
+   "answer": 0,
+   "why": "Tabletops reveal gaps in roles and procedures without risk to systems."
+  },
+  {
+   "q": "What is a legal hold?",
+   "options": [
+    "A firewall rule",
+    "A backup schedule",
+    "A data deletion policy",
+    "An order to preserve data relevant to a legal matter"
+   ],
+   "answer": 3,
+   "why": "Normal deletion stops for the covered data until the hold is lifted."
+  },
+  {
+   "q": "What is e-discovery?",
+   "options": [
+    "Finding and producing electronic information for legal proceedings",
+    "Scanning for malware",
+    "Discovering network devices",
+    "Recovering deleted files for users"
+   ],
+   "answer": 0,
+   "why": "Organisations must be able to search and hand over relevant emails and files."
+  },
+  {
+   "q": "Which log source shows which websites users visited through the corporate proxy?",
+   "options": [
+    "Proxy logs",
+    "DHCP logs",
+    "OS boot logs",
+    "Application logs"
+   ],
+   "answer": 0,
+   "why": "Proxy logs record URLs, users and times for web traffic."
+  },
+  {
+   "q": "Which log would show which IP address a laptop was given at a certain time?",
+   "options": [
+    "Firewall logs",
+    "Antivirus logs",
+    "Web server logs",
+    "DHCP logs"
+   ],
+   "answer": 3,
+   "why": "DHCP logs map MAC addresses to leased IPs and times, linking traffic to devices."
+  },
+  {
+   "q": "What is a security policy?",
+   "options": [
+    "A high-level statement of management's intent and requirements",
+    "A technical setting",
+    "Step-by-step instructions",
+    "A software licence"
+   ],
+   "answer": 0,
+   "why": "Policies say what must be done; standards and procedures say how."
+  },
+  {
+   "q": "What is a standard in governance documents?",
+   "options": [
+    "A legal contract",
+    "Optional advice",
+    "A high-level goal",
+    "A mandatory requirement, such as a minimum password length"
+   ],
+   "answer": 3,
+   "why": "Standards make policies measurable and enforceable."
+  },
+  {
+   "q": "What is a procedure?",
+   "options": [
+    "A broad statement of intent",
+    "A risk rating",
+    "Detailed step-by-step instructions for doing a task",
+    "Optional guidance"
+   ],
+   "answer": 2,
+   "why": "Procedures such as onboarding steps make tasks consistent."
+  },
+  {
+   "q": "What is a risk register?",
+   "options": [
+    "A list of passwords",
+    "A backup log",
+    "A document listing identified risks, their ratings, owners and responses",
+    "A cash register"
+   ],
+   "answer": 2,
+   "why": "It tracks risks over time so they're managed, not forgotten."
+  },
+  {
+   "q": "What is risk appetite?",
+   "options": [
+    "The likelihood of an attack",
+    "The number of risks found",
+    "How much risk an organisation is willing to accept in pursuit of its goals",
+    "The cost of insurance"
+   ],
+   "answer": 2,
+   "why": "Appetite guides whether risks are accepted or must be reduced."
+  },
+  {
+   "q": "What is a key risk indicator (KRI)?",
+   "options": [
+    "A report signature",
+    "A metric that warns when risk is increasing",
+    "A cryptographic key",
+    "A firewall rule"
+   ],
+   "answer": 1,
+   "why": "KRIs, such as a rising count of unpatched systems, give early warning."
+  },
+  {
+   "q": "What is the difference between qualitative and quantitative risk analysis?",
+   "options": [
+    "Quantitative is always guesswork",
+    "Qualitative needs exact costs",
+    "Qualitative uses ratings like high or low; quantitative uses numbers such as money",
+    "They are the same"
+   ],
+   "answer": 2,
+   "why": "Quantitative uses values such as SLE and ALE; qualitative uses scales and judgement."
+  },
+  {
+   "q": "What does a vendor risk assessment check?",
+   "options": [
+    "The vendor's office location only",
+    "The vendor's prices",
+    "Whether a supplier's security is adequate for the data or access they'll have",
+    "Product colours"
+   ],
+   "answer": 2,
+   "why": "Third parties with access to your systems or data extend your risk."
+  },
+  {
+   "q": "What is the purpose of a right-to-audit clause in a contract?",
+   "options": [
+    "It lets the customer inspect the vendor's security controls",
+    "It defines warranty length",
+    "It lets the vendor audit the customer",
+    "It sets payment terms"
+   ],
+   "answer": 0,
+   "why": "Without it, customers may have no way to verify a supplier's claims."
+  },
+  {
+   "q": "What is an SLA?",
+   "options": [
+    "A risk score",
+    "A software licence",
+    "An agreement defining expected service levels such as uptime",
+    "A privacy notice"
+   ],
+   "answer": 2,
+   "why": "Service-level agreements set measurable targets and remedies if they're missed."
+  },
+  {
+   "q": "What is an MOU?",
+   "options": [
+    "A purchase order",
+    "A non-disclosure agreement",
+    "A binding service contract",
+    "A memorandum of understanding that states shared intent, usually not legally binding"
+   ],
+   "answer": 3,
+   "why": "MOUs document cooperation without the detail or force of a contract."
+  },
+  {
+   "q": "What is an attestation in compliance?",
+   "options": [
+    "A firewall log",
+    "A user complaint",
+    "A formal statement, often by an auditor, that controls meet requirements",
+    "A patch note"
+   ],
+   "answer": 2,
+   "why": "Attestations such as SOC 2 reports give customers assurance."
+  },
+  {
+   "q": "What is the difference between an internal and external audit?",
+   "options": [
+    "They are identical",
+    "External audits are optional",
+    "Internal audits are done by the organisation's own staff; external by independent parties",
+    "Internal audits are legally binding"
+   ],
+   "answer": 2,
+   "why": "External audits carry independent credibility for regulators and customers."
+  },
+  {
+   "q": "What is the consequence of non-compliance with regulations like GDPR?",
+   "options": [
+    "Nothing",
+    "Faster networks",
+    "Fines, legal action and reputational damage",
+    "Lower insurance costs"
+   ],
+   "answer": 2,
+   "why": "Regulators can impose large fines, and customers lose trust."
+  },
+  {
+   "q": "Which penetration test type is done with full knowledge of the environment?",
+   "options": [
+    "Partially known (gray box)",
+    "Known environment (white box)",
+    "Unknown environment (black box)",
+    "Passive"
+   ],
+   "answer": 1,
+   "why": "Testers get diagrams, code and credentials to examine everything thoroughly."
+  },
+  {
+   "q": "What is the main goal of security awareness training on phishing?",
+   "options": [
+    "Teaching users to recognise and report suspicious messages",
+    "Teaching users to write malware",
+    "Replacing email filters",
+    "Blocking all email"
+   ],
+   "answer": 0,
+   "why": "Trained users report phishing quickly, giving the security team early warning."
+  },
+  {
+   "q": "Why run phishing simulations?",
+   "options": [
+    "To punish employees",
+    "To test email servers",
+    "To collect passwords",
+    "To measure and improve how users respond to realistic phishing"
+   ],
+   "answer": 3,
+   "why": "Simulations show who needs more training and track improvement over time."
+  },
+  {
+   "q": "What should employees do when they spot a likely phishing email?",
+   "options": [
+    "Delete it silently",
+    "Report it using the approved method and not click anything",
+    "Reply to ask if it's real",
+    "Forward it to colleagues as a warning"
+   ],
+   "answer": 1,
+   "why": "Reporting lets the security team block the sender and warn others."
+  },
+  {
+   "q": "Which malware disguises itself as useful software to trick users into installing it?",
+   "options": [
+    "Trojan",
+    "Worm",
+    "Rootkit",
+    "Logic bomb"
+   ],
+   "answer": 0,
+   "why": "A Trojan relies on the user running it; it doesn't spread on its own like a worm."
+  },
+  {
+   "q": "Which malware records every key a user presses?",
+   "options": [
+    "Worm",
+    "Bloatware",
+    "Keylogger",
+    "Adware"
+   ],
+   "answer": 2,
+   "why": "Keyloggers capture passwords and messages as they're typed, often sending them to the attacker."
+  },
+  {
+   "q": "What is a remote access Trojan (RAT)?",
+   "options": [
+    "Malware that gives an attacker hidden remote control of a system",
+    "A type of firewall",
+    "A legitimate remote desktop tool",
+    "An antivirus scanner"
+   ],
+   "answer": 0,
+   "why": "RATs let attackers browse files, run commands and watch the user without permission."
+  },
+  {
+   "q": "What makes fileless malware hard to detect?",
+   "options": [
+    "It only runs on Linux",
+    "It deletes the antivirus",
+    "It runs in memory using legitimate tools like PowerShell and leaves few files on disk",
+    "It is always encrypted"
+   ],
+   "answer": 2,
+   "why": "Scanners that look for malicious files on disk find little to catch."
+  },
+  {
+   "q": "Which malware hides deep in the operating system to conceal itself and other malware?",
+   "options": [
+    "Adware",
+    "Rootkit",
+    "Spyware",
+    "Bloatware"
+   ],
+   "answer": 1,
+   "why": "Rootkits alter the OS or firmware so normal tools can't see them."
+  },
+  {
+   "q": "What is bloatware?",
+   "options": [
+    "Unwanted pre-installed software that wastes resources and may add risk",
+    "Malware that encrypts files",
+    "A type of firewall",
+    "A fast antivirus"
+   ],
+   "answer": 0,
+   "why": "Vendor-installed extras increase the attack surface and should be removed."
+  },
+  {
+   "q": "What triggers a logic bomb?",
+   "options": [
+    "A specific condition, such as a date or an employee being removed from payroll",
+    "A network scan",
+    "Plugging in a USB drive",
+    "A user opening an email"
+   ],
+   "answer": 0,
+   "why": "Logic bombs lie dormant until their condition is met, often planted by insiders."
+  },
+  {
+   "q": "Which malware spreads across networks by itself without user action?",
+   "options": [
+    "Virus",
+    "Spyware",
+    "Trojan",
+    "Worm"
+   ],
+   "answer": 3,
+   "why": "Worms exploit vulnerabilities to copy themselves from host to host."
+  },
+  {
+   "q": "What is spyware?",
+   "options": [
+    "Software that encrypts files",
+    "Software that secretly collects information about a user's activity",
+    "A security scanner",
+    "A hardware keylogger"
+   ],
+   "answer": 1,
+   "why": "Spyware monitors browsing, keystrokes or location and sends data to a third party."
+  },
+  {
+   "q": "What does ransomware typically demand payment in?",
+   "options": [
+    "Bank transfers only",
+    "Cryptocurrency",
+    "Cash in person",
+    "Gift cards only"
+   ],
+   "answer": 1,
+   "why": "Cryptocurrency is harder to trace, which suits criminals."
+  },
+  {
+   "q": "What is RFID cloning?",
+   "options": [
+    "Jamming Wi-Fi",
+    "Copying the data from an access badge to make a working duplicate",
+    "Stealing a laptop",
+    "Phishing by text"
+   ],
+   "answer": 1,
+   "why": "Many proximity cards can be read from a short distance and copied to a blank card."
+  },
+  {
+   "q": "What is an environmental attack on a data centre?",
+   "options": [
+    "Recycling old hardware",
+    "Installing solar panels",
+    "Targeting power, cooling or fire systems to disrupt operations",
+    "Phishing the facilities team"
+   ],
+   "answer": 2,
+   "why": "Disabling HVAC or power can take systems offline without touching the network."
+  },
+  {
+   "q": "What is a brute-force attack on a password?",
+   "options": [
+    "Using a list of common words",
+    "Reading it from a sticky note",
+    "Tricking the user into revealing it",
+    "Trying every possible combination until one works"
+   ],
+   "answer": 3,
+   "why": "Brute force is guaranteed eventually but slow against long passwords; lockouts slow it further."
+  },
+  {
+   "q": "What is a dictionary attack?",
+   "options": [
+    "Phishing with a fake dictionary site",
+    "Trying words and common passwords from a list",
+    "Trying every possible character combination",
+    "Cracking encryption keys"
+   ],
+   "answer": 1,
+   "why": "Dictionary attacks are fast against weak, common passwords."
+  },
+  {
+   "q": "Which practice best defends against password spraying?",
+   "options": [
+    "Hiding the login page",
+    "Changing usernames monthly",
+    "Longer lockout timers only",
+    "MFA plus blocking commonly used passwords"
+   ],
+   "answer": 3,
+   "why": "Spraying uses common passwords; MFA stops a correct guess from being enough."
+  },
+  {
+   "q": "What is a cryptographic collision?",
+   "options": [
+    "A network packet collision",
+    "A failed decryption",
+    "Two keys that are identical",
+    "Two different inputs producing the same hash"
+   ],
+   "answer": 3,
+   "why": "Collisions let attackers substitute content while the hash still matches, which breaks integrity checks."
+  },
+  {
+   "q": "Which protocol securely replaces FTP for file transfers?",
+   "options": [
+    "SFTP",
+    "HTTP",
+    "SNMPv1",
+    "TFTP"
+   ],
+   "answer": 0,
+   "why": "SFTP runs over SSH and encrypts both credentials and data."
+  },
+  {
+   "q": "Which port does HTTPS use by default?",
+   "options": [
+    "80",
+    "8080",
+    "22",
+    "443"
+   ],
+   "answer": 3,
+   "why": "HTTP uses port 80 in clear text; HTTPS wraps it in TLS on port 443."
+  },
+  {
+   "q": "Which secure protocol is used to send email between servers with encryption?",
+   "options": [
+    "POP3 without TLS",
+    "SNMPv2",
+    "Telnet",
+    "SMTP with STARTTLS"
+   ],
+   "answer": 3,
+   "why": "STARTTLS upgrades an SMTP connection to an encrypted one."
+  },
+  {
+   "q": "Which port does LDAPS use?",
+   "options": [
+    "3389",
+    "443",
+    "389",
+    "636"
+   ],
+   "answer": 3,
+   "why": "LDAP uses 389 in clear text; LDAPS wraps it in TLS on port 636."
+  },
+  {
+   "q": "Which protocol provides secure time synchronisation features such as authentication?",
+   "options": [
+    "FTP",
+    "NTP with authentication (or NTS)",
+    "TFTP",
+    "Telnet"
+   ],
+   "answer": 1,
+   "why": "Accurate, trusted time matters for logs, certificates and Kerberos."
+  },
+  {
+   "q": "What is DNSSEC?",
+   "options": [
+    "Encrypted DNS queries",
+    "Faster DNS",
+    "A DNS firewall",
+    "Digital signatures on DNS records so responses can be verified"
+   ],
+   "answer": 3,
+   "why": "DNSSEC protects integrity and authenticity, not confidentiality."
+  },
+  {
+   "q": "What does DNS over HTTPS (DoH) protect?",
+   "options": [
+    "Email delivery",
+    "Web server certificates",
+    "The privacy of DNS queries from eavesdroppers",
+    "The integrity of DNS records on the server"
+   ],
+   "answer": 2,
+   "why": "DoH encrypts the query, but it can also bypass corporate DNS filtering."
+  },
+  {
+   "q": "Which VPN protocol suite works at the network layer and can protect all IP traffic between sites?",
+   "options": [
+    "IPsec",
+    "TLS for web only",
+    "HTTPS",
+    "SSH"
+   ],
+   "answer": 0,
+   "why": "IPsec is the standard for site-to-site VPNs."
+  },
+  {
+   "q": "What is a clientless (SSL/TLS) VPN?",
+   "options": [
+    "A VPN accessed through a web browser without installing client software",
+    "A wireless network",
+    "A VPN with no encryption",
+    "A VPN for servers only"
+   ],
+   "answer": 0,
+   "why": "Users reach web-based internal apps through a portal in their browser."
+  },
+  {
+   "q": "What does SASE combine?",
+   "options": [
+    "Printers and scanners",
+    "Email and calendars",
+    "Antivirus and backups",
+    "Network and security services delivered from the cloud"
+   ],
+   "answer": 3,
+   "why": "Secure access service edge merges SD-WAN with cloud security such as SWG, CASB and ZTNA."
+  },
+  {
+   "q": "What does SD-WAN do?",
+   "options": [
+    "Scans for vulnerabilities",
+    "Encrypts disks",
+    "Intelligently routes traffic across multiple WAN links, such as broadband and MPLS",
+    "Manages mobile devices"
+   ],
+   "answer": 2,
+   "why": "Software-defined WAN picks the best path per application and reduces reliance on expensive circuits."
+  },
+  {
+   "q": "What does a next-generation firewall add beyond port filtering?",
+   "options": [
+    "Faster routing only",
+    "Application awareness, user identity and intrusion prevention",
+    "Email hosting",
+    "Wireless management"
+   ],
+   "answer": 1,
+   "why": "NGFWs can allow or block by application, such as permitting web browsing but not file sharing."
+  },
+  {
+   "q": "What is a layer 7 firewall able to inspect?",
+   "options": [
+    "Only MAC addresses",
+    "Only cable signals",
+    "Application data, such as HTTP requests",
+    "Only IP addresses"
+   ],
+   "answer": 2,
+   "why": "Application-layer inspection catches attacks hidden inside allowed ports."
+  },
+  {
+   "q": "What does a forward proxy do?",
+   "options": [
+    "Assigns IP addresses",
+    "Makes requests to the internet on behalf of internal clients",
+    "Accepts requests from the internet for internal servers",
+    "Stores backups"
+   ],
+   "answer": 1,
+   "why": "Forward proxies filter and log user web traffic. Reverse proxies sit in front of servers."
+  },
+  {
+   "q": "What does a reverse proxy do?",
+   "options": [
+    "Receives client requests and forwards them to internal servers",
+    "Routes between VLANs",
+    "Lets users browse anonymously",
+    "Filters employees' web browsing"
+   ],
+   "answer": 0,
+   "why": "It hides server details and can add TLS termination, caching and WAF protection."
+  },
+  {
+   "q": "What is a security benefit of a load balancer?",
+   "options": [
+    "It replaces firewalls",
+    "It encrypts disks",
+    "It stores logs",
+    "It spreads traffic so no single server is overwhelmed and can absorb some attacks"
+   ],
+   "answer": 3,
+   "why": "Load balancers improve availability and can hide backend servers."
+  },
+  {
+   "q": "What does 802.1X provide on a wired network?",
+   "options": [
+    "Wireless encryption",
+    "Port-based authentication before a device gets network access",
+    "VLAN tagging only",
+    "Faster Ethernet"
+   ],
+   "answer": 1,
+   "why": "A device must authenticate, usually via RADIUS, before the switch port passes normal traffic."
+  },
+  {
+   "q": "What is the role of a RADIUS server in 802.1X?",
+   "options": [
+    "The switch port",
+    "The authentication server that checks credentials",
+    "The DHCP server",
+    "The client device"
+   ],
+   "answer": 1,
+   "why": "The supplicant is the client, the authenticator is the switch or AP, and RADIUS is the authentication server."
+  },
+  {
+   "q": "What does a NAC posture check verify?",
+   "options": [
+    "The cable type",
+    "The user's password strength",
+    "The device's colour",
+    "A device's health, such as patches and antivirus, before granting access"
+   ],
+   "answer": 3,
+   "why": "Non-compliant devices can be quarantined until they're fixed."
+  },
+  {
+   "q": "What is the difference between agent and agentless NAC?",
+   "options": [
+    "Agent NAC works only on phones",
+    "Agent NAC installs software on devices; agentless checks them without it",
+    "Agentless needs more software",
+    "They are the same"
+   ],
+   "answer": 1,
+   "why": "Agents give deeper checks; agentless suits devices where software can't be installed."
+  },
+  {
+   "q": "What does a TPM chip support?",
+   "options": [
+    "Faster graphics",
+    "Secure key storage and measured boot",
+    "Wireless networking",
+    "Extra RAM"
+   ],
+   "answer": 1,
+   "why": "The TPM stores keys, such as BitLocker's, and records boot measurements."
+  },
+  {
+   "q": "What does Secure Boot do?",
+   "options": [
+    "Encrypts the whole disk",
+    "Backs up the BIOS",
+    "Only allows boot software signed by trusted keys to run",
+    "Speeds up booting"
+   ],
+   "answer": 2,
+   "why": "It stops bootkits that replace the boot loader with malicious code."
+  },
+  {
+   "q": "What is measured boot?",
+   "options": [
+    "Booting from the network",
+    "Booting in safe mode",
+    "Timing how long the boot takes",
+    "Recording hashes of each boot component so they can be checked later"
+   ],
+   "answer": 3,
+   "why": "The TPM stores the measurements, which can be reported to a server for attestation."
+  },
+  {
+   "q": "What is remote attestation?",
+   "options": [
+    "Backing up remotely",
+    "Logging in remotely",
+    "A device proving its boot state and configuration to a remote server",
+    "Signing a contract online"
+   ],
+   "answer": 2,
+   "why": "Using TPM measurements, the server can refuse access to devices that booted tampered software."
+  },
+  {
+   "q": "What is a self-encrypting drive (SED)?",
+   "options": [
+    "A drive that encrypts data in its own hardware",
+    "A cloud storage service",
+    "Software encryption for files",
+    "A backup tape"
+   ],
+   "answer": 0,
+   "why": "SEDs encrypt everything automatically with little performance cost."
+  },
+  {
+   "q": "What is the purpose of a firmware update for network devices?",
+   "options": [
+    "Adding users",
+    "Fixing vulnerabilities and bugs in the device's built-in software",
+    "Cleaning the device",
+    "Changing passwords"
+   ],
+   "answer": 1,
+   "why": "Routers and switches have firmware flaws too, so updates are part of patching."
+  },
+  {
+   "q": "Why disable unused switch ports?",
+   "options": [
+    "To speed up the switch",
+    "To save electricity",
+    "So no one can plug in an unauthorised device",
+    "To free up VLANs"
+   ],
+   "answer": 2,
+   "why": "Unused live ports are an easy way into the network."
+  },
+  {
+   "q": "What is port security on a switch?",
+   "options": [
+    "Encrypting traffic on a port",
+    "Blocking all ports",
+    "Changing the port number",
+    "Limiting which MAC addresses can use a port"
+   ],
+   "answer": 3,
+   "why": "If an unknown MAC appears, the port can be shut down or the traffic dropped."
+  },
+  {
+   "q": "What is the purpose of a VLAN?",
+   "options": [
+    "Encrypting wireless traffic",
+    "Backing up switches",
+    "Speeding up the internet",
+    "Logically separating devices into different broadcast domains"
+   ],
+   "answer": 3,
+   "why": "VLANs keep groups such as guests, voice and servers apart even on the same switch."
+  },
+  {
+   "q": "What is a screened subnet?",
+   "options": [
+    "A wireless guest network",
+    "A VLAN for printers",
+    "The modern term for a DMZ between the internet and the internal network",
+    "A VPN"
+   ],
+   "answer": 2,
+   "why": "Public-facing servers sit there, separated from internal systems by firewalls."
+  },
+  {
+   "q": "What is an air gap?",
+   "options": [
+    "A wireless network",
+    "A system or network with no connection to other networks",
+    "A slow connection",
+    "A gap in a firewall rule"
+   ],
+   "answer": 1,
+   "why": "Air-gapped systems can only be reached physically, though removable media is still a risk."
+  },
+  {
+   "q": "Which cloud security control discovers which cloud apps employees are using?",
+   "options": [
+    "IDS",
+    "HSM",
+    "WAF",
+    "CASB"
+   ],
+   "answer": 3,
+   "why": "A cloud access security broker gives visibility into shadow IT and enforces policy on cloud services."
+  },
+  {
+   "q": "What is a security group in a cloud environment?",
+   "options": [
+    "A virtual firewall controlling traffic to cloud resources",
+    "A user group in Active Directory",
+    "A team of security staff",
+    "A backup policy"
+   ],
+   "answer": 0,
+   "why": "Security groups set allowed ports and sources for instances."
+  },
+  {
+   "q": "What is a common cause of cloud data breaches?",
+   "options": [
+    "Using MFA",
+    "Strong passwords",
+    "Too much encryption",
+    "Misconfigured storage, such as public buckets"
+   ],
+   "answer": 3,
+   "why": "Storage left publicly readable exposes data without any hacking needed."
+  },
+  {
+   "q": "What is responsibility under IaaS for patching the guest operating system?",
+   "options": [
+    "The ISP",
+    "The cloud provider",
+    "Nobody",
+    "The customer"
+   ],
+   "answer": 3,
+   "why": "In IaaS the provider secures the hardware and hypervisor; the customer manages the OS and above."
+  },
+  {
+   "q": "What is a hybrid cloud's main security challenge?",
+   "options": [
+    "It cannot use encryption",
+    "It has no networking",
+    "Keeping consistent security policies across on-premises and cloud environments",
+    "There are no challenges"
+   ],
+   "answer": 2,
+   "why": "Different tools and responsibilities in each environment can leave gaps."
+  },
+  {
+   "q": "What is a container's main security consideration compared with a VM?",
+   "options": [
+    "Containers are always more secure",
+    "Containers can't be patched",
+    "Containers share the host kernel, so a kernel flaw affects all of them",
+    "Containers have their own kernel"
+   ],
+   "answer": 2,
+   "why": "VMs isolate with separate kernels; containers rely on the shared host kernel."
+  },
+  {
+   "q": "What is the purpose of an API gateway?",
+   "options": [
+    "A backup tool",
+    "A central point that authenticates, rate-limits and routes API requests",
+    "A firewall for email",
+    "A wireless controller"
+   ],
+   "answer": 1,
+   "why": "Gateways protect microservices from abuse and enforce consistent controls."
+  },
+  {
+   "q": "What is rate limiting?",
+   "options": [
+    "Limiting password length",
+    "Limiting the number of users",
+    "Limiting bandwidth for all users equally",
+    "Restricting how many requests a client can make in a period"
+   ],
+   "answer": 3,
+   "why": "It slows brute-force, scraping and some DoS attacks."
+  },
+  {
+   "q": "What does the principle of least functionality mean?",
+   "options": [
+    "Systems run only the services and features they need",
+    "Networks have few devices",
+    "Users get minimal training",
+    "Software has no updates"
+   ],
+   "answer": 0,
+   "why": "Each unneeded feature is extra attack surface."
+  },
+  {
+   "q": "What is configuration drift?",
+   "options": [
+    "Systems gradually moving away from their approved baseline",
+    "Moving servers between racks",
+    "Updating DNS records",
+    "Network latency changing"
+   ],
+   "answer": 0,
+   "why": "Untracked manual changes cause drift; automated configuration management detects and fixes it."
+  },
+  {
+   "q": "What is a golden image?",
+   "options": [
+    "A pre-hardened standard system image used to build new machines",
+    "An encrypted archive",
+    "A high-resolution logo",
+    "A backup of a failed server"
+   ],
+   "answer": 0,
+   "why": "Building from a golden image gives every system the same secure starting point."
+  },
+  {
+   "q": "What does a host-based firewall protect?",
+   "options": [
+    "The whole network perimeter",
+    "Only wireless clients",
+    "The individual system it runs on",
+    "Only email"
+   ],
+   "answer": 2,
+   "why": "It filters traffic to and from that host, even from other machines on the same network."
+  },
+  {
+   "q": "What is the purpose of disabling autorun for removable media?",
+   "options": [
+    "Stopping malware on USB drives from running automatically",
+    "Encrypting USB drives",
+    "Speeding up file copies",
+    "Saving battery"
+   ],
+   "answer": 0,
+   "why": "Autorun was a classic way for USB malware to spread."
+  },
+  {
+   "q": "What does a data loss prevention (DLP) system do when an employee emails a file containing card numbers to a personal address?",
+   "options": [
+    "Speeds up email",
+    "Deletes the employee's account",
+    "Blocks or alerts on the message based on policy",
+    "Encrypts the employee's laptop"
+   ],
+   "answer": 2,
+   "why": "DLP inspects content leaving the organisation and enforces rules on sensitive data."
+  },
+  {
+   "q": "What is data masking used for in testing environments?",
+   "options": [
+    "Backing up production",
+    "Speeding up tests",
+    "Replacing real sensitive values with realistic fakes",
+    "Encrypting the whole database"
+   ],
+   "answer": 2,
+   "why": "Developers can test with realistic data without seeing real personal information."
+  },
+  {
+   "q": "What is anonymisation of data?",
+   "options": [
+    "Encrypting data with a key",
+    "Removing identifying details so individuals can't be identified",
+    "Hiding data in images",
+    "Compressing data"
+   ],
+   "answer": 1,
+   "why": "Properly anonymised data is no longer personal data, though re-identification can be a risk."
+  },
+  {
+   "q": "What is pseudonymisation?",
+   "options": [
+    "Encrypting disks",
+    "Publishing data openly",
+    "Replacing identifiers with tokens that can be re-linked using separate information",
+    "Deleting all data"
+   ],
+   "answer": 2,
+   "why": "Unlike anonymisation, the original identity can be restored by whoever holds the mapping."
+  },
+  {
+   "q": "What is data retention policy?",
+   "options": [
+    "A password policy",
+    "Rules for how long different types of data must be kept and when to delete them",
+    "A backup schedule only",
+    "A firewall policy"
+   ],
+   "answer": 1,
+   "why": "Keeping data too long increases risk; deleting too soon can break legal requirements."
+  },
+  {
+   "q": "What is geofencing in mobile security?",
+   "options": [
+    "Blocking GPS",
+    "A wireless jammer",
+    "Fencing around a data centre",
+    "Using a device's location to allow or restrict actions"
+   ],
+   "answer": 3,
+   "why": "For example, an app might only work while the device is on company premises."
+  },
+  {
+   "q": "What is a security key (hardware token) used for?",
+   "options": [
+    "To unlock doors only",
+    "To store backups",
+    "As a physical second factor for authentication",
+    "To encrypt Wi-Fi"
+   ],
+   "answer": 2,
+   "why": "Security keys such as FIDO2 tokens prove possession and resist phishing."
+  },
+  {
+   "q": "What is a time-based one-time password (TOTP)?",
+   "options": [
+    "A code that changes every 30 seconds or so, generated by an app",
+    "A code sent by email",
+    "A biometric scan",
+    "A password that never changes"
+   ],
+   "answer": 0,
+   "why": "Authenticator apps compute TOTP codes from a shared secret and the current time."
+  },
+  {
+   "q": "What is HOTP?",
+   "options": [
+    "A one-time password based on a counter that increases with each use",
+    "A hardware firewall",
+    "A time-based code",
+    "A static PIN"
+   ],
+   "answer": 0,
+   "why": "HOTP codes stay valid until used, unlike TOTP codes, which expire with time."
+  },
+  {
+   "q": "What are the factors of authentication?",
+   "options": [
+    "Username, password, email",
+    "Read, write, execute",
+    "Something you know, have, are, and sometimes somewhere you are",
+    "Public, private, shared"
+   ],
+   "answer": 2,
+   "why": "True MFA combines factors from different categories."
+  },
+  {
+   "q": "What is a false rejection rate (FRR) in biometrics?",
+   "options": [
+    "How fast the scanner works",
+    "How many users are enrolled",
+    "How often an impostor is accepted",
+    "How often a legitimate user is wrongly denied"
+   ],
+   "answer": 3,
+   "why": "High FRR frustrates users; high false acceptance rate (FAR) weakens security."
+  },
+  {
+   "q": "What is attribute-based access control (ABAC)?",
+   "options": [
+    "Access set by the data owner",
+    "Access decisions based on attributes of the user, resource and environment",
+    "Access based only on job role",
+    "Access based on security labels"
+   ],
+   "answer": 1,
+   "why": "ABAC can express rules like 'finance staff, on managed devices, during work hours'."
+  },
+  {
+   "q": "What is mandatory access control (MAC)?",
+   "options": [
+    "Access based on labels and clearances enforced by the system",
+    "Access based on time of day",
+    "Access based on job role",
+    "Access decided by the data owner"
+   ],
+   "answer": 0,
+   "why": "Users can't change MAC permissions; it's used in high-security environments."
+  },
+  {
+   "q": "What is rule-based access control?",
+   "options": [
+    "Access based on clearance labels",
+    "Access governed by system rules, such as firewall rules or time restrictions",
+    "Access set by job title",
+    "Access chosen by each user"
+   ],
+   "answer": 1,
+   "why": "Rules apply to everyone equally, regardless of identity."
+  },
+  {
+   "q": "What is time-of-day restriction?",
+   "options": [
+    "Allowing logins only during set hours",
+    "Rotating keys hourly",
+    "Changing passwords daily",
+    "Expiring certificates at midnight"
+   ],
+   "answer": 0,
+   "why": "Logins outside approved hours are blocked, limiting misuse of stolen credentials."
+  },
+  {
+   "q": "What is single sign-on (SSO)?",
+   "options": [
+    "Using one password for every website",
+    "Logging in once to access many applications",
+    "Logging in with a fingerprint only",
+    "A shared admin account"
+   ],
+   "answer": 1,
+   "why": "SSO improves usability and centralises control, but the identity provider becomes a key target."
+  },
+  {
+   "q": "What is SAML used for?",
+   "options": [
+    "Sending email",
+    "Exchanging authentication and authorisation assertions between an identity provider and a service",
+    "Assigning IP addresses",
+    "Encrypting disks"
+   ],
+   "answer": 1,
+   "why": "SAML is an XML standard common for enterprise web single sign-on between an IdP and apps."
+  },
+  {
+   "q": "What is LDAP used for?",
+   "options": [
+    "Routing packets",
+    "Encrypting web traffic",
+    "Sending files",
+    "Querying and managing directory information such as users and groups"
+   ],
+   "answer": 3,
+   "why": "LDAP is how many applications look up accounts in directories like Active Directory."
+  },
+  {
+   "q": "What is Kerberos's main purpose?",
+   "options": [
+    "Routing traffic",
+    "Network authentication using tickets",
+    "Encrypting disks",
+    "Filtering email"
+   ],
+   "answer": 1,
+   "why": "Kerberos avoids sending passwords across the network by issuing time-limited tickets."
+  },
+  {
+   "q": "Why does Kerberos need accurate time on all systems?",
+   "options": [
+    "To schedule backups",
+    "To log events",
+    "Tickets include timestamps and are rejected if clocks differ too much",
+    "To set password expiry"
+   ],
+   "answer": 2,
+   "why": "Time limits stop old tickets from being replayed, so clock skew causes failures."
+  },
+  {
+   "q": "What is a service account?",
+   "options": [
+    "An account used by an application or service rather than a person",
+    "A guest account",
+    "A shared user account",
+    "A help desk account"
+   ],
+   "answer": 0,
+   "why": "Service accounts often have high privileges and long-lived passwords, so they need careful control."
+  },
+  {
+   "q": "Why are shared accounts discouraged?",
+   "options": [
+    "They can't have passwords",
+    "Actions can't be traced to an individual",
+    "They are slower",
+    "They use more licences"
+   ],
+   "answer": 1,
+   "why": "Accountability requires knowing who did what."
+  },
+  {
+   "q": "What is privilege escalation?",
+   "options": [
+    "Promoting an employee",
+    "Gaining higher access rights than intended",
+    "Adding RAM",
+    "Increasing bandwidth"
+   ],
+   "answer": 1,
+   "why": "Attackers start with limited access and exploit flaws to become administrators."
+  },
+  {
+   "q": "What is the purpose of reviewing user permissions regularly?",
+   "options": [
+    "Changing passwords",
+    "Speeding up logins",
+    "Creating new accounts",
+    "Removing access people no longer need"
+   ],
+   "answer": 3,
+   "why": "Access reviews catch privilege creep and accounts left behind after role changes."
+  },
+  {
+   "q": "What does the preparation phase of incident response include?",
+   "options": [
+    "Writing the final report",
+    "Restoring backups",
+    "Removing malware",
+    "Building the plan, team, tools and training before incidents happen"
+   ],
+   "answer": 3,
+   "why": "Preparation makes every later phase faster and more effective."
+  },
+  {
+   "q": "What happens in the detection phase of incident response?",
+   "options": [
+    "Identifying that an incident has occurred through alerts, logs or reports",
+    "Wiping systems",
+    "Restoring data",
+    "Signing contracts"
+   ],
+   "answer": 0,
+   "why": "Detection triggers the response and starts analysis of scope and impact."
+  },
+  {
+   "q": "What is the purpose of containment?",
+   "options": [
+    "Rebuilding systems",
+    "Reporting to management",
+    "Finding the root cause",
+    "Stopping the incident from spreading or causing more damage"
+   ],
+   "answer": 3,
+   "why": "Containment might isolate hosts, disable accounts or block IPs."
+  },
+  {
+   "q": "What does recovery involve in incident response?",
+   "options": [
+    "Deleting logs",
+    "Assigning blame",
+    "Detecting the attack",
+    "Restoring systems to normal operation and monitoring for problems"
+   ],
+   "answer": 3,
+   "why": "Systems are brought back carefully, with extra monitoring for signs of reinfection."
+  },
+  {
+   "q": "What is root cause analysis after an incident?",
+   "options": [
+    "Removing malware",
+    "Finding the underlying reason the incident happened",
+    "Restarting servers",
+    "Calling the police"
+   ],
+   "answer": 1,
+   "why": "Fixing the root cause, not just symptoms, prevents repeats."
+  },
+  {
+   "q": "What is the order of volatility used for?",
+   "options": [
+    "Sorting log files",
+    "Ranking threats",
+    "Choosing backup media",
+    "Deciding which evidence to collect first because it disappears fastest"
+   ],
+   "answer": 3,
+   "why": "Memory and network state vanish quickly, so they're captured before disk images."
+  },
+  {
+   "q": "Why is chain of custody important in forensics?",
+   "options": [
+    "It speeds up analysis",
+    "It deletes old evidence",
+    "It proves evidence was handled properly and not tampered with",
+    "It encrypts evidence"
+   ],
+   "answer": 2,
+   "why": "Gaps in custody can make evidence inadmissible in court."
+  },
+  {
+   "q": "What is a forensic image?",
+   "options": [
+    "A compressed backup of files",
+    "A photo of the hardware",
+    "A screenshot",
+    "A bit-for-bit copy of a storage device"
+   ],
+   "answer": 3,
+   "why": "An exact copy, including deleted data, lets analysis happen without changing the original."
+  },
+  {
+   "q": "Why is a hash taken of evidence when it is collected?",
+   "options": [
+    "To encrypt it",
+    "To identify malware",
+    "To compress it",
+    "To prove later that it hasn't changed"
+   ],
+   "answer": 3,
+   "why": "A matching hash at any later point shows the evidence is intact."
+  },
+  {
+   "q": "What is the purpose of a lessons learned meeting?",
+   "options": [
+    "To improve processes based on what happened during an incident",
+    "To close tickets",
+    "To buy new tools",
+    "To punish staff"
+   ],
+   "answer": 0,
+   "why": "Documenting what worked and what didn't strengthens the next response."
+  },
+  {
+   "q": "What is threat hunting?",
+   "options": [
+    "Penetration testing",
+    "Responding to tickets",
+    "Proactively searching for hidden threats rather than waiting for alerts",
+    "Scanning for open ports"
+   ],
+   "answer": 2,
+   "why": "Hunters use hypotheses and data to find attackers who evaded automated detection."
+  },
+  {
+   "q": "What is a security operations centre (SOC)?",
+   "options": [
+    "A data backup site",
+    "A help desk for passwords",
+    "A software development team",
+    "A team and facility that monitors and responds to security events"
+   ],
+   "answer": 3,
+   "why": "SOCs watch alerts around the clock and coordinate incident response."
+  },
+  {
+   "q": "What is a playbook in security operations?",
+   "options": [
+    "A firewall log",
+    "A risk register",
+    "A training video",
+    "A documented set of steps for handling a specific type of event"
+   ],
+   "answer": 3,
+   "why": "Playbooks make responses consistent, and SOAR tools can automate them."
+  },
+  {
+   "q": "What does SOAR stand for?",
+   "options": [
+    "Secure online access routing",
+    "Security operations and audit review",
+    "System operations and recovery",
+    "Security orchestration, automation and response"
+   ],
+   "answer": 3,
+   "why": "SOAR platforms connect tools and automate response playbooks."
+  },
+  {
+   "q": "What does the NIST Cybersecurity Framework organise its functions into?",
+   "options": [
+    "Prevent, Detect, Correct",
+    "Confidentiality, Integrity, Availability",
+    "Plan, Do, Check, Act",
+    "Govern, Identify, Protect, Detect, Respond, Recover"
+   ],
+   "answer": 3,
+   "why": "CSF 2.0 added Govern to the original five functions."
+  },
+  {
+   "q": "What is ISO/IEC 27001?",
+   "options": [
+    "A US privacy law",
+    "A standard for information security management systems that organisations can be certified against",
+    "A wireless protocol",
+    "A programming standard"
+   ],
+   "answer": 1,
+   "why": "It sets requirements for an ISMS; ISO 27002 gives guidance on controls."
+  },
+  {
+   "q": "What are the CIS Controls?",
+   "options": [
+    "A cloud provider's terms",
+    "A US privacy law",
+    "A prioritised set of practical security safeguards",
+    "A type of firewall"
+   ],
+   "answer": 2,
+   "why": "The Center for Internet Security publishes them to help organisations focus on the most effective defences."
+  },
+  {
+   "q": "What is a benchmark such as a CIS Benchmark?",
+   "options": [
+    "A detailed secure configuration guide for a specific product",
+    "A performance test",
+    "A risk score",
+    "A pricing comparison"
+   ],
+   "answer": 0,
+   "why": "Benchmarks list recommended settings for systems like Windows, Linux and cloud services."
+  },
+  {
+   "q": "What is the purpose of a business continuity plan (BCP)?",
+   "options": [
+    "Planning marketing campaigns",
+    "Keeping essential business functions running during and after a disruption",
+    "Recovering IT systems only",
+    "Training new staff"
+   ],
+   "answer": 1,
+   "why": "A BCP covers people, processes and facilities; the DRP focuses on IT recovery."
+  },
+  {
+   "q": "What is a disaster recovery plan (DRP)?",
+   "options": [
+    "A plan for hiring staff",
+    "Procedures for restoring IT systems after a disaster",
+    "A marketing plan",
+    "A legal policy"
+   ],
+   "answer": 1,
+   "why": "The DRP is part of business continuity and focuses on technology."
+  },
+  {
+   "q": "What does a business impact analysis identify?",
+   "options": [
+    "Network speed",
+    "Critical functions, their dependencies and the impact of their loss",
+    "All software licences",
+    "Employee salaries"
+   ],
+   "answer": 1,
+   "why": "The BIA sets recovery priorities and objectives such as RTO and RPO."
+  },
+  {
+   "q": "What is a single point of failure?",
+   "options": [
+    "A backup tape",
+    "A component whose failure stops the whole system",
+    "A minor bug",
+    "A redundant server"
+   ],
+   "answer": 1,
+   "why": "Redundancy, such as dual power supplies or clustered servers, removes single points of failure."
+  },
+  {
+   "q": "What is failover testing?",
+   "options": [
+    "Testing printers",
+    "Testing user training",
+    "Deliberately failing a component to confirm the backup takes over",
+    "Testing password strength"
+   ],
+   "answer": 2,
+   "why": "Untested failover often doesn't work when it's really needed."
+  },
+  {
+   "q": "What is parallel processing as a recovery test?",
+   "options": [
+    "Processing two backups at once",
+    "Using two CPUs",
+    "Running two antivirus products",
+    "Running the recovery site alongside production to confirm it works"
+   ],
+   "answer": 3,
+   "why": "Parallel tests validate the alternate site without stopping primary operations."
+  },
+  {
+   "q": "What is a simulation exercise in continuity planning?",
+   "options": [
+    "A realistic walk-through that tests responses without causing real disruption",
+    "A paper review only",
+    "A live failover of production",
+    "A software test"
+   ],
+   "answer": 0,
+   "why": "Simulations sit between tabletop discussion and full failover tests."
+  },
+  {
+   "q": "What is capacity planning in resilience?",
+   "options": [
+    "Reducing staff",
+    "Buying the cheapest hardware",
+    "Making sure there are enough people, technology and infrastructure to meet demand",
+    "Cutting bandwidth"
+   ],
+   "answer": 2,
+   "why": "Planning for growth and peaks avoids outages caused by running out of resources."
+  },
+  {
+   "q": "What is the main purpose of security awareness for remote workers?",
+   "options": [
+    "Teaching them to avoid email",
+    "Teaching safe practices for home networks, public Wi-Fi and device security",
+    "Banning laptops",
+    "Requiring them to work offline"
+   ],
+   "answer": 1,
+   "why": "Remote work moves the perimeter to homes and cafés, so user habits matter more."
+  },
+  {
+   "q": "What is an insider threat?",
+   "options": [
+    "A virus from the internet",
+    "A risk from people within the organisation, malicious or careless",
+    "A power outage",
+    "A hacker in another country"
+   ],
+   "answer": 1,
+   "why": "Insiders already have access, so monitoring, least privilege and offboarding are key."
+  },
+  {
+   "q": "What is the purpose of a clean desk policy?",
+   "options": [
+    "Keeping offices tidy for visitors",
+    "Preventing sensitive information being left visible or unattended",
+    "Reducing cleaning costs",
+    "Organising files alphabetically"
+   ],
+   "answer": 1,
+   "why": "Papers and notes left on desks can be read or taken."
+  },
+  {
+   "q": "What is shoulder surfing?",
+   "options": [
+    "Calling the help desk",
+    "Searching rubbish bins",
+    "Following someone through a door",
+    "Watching someone enter a password or PIN"
+   ],
+   "answer": 3,
+   "why": "Privacy screens and awareness help prevent it."
+  },
+  {
+   "q": "What is dumpster diving?",
+   "options": [
+    "Searching discarded rubbish for useful information",
+    "Hacking a database",
+    "Phishing by email",
+    "Spoofing caller ID"
+   ],
+   "answer": 0,
+   "why": "Shredding documents and destroying media stops attackers recovering them from the trash."
+  },
+  {
+   "q": "What is pretexting?",
+   "options": [
+    "Scanning ports",
+    "Inventing a scenario to persuade someone to give information or access",
+    "Sending malware",
+    "Guessing passwords"
+   ],
+   "answer": 1,
+   "why": "An attacker might pose as IT support or an auditor to sound legitimate."
+  },
+  {
+   "q": "What is a business email compromise attack usually after?",
+   "options": [
+    "Fraudulent payments or sensitive data through a trusted-looking email",
+    "Crashing a server",
+    "Stealing hardware",
+    "Defacing a website"
+   ],
+   "answer": 0,
+   "why": "Attackers impersonate executives or suppliers and ask for urgent transfers."
+  },
+  {
+   "q": "What is the best defence against invoice fraud from a spoofed supplier email?",
+   "options": [
+    "Forwarding to colleagues",
+    "Verifying payment changes by calling a known number",
+    "Replying to the email to confirm",
+    "Paying quickly to avoid late fees"
+   ],
+   "answer": 1,
+   "why": "Out-of-band verification defeats spoofed or compromised email accounts."
+  },
+  {
+   "q": "What is a deepfake risk in social engineering?",
+   "options": [
+    "Corrupted image files",
+    "Fake audio or video of a trusted person used to authorise actions",
+    "A slow video call",
+    "A broken webcam"
+   ],
+   "answer": 1,
+   "why": "Attackers have used cloned voices of executives to request payments."
+  },
+  {
+   "q": "What is the purpose of a non-disclosure agreement (NDA)?",
+   "options": [
+    "Defining service uptime",
+    "Granting software licences",
+    "Legally requiring parties to keep shared information confidential",
+    "Setting payment terms"
+   ],
+   "answer": 2,
+   "why": "NDAs protect sensitive information shared with employees, contractors or partners."
+  },
+  {
+   "q": "What is due diligence in third-party risk management?",
+   "options": [
+    "Investigating a vendor's security and reliability before engaging them",
+    "Choosing the cheapest vendor",
+    "Ignoring vendor history",
+    "Signing contracts quickly"
+   ],
+   "answer": 0,
+   "why": "Due diligence finds red flags before you depend on the supplier."
+  },
+  {
+   "q": "What is a supply chain risk with open-source libraries?",
+   "options": [
+    "A compromised or vulnerable dependency can affect every application that uses it",
+    "There is no risk",
+    "Open source is always secure",
+    "Libraries can't be updated"
+   ],
+   "answer": 0,
+   "why": "Tracking dependencies with a software bill of materials helps manage this."
+  },
+  {
+   "q": "What is a software bill of materials (SBOM)?",
+   "options": [
+    "A user manual",
+    "A list of all components and libraries in a piece of software",
+    "An invoice for software",
+    "A licence agreement"
+   ],
+   "answer": 1,
+   "why": "An SBOM lets you quickly check whether you're affected when a library vulnerability is announced."
+  },
+  {
+   "q": "What is penetration testing's main difference from vulnerability scanning?",
+   "options": [
+    "Pen testing tries to exploit weaknesses to show real impact",
+    "Pen testing is fully automated",
+    "Scanning exploits vulnerabilities",
+    "They are identical"
+   ],
+   "answer": 0,
+   "why": "Scanning finds possible issues; testers prove what an attacker could actually do."
+  },
+  {
+   "q": "What is a red team?",
+   "options": [
+    "A group that emulates real attackers to test defences",
+    "Auditors who review policies",
+    "Developers who write code",
+    "The team that defends the network"
+   ],
+   "answer": 0,
+   "why": "Red teams test detection and response; blue teams defend; purple teams combine both."
+  },
+  {
+   "q": "What is a blue team?",
+   "options": [
+    "The defenders who monitor and protect systems",
+    "Attackers in an exercise",
+    "Software testers",
+    "Auditors"
+   ],
+   "answer": 0,
+   "why": "Blue teams detect and respond to red team activity in exercises."
+  },
+  {
+   "q": "What is passive reconnaissance?",
+   "options": [
+    "Exploiting vulnerabilities",
+    "Port scanning the target",
+    "Gathering information without directly interacting with the target's systems",
+    "Sending phishing emails"
+   ],
+   "answer": 2,
+   "why": "Public records, search engines and social media are passive sources."
+  },
+  {
+   "q": "What is active reconnaissance?",
+   "options": [
+    "Interacting directly with target systems, such as scanning them",
+    "Reading news articles",
+    "Searching social media",
+    "Checking public records"
+   ],
+   "answer": 0,
+   "why": "Active techniques can be detected and logged by the target."
+  },
+  {
+   "q": "What is the purpose of the rules of engagement in a penetration test?",
+   "options": [
+    "Setting the price",
+    "Defining scope, timing, methods and limits of the test",
+    "Listing the testers' certifications",
+    "Choosing the report font"
+   ],
+   "answer": 1,
+   "why": "Clear rules protect both the client and the testers."
+  },
+  {
+   "q": "What is responsible disclosure?",
+   "options": [
+    "Selling vulnerabilities",
+    "Ignoring vulnerabilities",
+    "Privately reporting a vulnerability to the vendor and giving time to fix it before publishing",
+    "Publishing exploits immediately"
+   ],
+   "answer": 2,
+   "why": "It balances informing the public with giving the vendor time to protect users."
+  },
+  {
+   "q": "What is the purpose of security metrics such as mean time to patch?",
+   "options": [
+    "Choosing vendors",
+    "Measuring how well security processes perform over time",
+    "Setting prices",
+    "Counting employees"
+   ],
+   "answer": 1,
+   "why": "Metrics show where processes are slow and whether improvements work."
+  },
+  {
+   "q": "What is a security champion programme?",
+   "options": [
+    "Hiring outside hackers",
+    "Replacing the security team",
+    "Awarding prizes to attackers",
+    "Training staff in each team to promote good security practices"
+   ],
+   "answer": 3,
+   "why": "Champions spread security knowledge and spot issues early in their own teams."
+  },
+  {
+   "q": "What is the purpose of a privacy notice?",
+   "options": [
+    "Telling people how their personal data is collected and used",
+    "Blocking cookies",
+    "Hiding data from users",
+    "Encrypting websites"
+   ],
+   "answer": 0,
+   "why": "Privacy laws require transparency about data collection and use."
+  },
+  {
+   "q": "What is data minimisation?",
+   "options": [
+    "Compressing data",
+    "Deleting backups",
+    "Collecting and keeping only the personal data that is needed",
+    "Hiding data"
+   ],
+   "answer": 2,
+   "why": "Less data held means less to protect and less exposed in a breach."
+  },
+  {
+   "q": "What does a cyber insurance policy do in risk management?",
+   "options": [
+    "Transfers some financial risk of incidents to an insurer",
+    "Replaces security controls",
+    "Encrypts data",
+    "Prevents attacks"
+   ],
+   "answer": 0,
+   "why": "Insurance is risk transference; insurers often require basic controls first."
+  },
+  {
+   "q": "What is residual risk?",
+   "options": [
+    "Risk that has been eliminated",
+    "Risk transferred to an insurer",
+    "Risk before any controls",
+    "The risk that remains after controls are applied"
+   ],
+   "answer": 3,
+   "why": "No control removes all risk; residual risk must be within the organisation's appetite."
+  },
+  {
+   "q": "What is inherent risk?",
+   "options": [
+    "Risk that is accepted",
+    "The level of risk before any controls are applied",
+    "Risk from insiders only",
+    "Risk after controls"
+   ],
+   "answer": 1,
+   "why": "Comparing inherent and residual risk shows how much controls help."
+  },
+  {
+   "q": "What is a risk owner?",
+   "options": [
+    "An external auditor",
+    "The person accountable for managing a particular risk",
+    "The attacker",
+    "The person who found the risk"
+   ],
+   "answer": 1,
+   "why": "Each risk in the register needs an owner who decides and tracks the response."
+  },
+  {
+   "q": "What is the purpose of a heat map in risk assessment?",
+   "options": [
+    "Mapping office layouts",
+    "Tracking server temperatures",
+    "Visually showing risks by likelihood and impact",
+    "Showing wireless coverage only"
+   ],
+   "answer": 2,
+   "why": "Risk heat maps help prioritise the high-likelihood, high-impact risks."
   }
  ]
 }

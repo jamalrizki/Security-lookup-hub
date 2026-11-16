@@ -56,28 +56,6 @@
    "why": "\"..\" means the parent directory, so from /home/user/projects it resolves to /home/user."
   },
   {
-   "q": "Which command will change the shell’s current directory to the directory linuxpocketguide located in the user’s home directory?",
-   "options": [
-    "cd linuxpocketguide",
-    "cd /home/alice/linuxpocketguide",
-    "cd ./linuxpocketguide",
-    "cd ~/linuxpocketguide"
-   ],
-   "answer": 3,
-   "why": "The tilde (~) expands to the user’s home directory, so cd ~/linuxpocketguide changes to that path."
-  },
-  {
-   "q": "Which pattern will correctly match the hidden file named .profile in the current directory?",
-   "options": [
-    ".pro*",
-    "*profile",
-    ".profile*",
-    ".?rofile"
-   ],
-   "answer": 0,
-   "why": "Wildcards do not match a leading period unless the period is typed explicitly; .pro* matches .profile while *profile would miss the hidden file."
-  },
-  {
    "q": "What will the command `echo file{1,2,3}.txt` display?",
    "options": [
     "file1.txt file2.txt file3.txt",
@@ -98,28 +76,6 @@
    ],
    "answer": 3,
    "why": "Variable assignment is done with NAME=value and the value is accessed with a preceding $. The first option follows this syntax."
-  },
-  {
-   "q": "Which command correctly brings job number 3 to the foreground in a Bash shell?",
-   "options": [
-    "fg %3 &",
-    "fg %3",
-    "fg %job3",
-    "fg 3"
-   ],
-   "answer": 1,
-   "why": "The fg builtin requires the job number preceded by a percent sign; fg %3 resumes job 3 in the foreground."
-  },
-  {
-   "q": "If an interactive command is sent to the background and the shell cannot keep it there, what does the shell display?",
-   "options": [
-    "[1]- Stopped command line here",
-    "[1] Done command line here",
-    "[1]+ Stopped command line here",
-    "[1]+ Running command line here"
-   ],
-   "answer": 2,
-   "why": "The shell stops the job and prints a message like \"[1]+ Stopped command line here\" indicating it is suspended."
   },
   {
    "q": "Within a screen session, which key sequence creates a new virtual window?",
@@ -186,17 +142,6 @@
    ],
    "answer": 2,
    "why": "Pressing the Escape key exits insert mode and puts Vim back into command mode."
-  },
-  {
-   "q": "What is the correct Vim command to write the current buffer to disk and then quit the editor?",
-   "options": [
-    ":wq",
-    ":x",
-    ":w",
-    ":q!"
-   ],
-   "answer": 0,
-   "why": ":wq writes the file and quits Vim; it combines saving and exiting in one command."
   },
   {
    "q": "A user runs `umask 0002` and then creates a regular file and a directory with the default creation modes. What permission bits will the new file and directory have?",
@@ -276,39 +221,6 @@
    "why": "The -g option performs a general numeric sort that understands scientific notation such as 2.5e2."
   },
   {
-   "q": "You need to verify that a sorted file has no duplicate consecutive lines. Which command will cause an error if any duplicates are present?",
-   "options": [
-    "sort -u -c file",
-    "sort -c -u file",
-    "sort -c file",
-    "sort -u file"
-   ],
-   "answer": 1,
-   "why": "Combining -c (check order) with -u (unique) makes sort fail when duplicate consecutive lines exist."
-  },
-  {
-   "q": "Given a CSV file \"people\" with lines like \"Name,Street,City\", which command will sort the entries alphabetically by the city field?",
-   "options": [
-    "sort -k3 -t, file",
-    "sort -k3 file",
-    "sort -t, -k3 file",
-    "sort -t, file -k3"
-   ],
-   "answer": 2,
-   "why": "The -t, option sets the comma as the field delimiter, and -k3 tells sort to use the third field (city) for ordering."
-  },
-  {
-   "q": "Which diff option generates a context‑style diff that can be applied with the patch utility?",
-   "options": [
-    "-u",
-    "-c",
-    "-y",
-    "-e"
-   ],
-   "answer": 1,
-   "why": "The -c flag tells diff to produce a context diff, the format expected by patch."
-  },
-  {
    "q": "You need to compare two directory trees and see differences in all nested subdirectories. Which command will accomplish this?",
    "options": [
     "diff -r dir1 dir2",
@@ -329,28 +241,6 @@
    ],
    "answer": 1,
    "why": "The -i flag tells diff to ignore case when comparing text."
-  },
-  {
-   "q": "You want to list all dictionary words that start with the letters \"bi\" using the look command. Which option correctly limits the prefix to characters up to \"i\"?",
-   "options": [
-    "look -t b bi",
-    "look -t i big",
-    "look -f i bi",
-    "look -t i bi"
-   ],
-   "answer": 3,
-   "why": "The -t option tells look to stop matching at the termination character; using -t i with the prefix \"bi\" lists words beginning with \"bi\"."
-  },
-  {
-   "q": "Which aspell command will start an interactive spell‑checking session for the file report.txt?",
-   "options": [
-    "aspell -c report.txt",
-    "aspell dump master > report.txt",
-    "aspell -a report.txt",
-    "aspell --check report.txt"
-   ],
-   "answer": 0,
-   "why": "The -c option runs aspell in interactive mode, allowing the user to correct misspellings in the specified file."
   },
   {
    "q": "On a Linux system, the path /dev/sdb3 most likely refers to:",
@@ -463,17 +353,6 @@
    "why": "The -l option changes a user's login name; you should check for dependencies on the old name before renaming."
   },
   {
-   "q": "Which command and option should you use to retrieve the MX (mail exchange) records for a domain?",
-   "options": [
-    "host -t MX",
-    "dig MX",
-    "ping -c",
-    "nslookup -type=MX"
-   ],
-   "answer": 0,
-   "why": "The host command with the -t MX option queries DNS for MX records, as shown in the example."
-  },
-  {
    "q": "When performing a whois lookup, how can you direct the query to a specific registrar's server?",
    "options": [
     "-r",
@@ -494,17 +373,6 @@
    ],
    "answer": 2,
    "why": "The -c N option tells ping to send at most N packets before stopping."
-  },
-  {
-   "q": "When using the Lynx text‑based web browser, which keystroke returns the cursor to the very beginning of the current document?",
-   "options": [
-    "^A",
-    "/",
-    "^E",
-    "m"
-   ],
-   "answer": 0,
-   "why": "^A is defined in Lynx as the command to move to the top of the page."
   },
   {
    "q": "Which Lynx command‑line switch causes the program to print the formatted page to standard output and then quit?",
@@ -1836,6 +1704,3350 @@
    ],
    "answer": 2,
    "why": "-n compares numbers, so 10 comes after 9. -r reverses, -u removes duplicates and -k picks a field."
+  },
+  {
+   "q": "Which command prints the current working directory?",
+   "options": [
+    "cd",
+    "pwd",
+    "ls -d",
+    "dir -p"
+   ],
+   "answer": 1,
+   "why": "pwd shows the full path of the directory you're in."
+  },
+  {
+   "q": "What does cd with no arguments do?",
+   "options": [
+    "Prints an error",
+    "Changes to your home directory",
+    "Stays in the current directory",
+    "Goes to /"
+   ],
+   "answer": 1,
+   "why": "cd on its own, like cd ~, takes you to your home directory."
+  },
+  {
+   "q": "What does cd - do?",
+   "options": [
+    "Returns to the previous directory",
+    "Goes to /",
+    "Goes to the parent directory",
+    "Goes to home"
+   ],
+   "answer": 0,
+   "why": "The shell keeps the last directory in OLDPWD and cd - switches back to it."
+  },
+  {
+   "q": "Which ls option shows hidden files?",
+   "options": [
+    "-l",
+    "-R",
+    "-a",
+    "-h"
+   ],
+   "answer": 2,
+   "why": "Files whose names start with a dot are hidden unless you use -a."
+  },
+  {
+   "q": "Which ls option lists files in long format with permissions and sizes?",
+   "options": [
+    "-F",
+    "-a",
+    "-l",
+    "-1"
+   ],
+   "answer": 2,
+   "why": "Long format shows type, permissions, links, owner, group, size and date."
+  },
+  {
+   "q": "Which ls option sorts by modification time, newest first?",
+   "options": [
+    "-S",
+    "-t",
+    "-X",
+    "-r"
+   ],
+   "answer": 1,
+   "why": "-t sorts by time; add -r to reverse the order."
+  },
+  {
+   "q": "Which ls option sorts by file size?",
+   "options": [
+    "-s",
+    "-t",
+    "-X",
+    "-S"
+   ],
+   "answer": 3,
+   "why": "-S lists largest first; -s just shows block sizes next to names."
+  },
+  {
+   "q": "What does the first character d mean in ls -l output?",
+   "options": [
+    "The file is a device",
+    "The file is deleted",
+    "The entry is a directory",
+    "The file is downloaded"
+   ],
+   "answer": 2,
+   "why": "- is a regular file, d a directory, l a symbolic link."
+  },
+  {
+   "q": "What does an l at the start of ls -l output mean?",
+   "options": [
+    "The file is locked",
+    "The file is a library",
+    "The file is large",
+    "The entry is a symbolic link"
+   ],
+   "answer": 3,
+   "why": "Symlinks show their target after an arrow, such as link -> target."
+  },
+  {
+   "q": "What does the wildcard * match?",
+   "options": [
+    "Any number of characters, including none",
+    "Only digits",
+    "Only letters",
+    "Exactly one character"
+   ],
+   "answer": 0,
+   "why": "*.txt matches every file ending in .txt."
+  },
+  {
+   "q": "What does [abc] match in a filename pattern?",
+   "options": [
+    "Nothing",
+    "The string abc",
+    "Any one of the characters a, b or c",
+    "Any three characters"
+   ],
+   "answer": 2,
+   "why": "Brackets match a single character from the set."
+  },
+  {
+   "q": "What does mv old.txt new.txt do?",
+   "options": [
+    "Copies old.txt",
+    "Renames old.txt to new.txt",
+    "Deletes both files",
+    "Links the files"
+   ],
+   "answer": 1,
+   "why": "mv renames within a filesystem, or moves files between directories."
+  },
+  {
+   "q": "What does cp -i do?",
+   "options": [
+    "Asks before overwriting an existing file",
+    "Ignores errors",
+    "Copies only images",
+    "Copies invisibly"
+   ],
+   "answer": 0,
+   "why": "-i (interactive) prevents accidentally overwriting files."
+  },
+  {
+   "q": "What does cp -a preserve?",
+   "options": [
+    "Only file names",
+    "Nothing extra",
+    "Permissions, ownership, timestamps and links, copying recursively",
+    "Only contents"
+   ],
+   "answer": 2,
+   "why": "-a (archive) makes an exact copy, useful for backups."
+  },
+  {
+   "q": "What does rm -i do?",
+   "options": [
+    "Deletes invisibly",
+    "Asks for confirmation before deleting each file",
+    "Restores files",
+    "Deletes immediately without asking"
+   ],
+   "answer": 1,
+   "why": "Interactive mode helps avoid deleting the wrong files."
+  },
+  {
+   "q": "Why is rm -rf dangerous?",
+   "options": [
+    "It is slow",
+    "It only works as root",
+    "It deletes recursively and forcefully without asking, with no undo",
+    "It needs a password"
+   ],
+   "answer": 2,
+   "why": "A typo in the path can wipe large parts of a system."
+  },
+  {
+   "q": "What does mkdir -p a/b/c do?",
+   "options": [
+    "Creates a, a/b and a/b/c as needed",
+    "Deletes the directories",
+    "Creates only c",
+    "Fails if a doesn't exist"
+   ],
+   "answer": 0,
+   "why": "-p creates missing parents and doesn't error if they exist."
+  },
+  {
+   "q": "What does the file command do?",
+   "options": [
+    "Identifies a file's type by examining its contents",
+    "Creates a file",
+    "Deletes a file",
+    "Moves a file"
+   ],
+   "answer": 0,
+   "why": "file tells you whether something is text, an image, an executable and so on."
+  },
+  {
+   "q": "What does head -n 5 file do?",
+   "options": [
+    "Counts lines",
+    "Shows the last 5 lines",
+    "Shows the first 5 lines",
+    "Deletes 5 lines"
+   ],
+   "answer": 2,
+   "why": "head shows the start of a file; tail shows the end."
+  },
+  {
+   "q": "What does tail -f do?",
+   "options": [
+    "Shows the first lines",
+    "Sorts the file",
+    "Deletes the file",
+    "Keeps showing new lines as they are added to a file"
+   ],
+   "answer": 3,
+   "why": "Following a log in real time is a common use."
+  },
+  {
+   "q": "Which command concatenates files and prints them?",
+   "options": [
+    "cat",
+    "join",
+    "tac",
+    "paste"
+   ],
+   "answer": 0,
+   "why": "cat file1 file2 prints both in order; tac prints lines in reverse."
+  },
+  {
+   "q": "Which command searches for text inside files?",
+   "options": [
+    "locate",
+    "grep",
+    "find",
+    "which"
+   ],
+   "answer": 1,
+   "why": "grep prints lines matching a pattern; find searches for files by attributes."
+  },
+  {
+   "q": "Which grep option ignores case?",
+   "options": [
+    "-c",
+    "-n",
+    "-v",
+    "-i"
+   ],
+   "answer": 3,
+   "why": "-i makes Error, ERROR and error all match."
+  },
+  {
+   "q": "Which grep option shows line numbers with matches?",
+   "options": [
+    "-l",
+    "-n",
+    "-c",
+    "-o"
+   ],
+   "answer": 1,
+   "why": "-n helps locate matches inside large files."
+  },
+  {
+   "q": "Which grep option prints only the names of files containing a match?",
+   "options": [
+    "-h",
+    "-l",
+    "-v",
+    "-n"
+   ],
+   "answer": 1,
+   "why": "-l lists matching files without the matching lines."
+  },
+  {
+   "q": "Which grep option counts matching lines?",
+   "options": [
+    "-n",
+    "-v",
+    "-c",
+    "-l"
+   ],
+   "answer": 2,
+   "why": "-c prints a count per file instead of the lines."
+  },
+  {
+   "q": "Which grep option matches whole words only?",
+   "options": [
+    "-o",
+    "-x",
+    "-e",
+    "-w"
+   ],
+   "answer": 3,
+   "why": "grep -w cat matches the word cat but not concatenate."
+  },
+  {
+   "q": "What does grep -o do?",
+   "options": [
+    "Ignores case",
+    "Prints only the matching part of each line",
+    "Counts matches",
+    "Outputs to a file"
+   ],
+   "answer": 1,
+   "why": "-o is handy for extracting things like IP addresses."
+  },
+  {
+   "q": "Which command finds files by name under /etc?",
+   "options": [
+    "ls -R /etc | name",
+    "grep -r name /etc",
+    "find /etc -name 'pattern'",
+    "locate -d /etc"
+   ],
+   "answer": 2,
+   "why": "find searches the live filesystem; locate uses a prebuilt database."
+  },
+  {
+   "q": "Which find option matches only regular files?",
+   "options": [
+    "-type d",
+    "-type f",
+    "-f",
+    "-type l"
+   ],
+   "answer": 1,
+   "why": "-type d matches directories and -type l symbolic links."
+  },
+  {
+   "q": "How does find run a command on each file it finds?",
+   "options": [
+    "| xargs only",
+    "-do command",
+    "-exec command {} \\;",
+    "-run command"
+   ],
+   "answer": 2,
+   "why": "{} is replaced by each file name and \\; ends the command."
+  },
+  {
+   "q": "Which find test matches files owned by a specific user?",
+   "options": [
+    "-uid only",
+    "-owner name",
+    "-who name",
+    "-user name"
+   ],
+   "answer": 3,
+   "why": "find / -user alice lists files alice owns."
+  },
+  {
+   "q": "Which find test matches files with exactly permissions 644?",
+   "options": [
+    "-chmod 644",
+    "-type 644",
+    "-mode 644",
+    "-perm 644"
+   ],
+   "answer": 3,
+   "why": "-perm -644 means at least those bits; -perm 644 means exactly."
+  },
+  {
+   "q": "What is the advantage of locate over find?",
+   "options": [
+    "It's much faster because it searches a database",
+    "It needs no database",
+    "It always shows new files",
+    "It searches file contents"
+   ],
+   "answer": 0,
+   "why": "The database may be out of date until updatedb runs."
+  },
+  {
+   "q": "Which command updates the locate database?",
+   "options": [
+    "locate -u",
+    "find --update",
+    "mlocate -r",
+    "updatedb"
+   ],
+   "answer": 3,
+   "why": "updatedb usually runs daily from cron; run it manually to include new files."
+  },
+  {
+   "q": "What does which ls show?",
+   "options": [
+    "The ls manual",
+    "The path of the ls program that would run",
+    "The ls version",
+    "Files named ls"
+   ],
+   "answer": 1,
+   "why": "which searches PATH for the first matching executable."
+  },
+  {
+   "q": "What does type cd tell you?",
+   "options": [
+    "The cd manual",
+    "The cd version",
+    "The path to cd",
+    "That cd is a shell builtin"
+   ],
+   "answer": 3,
+   "why": "type identifies builtins, aliases, functions and files."
+  },
+  {
+   "q": "What does whatis do?",
+   "options": [
+    "Runs the command",
+    "Shows the full manual",
+    "Shows a one-line description of a command",
+    "Finds the command's path"
+   ],
+   "answer": 2,
+   "why": "whatis ls prints the short NAME line from its man page."
+  },
+  {
+   "q": "What does apropos do?",
+   "options": [
+    "Searches man page descriptions for a keyword",
+    "Lists processes",
+    "Shows disk usage",
+    "Runs a command"
+   ],
+   "answer": 0,
+   "why": "apropos network finds commands related to networking."
+  },
+  {
+   "q": "Which man section contains user commands?",
+   "options": [
+    "Section 8",
+    "Section 3",
+    "Section 1",
+    "Section 5"
+   ],
+   "answer": 2,
+   "why": "Section 5 is file formats and section 8 is admin commands."
+  },
+  {
+   "q": "How do you view the man page for the passwd file format rather than the command?",
+   "options": [
+    "man passwd",
+    "man -f passwd",
+    "man 5 passwd",
+    "info passwd"
+   ],
+   "answer": 2,
+   "why": "Specifying section 5 picks the file format page."
+  },
+  {
+   "q": "Which section of the manual holds system administration commands?",
+   "options": [
+    "Section 7",
+    "Section 1",
+    "Section 8",
+    "Section 2"
+   ],
+   "answer": 2,
+   "why": "Commands like useradd and mount are documented in section 8."
+  },
+  {
+   "q": "What are the three permission classes in Linux?",
+   "options": [
+    "User (owner), group and others",
+    "Read, write and execute",
+    "File, directory and link",
+    "Root, admin and guest"
+   ],
+   "answer": 0,
+   "why": "Each class gets its own read, write and execute bits."
+  },
+  {
+   "q": "What does execute permission on a directory allow?",
+   "options": [
+    "Listing its contents only",
+    "Running the directory as a program",
+    "Entering the directory and accessing files in it",
+    "Deleting it"
+   ],
+   "answer": 2,
+   "why": "Read lists names; execute lets you cd into it and reach files."
+  },
+  {
+   "q": "What does write permission on a directory allow?",
+   "options": [
+    "Editing every file's contents",
+    "Reading files",
+    "Creating, deleting and renaming files in it",
+    "Changing ownership"
+   ],
+   "answer": 2,
+   "why": "Deleting a file depends on the directory's permissions, not the file's."
+  },
+  {
+   "q": "What is the numeric value of rwx?",
+   "options": [
+    "4",
+    "5",
+    "7",
+    "6"
+   ],
+   "answer": 2,
+   "why": "r=4, w=2, x=1, so rwx is 7, rw- is 6 and r-x is 5."
+  },
+  {
+   "q": "What permissions does chmod 640 file set?",
+   "options": [
+    "rwx for everyone",
+    "r-- for everyone",
+    "rw- for owner, r-- for group, none for others",
+    "rw- for everyone"
+   ],
+   "answer": 2,
+   "why": "6 is rw for the owner, 4 is r for the group, and 0 gives others nothing."
+  },
+  {
+   "q": "What does chmod g+w file do?",
+   "options": [
+    "Changes the group",
+    "Adds write for others",
+    "Removes write for group",
+    "Adds write permission for the group"
+   ],
+   "answer": 3,
+   "why": "Symbolic mode uses u, g, o and a with +, - or =."
+  },
+  {
+   "q": "What does chmod o-r file do?",
+   "options": [
+    "Removes read from the owner",
+    "Removes all permissions",
+    "Adds read for others",
+    "Removes read permission from others"
+   ],
+   "answer": 3,
+   "why": "o means others, users who aren't the owner or in the group."
+  },
+  {
+   "q": "What does chmod -R do?",
+   "options": [
+    "Removes the file",
+    "Applies the change recursively to a directory and its contents",
+    "Reads permissions",
+    "Reverses permissions"
+   ],
+   "answer": 1,
+   "why": "Be careful: execute bits applied to every file may not be wanted."
+  },
+  {
+   "q": "What is the setuid bit?",
+   "options": [
+    "New files inherit the group",
+    "A file can't be deleted",
+    "A program runs with its owner's privileges rather than the user's",
+    "The file is hidden"
+   ],
+   "answer": 2,
+   "why": "passwd uses setuid root so users can update /etc/shadow."
+  },
+  {
+   "q": "How does setuid appear in ls -l output?",
+   "options": [
+    "A t at the end",
+    "A capital S at the start",
+    "An s in place of the owner's x",
+    "A + after permissions"
+   ],
+   "answer": 2,
+   "why": "rwsr-xr-x shows setuid on an executable."
+  },
+  {
+   "q": "What does the setgid bit do on a directory?",
+   "options": [
+    "The directory can't be deleted",
+    "Only the owner can list it",
+    "Files run as the group",
+    "New files inherit the directory's group"
+   ],
+   "answer": 3,
+   "why": "It's handy for shared project directories."
+  },
+  {
+   "q": "How does the sticky bit appear on /tmp in ls -l?",
+   "options": [
+    "An s in the owner's x",
+    "A + after permissions",
+    "A capital T at the start",
+    "A t in place of others' x"
+   ],
+   "answer": 3,
+   "why": "drwxrwxrwt shows the sticky bit as a t in the others' execute position."
+  },
+  {
+   "q": "Which command changes a file's group only?",
+   "options": [
+    "chown -u",
+    "chmod g",
+    "chgrp",
+    "groupmod"
+   ],
+   "answer": 2,
+   "why": "chgrp staff file sets the group; chown :staff file does the same."
+  },
+  {
+   "q": "What does a + at the end of ls -l permissions mean?",
+   "options": [
+    "The file is executable",
+    "The file is new",
+    "The file has an access control list",
+    "The file is encrypted"
+   ],
+   "answer": 2,
+   "why": "The + means extra ACL entries exist; getfacl shows them."
+  },
+  {
+   "q": "Which command shows a file's ACL?",
+   "options": [
+    "lsattr",
+    "stat -a",
+    "getfacl",
+    "setfacl"
+   ],
+   "answer": 2,
+   "why": "setfacl changes ACLs; getfacl displays them."
+  },
+  {
+   "q": "Which command shows extended attributes such as immutable?",
+   "options": [
+    "lsattr",
+    "stat",
+    "ls -Z",
+    "getfacl"
+   ],
+   "answer": 0,
+   "why": "chattr +i sets immutable, and lsattr shows it."
+  },
+  {
+   "q": "What does sudo do?",
+   "options": [
+    "Runs a command with another user's privileges, usually root",
+    "Shows disk usage",
+    "Switches the shell permanently",
+    "Shuts down the system"
+   ],
+   "answer": 0,
+   "why": "Access is controlled by /etc/sudoers and is logged."
+  },
+  {
+   "q": "How should /etc/sudoers be edited?",
+   "options": [
+    "With chmod",
+    "With any text editor directly",
+    "With visudo, which checks the syntax before saving",
+    "With echo >>"
+   ],
+   "answer": 2,
+   "why": "A syntax error in sudoers could lock everyone out of sudo."
+  },
+  {
+   "q": "What does su - do?",
+   "options": [
+    "Shows users",
+    "Switches to root with a full login environment",
+    "Shuts down",
+    "Switches user without changing environment"
+   ],
+   "answer": 1,
+   "why": "The dash loads the target user's environment, as if they logged in."
+  },
+  {
+   "q": "What does the id command show?",
+   "options": [
+    "Running processes",
+    "Your user ID, group ID and groups",
+    "Your home directory",
+    "Your password"
+   ],
+   "answer": 1,
+   "why": "id alice shows another user's IDs and groups."
+  },
+  {
+   "q": "What does whoami show?",
+   "options": [
+    "Your groups",
+    "All logged-in users",
+    "The current effective username",
+    "Your home directory"
+   ],
+   "answer": 2,
+   "why": "Useful after su or sudo to confirm who you are."
+  },
+  {
+   "q": "What does the who command show?",
+   "options": [
+    "All accounts on the system",
+    "Users currently logged in",
+    "Recent reboots only",
+    "Your user ID"
+   ],
+   "answer": 1,
+   "why": "w shows the same with what each user is doing."
+  },
+  {
+   "q": "Which file stores group definitions?",
+   "options": [
+    "/etc/gshadow only",
+    "/etc/passwd",
+    "/etc/group",
+    "/etc/shadow"
+   ],
+   "answer": 2,
+   "why": "/etc/group lists group names, GIDs and members."
+  },
+  {
+   "q": "Which command creates a group?",
+   "options": [
+    "mkgroup",
+    "addgroup only on all systems",
+    "useradd -g",
+    "groupadd"
+   ],
+   "answer": 3,
+   "why": "groupadd -g 3000 devs creates a group with a chosen GID."
+  },
+  {
+   "q": "Which command adds an existing user to a supplementary group without removing others?",
+   "options": [
+    "chgrp user",
+    "usermod -G group user",
+    "groupadd user",
+    "usermod -aG group user"
+   ],
+   "answer": 3,
+   "why": "Without -a, -G replaces the user's supplementary groups."
+  },
+  {
+   "q": "Which command changes a user's password?",
+   "options": [
+    "passwd",
+    "pwchange",
+    "chpass only",
+    "usermod -p plain"
+   ],
+   "answer": 0,
+   "why": "Root can run passwd username to set another user's password."
+  },
+  {
+   "q": "Which command shows password ageing for a user?",
+   "options": [
+    "id -p user",
+    "chage -l user",
+    "last user",
+    "passwd -a user"
+   ],
+   "answer": 1,
+   "why": "chage -l lists expiry and last-change dates."
+  },
+  {
+   "q": "What does a login shell of /sbin/nologin do?",
+   "options": [
+    "Prevents interactive logins for that account",
+    "Deletes the account",
+    "Gives root access",
+    "Logs the user in silently"
+   ],
+   "answer": 0,
+   "why": "Service accounts often use it so nobody can log in as them."
+  },
+  {
+   "q": "What is the root user's UID?",
+   "options": [
+    "0",
+    "65534",
+    "1000",
+    "1"
+   ],
+   "answer": 0,
+   "why": "Any account with UID 0 has full superuser rights."
+  },
+  {
+   "q": "What does ps -ef show?",
+   "options": [
+    "Only root processes",
+    "Every process in full format",
+    "Only your processes",
+    "Network connections"
+   ],
+   "answer": 1,
+   "why": "-e selects all processes and -f adds details like the parent PID."
+  },
+  {
+   "q": "What is a PID?",
+   "options": [
+    "A package ID",
+    "A process ID number",
+    "A password ID",
+    "A partition ID"
+   ],
+   "answer": 1,
+   "why": "Every running process gets a unique process ID that commands like kill use."
+  },
+  {
+   "q": "What is a zombie process?",
+   "options": [
+    "A stopped process",
+    "A hidden virus",
+    "A process using all CPU",
+    "A process that has finished but whose parent hasn't collected its exit status"
+   ],
+   "answer": 3,
+   "why": "Zombies use almost no resources; many usually mean a buggy parent."
+  },
+  {
+   "q": "What does kill -9 PID send?",
+   "options": [
+    "SIGHUP",
+    "SIGSTOP",
+    "SIGKILL, which can't be caught or ignored",
+    "SIGTERM"
+   ],
+   "answer": 2,
+   "why": "Use SIGTERM first so the program can clean up."
+  },
+  {
+   "q": "What does SIGHUP often tell a daemon to do?",
+   "options": [
+    "Pause",
+    "Shut down immediately",
+    "Reload its configuration",
+    "Delete logs"
+   ],
+   "answer": 2,
+   "why": "Many services re-read their config files on SIGHUP."
+  },
+  {
+   "q": "Which command kills processes by name?",
+   "options": [
+    "stop",
+    "pkill or killall",
+    "ps -k",
+    "kill -n"
+   ],
+   "answer": 1,
+   "why": "pkill httpd signals all processes whose names match."
+  },
+  {
+   "q": "What does pgrep sshd do?",
+   "options": [
+    "Starts sshd",
+    "Kills sshd",
+    "Shows sshd's config",
+    "Prints the PIDs of processes named sshd"
+   ],
+   "answer": 3,
+   "why": "pgrep -a also shows the full command line."
+  },
+  {
+   "q": "What does the & at the end of a command do?",
+   "options": [
+    "Logs its output",
+    "Runs it twice",
+    "Runs it in the background",
+    "Runs it as root"
+   ],
+   "answer": 2,
+   "why": "The shell prints a job number and PID and gives you the prompt back."
+  },
+  {
+   "q": "What does Ctrl+Z do to a running foreground job?",
+   "options": [
+    "Suspends (stops) it",
+    "Kills it",
+    "Restarts it",
+    "Sends it to the background running"
+   ],
+   "answer": 0,
+   "why": "Use bg to resume it in the background or fg in the foreground."
+  },
+  {
+   "q": "What does the jobs command list?",
+   "options": [
+    "Print jobs",
+    "All system processes",
+    "Cron jobs",
+    "Jobs started from the current shell"
+   ],
+   "answer": 3,
+   "why": "Each job has a number like %1 for fg, bg and kill."
+  },
+  {
+   "q": "What does nice -n 19 command do?",
+   "options": [
+    "Delays it 19 seconds",
+    "Runs it with the lowest scheduling priority",
+    "Runs it with the highest priority",
+    "Runs it 19 times"
+   ],
+   "answer": 1,
+   "why": "Niceness ranges from -20 (highest priority) to 19 (lowest)."
+  },
+  {
+   "q": "Who can set a negative nice value?",
+   "options": [
+    "Any user",
+    "Only the process owner",
+    "Only root",
+    "No one"
+   ],
+   "answer": 2,
+   "why": "Ordinary users can only make their processes nicer, not more aggressive."
+  },
+  {
+   "q": "What does uptime show?",
+   "options": [
+    "Current time, how long the system has run, users and load averages",
+    "Disk usage",
+    "Network speed",
+    "Memory usage only"
+   ],
+   "answer": 0,
+   "why": "The three load averages cover 1, 5 and 15 minutes."
+  },
+  {
+   "q": "What does a load average higher than the number of CPU cores suggest?",
+   "options": [
+    "The network is down",
+    "Processes are waiting for CPU time",
+    "The system is idle",
+    "The disk is full"
+   ],
+   "answer": 1,
+   "why": "Sustained high load means the system is overloaded."
+  },
+  {
+   "q": "What does free -h show?",
+   "options": [
+    "Free CPU time",
+    "Memory and swap usage in readable units",
+    "Free IP addresses",
+    "Free disk space"
+   ],
+   "answer": 1,
+   "why": "Look at the available column, not just free, for usable memory."
+  },
+  {
+   "q": "What is swap space?",
+   "options": [
+    "Extra CPU",
+    "A network share",
+    "A backup area",
+    "Disk space used as overflow when RAM is full"
+   ],
+   "answer": 3,
+   "why": "Heavy swapping slows a system because disks are much slower than RAM."
+  },
+  {
+   "q": "What does df -i show?",
+   "options": [
+    "Disk temperature",
+    "Interface details",
+    "Disk speed",
+    "Inode usage on each filesystem"
+   ],
+   "answer": 3,
+   "why": "A filesystem can run out of inodes even with free space if it has many small files."
+  },
+  {
+   "q": "What does du -sh * do in a directory?",
+   "options": [
+    "Shows inodes",
+    "Deletes large files",
+    "Shows the size of each item in the directory",
+    "Shows free space"
+   ],
+   "answer": 2,
+   "why": "It quickly reveals which subdirectory uses the most space."
+  },
+  {
+   "q": "What is a mount point?",
+   "options": [
+    "A disk label",
+    "A directory where a filesystem is attached to the tree",
+    "A partition table",
+    "A swap file"
+   ],
+   "answer": 1,
+   "why": "Mounting /dev/sdb1 on /data makes its contents appear under /data."
+  },
+  {
+   "q": "What does findmnt show?",
+   "options": [
+    "Files by name",
+    "Disk temperature",
+    "Mounted filesystems in a tree, with sources and options",
+    "Open ports"
+   ],
+   "answer": 2,
+   "why": "findmnt /data quickly confirms what's mounted there."
+  },
+  {
+   "q": "What does blkid show?",
+   "options": [
+    "Blocked IP addresses",
+    "Blocked users",
+    "Bad blocks",
+    "Block devices with their UUIDs, labels and filesystem types"
+   ],
+   "answer": 3,
+   "why": "UUIDs from blkid are the safest way to reference disks in fstab."
+  },
+  {
+   "q": "Why use UUIDs instead of device names like /dev/sdb1 in /etc/fstab?",
+   "options": [
+    "UUIDs are shorter",
+    "Device names can change between boots; UUIDs don't",
+    "Device names are illegal",
+    "UUIDs mount faster"
+   ],
+   "answer": 1,
+   "why": "Adding a disk can renumber /dev/sdX names."
+  },
+  {
+   "q": "What are the six fields of an /etc/fstab line?",
+   "options": [
+    "Source, target, port, protocol, action, log",
+    "User, group, mode, size, date, name",
+    "Device, mount point, filesystem type, options, dump, fsck order",
+    "IP, mask, gateway, DNS, hostname, domain"
+   ],
+   "answer": 2,
+   "why": "For example: UUID=... /data xfs defaults 0 0."
+  },
+  {
+   "q": "Which command creates an ext4 filesystem on /dev/sdb1?",
+   "options": [
+    "fdisk /dev/sdb1",
+    "mount -t ext4 /dev/sdb1",
+    "fsck.ext4 /dev/sdb1",
+    "mkfs.ext4 /dev/sdb1"
+   ],
+   "answer": 3,
+   "why": "mkfs builds a filesystem; fdisk only partitions."
+  },
+  {
+   "q": "Which command checks and repairs an unmounted ext4 filesystem?",
+   "options": [
+    "df",
+    "mkfs",
+    "mount",
+    "fsck (e2fsck)"
+   ],
+   "answer": 3,
+   "why": "Never run fsck on a mounted filesystem; XFS uses xfs_repair."
+  },
+  {
+   "q": "Which command lists partitions on all disks?",
+   "options": [
+    "df -p",
+    "lsblk or fdisk -l",
+    "mount -p",
+    "ls /partitions"
+   ],
+   "answer": 1,
+   "why": "lsblk shows a tree of disks and partitions."
+  },
+  {
+   "q": "What is the difference between MBR and GPT partition tables?",
+   "options": [
+    "MBR supports larger disks",
+    "GPT works only on USB drives",
+    "They are identical",
+    "GPT supports larger disks and many more partitions"
+   ],
+   "answer": 3,
+   "why": "MBR is limited to 2 TB and four primary partitions."
+  },
+  {
+   "q": "What does LVM add over plain partitions?",
+   "options": [
+    "Faster disks",
+    "Flexible volumes that can be resized and span multiple disks",
+    "Network storage",
+    "Encryption only"
+   ],
+   "answer": 1,
+   "why": "Physical volumes form volume groups, which are carved into logical volumes."
+  },
+  {
+   "q": "What is the order of LVM building blocks from disk up?",
+   "options": [
+    "Volume group, physical volume, logical volume",
+    "Physical volume, volume group, logical volume",
+    "Partition, filesystem, volume",
+    "Logical volume, volume group, physical volume"
+   ],
+   "answer": 1,
+   "why": "pvcreate, vgcreate and lvcreate build them in that order."
+  },
+  {
+   "q": "What does tar -xzf archive.tar.gz -C /tmp do?",
+   "options": [
+    "Lists the archive",
+    "Deletes /tmp",
+    "Extracts the gzip archive into /tmp",
+    "Creates an archive in /tmp"
+   ],
+   "answer": 2,
+   "why": "-C changes to a directory before extracting."
+  },
+  {
+   "q": "What does zip -r archive.zip dir do?",
+   "options": [
+    "Encrypts a directory",
+    "Lists a zip",
+    "Extracts a zip",
+    "Creates a zip archive of a directory recursively"
+   ],
+   "answer": 3,
+   "why": "-r includes subdirectories; unzip archive.zip extracts it again."
+  },
+  {
+   "q": "What does gunzip file.gz do?",
+   "options": [
+    "Decompresses file.gz back to file",
+    "Deletes file.gz without decompressing",
+    "Lists file.gz",
+    "Compresses file"
+   ],
+   "answer": 0,
+   "why": "gunzip restores the original file and removes the .gz; gzip -d does the same."
+  },
+  {
+   "q": "Which compression tool generally gives the best compression ratio of these?",
+   "options": [
+    "xz",
+    "gzip",
+    "zip",
+    "compress"
+   ],
+   "answer": 0,
+   "why": "xz is slower but produces smaller files than gzip or bzip2."
+  },
+  {
+   "q": "What does sort -u do?",
+   "options": [
+    "Sorts by user",
+    "Sorts unique files only",
+    "Sorts and removes duplicate lines",
+    "Sorts upside down"
+   ],
+   "answer": 2,
+   "why": "It's equivalent to sort | uniq for removing duplicates."
+  },
+  {
+   "q": "What does sort -k2 do?",
+   "options": [
+    "Sorts 2 lines",
+    "Sorts in 2 passes",
+    "Sorts by the second field",
+    "Sorts by size"
+   ],
+   "answer": 2,
+   "why": "Combine with -t to set the field separator, such as -t,."
+  },
+  {
+   "q": "What does sort -r do?",
+   "options": [
+    "Removes duplicates",
+    "Reverses the sort order",
+    "Sorts recursively",
+    "Sorts randomly"
+   ],
+   "answer": 1,
+   "why": "sort -rn sorts numbers from largest to smallest."
+  },
+  {
+   "q": "What does tee do?",
+   "options": [
+    "Writes input to a file and also passes it on to standard output",
+    "Counts lines",
+    "Splits a file in two",
+    "Encrypts output"
+   ],
+   "answer": 0,
+   "why": "command | tee log.txt saves output while still showing it."
+  },
+  {
+   "q": "What does sed 's/old/new/g' file do?",
+   "options": [
+    "Sorts the file",
+    "Replaces every occurrence of old with new on each line and prints the result",
+    "Counts old and new",
+    "Deletes the file"
+   ],
+   "answer": 1,
+   "why": "Without g, only the first match on each line is replaced; -i edits in place."
+  },
+  {
+   "q": "What does awk '{print $1}' file do?",
+   "options": [
+    "Prints the file's name",
+    "Prints the first line",
+    "Prints the first field of each line",
+    "Prints line counts"
+   ],
+   "answer": 2,
+   "why": "awk splits lines on whitespace by default."
+  },
+  {
+   "q": "How do you make awk use a colon as the field separator?",
+   "options": [
+    "awk --colon ...",
+    "awk -d: ...",
+    "awk -F: '{print $1}' /etc/passwd",
+    "awk -s: ..."
+   ],
+   "answer": 2,
+   "why": "-F sets the field separator, so -F: splits /etc/passwd into its fields."
+  },
+  {
+   "q": "What does diff file1 file2 show?",
+   "options": [
+    "Line differences between the files",
+    "File permissions",
+    "File owners",
+    "Which file is larger"
+   ],
+   "answer": 0,
+   "why": "No output means the files are identical."
+  },
+  {
+   "q": "What does cmp do?",
+   "options": [
+    "Copies files",
+    "Compares two files byte by byte and reports the first difference",
+    "Compresses files",
+    "Counts files"
+   ],
+   "answer": 1,
+   "why": "cmp reports the first differing byte, which makes it useful for binary files."
+  },
+  {
+   "q": "Which command shows the differences between two directories?",
+   "options": [
+    "ls dir1 dir2",
+    "cmp dir1 dir2",
+    "du dir1 dir2",
+    "diff -r dir1 dir2"
+   ],
+   "answer": 3,
+   "why": "diff -r recurses into subdirectories and compares every file it finds."
+  },
+  {
+   "q": "What is an environment variable?",
+   "options": [
+    "A network setting only",
+    "A user account",
+    "A file in /etc",
+    "A named value the shell passes to programs it starts"
+   ],
+   "answer": 3,
+   "why": "Programs inherit them from the shell; examples include PATH, HOME and LANG."
+  },
+  {
+   "q": "What does the PATH variable do?",
+   "options": [
+    "Lists the directories the shell searches for commands",
+    "Stores passwords",
+    "Sets the prompt",
+    "Sets the home directory"
+   ],
+   "answer": 0,
+   "why": "Commands outside PATH need a full or relative path to run."
+  },
+  {
+   "q": "How do you run a script in the current directory that isn't in PATH?",
+   "options": [
+    "script.sh",
+    "./script.sh",
+    "run script.sh",
+    "exec script"
+   ],
+   "answer": 1,
+   "why": "The current directory isn't in PATH by default for safety."
+  },
+  {
+   "q": "What does echo $HOME print?",
+   "options": [
+    "Your home directory path",
+    "Your username",
+    "The root directory",
+    "The word HOME"
+   ],
+   "answer": 0,
+   "why": "The $ makes the shell expand the variable, so you see the path, not the word."
+  },
+  {
+   "q": "What is the difference between single and double quotes in bash?",
+   "options": [
+    "Double quotes allow variable expansion; single quotes keep text literal",
+    "They are identical",
+    "Single quotes allow expansion",
+    "Double quotes disable spaces"
+   ],
+   "answer": 0,
+   "why": "echo '$HOME' prints $HOME; echo \"$HOME\" prints the path."
+  },
+  {
+   "q": "What is command substitution?",
+   "options": [
+    "Running two commands together",
+    "Deleting a command",
+    "Replacing a command with an alias",
+    "Running a command and inserting its output, as in $(date)"
+   ],
+   "answer": 3,
+   "why": "today=$(date +%F) stores the date in a variable."
+  },
+  {
+   "q": "What does ~/.bash_profile usually do?",
+   "options": [
+    "Defines system-wide settings",
+    "Runs commands for login shells",
+    "Stores command history",
+    "Stores SSH keys"
+   ],
+   "answer": 1,
+   "why": "Many setups source ~/.bashrc from it so settings apply everywhere."
+  },
+  {
+   "q": "What is /etc/profile?",
+   "options": [
+    "A password file",
+    "System-wide startup settings for login shells",
+    "A log file",
+    "A user's personal profile"
+   ],
+   "answer": 1,
+   "why": "Settings there apply to every user's login shell."
+  },
+  {
+   "q": "What does source ~/.bashrc do?",
+   "options": [
+    "Copies the file",
+    "Runs the file in the current shell so changes take effect now",
+    "Opens it in an editor",
+    "Deletes the file"
+   ],
+   "answer": 1,
+   "why": "The dot command, . ~/.bashrc, does the same."
+  },
+  {
+   "q": "What does history -c do?",
+   "options": [
+    "Clears the current session's command history",
+    "Counts commands",
+    "Shows history",
+    "Saves history"
+   ],
+   "answer": 0,
+   "why": "Without writing, ~/.bash_history may still hold earlier entries."
+  },
+  {
+   "q": "What does !! do in bash?",
+   "options": [
+    "Repeats the previous command",
+    "Clears the screen",
+    "Negates the command",
+    "Runs as root"
+   ],
+   "answer": 0,
+   "why": "sudo !! reruns the last command with sudo."
+  },
+  {
+   "q": "What does Ctrl+R do in bash?",
+   "options": [
+    "Reloads the shell",
+    "Clears the line",
+    "Runs the last command",
+    "Searches backward through command history"
+   ],
+   "answer": 3,
+   "why": "Type part of a command to find it, then Enter to run it."
+  },
+  {
+   "q": "What does Tab do at the bash prompt?",
+   "options": [
+    "Opens a new tab",
+    "Indents text",
+    "Completes commands and file names",
+    "Runs the command"
+   ],
+   "answer": 2,
+   "why": "Pressing it twice lists the possible completions."
+  },
+  {
+   "q": "What is the exit status of a successful command?",
+   "options": [
+    "0",
+    "255",
+    "-1",
+    "1"
+   ],
+   "answer": 0,
+   "why": "Non-zero values mean some kind of failure."
+  },
+  {
+   "q": "What does && do between two commands?",
+   "options": [
+    "Pipes output",
+    "Runs the second only if the first succeeds",
+    "Runs the second only if the first fails",
+    "Runs both in parallel"
+   ],
+   "answer": 1,
+   "why": "make && make install installs only if the build worked."
+  },
+  {
+   "q": "What does ; do between commands?",
+   "options": [
+    "Runs the second only on success",
+    "Runs them in the background",
+    "Runs them one after another regardless of success",
+    "Pipes output"
+   ],
+   "answer": 2,
+   "why": "cmd1; cmd2 always runs both, whether or not the first one succeeds."
+  },
+  {
+   "q": "What does an if statement test in bash?",
+   "options": [
+    "Only numbers",
+    "The exit status of a command",
+    "File sizes only",
+    "Only strings"
+   ],
+   "answer": 1,
+   "why": "if grep -q x file; then ... runs the block when grep succeeds."
+  },
+  {
+   "q": "Which test checks whether a file exists and is a regular file?",
+   "options": [
+    "[ -f file ]",
+    "[ -d file ]",
+    "[ -z file ]",
+    "[ -x file ]"
+   ],
+   "answer": 0,
+   "why": "-d tests for a directory and -x for executable."
+  },
+  {
+   "q": "Which test checks whether a string is empty?",
+   "options": [
+    "[ -n \"$var\" ]",
+    "[ -z \"$var\" ]",
+    "[ -s \"$var\" ]",
+    "[ -e \"$var\" ]"
+   ],
+   "answer": 1,
+   "why": "-z is true for a zero-length string; -n for non-empty."
+  },
+  {
+   "q": "Which operator compares integers for 'greater than' in [ ]?",
+   "options": [
+    "-gt",
+    ">",
+    "gt",
+    "-ge only"
+   ],
+   "answer": 0,
+   "why": "Inside [ ], > is a redirection, so integer tests use -gt, -lt, -eq and so on."
+  },
+  {
+   "q": "What does a case statement do in bash?",
+   "options": [
+    "Loops forever",
+    "Changes letter case",
+    "Defines a function",
+    "Matches a value against patterns and runs the matching block"
+   ],
+   "answer": 3,
+   "why": "It's cleaner than many if/elif tests for one variable."
+  },
+  {
+   "q": "How do you define a function in bash?",
+   "options": [
+    "function: name",
+    "name() { commands; }",
+    "func name ()",
+    "def name:"
+   ],
+   "answer": 1,
+   "why": "Functions keep repeated code in one place."
+  },
+  {
+   "q": "What does $1 mean inside a script?",
+   "options": [
+    "The script's name",
+    "The exit status",
+    "The first argument passed to the script",
+    "The process ID"
+   ],
+   "answer": 2,
+   "why": "$0 is the script name and $# the argument count."
+  },
+  {
+   "q": "What does \"$@\" expand to?",
+   "options": [
+    "All arguments, each as a separate quoted word",
+    "The last argument only",
+    "The number of arguments",
+    "The script name"
+   ],
+   "answer": 0,
+   "why": "Quoted $@ preserves arguments that contain spaces."
+  },
+  {
+   "q": "What does set -e do at the top of a script?",
+   "options": [
+    "Enables debugging",
+    "Exports all variables",
+    "Enables echo",
+    "Exits the script as soon as a command fails"
+   ],
+   "answer": 3,
+   "why": "It stops scripts carrying on after errors."
+  },
+  {
+   "q": "What does bash -x script.sh do?",
+   "options": [
+    "Checks syntax only",
+    "Makes it executable",
+    "Runs the script, printing each command before it runs",
+    "Exports variables"
+   ],
+   "answer": 2,
+   "why": "Tracing prints each command as it runs, which makes scripts easier to debug."
+  },
+  {
+   "q": "What does a here document (<<EOF) do?",
+   "options": [
+    "Defines a variable",
+    "Creates a loop",
+    "Comments out code",
+    "Feeds a block of text to a command's standard input"
+   ],
+   "answer": 3,
+   "why": "Useful for writing multi-line config into files from a script."
+  },
+  {
+   "q": "What does crontab's 0 2 * * * field pattern mean?",
+   "options": [
+    "Run every 2 hours",
+    "Run on the 2nd of each month",
+    "Run every day at 02:00",
+    "Run every 2 minutes"
+   ],
+   "answer": 2,
+   "why": "The fields are minute, hour, day of month, month and day of week."
+  },
+  {
+   "q": "What does */15 in a crontab minute field mean?",
+   "options": [
+    "At minute 15 only",
+    "Every 15 minutes",
+    "Once every 15 hours",
+    "15 times an hour"
+   ],
+   "answer": 1,
+   "why": "*/15 matches minutes 0, 15, 30 and 45 of every hour."
+  },
+  {
+   "q": "Where are system-wide cron jobs often placed?",
+   "options": [
+    "~/.cron",
+    "/etc/crontab and /etc/cron.d/",
+    "/var/cron/user",
+    "/tmp/cron"
+   ],
+   "answer": 1,
+   "why": "Directories like /etc/cron.daily run scripts on a schedule too."
+  },
+  {
+   "q": "What does systemctl status sshd show?",
+   "options": [
+    "The SSH config",
+    "Open ports",
+    "Whether the service is running, plus recent log lines",
+    "Users logged in"
+   ],
+   "answer": 2,
+   "why": "It's the first check when a service misbehaves."
+  },
+  {
+   "q": "Which command starts a service now and enables it at boot?",
+   "options": [
+    "chkconfig start",
+    "systemctl start service only",
+    "systemctl enable --now service",
+    "service enable"
+   ],
+   "answer": 2,
+   "why": "enable alone only affects boot; --now also starts it."
+  },
+  {
+   "q": "Which command shows logs for a specific systemd service?",
+   "options": [
+    "tail service",
+    "journalctl -u service",
+    "dmesg -u",
+    "cat /var/log/service"
+   ],
+   "answer": 1,
+   "why": "journalctl -u sshd shows that unit's logs; add -f to follow new lines."
+  },
+  {
+   "q": "What does dmesg show?",
+   "options": [
+    "Web logs",
+    "Kernel ring buffer messages such as hardware and driver events",
+    "Cron jobs",
+    "User logins"
+   ],
+   "answer": 1,
+   "why": "dmesg helps diagnose disk, USB and driver problems."
+  },
+  {
+   "q": "Where are most traditional log files kept?",
+   "options": [
+    "/usr/log",
+    "/home/log",
+    "/var/log",
+    "/etc/log"
+   ],
+   "answer": 2,
+   "why": "Systems with persistent journald also keep logs in /var/log/journal."
+  },
+  {
+   "q": "What does logrotate do?",
+   "options": [
+    "Rotates, compresses and deletes old log files on a schedule",
+    "Encrypts logs",
+    "Sends logs by email only",
+    "Creates log files"
+   ],
+   "answer": 0,
+   "why": "Rotating and compressing old logs stops them from filling the disk."
+  },
+  {
+   "q": "What does the ping command test?",
+   "options": [
+    "Whether a host is reachable over the network",
+    "DNS records only",
+    "Open ports",
+    "Disk speed"
+   ],
+   "answer": 0,
+   "why": "ping sends ICMP echo requests and reports replies and timing."
+  },
+  {
+   "q": "Which command shows the route packets take to a host on Linux?",
+   "options": [
+    "traceroute (or tracepath)",
+    "ip trace",
+    "route -t",
+    "ping -r"
+   ],
+   "answer": 0,
+   "why": "traceroute lists each router hop between you and the destination."
+  },
+  {
+   "q": "Which command looks up DNS records with detailed output?",
+   "options": [
+    "netstat",
+    "dig",
+    "ping",
+    "ip"
+   ],
+   "answer": 1,
+   "why": "dig example.com MX shows the MX records and the server that answered."
+  },
+  {
+   "q": "Which file sets the DNS servers a Linux system uses?",
+   "options": [
+    "/etc/hostname",
+    "/etc/services",
+    "/etc/resolv.conf",
+    "/etc/hosts"
+   ],
+   "answer": 2,
+   "why": "On many modern systems it's managed by NetworkManager or systemd-resolved."
+  },
+  {
+   "q": "What is /etc/hosts used for?",
+   "options": [
+    "Firewall rules",
+    "Network interfaces",
+    "Listing users",
+    "Static name-to-IP mappings checked before DNS"
+   ],
+   "answer": 3,
+   "why": "It's handy for testing or small networks."
+  },
+  {
+   "q": "Which command shows or sets the hostname on systemd systems?",
+   "options": [
+    "hostnamectl",
+    "uname -n",
+    "hostname -s only",
+    "sethost"
+   ],
+   "answer": 0,
+   "why": "hostnamectl set-hostname name changes it persistently."
+  },
+  {
+   "q": "What does ssh-keygen do?",
+   "options": [
+    "Copies files",
+    "Creates a public/private key pair for SSH",
+    "Starts the SSH server",
+    "Shows logged-in users"
+   ],
+   "answer": 1,
+   "why": "The private key stays on your machine; the public key goes to servers."
+  },
+  {
+   "q": "What does ssh-copy-id do?",
+   "options": [
+    "Copies files over SSH",
+    "Installs your public key in a remote account's authorized_keys",
+    "Removes keys",
+    "Generates keys"
+   ],
+   "answer": 1,
+   "why": "Afterwards you can log in with the key instead of a password."
+  },
+  {
+   "q": "Which command copies files securely between hosts?",
+   "options": [
+    "ftp",
+    "telnet",
+    "cp -r",
+    "scp or sftp"
+   ],
+   "answer": 3,
+   "why": "Both scp and sftp run over SSH, so files and passwords are encrypted."
+  },
+  {
+   "q": "What does rsync -avz src/ host:dest/ do?",
+   "options": [
+    "Syncs files to a remote host with archive mode, verbose output and compression",
+    "Deletes the source",
+    "Encrypts files only",
+    "Lists files"
+   ],
+   "answer": 0,
+   "why": "rsync copies only changes, making repeat transfers fast."
+  },
+  {
+   "q": "What does curl -I https://example.com show?",
+   "options": [
+    "The full page",
+    "The SSL certificate only",
+    "The DNS records",
+    "Only the HTTP response headers"
+   ],
+   "answer": 3,
+   "why": "-I sends a HEAD request, so only the response headers come back."
+  },
+  {
+   "q": "What does wget do?",
+   "options": [
+    "Uploads files",
+    "Downloads files from the web",
+    "Scans ports",
+    "Edits web pages"
+   ],
+   "answer": 1,
+   "why": "wget downloads files from the web; wget -c resumes an interrupted download."
+  },
+  {
+   "q": "What package manager do Debian and Ubuntu use?",
+   "options": [
+    "apt (with dpkg)",
+    "zypper",
+    "dnf (with rpm)",
+    "pacman"
+   ],
+   "answer": 0,
+   "why": "apt install package installs software with dependencies."
+  },
+  {
+   "q": "What package manager do RHEL and Fedora use?",
+   "options": [
+    "apt",
+    "dnf (with rpm)",
+    "pacman",
+    "emerge"
+   ],
+   "answer": 1,
+   "why": "dnf replaced yum and resolves dependencies automatically."
+  },
+  {
+   "q": "Which command lists installed packages on an RPM-based system?",
+   "options": [
+    "dnf erase",
+    "rpm -e",
+    "rpm -i",
+    "rpm -qa"
+   ],
+   "answer": 3,
+   "why": "-q means query and -a means all packages, so rpm -qa lists everything installed."
+  },
+  {
+   "q": "Which command shows which package owns a file on an RPM system?",
+   "options": [
+    "rpm -qf /path/to/file",
+    "rpm -ql package",
+    "rpm -V",
+    "dnf search file"
+   ],
+   "answer": 0,
+   "why": "rpm -ql lists the files a package installed."
+  },
+  {
+   "q": "Which command shows which package owns a file on Debian?",
+   "options": [
+    "dpkg -S /path/to/file",
+    "dpkg -l",
+    "apt show file",
+    "dpkg -i"
+   ],
+   "answer": 0,
+   "why": "dpkg -L package lists the files it installed."
+  },
+  {
+   "q": "What does apt update do?",
+   "options": [
+    "Refreshes the list of available packages",
+    "Removes a package",
+    "Upgrades all packages",
+    "Installs a package"
+   ],
+   "answer": 0,
+   "why": "apt upgrade then installs newer versions."
+  },
+  {
+   "q": "What is a shebang line?",
+   "options": [
+    "An error message",
+    "A function definition",
+    "A comment anywhere",
+    "The first line, like #!/bin/bash, naming the script's interpreter"
+   ],
+   "answer": 3,
+   "why": "Without it, the script runs in whatever shell launched it."
+  },
+  {
+   "q": "What does uname -r show?",
+   "options": [
+    "The CPU type",
+    "The running kernel version",
+    "The distribution name",
+    "The hostname"
+   ],
+   "answer": 1,
+   "why": "uname -r prints the running kernel release; uname -a shows everything."
+  },
+  {
+   "q": "Which file usually identifies the Linux distribution and version?",
+   "options": [
+    "/proc/cpuinfo",
+    "/etc/os-release",
+    "/etc/issue only",
+    "/etc/hostname"
+   ],
+   "answer": 1,
+   "why": "Scripts read os-release to detect the distribution."
+  },
+  {
+   "q": "What does lsmod list?",
+   "options": [
+    "Loaded kernel modules",
+    "Open files",
+    "Mounted disks",
+    "Installed packages"
+   ],
+   "answer": 0,
+   "why": "modprobe loads modules and rmmod removes them."
+  },
+  {
+   "q": "What does lsof show?",
+   "options": [
+    "User groups",
+    "Disk partitions",
+    "Open files and the processes using them",
+    "Loaded modules"
+   ],
+   "answer": 2,
+   "why": "lsof lists open files and their processes; lsof -i adds network sockets."
+  },
+  {
+   "q": "What does the screen or tmux command provide?",
+   "options": [
+    "Terminal sessions that keep running after you disconnect",
+    "A text editor",
+    "A file manager",
+    "A graphical desktop"
+   ],
+   "answer": 0,
+   "why": "Long jobs over SSH survive a dropped connection."
+  },
+  {
+   "q": "What does shutdown -r now do?",
+   "options": [
+    "Restarts the network",
+    "Logs out the user",
+    "Reboots the system immediately",
+    "Shuts down in an hour"
+   ],
+   "answer": 2,
+   "why": "shutdown -h now halts; systemctl reboot also restarts."
+  },
+  {
+   "q": "Which directory holds essential user command binaries in the Filesystem Hierarchy Standard?",
+   "options": [
+    "/etc",
+    "/var",
+    "/bin (often a link to /usr/bin)",
+    "/srv"
+   ],
+   "answer": 2,
+   "why": "On modern distributions /bin is usually a symbolic link to /usr/bin, where the commands actually live."
+  },
+  {
+   "q": "Which directory holds variable data such as logs, mail spools and caches?",
+   "options": [
+    "/opt",
+    "/usr",
+    "/boot",
+    "/var"
+   ],
+   "answer": 3,
+   "why": "Data in /var changes as the system runs, so it's often a separate filesystem on servers."
+  },
+  {
+   "q": "Which directory is meant for optional add-on software packages?",
+   "options": [
+    "/dev",
+    "/usr/bin",
+    "/opt",
+    "/etc"
+   ],
+   "answer": 2,
+   "why": "Third-party applications often install themselves under /opt/<vendor>."
+  },
+  {
+   "q": "Which directory holds temporary files that may be cleared at reboot?",
+   "options": [
+    "/home",
+    "/var/log",
+    "/srv",
+    "/tmp"
+   ],
+   "answer": 3,
+   "why": "Anyone can write to /tmp, which is why the sticky bit protects other users' files there."
+  },
+  {
+   "q": "What is /proc?",
+   "options": [
+    "A backup area",
+    "A log directory",
+    "A folder of programs",
+    "A virtual filesystem exposing kernel and process information"
+   ],
+   "answer": 3,
+   "why": "Files under /proc are generated by the kernel on demand and take no disk space."
+  },
+  {
+   "q": "What is /sys used for?",
+   "options": [
+    "User home directories",
+    "A virtual filesystem exposing devices and kernel settings",
+    "System backups",
+    "Package caches"
+   ],
+   "answer": 1,
+   "why": "sysfs lets tools read and change device and driver settings."
+  },
+  {
+   "q": "Which directory holds the home directory of the root user?",
+   "options": [
+    "/",
+    "/etc/root",
+    "/root",
+    "/home/root"
+   ],
+   "answer": 2,
+   "why": "Root's home is separate so it stays available even if /home is on a failed disk."
+  },
+  {
+   "q": "What is /srv intended for?",
+   "options": [
+    "System binaries",
+    "Kernel modules",
+    "Device files",
+    "Data served by the system, such as web or FTP content"
+   ],
+   "answer": 3,
+   "why": "Some admins keep website files under /srv instead of /var/www."
+  },
+  {
+   "q": "What is an inode?",
+   "options": [
+    "A directory",
+    "A data structure holding a file's metadata and data locations",
+    "A file's name",
+    "A partition"
+   ],
+   "answer": 1,
+   "why": "File names live in directories and point to inodes, which hold permissions, owner, size and block pointers."
+  },
+  {
+   "q": "Which command shows a file's inode number?",
+   "options": [
+    "ls -n",
+    "file -i",
+    "ls -i",
+    "stat -n"
+   ],
+   "answer": 2,
+   "why": "Hard links to the same file share an inode number, which ls -i reveals."
+  },
+  {
+   "q": "Why can't hard links point to directories in normal use?",
+   "options": [
+    "It is too slow",
+    "Directories have no inodes",
+    "It could create loops in the filesystem tree",
+    "Only root owns directories"
+   ],
+   "answer": 2,
+   "why": "Allowing directory hard links would let the tree contain cycles that confuse tools like find."
+  },
+  {
+   "q": "What happens to a hard-linked file's data when one of its names is deleted?",
+   "options": [
+    "The data stays until the last link is removed",
+    "All names are deleted",
+    "The file becomes read-only",
+    "The data is deleted immediately"
+   ],
+   "answer": 0,
+   "why": "The inode tracks a link count, and the data is freed only when that count reaches zero."
+  },
+  {
+   "q": "What happens to a symbolic link when its target is deleted?",
+   "options": [
+    "It becomes a broken (dangling) link",
+    "It keeps a copy of the data",
+    "It points to the parent",
+    "It is deleted automatically"
+   ],
+   "answer": 0,
+   "why": "A symlink only stores a path; if nothing exists at that path, the link is broken."
+  },
+  {
+   "q": "What are the three standard file descriptors?",
+   "options": [
+    "0 stdout, 1 stderr, 2 stdin",
+    "1 stdin, 2 stdout, 3 stderr",
+    "0 input, 1 log, 2 output",
+    "0 stdin, 1 stdout, 2 stderr"
+   ],
+   "answer": 3,
+   "why": "Redirection uses these numbers, as in 2> for errors."
+  },
+  {
+   "q": "What does 2>&1 mean?",
+   "options": [
+    "Run two commands",
+    "Send output to file 2",
+    "Send input to error",
+    "Send standard error to wherever standard output is going"
+   ],
+   "answer": 3,
+   "why": "command > out.txt 2>&1 puts both streams in out.txt; the order of the redirections matters."
+  },
+  {
+   "q": "What is /dev/null?",
+   "options": [
+    "An empty directory",
+    "A broken device",
+    "A special file that discards anything written to it",
+    "A null disk"
+   ],
+   "answer": 2,
+   "why": "command > /dev/null 2>&1 silences all output from a command."
+  },
+  {
+   "q": "What does the xargs command do?",
+   "options": [
+    "Exits the shell",
+    "Builds command lines from standard input",
+    "Shows extended attributes",
+    "Extracts archives"
+   ],
+   "answer": 1,
+   "why": "find . -name '*.log' | xargs rm passes the found names to rm as arguments."
+  },
+  {
+   "q": "What does the cut -c1-5 command do?",
+   "options": [
+    "Deletes 5 lines",
+    "Cuts files into 5 parts",
+    "Shows 5 columns",
+    "Prints characters 1 to 5 of each line"
+   ],
+   "answer": 3,
+   "why": "-c selects by character position and -f by field."
+  },
+  {
+   "q": "What does wc -l < file print compared with wc -l file?",
+   "options": [
+    "The same output",
+    "Just the number, without the file name",
+    "An error",
+    "The word count"
+   ],
+   "answer": 1,
+   "why": "When input comes from redirection, wc doesn't know a file name, so it prints only the count."
+  },
+  {
+   "q": "What does the column -t command do?",
+   "options": [
+    "Sorts columns",
+    "Counts columns",
+    "Deletes columns",
+    "Formats whitespace-separated text into aligned columns"
+   ],
+   "answer": 3,
+   "why": "It makes messy output, like mount or a CSV with -s,, easier to read."
+  },
+  {
+   "q": "What does nl -ba file do?",
+   "options": [
+    "Numbers only non-blank lines",
+    "Counts lines",
+    "Deletes blank lines",
+    "Numbers every line, including blank ones"
+   ],
+   "answer": 3,
+   "why": "nl's default numbers only non-blank lines, so -ba changes that."
+  },
+  {
+   "q": "What does fold -w 40 do?",
+   "options": [
+    "Joins lines",
+    "Deletes 40 characters",
+    "Wraps long lines at 40 characters",
+    "Counts 40 lines"
+   ],
+   "answer": 2,
+   "why": "Use -s to break at spaces so words aren't split."
+  },
+  {
+   "q": "What does split -l 1000 big.txt part_ do?",
+   "options": [
+    "Deletes 1,000 lines",
+    "Splits big.txt into files of 1,000 lines each named part_aa, part_ab and so on",
+    "Merges files",
+    "Counts lines"
+   ],
+   "answer": 1,
+   "why": "cat part_* > big.txt joins them back together."
+  },
+  {
+   "q": "In a regular expression, what does ^ mean at the start of a pattern?",
+   "options": [
+    "Match at the beginning of a line",
+    "Match any character",
+    "Negate the pattern",
+    "Match the end of a line"
+   ],
+   "answer": 0,
+   "why": "grep '^root' finds lines that start with root."
+  },
+  {
+   "q": "In a regular expression, what does $ mean at the end of a pattern?",
+   "options": [
+    "Match the start",
+    "Match a variable",
+    "Match at the end of a line",
+    "Match a dollar sign only"
+   ],
+   "answer": 2,
+   "why": "grep 'bash$' finds lines ending in bash."
+  },
+  {
+   "q": "In a regular expression, what does . match?",
+   "options": [
+    "Any single character",
+    "Nothing",
+    "End of line",
+    "A literal dot only"
+   ],
+   "answer": 0,
+   "why": "Use \\. to match an actual dot, such as in an IP address."
+  },
+  {
+   "q": "In extended regex, what does + mean?",
+   "options": [
+    "Exactly one",
+    "One or more of the previous item",
+    "Zero or more",
+    "Addition"
+   ],
+   "answer": 1,
+   "why": "grep -E '[0-9]+' matches one or more digits."
+  },
+  {
+   "q": "What does [^0-9] match?",
+   "options": [
+    "A caret and digits",
+    "Any single character that is not a digit",
+    "Only digits",
+    "A line starting with a digit"
+   ],
+   "answer": 1,
+   "why": "A ^ inside square brackets negates the set, so this matches any non-digit."
+  },
+  {
+   "q": "What does sed -n '5,10p' file do?",
+   "options": [
+    "Numbers lines 5 to 10",
+    "Deletes lines 5 to 10",
+    "Swaps lines 5 and 10",
+    "Prints only lines 5 to 10"
+   ],
+   "answer": 3,
+   "why": "-n suppresses normal output so only the p-printed lines appear."
+  },
+  {
+   "q": "What does sed '/^#/d' file do?",
+   "options": [
+    "Deletes lines starting with #, showing the rest",
+    "Counts comments",
+    "Adds # to every line",
+    "Prints only comments"
+   ],
+   "answer": 0,
+   "why": "This is a quick way to view a config file without its comment lines."
+  },
+  {
+   "q": "What does sed -i.bak 's/a/b/' file do?",
+   "options": [
+    "Edits the file in place and keeps a backup named file.bak",
+    "Creates a new file named b",
+    "Prints changes only",
+    "Deletes the file"
+   ],
+   "answer": 0,
+   "why": "On BSD and macOS sed, -i requires the backup suffix argument."
+  },
+  {
+   "q": "What does awk 'NR==3' file print?",
+   "options": [
+    "The third line",
+    "Lines with 3 fields",
+    "Three lines",
+    "Line counts"
+   ],
+   "answer": 0,
+   "why": "NR is the current line number, so the pattern matches only line 3."
+  },
+  {
+   "q": "What does awk '{print NF}' file print?",
+   "options": [
+    "The last field's value",
+    "Line numbers",
+    "The file name",
+    "The number of fields on each line"
+   ],
+   "answer": 3,
+   "why": "Use $NF to print the last field's value instead."
+  },
+  {
+   "q": "What does awk '$3 > 100' file print?",
+   "options": [
+    "The first 100 lines",
+    "Lines longer than 100 characters",
+    "Field 100",
+    "Lines whose third field is greater than 100"
+   ],
+   "answer": 3,
+   "why": "A pattern with no action prints matching lines by default."
+  },
+  {
+   "q": "What does the tr -d '\\r' command do?",
+   "options": [
+    "Adds line breaks",
+    "Removes carriage return characters, such as from Windows text files",
+    "Reverses text",
+    "Translates to upper case"
+   ],
+   "answer": 1,
+   "why": "Windows line endings cause odd errors in Linux scripts until the \\r is removed."
+  },
+  {
+   "q": "What is the default runlevel equivalent for a server without a GUI on systemd?",
+   "options": [
+    "emergency.target",
+    "multi-user.target",
+    "rescue.target",
+    "graphical.target"
+   ],
+   "answer": 1,
+   "why": "graphical.target adds the display manager on top of multi-user.target."
+  },
+  {
+   "q": "Which command changes the system to rescue mode right now?",
+   "options": [
+    "systemctl isolate rescue.target",
+    "init 6",
+    "shutdown -r",
+    "systemctl rescue --boot"
+   ],
+   "answer": 0,
+   "why": "isolate starts the target and stops units it doesn't need."
+  },
+  {
+   "q": "What is a systemd unit file?",
+   "options": [
+    "A kernel module",
+    "A log file",
+    "A user account",
+    "A configuration file describing a service, mount, timer or other unit"
+   ],
+   "answer": 3,
+   "why": "Unit files live in /usr/lib/systemd/system, with local overrides in /etc/systemd/system."
+  },
+  {
+   "q": "Where should you put custom or overriding systemd unit files?",
+   "options": [
+    "/usr/lib/systemd/system",
+    "/var/lib/systemd",
+    "/tmp/systemd",
+    "/etc/systemd/system"
+   ],
+   "answer": 3,
+   "why": "Files in /etc take priority over the vendor copies and survive package updates."
+  },
+  {
+   "q": "What must you run after editing a systemd unit file?",
+   "options": [
+    "systemctl mask",
+    "journalctl --flush",
+    "systemctl reboot",
+    "systemctl daemon-reload"
+   ],
+   "answer": 3,
+   "why": "daemon-reload makes systemd re-read unit files before you restart the service."
+  },
+  {
+   "q": "What is a systemd timer?",
+   "options": [
+    "A unit that runs a service on a schedule, like cron",
+    "A countdown clock",
+    "A log rotation tool",
+    "A boot delay"
+   ],
+   "answer": 0,
+   "why": "systemctl list-timers shows timers and when they will run next."
+  },
+  {
+   "q": "What does systemctl list-units --failed show?",
+   "options": [
+    "Running processes",
+    "All installed packages",
+    "Units that failed to start",
+    "Mounted disks"
+   ],
+   "answer": 2,
+   "why": "It's a quick health check after boot or changes."
+  },
+  {
+   "q": "What does systemctl mask do to a service?",
+   "options": [
+    "Hides it from lists",
+    "Restarts it",
+    "Prevents it from being started at all, even manually or as a dependency",
+    "Pauses it"
+   ],
+   "answer": 2,
+   "why": "Masking links the unit to /dev/null; systemctl unmask reverses it."
+  },
+  {
+   "q": "What is the first program the kernel runs at boot on most modern Linux systems?",
+   "options": [
+    "grub",
+    "systemd (PID 1)",
+    "cron",
+    "bash"
+   ],
+   "answer": 1,
+   "why": "PID 1 starts and supervises every other service."
+  },
+  {
+   "q": "What is GRUB?",
+   "options": [
+    "A file system",
+    "The boot loader that loads the kernel",
+    "A package manager",
+    "A shell"
+   ],
+   "answer": 1,
+   "why": "GRUB shows the boot menu and passes kernel parameters."
+  },
+  {
+   "q": "What is the initramfs (initial RAM filesystem)?",
+   "options": [
+    "A small temporary root filesystem with drivers needed to mount the real root",
+    "A swap file",
+    "A log file",
+    "A backup image"
+   ],
+   "answer": 0,
+   "why": "It lets the kernel reach root filesystems on RAID, LVM or encrypted disks."
+  },
+  {
+   "q": "How can you pass a one-time kernel parameter at boot?",
+   "options": [
+    "Edit /etc/fstab",
+    "Run sysctl after boot",
+    "Edit the GRUB entry at the boot menu by pressing e",
+    "Use crontab"
+   ],
+   "answer": 2,
+   "why": "Changes made at the menu apply to that boot only."
+  },
+  {
+   "q": "Which command makes permanent changes to kernel boot arguments on RHEL?",
+   "options": [
+    "grubby --update-kernel=ALL --args='...'",
+    "sysctl -w",
+    "dracut --args",
+    "modprobe"
+   ],
+   "answer": 0,
+   "why": "grubby edits the boot loader entries so the arguments persist."
+  },
+  {
+   "q": "What does sysctl do?",
+   "options": [
+    "Views and changes kernel parameters at runtime",
+    "Mounts filesystems",
+    "Lists processes",
+    "Controls services"
+   ],
+   "answer": 0,
+   "why": "sysctl -w net.ipv4.ip_forward=1 enables IP forwarding until reboot."
+  },
+  {
+   "q": "How do you make a sysctl setting permanent?",
+   "options": [
+    "Put it in a file under /etc/sysctl.d/ and run sysctl --system",
+    "Put it in /etc/fstab",
+    "Run sysctl -w twice",
+    "Put it in ~/.bashrc"
+   ],
+   "answer": 0,
+   "why": "Files in /etc/sysctl.d/ are applied at every boot."
+  },
+  {
+   "q": "Which command lists PCI devices?",
+   "options": [
+    "lsusb",
+    "lsblk",
+    "lspci",
+    "lsmod"
+   ],
+   "answer": 2,
+   "why": "lspci -k also shows which kernel driver each device uses."
+  },
+  {
+   "q": "Which command lists USB devices?",
+   "options": [
+    "lscpu",
+    "lsusb",
+    "lsblk",
+    "lspci"
+   ],
+   "answer": 1,
+   "why": "It helps confirm whether a plugged-in device was detected."
+  },
+  {
+   "q": "Which command shows CPU details such as cores and architecture?",
+   "options": [
+    "free",
+    "lsblk",
+    "uptime",
+    "lscpu"
+   ],
+   "answer": 3,
+   "why": "lscpu summarises information from /proc/cpuinfo."
+  },
+  {
+   "q": "What does modprobe do?",
+   "options": [
+    "Compiles a module",
+    "Removes all modules",
+    "Loads a kernel module along with its dependencies",
+    "Lists modules"
+   ],
+   "answer": 2,
+   "why": "modprobe -r removes a module and unused dependencies."
+  },
+  {
+   "q": "What does SELinux's getenforce show?",
+   "options": [
+    "User passwords",
+    "The current mode: Enforcing, Permissive or Disabled",
+    "The firewall status",
+    "Open ports"
+   ],
+   "answer": 1,
+   "why": "setenforce switches between enforcing and permissive until reboot."
+  },
+  {
+   "q": "What does SELinux permissive mode do?",
+   "options": [
+    "Logs policy violations but doesn't block them",
+    "Blocks everything",
+    "Disables SELinux completely",
+    "Allows only root"
+   ],
+   "answer": 0,
+   "why": "Permissive mode is useful for troubleshooting without turning SELinux off."
+  },
+  {
+   "q": "Which ls option shows SELinux security contexts?",
+   "options": [
+    "ls -Z",
+    "ls -X",
+    "ls -C",
+    "ls -S"
+   ],
+   "answer": 0,
+   "why": "Contexts look like system_u:object_r:httpd_sys_content_t:s0."
+  },
+  {
+   "q": "Which command restores default SELinux contexts on files?",
+   "options": [
+    "setenforce",
+    "semanage boolean",
+    "restorecon",
+    "chcon only"
+   ],
+   "answer": 2,
+   "why": "restorecon -Rv /path applies the contexts defined in policy."
+  },
+  {
+   "q": "What is an SELinux boolean?",
+   "options": [
+    "A file type",
+    "A user account",
+    "An on/off switch that adjusts policy for common needs",
+    "A firewall rule"
+   ],
+   "answer": 2,
+   "why": "setsebool -P httpd_can_network_connect on allows web apps to make network connections."
+  },
+  {
+   "q": "Which tool manages the firewall on RHEL and Fedora?",
+   "options": [
+    "pf",
+    "Windows Firewall",
+    "ufw",
+    "firewalld with firewall-cmd"
+   ],
+   "answer": 3,
+   "why": "firewall-cmd --permanent changes rules that survive a reload."
+  },
+  {
+   "q": "Which tool is the simple firewall front end on Ubuntu?",
+   "options": [
+    "pfctl",
+    "ufw",
+    "firewalld only",
+    "netsh"
+   ],
+   "answer": 1,
+   "why": "ufw allow 22/tcp opens SSH; ufw enable turns the firewall on."
+  },
+  {
+   "q": "What does firewall-cmd --reload do?",
+   "options": [
+    "Deletes all rules",
+    "Shows the zones",
+    "Applies permanent rules to the running firewall",
+    "Disables the firewall"
+   ],
+   "answer": 2,
+   "why": "Rules added with --permanent take effect only after a reload."
+  },
+  {
+   "q": "What is a firewalld zone?",
+   "options": [
+    "A DNS zone",
+    "A time zone",
+    "A disk partition",
+    "A named set of rules applied to interfaces or sources based on trust"
+   ],
+   "answer": 3,
+   "why": "Common zones include public, internal and trusted."
+  },
+  {
+   "q": "Which command shows listening TCP and UDP ports with process names?",
+   "options": [
+    "ip addr",
+    "ls -l",
+    "ping -l",
+    "ss -tulpn"
+   ],
+   "answer": 3,
+   "why": "-t TCP, -u UDP, -l listening, -p processes and -n numeric output."
+  },
+  {
+   "q": "Which command adds a temporary IP address to an interface?",
+   "options": [
+    "ip route add 192.168.1.10",
+    "nmcli show",
+    "ip addr add 192.168.1.10/24 dev eth0",
+    "ifconfig -a"
+   ],
+   "answer": 2,
+   "why": "Changes made with ip disappear at reboot unless saved in the network configuration."
+  },
+  {
+   "q": "Which command adds a default route temporarily?",
+   "options": [
+    "ip link set default",
+    "ip addr add default",
+    "route print",
+    "ip route add default via 192.168.1.1"
+   ],
+   "answer": 3,
+   "why": "To keep it, configure the gateway with NetworkManager or the distro's network files."
+  },
+  {
+   "q": "Which command lists NetworkManager connections?",
+   "options": [
+    "ifconfig",
+    "ip link",
+    "nmcli dev wifi",
+    "nmcli connection show"
+   ],
+   "answer": 3,
+   "why": "nmcli con mod and nmcli con up change and activate connections."
+  },
+  {
+   "q": "What does ip link set eth0 down do?",
+   "options": [
+    "Disables the interface",
+    "Renames the interface",
+    "Deletes the interface",
+    "Shows interface stats"
+   ],
+   "answer": 0,
+   "why": "The interface stops passing traffic; ip link set eth0 up brings it back."
+  },
+  {
+   "q": "What does the date command with +%F print?",
+   "options": [
+    "The date in YYYY-MM-DD format",
+    "The time only",
+    "Seconds since 1970",
+    "The day name"
+   ],
+   "answer": 0,
+   "why": "Format codes like %H:%M show hours and minutes; %s shows Unix time."
+  },
+  {
+   "q": "Which command sets the time zone on systemd systems?",
+   "options": [
+    "date -z",
+    "timedatectl set-timezone Region/City",
+    "hwclock --zone",
+    "tzselect --apply"
+   ],
+   "answer": 1,
+   "why": "timedatectl also shows whether the clock is synchronised."
+  },
+  {
+   "q": "What is chrony?",
+   "options": [
+    "A log tool",
+    "An NTP client and server for keeping time accurate",
+    "A cron replacement",
+    "A backup tool"
+   ],
+   "answer": 1,
+   "why": "chronyc sources shows which time servers it is using."
+  },
+  {
+   "q": "What does the at command do differently from cron?",
+   "options": [
+    "Runs only as root",
+    "Runs a job once at a set time rather than repeatedly",
+    "Runs only at boot",
+    "Runs jobs every minute"
+   ],
+   "answer": 1,
+   "why": "atq lists pending jobs and atrm removes them."
+  },
+  {
+   "q": "What does the watch command do?",
+   "options": [
+    "Runs a command repeatedly and shows its output full screen",
+    "Monitors files for changes",
+    "Shows the time",
+    "Records the screen"
+   ],
+   "answer": 0,
+   "why": "watch -n 5 df -h refreshes disk usage every 5 seconds."
+  },
+  {
+   "q": "What does nohup do?",
+   "options": [
+    "Runs as root",
+    "Hides output",
+    "Lets a command keep running after you log out",
+    "Stops a command"
+   ],
+   "answer": 2,
+   "why": "Output goes to nohup.out unless you redirect it."
+  },
+  {
+   "q": "What does the time command report?",
+   "options": [
+    "How long a command took to run, including CPU time",
+    "The system uptime",
+    "The current time",
+    "The date"
+   ],
+   "answer": 0,
+   "why": "real is wall-clock time; user and sys are CPU time."
+  },
+  {
+   "q": "What does stat -c %s file print?",
+   "options": [
+    "The file's inode",
+    "The file size in bytes",
+    "The file's type",
+    "The file's owner"
+   ],
+   "answer": 1,
+   "why": "stat -c accepts format codes for any file attribute."
+  },
+  {
+   "q": "What does the basename command do?",
+   "options": [
+    "Renames a file",
+    "Strips the directory part from a path, leaving the file name",
+    "Shows the base directory",
+    "Shows the file type"
+   ],
+   "answer": 1,
+   "why": "basename /var/log/syslog prints syslog; dirname prints /var/log."
+  },
+  {
+   "q": "What does readlink -f do?",
+   "options": [
+    "Prints the full resolved path, following all symlinks",
+    "Creates a link",
+    "Reads a file",
+    "Deletes a link"
+   ],
+   "answer": 0,
+   "why": "It's useful in scripts that need a script's real location."
+  },
+  {
+   "q": "What does mktemp create?",
+   "options": [
+    "A swap file",
+    "A temporary file or directory with a unique, unpredictable name",
+    "A log file",
+    "A permanent file"
+   ],
+   "answer": 1,
+   "why": "Safe temp names avoid race-condition attacks in shared /tmp."
+  },
+  {
+   "q": "What does the umask command with no arguments show?",
+   "options": [
+    "The permissions of a file",
+    "The umount status",
+    "The user's groups",
+    "The current default permission mask"
+   ],
+   "answer": 3,
+   "why": "umask -S shows it in symbolic form, such as u=rwx,g=rx,o=rx."
+  },
+  {
+   "q": "What is a process's niceness?",
+   "options": [
+    "Its owner",
+    "Its memory use",
+    "A value that influences its scheduling priority",
+    "Its age"
+   ],
+   "answer": 2,
+   "why": "Higher niceness means the process yields CPU to others more readily."
+  },
+  {
+   "q": "What is the difference between a process and a thread?",
+   "options": [
+    "Processes can't run in parallel",
+    "Threads share their process's memory; separate processes have their own",
+    "They are the same",
+    "Threads have separate memory"
+   ],
+   "answer": 1,
+   "why": "Threads are lighter weight but a bug in one can affect the whole process."
+  },
+  {
+   "q": "What is a daemon?",
+   "options": [
+    "A shell script",
+    "A virus",
+    "A background service process",
+    "A user"
+   ],
+   "answer": 2,
+   "why": "Daemon names often end in d, like sshd and crond."
+  },
+  {
+   "q": "What does the D state mean in ps or top output?",
+   "options": [
+    "Uninterruptible sleep, usually waiting on I/O",
+    "Disabled",
+    "Dead",
+    "Debugging"
+   ],
+   "answer": 0,
+   "why": "Many D-state processes often point to slow or failing storage."
+  },
+  {
+   "q": "What does the R state mean in ps output?",
+   "options": [
+    "Restarting",
+    "Running or ready to run",
+    "Root-owned",
+    "Removed"
+   ],
+   "answer": 1,
+   "why": "S means sleeping, T stopped and Z zombie."
+  },
+  {
+   "q": "What does pstree show?",
+   "options": [
+    "Processes as a tree of parents and children",
+    "Disk partitions",
+    "Package dependencies",
+    "Network routes"
+   ],
+   "answer": 0,
+   "why": "It makes it easy to see which process started which."
+  },
+  {
+   "q": "What does the kill -l command show?",
+   "options": [
+    "Open files",
+    "Logged-in users",
+    "Killed processes",
+    "The list of signal names and numbers"
+   ],
+   "answer": 3,
+   "why": "Signals include SIGHUP 1, SIGINT 2, SIGKILL 9 and SIGTERM 15."
+  },
+  {
+   "q": "What does Ctrl+C send to the foreground process?",
+   "options": [
+    "SIGHUP",
+    "SIGSTOP",
+    "SIGINT",
+    "SIGKILL"
+   ],
+   "answer": 2,
+   "why": "Programs can catch SIGINT to clean up before exiting."
+  },
+  {
+   "q": "What does Ctrl+D do at an empty shell prompt?",
+   "options": [
+    "Deletes a file",
+    "Suspends a job",
+    "Sends end-of-file, which logs out of the shell",
+    "Clears the screen"
+   ],
+   "answer": 2,
+   "why": "In programs reading input, it signals the end of input."
+  },
+  {
+   "q": "What is the purpose of the /etc/skel directory?",
+   "options": [
+    "System backups",
+    "Kernel files",
+    "Skeleton keys",
+    "Template files copied into new users' home directories"
+   ],
+   "answer": 3,
+   "why": "Put default .bashrc settings there so every new user gets them."
+  },
+  {
+   "q": "What does useradd -s /bin/zsh alice do?",
+   "options": [
+    "Creates a group",
+    "Sets her password",
+    "Deletes alice",
+    "Creates alice with zsh as her login shell"
+   ],
+   "answer": 3,
+   "why": "chsh -s changes an existing user's shell."
+  },
+  {
+   "q": "What does usermod -L alice do?",
+   "options": [
+    "Logs her out",
+    "Changes her login name",
+    "Lists her groups",
+    "Locks alice's password so she can't log in with it"
+   ],
+   "answer": 3,
+   "why": "-L puts a ! before the password hash; usermod -U unlocks the account."
+  },
+  {
+   "q": "What does gpasswd -d bob devs do?",
+   "options": [
+    "Removes bob from the devs group",
+    "Sets the group password",
+    "Deletes the devs group",
+    "Adds bob to devs"
+   ],
+   "answer": 0,
+   "why": "-d removes a user from a group, and gpasswd -a adds one."
+  },
+  {
+   "q": "What does newgrp do?",
+   "options": [
+    "Lists groups",
+    "Creates a group",
+    "Starts a shell with a different primary group for the session",
+    "Deletes a group"
+   ],
+   "answer": 2,
+   "why": "Files you create then belong to that group."
+  },
+  {
+   "q": "What does the last command read?",
+   "options": [
+    "The kernel log",
+    "The wtmp log of logins and reboots",
+    "The bash history",
+    "/etc/passwd"
+   ],
+   "answer": 1,
+   "why": "last reads the wtmp log of logins and reboots; lastb shows failed logins."
+  },
+  {
+   "q": "What does the w command add beyond who?",
+   "options": [
+    "User groups",
+    "Disk usage",
+    "User passwords",
+    "What each user is currently doing, plus load and idle times"
+   ],
+   "answer": 3,
+   "why": "It's a quick view of who is on the system and what they run."
+  },
+  {
+   "q": "What does the write or wall command do?",
+   "options": [
+    "Writes logs",
+    "Writes to disk",
+    "Writes a file",
+    "Sends a message to other users' terminals"
+   ],
+   "answer": 3,
+   "why": "wall broadcasts to everyone, such as before a reboot."
+  },
+  {
+   "q": "Which file contains the message shown after login on many systems?",
+   "options": [
+    "/etc/hosts",
+    "/etc/motd",
+    "/etc/issue",
+    "/etc/hostname"
+   ],
+   "answer": 1,
+   "why": "/etc/issue is shown before login on the console."
+  },
+  {
+   "q": "What does tar's -p option do when extracting?",
+   "options": [
+    "Pipes output",
+    "Prints progress",
+    "Pauses between files",
+    "Preserves the original permissions"
+   ],
+   "answer": 3,
+   "why": "Root extracting with -p restores the archived permissions exactly."
+  },
+  {
+   "q": "What does tar --exclude='*.log' do?",
+   "options": [
+    "Includes only log files",
+    "Leaves matching files out of the archive",
+    "Deletes log files",
+    "Compresses log files"
+   ],
+   "answer": 1,
+   "why": "It's handy for skipping caches or logs when backing up."
+  },
+  {
+   "q": "What is the dd command often used for?",
+   "options": [
+    "Deleting directories",
+    "Downloading files",
+    "Displaying disk usage",
+    "Copying raw data, such as making disk images or writing ISO files to USB"
+   ],
+   "answer": 3,
+   "why": "A wrong of= target can overwrite the wrong disk, so double-check it."
+  },
+  {
+   "q": "What does the sync command do?",
+   "options": [
+    "Synchronises clocks",
+    "Syncs packages",
+    "Flushes cached writes to disk",
+    "Syncs files with a server"
+   ],
+   "answer": 2,
+   "why": "Run it before pulling removable media if you're unsure writes have finished."
+  },
+  {
+   "q": "What does the lsblk -f option add?",
+   "options": [
+    "Free memory",
+    "Filesystem types, labels and UUIDs",
+    "Fragmentation",
+    "File counts"
+   ],
+   "answer": 1,
+   "why": "It's a quick alternative to blkid for seeing filesystems."
+  },
+  {
+   "q": "What does mount -o remount,rw / do?",
+   "options": [
+    "Mounts a new disk",
+    "Remounts the root filesystem read-write",
+    "Unmounts root",
+    "Formats root"
+   ],
+   "answer": 1,
+   "why": "It's needed in rescue situations where root was mounted read-only."
+  },
+  {
+   "q": "What does the noexec mount option do?",
+   "options": [
+    "Prevents reading files",
+    "Speeds up access",
+    "Prevents running programs from that filesystem",
+    "Prevents deleting files"
+   ],
+   "answer": 2,
+   "why": "Mounting /tmp with noexec stops attackers running dropped binaries there."
+  },
+  {
+   "q": "What does the swapon --show command display?",
+   "options": [
+    "Disk partitions",
+    "Mounted filesystems",
+    "Active swap devices and their usage",
+    "Memory modules"
+   ],
+   "answer": 2,
+   "why": "mkswap prepares a device and swapon enables it."
+  },
+  {
+   "q": "What is a loop device?",
+   "options": [
+    "A virtual block device that lets a file be used as a disk",
+    "A network loopback",
+    "A broken disk",
+    "A RAID array"
+   ],
+   "answer": 0,
+   "why": "mount -o loop image.iso /mnt mounts an ISO file."
+  },
+  {
+   "q": "What is RAID 1?",
+   "options": [
+    "Striping without redundancy",
+    "A single disk",
+    "Mirroring data across two or more disks",
+    "Striping with parity"
+   ],
+   "answer": 2,
+   "why": "If one disk fails, the other still holds all the data."
+  },
+  {
+   "q": "What is RAID 0?",
+   "options": [
+    "Mirroring",
+    "Striping across disks for speed, with no redundancy",
+    "Hot spare only",
+    "Parity"
+   ],
+   "answer": 1,
+   "why": "Losing any one disk loses the whole array."
+  },
+  {
+   "q": "What does mdadm manage?",
+   "options": [
+    "Mail delivery",
+    "Linux software RAID arrays",
+    "Modules",
+    "Mount points"
+   ],
+   "answer": 1,
+   "why": "cat /proc/mdstat shows the status of software RAID arrays."
+  },
+  {
+   "q": "What does git clone do?",
+   "options": [
+    "Copies a remote repository to your machine",
+    "Commits changes",
+    "Deletes a repository",
+    "Creates a branch"
+   ],
+   "answer": 0,
+   "why": "Linux admins often use git to manage scripts and configuration."
+  },
+  {
+   "q": "What does the env command do when run alone?",
+   "options": [
+    "Shows the shell version",
+    "Edits variables",
+    "Prints the environment variables",
+    "Creates a virtual environment"
+   ],
+   "answer": 2,
+   "why": "env VAR=value command runs one command with a modified environment."
+  },
+  {
+   "q": "What does unset VAR do?",
+   "options": [
+    "Removes the variable from the shell",
+    "Exports it",
+    "Makes it read-only",
+    "Sets it to zero"
+   ],
+   "answer": 0,
+   "why": "After unset, $VAR expands to nothing, as if it had never been set."
+  },
+  {
+   "q": "What does readonly VAR do?",
+   "options": [
+    "Exports it",
+    "Prevents the variable from being changed or unset",
+    "Hides it",
+    "Deletes it"
+   ],
+   "answer": 1,
+   "why": "Read-only variables protect important values in scripts."
+  },
+  {
+   "q": "What does the alias command with no arguments show?",
+   "options": [
+    "All currently defined aliases",
+    "Functions",
+    "Nothing",
+    "Environment variables"
+   ],
+   "answer": 0,
+   "why": "It lists every defined alias; unalias name removes one."
+  },
+  {
+   "q": "What does \\ls do in bash?",
+   "options": [
+    "Runs ls ignoring any alias named ls",
+    "Lists hidden files",
+    "Escapes the output",
+    "Runs ls as root"
+   ],
+   "answer": 0,
+   "why": "A leading backslash bypasses aliases for that command."
+  },
+  {
+   "q": "What does the locale command show?",
+   "options": [
+    "The system's location",
+    "Time zone only",
+    "Keyboard layout only",
+    "Language and regional settings in use"
+   ],
+   "answer": 3,
+   "why": "Settings like LANG and LC_ALL affect sorting, dates and messages."
+  },
+  {
+   "q": "What does LC_ALL=C sort file do?",
+   "options": [
+    "Sorts numbers only",
+    "Sorts in reverse",
+    "Sorts by raw byte values, ignoring locale rules",
+    "Sorts by length"
+   ],
+   "answer": 2,
+   "why": "The C locale gives fast, predictable sorting in scripts."
+  },
+  {
+   "q": "What does the seq 1 5 command print?",
+   "options": [
+    "The numbers 1 to 5, one per line",
+    "Sequence of letters",
+    "Nothing",
+    "Five random numbers"
+   ],
+   "answer": 0,
+   "why": "seq -s, 1 5 prints them separated by commas."
+  },
+  {
+   "q": "What does the expr command do?",
+   "options": [
+    "Expands files",
+    "Exits scripts",
+    "Exports variables",
+    "Evaluates simple arithmetic and string expressions"
+   ],
+   "answer": 3,
+   "why": "Bash's $(( )) arithmetic has largely replaced it."
+  },
+  {
+   "q": "What does $(( 7 / 2 )) evaluate to in bash?",
+   "options": [
+    "3",
+    "4",
+    "3.5",
+    "An error"
+   ],
+   "answer": 0,
+   "why": "Bash arithmetic uses integers, so division truncates."
+  },
+  {
+   "q": "What does the bc command provide?",
+   "options": [
+    "A binary converter only",
+    "A backup tool",
+    "A boot configuration tool",
+    "An arbitrary-precision calculator"
+   ],
+   "answer": 3,
+   "why": "echo 'scale=2; 7/2' | bc prints 3.50, unlike integer-only shell maths."
+  },
+  {
+   "q": "What does the shuf command do?",
+   "options": [
+    "Randomly shuffles lines of input",
+    "Shuts down",
+    "Sorts lines",
+    "Shows usernames"
+   ],
+   "answer": 0,
+   "why": "shuf randomises line order; shuf -n 1 file picks one random line."
+  },
+  {
+   "q": "What does the yes command do?",
+   "options": [
+    "Repeatedly prints y (or a given string)",
+    "Shows a yes/no dialog",
+    "Confirms a single prompt",
+    "Accepts a licence"
+   ],
+   "answer": 0,
+   "why": "yes | command answers yes to every prompt."
+  },
+  {
+   "q": "What does the factor command do?",
+   "options": [
+    "Factors a disk",
+    "Prints the prime factors of a number",
+    "Formats text",
+    "Configures settings"
+   ],
+   "answer": 1,
+   "why": "factor 12 prints 12: 2 2 3, listing each prime factor."
+  },
+  {
+   "q": "What does the cal command show?",
+   "options": [
+    "Call logs",
+    "Calculator",
+    "A calendar",
+    "CPU load"
+   ],
+   "answer": 2,
+   "why": "cal prints a calendar for the current month; cal 2026 shows the whole year."
+  },
+  {
+   "q": "What does the hexdump -C command show?",
+   "options": [
+    "A disk's partitions",
+    "Network packets",
+    "A file's bytes in hex alongside printable characters",
+    "Memory usage"
+   ],
+   "answer": 2,
+   "why": "od and xxd show similar views of binary data."
+  },
+  {
+   "q": "What does the iconv command do?",
+   "options": [
+    "Converts images",
+    "Changes icons",
+    "Converts text between character encodings",
+    "Encrypts files"
+   ],
+   "answer": 2,
+   "why": "iconv -f latin1 -t utf-8 fixes text saved in an old encoding."
+  },
+  {
+   "q": "What does the dos2unix command do?",
+   "options": [
+    "Converts DOS programs",
+    "Converts Windows line endings to Unix ones",
+    "Formats a disk",
+    "Installs DOS"
+   ],
+   "answer": 1,
+   "why": "Scripts edited on Windows often fail until their CRLF endings are fixed."
   }
  ]
 }

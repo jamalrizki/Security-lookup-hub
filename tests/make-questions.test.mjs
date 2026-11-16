@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  usable, pickPassages, systemPrompt, parseReply, workersAiText, copiesPassage, keepItems, shuffleOptions, assemble, PER_PASSAGE,
+  usable, pickPassages, rejected, OFF_TOPIC, systemPrompt, parseReply, workersAiText, copiesPassage, keepItems, shuffleOptions, assemble, PER_PASSAGE,
 } from '../rag/make_questions.mjs';
 
 const PASSAGE = 'The recovery time objective is the maximum time a system can be down before the business is harmed, while the recovery point objective '
@@ -108,4 +108,15 @@ test('assemble de-duplicates across passages and leaves tasks as they are', () =
   assert.equal(out.length, 2);
   const task = { task: 'Do x.', steps: ['x'], check: 'y' };
   assert.deepEqual(assemble({ format: 'tasks' }, [{ items: [task, task] }]), [task]);
+});
+
+test('rejected drops off-topic items and listed ones', () => {
+  assert.equal(rejected(good), false);
+  assert.equal(rejected({ ...good, q: 'Which format is NOT listed in the passage?' }), true);
+  assert.equal(rejected({ ...good, why: 'Earn CEUs every three years.' }), true);
+  assert.equal(rejected({ ...good, q: 'How do you book the Security+ exam with Pearson VUE?' }), true);
+  assert.equal(rejected(good, new Set([good.q.toLowerCase().match(/[a-z0-9]+/g).join(' ')])), true);
+  assert.ok(OFF_TOPIC.test('this chapter'));
+  const out = assemble({}, [{ items: [good, { ...good, q: 'What does the passage say?' }] }]);
+  assert.equal(out.length, 1);
 });

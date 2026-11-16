@@ -111,17 +111,6 @@
    "why": "Base64 is frequently used to encode data so that it is not easily readable in plain text."
   },
   {
-   "q": "To stop external actors from enumerating user accounts in the organization’s public LDAP directory, the administrator decides to require authentication before any LDAP query is answered. Which security control does this represent?",
-   "options": [
-    "Enforcing authentication on LDAP queries",
-    "Deploying a perimeter firewall",
-    "Installing an intrusion detection system",
-    "Applying rate‑limit thresholds to LDAP requests"
-   ],
-   "answer": 0,
-   "why": "Requiring authentication for LDAP access prevents unauthenticated enumeration, directly addressing the harvesting issue."
-  },
-  {
    "q": "During a risk assessment of a newly deployed web application, which finding should be addressed first because it poses the greatest threat?",
    "options": [
     "A SQL injection flaw in a CGI component",
@@ -142,17 +131,6 @@
    ],
    "answer": 0,
    "why": "Without a current subscription, the scanner's vulnerability signatures are not updated, so it misses known issues."
-  },
-  {
-   "q": "An internal scan flags a possible command injection, yet an external scan from the Internet does not show the same finding. Logs only contain requests from internal IPs. What most likely explains this difference?",
-   "options": [
-    "A perimeter firewall is blocking inbound connections to the vulnerable service",
-    "The vulnerable component resides on a subnet reachable only internally",
-    "A web application firewall sanitizes requests coming from outside the network",
-    "The external scanner uses a different set of test payloads"
-   ],
-   "answer": 0,
-   "why": "If the firewall blocks external traffic to the service, external scanners cannot reach the vulnerable endpoint, so the issue appears only in internal scans."
   },
   {
    "q": "Before executing a scheduled network upgrade, what three activities should the change manager complete in addition to the technical implementation plan?",
@@ -177,17 +155,6 @@
    "why": "Port 389 is used for LDAP, not for the file‑sharing service that relies on NetBIOS and SMB ports 137, 139, and 445."
   },
   {
-   "q": "After a large vulnerability scan, an analyst wants to reduce the number of low‑severity alerts and focus on the most critical findings. Which setting should be adjusted?",
-   "options": [
-    "Decrease the scan sensitivity",
-    "Increase the scan sensitivity",
-    "Increase the scan frequency",
-    "Decrease the scan frequency"
-   ],
-   "answer": 0,
-   "why": "Lowering the scanner's sensitivity reduces false positives, allowing the analyst to concentrate on higher‑severity vulnerabilities."
-  },
-  {
    "q": "A security team needs to develop a reusable checklist that can be automatically evaluated and produce standardized results for different departments. Which SCAP component should they use to author this checklist?",
    "options": [
     "Extensible Configuration Checklist Description Format (XCCDF)",
@@ -197,17 +164,6 @@
    ],
    "answer": 0,
    "why": "XCCDF defines checklists and assessment procedures, enabling automated evaluation and standardized reporting across teams."
-  },
-  {
-   "q": "A federal agency security manager is reviewing the agency's vulnerability‑scanning policy for FISMA compliance. Which of the following actions is NOT required by FISMA for the scanning process?",
-   "options": [
-    "Distribute the scan findings to the general public",
-    "Perform comprehensive scans at least once each month",
-    "Employ tools that support interoperability and automation",
-    "Remediate all verified, legitimate vulnerabilities"
-   ],
-   "answer": 0,
-   "why": "FISMA requires internal sharing of scan data and remediation, but it does not mandate publishing scan results to the public."
   },
   {
    "q": "An organization must assess configuration compliance on hundreds of workstations that cannot have agents installed. Which scanning method will most effectively uncover configuration issues on these unmanaged hosts?",
@@ -254,17 +210,6 @@
    "why": "The Signal protocol provides strong end‑to‑end encryption, ensuring messages remain confidential even if the transport layer is compromised."
   },
   {
-   "q": "An incident response manager must define a retention schedule for incident data when no legal or contractual requirements apply. Which time frame best reflects common industry practice?",
-   "options": [
-    "5 years",
-    "1 to 2 years",
-    "90 days",
-    "30 days"
-   ],
-   "answer": 1,
-   "why": "Industry guidelines typically recommend keeping incident data for 1–2 years when no specific legal mandates exist."
-  },
-  {
    "q": "A critical e‑commerce server has been compromised and must be restored to a clean state. Which incident‑response objective is most directly affected by this restoration action?",
    "options": [
     "Preserving forensic evidence",
@@ -287,28 +232,6 @@
    "why": "RAW images are simple bit‑for‑bit copies and are supported by almost all forensic tools."
   },
   {
-   "q": "Payroll processing has stopped for the current pay period, preventing employees from being paid on time. Using the NIST functional impact categories, how should this incident be classified?",
-   "options": [
-    "Medium",
-    "Critical",
-    "Low",
-    "High"
-   ],
-   "answer": 1,
-   "why": "The inability to pay staff directly impacts core business operations, matching the NIST definition of a Critical impact."
-  },
-  {
-   "q": "Laura must prove that a seized laptop was not altered while it was stored in a secure evidence room. Which control provides the most reliable proof of untampered custody?",
-   "options": [
-    "A signed chain‑of‑custody log",
-    "System event logs",
-    "Photographic documentation of the laptop",
-    "Tamper‑evident seals on the device"
-   ],
-   "answer": 3,
-   "why": "Tamper‑evident seals give physical evidence that the device was not opened or altered while unattended."
-  },
-  {
    "q": "An incident response team is gathering Windows event logs and network traffic captures to pinpoint the attacker’s method of entry. Which NIST incident‑response phase best describes this activity?",
    "options": [
     "Containment, Eradication, and Recovery",
@@ -329,17 +252,6 @@
    ],
    "answer": 0,
    "why": "NTLMv1 uses outdated hashing and is vulnerable to relay and brute‑force attacks, making it the riskiest protocol with AD."
-  },
-  {
-   "q": "A development team runs a fuzzing tool against their new API. Which category of vulnerability is this testing most likely to uncover?",
-   "options": [
-    "Incorrect firewall rule configuration",
-    "Use of weak encryption algorithms",
-    "SQL injection caused by unvalidated input",
-    "Missing operating system patches"
-   ],
-   "answer": 2,
-   "why": "Fuzz testing feeds random data to discover how the application handles unexpected input, often revealing input‑validation flaws such as SQL injection."
   },
   {
    "q": "An employee who moved from a database administrator role to a software developer still retains full admin rights on the production database. This scenario best illustrates which security principle?",
@@ -395,17 +307,6 @@
    ],
    "answer": 3,
    "why": "Lean Six Sigma targets waste elimination and variation reduction, making processes like account lifecycle management more efficient."
-  },
-  {
-   "q": "Veronica needs a commercial network vulnerability scanner that is broadly adopted in the industry and offers cloud‑based scanning with extensive reporting. Which product best fits this requirement?",
-   "options": [
-    "Qualys",
-    "OpenVAS",
-    "Nessus",
-    "Burp Suite"
-   ],
-   "answer": 0,
-   "why": "Qualys is a widely used commercial scanner known for its cloud platform, large vulnerability database, and robust reporting features."
   },
   {
    "q": "Jacob must collect logs from Windows servers, Linux hosts, and Cisco routers and send them to a single log server. Which logging protocol is supported across all these platforms?",
@@ -562,39 +463,6 @@
    "why": "lsof lists open files and shows the process that opened each file, making it ideal for identifying the holder of a specific log."
   },
   {
-   "q": "In a network access control (NAC) system, which type of criteria primarily evaluates the health and configuration of the endpoint rather than the user’s identity or job function?",
-   "options": [
-    "Time‑based criteria",
-    "Rule‑based criteria",
-    "Location‑based criteria",
-    "Role‑based criteria"
-   ],
-   "answer": 1,
-   "why": "Rule‑based NAC criteria focus on system health, patch level, and configuration, not on user attributes such as role or schedule."
-  },
-  {
-   "q": "A company stores unsalted MD5 password hashes for its users. Which attack method can most rapidly recover a large portion of these passwords?",
-   "options": [
-    "Phishing attack",
-    "Rainbow‑table attack",
-    "Man‑in‑the‑middle attack",
-    "GPU‑accelerated brute‑force attack"
-   ],
-   "answer": 1,
-   "why": "Rainbow tables contain pre‑computed MD5 hashes, allowing quick reversal of unsalted MD5 passwords."
-  },
-  {
-   "q": "A merchant is preparing for a PCI DSS compliance audit. Which of the following statements about the required vulnerability scan results is true?",
-   "options": [
-    "The scan must show no critical or high severity findings.",
-    "Low severity findings may be ignored as long as critical issues are fixed.",
-    "Only internal scans are required; external scans are optional.",
-    "Critical findings can remain if a remediation plan is submitted within 30 days."
-   ],
-   "answer": 0,
-   "why": "PCI DSS mandates a clean scan result with no critical or high vulnerabilities for compliance."
-  },
-  {
    "q": "During a security review, an analyst notes that a VPN tunnel is using the Data Encryption Standard (DES) for encryption. What is the appropriate corrective action?",
    "options": [
     "Replace DES with an AES‑based cipher suite.",
@@ -637,17 +505,6 @@
    ],
    "answer": 3,
    "why": "Even a low‑severity finding can be critical when exposed externally; blocking access via the firewall mitigates the risk without disrupting services."
-  },
-  {
-   "q": "An auditor needs documentation that details the specific remediation steps for a single server that failed a vulnerability scan. Which report should the security team provide?",
-   "options": [
-    "Executive summary report.",
-    "Qualys Top 20 report.",
-    "Technical report for the host.",
-    "PCI compliance technical report."
-   ],
-   "answer": 2,
-   "why": "A technical report contains detailed, host‑specific information intended for engineers to remediate the identified issues."
   },
   {
    "q": "An analyst wants an active reconnaissance technique, one that queries the target's own systems. Which fits?",
@@ -1902,6 +1759,3196 @@
    ],
    "answer": 2,
    "why": "Playbooks make response consistent and fast, for example the exact steps for ransomware or a phishing report."
+  },
+  {
+   "q": "An analyst sees a workstation making DNS queries every 60 seconds to a domain registered two days ago. What should they suspect?",
+   "options": [
+    "Command-and-control beaconing",
+    "Normal software updates",
+    "A user browsing news",
+    "A misconfigured printer"
+   ],
+   "answer": 0,
+   "why": "Regular intervals to a newly registered domain are classic signs of malware checking in with its controller."
+  },
+  {
+   "q": "Which network indicator suggests data exfiltration?",
+   "options": [
+    "Large outbound transfers to an unfamiliar external host at odd hours",
+    "Normal web browsing during work hours",
+    "Backups going to the usual backup server",
+    "Many small DNS queries to the company's own domain"
+   ],
+   "answer": 0,
+   "why": "Unusual volume, destination and timing together point to data leaving the network."
+  },
+  {
+   "q": "What does a sudden increase in failed logins followed by one success from the same IP suggest?",
+   "options": [
+    "A user who forgot their password",
+    "A software update",
+    "A routine password change",
+    "A successful brute-force or spraying attack"
+   ],
+   "answer": 3,
+   "why": "The pattern shows guessing that eventually worked, so the account should be treated as compromised."
+  },
+  {
+   "q": "A server's CPU is pinned at 100% with an unknown process connecting to a mining pool. What is happening?",
+   "options": [
+    "Cryptojacking",
+    "A memory leak",
+    "A DDoS against the server",
+    "A backup job"
+   ],
+   "answer": 0,
+   "why": "Cryptominers use stolen compute power and often connect to known pool addresses."
+  },
+  {
+   "q": "What host indicator suggests a rootkit?",
+   "options": [
+    "A new desktop wallpaper",
+    "A slow network",
+    "System tools showing different results from an offline scan of the same disk",
+    "A full disk"
+   ],
+   "answer": 2,
+   "why": "Rootkits hide from tools running on the infected OS, so offline analysis reveals the difference."
+  },
+  {
+   "q": "An endpoint shows a scheduled task that runs PowerShell with an encoded command at logon. Why is this suspicious?",
+   "options": [
+    "Scheduled tasks are always malicious",
+    "Encoded commands are faster",
+    "It is a common persistence technique used by malware",
+    "PowerShell is never used legitimately"
+   ],
+   "answer": 2,
+   "why": "Attackers use encoded PowerShell in scheduled tasks to survive reboots and hide what they run."
+  },
+  {
+   "q": "Which Windows registry location is commonly abused for persistence?",
+   "options": [
+    "The printer settings key",
+    "Run and RunOnce keys",
+    "The Desktop wallpaper key",
+    "The time zone key"
+   ],
+   "answer": 1,
+   "why": "Programs listed under Run keys start automatically at logon."
+  },
+  {
+   "q": "What application indicator suggests a web shell on a server?",
+   "options": [
+    "A new favicon",
+    "A new script in the web directory that runs system commands",
+    "An updated SSL certificate",
+    "A larger log file"
+   ],
+   "answer": 1,
+   "why": "Web shells let attackers run commands through the web server; unexpected scripts are a red flag."
+  },
+  {
+   "q": "Unexpected outbound connections from a web server to the internet on port 4444 suggest what?",
+   "options": [
+    "DNS resolution",
+    "A reverse shell",
+    "A software update",
+    "A normal web request"
+   ],
+   "answer": 1,
+   "why": "Web servers rarely start outbound connections, and 4444 is a common default for attack tools."
+  },
+  {
+   "q": "What does an unexpected new local administrator account on a server suggest?",
+   "options": [
+    "A routine Windows update",
+    "A backup job",
+    "A normal user login",
+    "An attacker establishing persistence"
+   ],
+   "answer": 3,
+   "why": "Creating admin accounts is a common way to keep access after the initial compromise."
+  },
+  {
+   "q": "An analyst sees processes running from a user's AppData\\Temp folder with random names. What should they do?",
+   "options": [
+    "Investigate them as possible malware",
+    "Reboot the network",
+    "Delete the user",
+    "Ignore them as normal"
+   ],
+   "answer": 0,
+   "why": "Malware often runs from temp folders with random names to avoid notice."
+  },
+  {
+   "q": "What is the purpose of tcpdump?",
+   "options": [
+    "Managing firewalls",
+    "Scanning for vulnerabilities",
+    "Cracking passwords",
+    "Capturing network packets from the command line"
+   ],
+   "answer": 3,
+   "why": "tcpdump saves packets in pcap format that tools such as Wireshark can analyse."
+  },
+  {
+   "q": "In Wireshark, which display filter shows only HTTP traffic?",
+   "options": [
+    "icmp",
+    "dns",
+    "tcp.port == 22",
+    "http"
+   ],
+   "answer": 3,
+   "why": "Display filters narrow a capture to the traffic of interest."
+  },
+  {
+   "q": "What does Wireshark's 'Follow TCP Stream' feature do?",
+   "options": [
+    "Deletes the packets",
+    "Encrypts the traffic",
+    "Reassembles a whole conversation so you can read it in order",
+    "Blocks the connection"
+   ],
+   "answer": 2,
+   "why": "It shows the full exchange, such as an HTTP request and response or a clear-text login."
+  },
+  {
+   "q": "What does an IP reputation service tell an analyst?",
+   "options": [
+    "The network speed",
+    "The device's OS",
+    "The owner's password",
+    "Whether an address has been linked to malicious activity"
+   ],
+   "answer": 3,
+   "why": "Reputation data helps decide quickly whether a connection is suspicious."
+  },
+  {
+   "q": "What is AbuseIPDB used for?",
+   "options": [
+    "Managing firewalls",
+    "Scanning for open ports",
+    "Hosting malware samples",
+    "Checking whether an IP has been reported for abuse"
+   ],
+   "answer": 3,
+   "why": "Community reports show whether an address is known for scanning, spam or attacks."
+  },
+  {
+   "q": "What does submitting a file hash to VirusTotal do?",
+   "options": [
+    "Patches the file",
+    "Deletes the file",
+    "Checks whether many antivirus engines already recognise the file",
+    "Encrypts the file"
+   ],
+   "answer": 2,
+   "why": "Submitting only the hash avoids uploading a possibly sensitive file."
+  },
+  {
+   "q": "Why might an analyst avoid uploading a suspicious internal document to a public sandbox?",
+   "options": [
+    "It could expose sensitive data to anyone who can see the submission",
+    "It makes the file slower",
+    "Public sandboxes delete files",
+    "Sandboxes are illegal"
+   ],
+   "answer": 0,
+   "why": "Public submissions can be visible to others, including the attacker."
+  },
+  {
+   "q": "What does a malware sandbox report typically include?",
+   "options": [
+    "A patch for the flaw",
+    "Files created, registry changes, network connections and processes started",
+    "The attacker's name",
+    "The victim's password"
+   ],
+   "answer": 1,
+   "why": "Behavioural reports reveal what the sample does and give indicators to hunt for."
+  },
+  {
+   "q": "What is a YARA rule?",
+   "options": [
+    "A firewall rule",
+    "A password policy",
+    "A pattern description used to identify malware by its characteristics",
+    "A routing rule"
+   ],
+   "answer": 2,
+   "why": "YARA rules match strings or byte patterns, helping find related samples."
+  },
+  {
+   "q": "What is the purpose of the strings command in malware analysis?",
+   "options": [
+    "Patching the binary",
+    "Showing readable text inside a binary, such as URLs and commands",
+    "Running the malware",
+    "Encrypting the binary"
+   ],
+   "answer": 1,
+   "why": "Strings often reveal domains, IPs and file paths quickly."
+  },
+  {
+   "q": "What does a SIEM correlation rule detect that individual logs don't?",
+   "options": [
+    "Hardware faults",
+    "Disk usage",
+    "Patterns across multiple events and sources",
+    "Only single events"
+   ],
+   "answer": 2,
+   "why": "For example, a VPN login from abroad followed by access to sensitive files."
+  },
+  {
+   "q": "What is normalisation in a SIEM?",
+   "options": [
+    "Deleting old logs",
+    "Encrypting logs",
+    "Compressing logs",
+    "Converting logs from different sources into a common format"
+   ],
+   "answer": 3,
+   "why": "Normalised fields let rules and searches work across many log types."
+  },
+  {
+   "q": "What is a false positive in alerting?",
+   "options": [
+    "A missed attack",
+    "A log with no events",
+    "An alert for activity that is actually harmless",
+    "A confirmed attack"
+   ],
+   "answer": 2,
+   "why": "Too many false positives cause alert fatigue."
+  },
+  {
+   "q": "What is a false negative in alerting?",
+   "options": [
+    "A test alert",
+    "A harmless alert",
+    "A real attack that generated no alert",
+    "A duplicate alert"
+   ],
+   "answer": 2,
+   "why": "False negatives are dangerous because nobody knows to respond."
+  },
+  {
+   "q": "How can analysts reduce alert fatigue?",
+   "options": [
+    "Tune rules, remove noisy alerts and automate triage",
+    "Disable all alerts",
+    "Ignore low-severity alerts forever",
+    "Add more alerts"
+   ],
+   "answer": 0,
+   "why": "Better-tuned alerts let analysts focus on real threats."
+  },
+  {
+   "q": "What does SOAR automate in a SOC?",
+   "options": [
+    "Buying hardware",
+    "Response playbooks such as enriching alerts and isolating hosts",
+    "Writing policies",
+    "Hiring staff"
+   ],
+   "answer": 1,
+   "why": "Automation speeds up response and makes it consistent."
+  },
+  {
+   "q": "What is threat intelligence?",
+   "options": [
+    "A software licence",
+    "A list of employees",
+    "A firewall log",
+    "Information about threats and attackers that helps make security decisions"
+   ],
+   "answer": 3,
+   "why": "Good intelligence is relevant, timely, accurate and actionable."
+  },
+  {
+   "q": "What is strategic threat intelligence?",
+   "options": [
+    "Packet captures",
+    "Specific IP addresses to block",
+    "Malware hashes",
+    "High-level information about trends and risks for leadership"
+   ],
+   "answer": 3,
+   "why": "Strategic intelligence informs decisions about budgets and priorities."
+  },
+  {
+   "q": "What is tactical threat intelligence?",
+   "options": [
+    "Employee training plans",
+    "Information about attackers' techniques and procedures",
+    "Hardware inventories",
+    "Board-level risk reports"
+   ],
+   "answer": 1,
+   "why": "Tactical intelligence describes how attackers operate, guiding defences."
+  },
+  {
+   "q": "What is operational threat intelligence?",
+   "options": [
+    "Details about specific campaigns or attacks in progress",
+    "Long-term industry trends",
+    "Policy documents",
+    "Insurance quotes"
+   ],
+   "answer": 0,
+   "why": "It helps defenders prepare for and respond to imminent attacks."
+  },
+  {
+   "q": "What is an ISAC?",
+   "options": [
+    "A cloud provider",
+    "A malware family",
+    "A type of firewall",
+    "An information sharing and analysis centre for an industry sector"
+   ],
+   "answer": 3,
+   "why": "ISACs let organisations in sectors such as finance or health share threat information."
+  },
+  {
+   "q": "What is open-source intelligence (OSINT) in threat intelligence?",
+   "options": [
+    "Information gathered from public sources",
+    "Paid commercial feeds only",
+    "Classified government data",
+    "Internal logs only"
+   ],
+   "answer": 0,
+   "why": "OSINT includes news, social media, public reports and forums."
+  },
+  {
+   "q": "What does 'confidence level' mean for a threat intelligence report?",
+   "options": [
+    "How certain the analyst is that the information is accurate",
+    "How old the report is",
+    "How long the report is",
+    "How secret the report is"
+   ],
+   "answer": 0,
+   "why": "Low-confidence intelligence shouldn't drive major decisions alone."
+  },
+  {
+   "q": "What is a TTP?",
+   "options": [
+    "A type of firewall",
+    "A transport protocol",
+    "Tactics, techniques and procedures used by an attacker",
+    "A test plan"
+   ],
+   "answer": 2,
+   "why": "Focusing on TTPs is harder for attackers to evade than blocking IPs or hashes."
+  },
+  {
+   "q": "Why is detecting TTPs more durable than blocking specific IPs?",
+   "options": [
+    "IPs never change",
+    "Blocking IPs is illegal",
+    "TTPs are always public",
+    "Attackers change IPs easily but change their methods less often"
+   ],
+   "answer": 3,
+   "why": "The Pyramid of Pain shows behaviours cost attackers more to change than indicators."
+  },
+  {
+   "q": "What is the Pyramid of Pain?",
+   "options": [
+    "A model showing that indicators like TTPs are harder for attackers to change than hashes or IPs",
+    "A risk matrix",
+    "A pain management chart",
+    "A network diagram"
+   ],
+   "answer": 0,
+   "why": "The higher the level defenders detect, the more it costs attackers to adapt."
+  },
+  {
+   "q": "What is a threat hunting hypothesis?",
+   "options": [
+    "A confirmed alert",
+    "A vulnerability scan",
+    "A patch schedule",
+    "A testable idea about how an attacker might be operating in the environment"
+   ],
+   "answer": 3,
+   "why": "Hunts start from hypotheses like 'attackers may be using scheduled tasks for persistence'."
+  },
+  {
+   "q": "What is the main output of a successful threat hunt?",
+   "options": [
+    "Found threats plus new detections to catch them automatically next time",
+    "A larger budget",
+    "A deleted log",
+    "A new firewall"
+   ],
+   "answer": 0,
+   "why": "Hunting improves defences even when nothing malicious is found."
+  },
+  {
+   "q": "What is attack surface management?",
+   "options": [
+    "Training staff",
+    "Continuously finding and reducing exposed assets and services",
+    "Painting servers",
+    "Managing office space"
+   ],
+   "answer": 1,
+   "why": "You can't defend systems you don't know are exposed."
+  },
+  {
+   "q": "What is asset discovery in vulnerability management?",
+   "options": [
+    "Disposing of old assets",
+    "Buying new assets",
+    "Finding all devices and software on the network",
+    "Valuing stock"
+   ],
+   "answer": 2,
+   "why": "Unknown assets go unscanned and unpatched."
+  },
+  {
+   "q": "What is a passive vulnerability scan?",
+   "options": [
+    "Scanning with credentials",
+    "A full port scan",
+    "Identifying systems and weaknesses by observing traffic without sending probes",
+    "Exploiting vulnerabilities"
+   ],
+   "answer": 2,
+   "why": "Passive scanning suits fragile systems such as industrial controllers."
+  },
+  {
+   "q": "Why should industrial control systems be scanned carefully?",
+   "options": [
+    "Scanning is illegal for them",
+    "They are always cloud-based",
+    "They have no IP addresses",
+    "Aggressive scans can crash fragile devices and stop operations"
+   ],
+   "answer": 3,
+   "why": "OT devices may fail under unexpected traffic, so passive or carefully tuned scans are used."
+  },
+  {
+   "q": "What is an external vulnerability scan?",
+   "options": [
+    "A scan of internal laptops",
+    "A scan with admin credentials",
+    "A code review",
+    "A scan from outside the network to see what attackers on the internet can reach"
+   ],
+   "answer": 3,
+   "why": "External scans show the real internet-facing exposure."
+  },
+  {
+   "q": "What is an internal vulnerability scan?",
+   "options": [
+    "A scan from inside the network to find weaknesses an insider or intruder could use",
+    "A scan from the internet",
+    "A physical security check",
+    "A phishing test"
+   ],
+   "answer": 0,
+   "why": "Internal scans find many issues that the perimeter hides from outside."
+  },
+  {
+   "q": "What is the advantage of agent-based scanning?",
+   "options": [
+    "It works even when devices are off the corporate network",
+    "It needs no software",
+    "It never needs updates",
+    "It is always faster"
+   ],
+   "answer": 0,
+   "why": "Agents report from laptops wherever they are."
+  },
+  {
+   "q": "What is dynamic application security testing (DAST)?",
+   "options": [
+    "Checking licences",
+    "Scanning disks",
+    "Reviewing source code",
+    "Testing a running application by sending it requests"
+   ],
+   "answer": 3,
+   "why": "DAST finds issues like injection and misconfiguration from the outside."
+  },
+  {
+   "q": "What is static application security testing (SAST)?",
+   "options": [
+    "Analysing source code without running it",
+    "Phishing developers",
+    "Testing the live app",
+    "Scanning the network"
+   ],
+   "answer": 0,
+   "why": "SAST finds flaws early, before the code is deployed."
+  },
+  {
+   "q": "What is fuzzing?",
+   "options": [
+    "Encrypting inputs",
+    "Logging inputs",
+    "Sending unexpected or random inputs to find crashes and flaws",
+    "Blocking inputs"
+   ],
+   "answer": 2,
+   "why": "Fuzzers find input-handling bugs that could become vulnerabilities."
+  },
+  {
+   "q": "Which tool is an open-source web application scanner from OWASP?",
+   "options": [
+    "Nmap",
+    "Wireshark",
+    "ZAP",
+    "Nessus"
+   ],
+   "answer": 2,
+   "why": "OWASP ZAP is an intercepting proxy and scanner for web apps."
+  },
+  {
+   "q": "Which tool is a commercial web testing proxy widely used by testers?",
+   "options": [
+    "OpenVAS",
+    "tcpdump",
+    "Burp Suite",
+    "Nmap"
+   ],
+   "answer": 2,
+   "why": "Burp intercepts and modifies HTTP requests to test web applications."
+  },
+  {
+   "q": "Which tool is an open-source network vulnerability scanner?",
+   "options": [
+    "OpenVAS",
+    "Burp Suite",
+    "John the Ripper",
+    "Wireshark"
+   ],
+   "answer": 0,
+   "why": "OpenVAS (Greenbone) is a free alternative to commercial scanners like Nessus."
+  },
+  {
+   "q": "Which tool checks web servers for dangerous files and outdated software?",
+   "options": [
+    "Nikto",
+    "Responder",
+    "Hashcat",
+    "Mimikatz"
+   ],
+   "answer": 0,
+   "why": "Nikto is a fast, noisy web server scanner."
+  },
+  {
+   "q": "Which tools assess cloud account configurations against best practices?",
+   "options": [
+    "tcpdump and Wireshark",
+    "Prowler and ScoutSuite",
+    "Nikto and Burp",
+    "John and Hashcat"
+   ],
+   "answer": 1,
+   "why": "Cloud posture tools find issues like public buckets and missing MFA."
+  },
+  {
+   "q": "What is Pacu?",
+   "options": [
+    "A packet capture tool",
+    "A firewall",
+    "An AWS exploitation framework for testing cloud security",
+    "A password manager"
+   ],
+   "answer": 2,
+   "why": "Pacu tests what an attacker could do with AWS credentials."
+  },
+  {
+   "q": "What is a debugger used for in security analysis?",
+   "options": [
+    "Managing users",
+    "Scanning networks",
+    "Encrypting files",
+    "Stepping through a program's execution to understand its behaviour"
+   ],
+   "answer": 3,
+   "why": "Debuggers help reverse-engineer malware and find vulnerabilities."
+  },
+  {
+   "q": "What does the CVSS base score's 'attack complexity' metric describe?",
+   "options": [
+    "Whether special conditions beyond the attacker's control are needed",
+    "The attacker's skill level only",
+    "The number of users affected",
+    "The patch's size"
+   ],
+   "answer": 0,
+   "why": "Low complexity means the attack works reliably without special circumstances."
+  },
+  {
+   "q": "What does the CVSS 'privileges required' metric describe?",
+   "options": [
+    "The admin's password",
+    "The patch approval level",
+    "The number of admins",
+    "The level of access an attacker needs before exploiting the flaw"
+   ],
+   "answer": 3,
+   "why": "A flaw needing no privileges is more serious than one requiring admin rights."
+  },
+  {
+   "q": "What does the CVSS 'user interaction' metric describe?",
+   "options": [
+    "User training levels",
+    "Whether a user must do something, such as click a link, for the attack to work",
+    "User passwords",
+    "How many users are on the system"
+   ],
+   "answer": 1,
+   "why": "Exploits needing no interaction can spread automatically."
+  },
+  {
+   "q": "What does CVSS 'scope' indicate?",
+   "options": [
+    "The size of the network",
+    "Whether the impact extends beyond the vulnerable component to others",
+    "The number of scanners",
+    "The patch timeline"
+   ],
+   "answer": 1,
+   "why": "A changed scope, such as a VM escape, raises the score."
+  },
+  {
+   "q": "Why might a CVSS 9.8 vulnerability be lower priority than a 7.5?",
+   "options": [
+    "The 9.8 is newer",
+    "The 9.8 is on an isolated test system while the 7.5 is on an internet-facing server",
+    "CVSS scores are random",
+    "Higher scores are always less urgent"
+   ],
+   "answer": 1,
+   "why": "Asset value and exposure matter as much as the raw score."
+  },
+  {
+   "q": "What does the EPSS score estimate?",
+   "options": [
+    "The probability a vulnerability will be exploited in the near future",
+    "The cost of a breach",
+    "The number of affected users",
+    "The patch size"
+   ],
+   "answer": 0,
+   "why": "EPSS helps prioritise flaws that attackers are likely to use."
+  },
+  {
+   "q": "What is the CISA Known Exploited Vulnerabilities (KEV) catalogue?",
+   "options": [
+    "A malware database",
+    "A list of all CVEs",
+    "A list of vulnerabilities confirmed to be exploited in the wild",
+    "A firewall vendor list"
+   ],
+   "answer": 2,
+   "why": "Flaws on KEV should be prioritised because attackers are actively using them."
+  },
+  {
+   "q": "What is vulnerability validation?",
+   "options": [
+    "Patching the vulnerability",
+    "Publishing the vulnerability",
+    "Ignoring the vulnerability",
+    "Confirming a reported vulnerability is real and not a false positive"
+   ],
+   "answer": 3,
+   "why": "Validation avoids wasting effort on false positives."
+  },
+  {
+   "q": "What is the OWASP Top 10?",
+   "options": [
+    "Ten compliance laws",
+    "A list of the most critical web application security risks",
+    "Ten malware families",
+    "The ten best firewalls"
+   ],
+   "answer": 1,
+   "why": "It guides developers and testers to the most common serious web flaws."
+  },
+  {
+   "q": "What is broken access control?",
+   "options": [
+    "A broken door lock",
+    "A slow login page",
+    "Users can act outside their intended permissions",
+    "A failed backup"
+   ],
+   "answer": 2,
+   "why": "Examples include viewing other users' records by changing an ID in the URL."
+  },
+  {
+   "q": "What is a cryptographic failure in OWASP terms?",
+   "options": [
+    "Sensitive data not properly protected by encryption",
+    "A full disk",
+    "A slow encryption algorithm",
+    "A lost password"
+   ],
+   "answer": 0,
+   "why": "Examples include sending data in clear text or using weak algorithms."
+  },
+  {
+   "q": "What is insecure design?",
+   "options": [
+    "Security flaws built into the application's design rather than its code",
+    "A typo in code",
+    "A bad colour scheme",
+    "A slow server"
+   ],
+   "answer": 0,
+   "why": "Threat modelling during design helps prevent these flaws."
+  },
+  {
+   "q": "What is security misconfiguration?",
+   "options": [
+    "A strong password policy",
+    "A secure baseline",
+    "An updated server",
+    "Insecure settings such as default accounts, verbose errors or open cloud storage"
+   ],
+   "answer": 3,
+   "why": "Misconfigurations are among the most common causes of breaches."
+  },
+  {
+   "q": "What are identification and authentication failures?",
+   "options": [
+    "Network outages",
+    "Disk failures",
+    "Database crashes",
+    "Weaknesses like weak passwords, missing MFA or poor session handling"
+   ],
+   "answer": 3,
+   "why": "These weaknesses let attackers take over accounts by guessing or hijacking sessions."
+  },
+  {
+   "q": "What is server-side request forgery (SSRF)?",
+   "options": [
+    "Forging a user's browser request",
+    "Tricking a server into making requests to internal resources",
+    "Spoofing a server's certificate",
+    "Flooding a server"
+   ],
+   "answer": 1,
+   "why": "SSRF can expose cloud metadata services and internal admin interfaces."
+  },
+  {
+   "q": "What is remote code execution (RCE)?",
+   "options": [
+    "A scheduled task",
+    "A backup job",
+    "A user running a program locally",
+    "An attacker running their own code on a target system remotely"
+   ],
+   "answer": 3,
+   "why": "RCE is among the most severe vulnerabilities."
+  },
+  {
+   "q": "What is local file inclusion (LFI)?",
+   "options": [
+    "Uploading a file",
+    "Deleting a file",
+    "Making an application include a file from the server it runs on",
+    "Downloading a file"
+   ],
+   "answer": 2,
+   "why": "LFI can expose sensitive files or lead to code execution."
+  },
+  {
+   "q": "What is remote file inclusion (RFI)?",
+   "options": [
+    "Including a local file",
+    "Mounting a network share",
+    "Making an application include and run a file from an external server",
+    "Uploading a photo"
+   ],
+   "answer": 2,
+   "why": "RFI can let attackers run their own code through the application."
+  },
+  {
+   "q": "What is data poisoning?",
+   "options": [
+    "Encrypting data for ransom",
+    "Filling a disk",
+    "Corrupting the data used to train a system, such as a machine learning model",
+    "Deleting backups"
+   ],
+   "answer": 2,
+   "why": "Poisoned training data can make a model behave wrongly or unsafely."
+  },
+  {
+   "q": "What is a compensating control in vulnerability response?",
+   "options": [
+    "A backup",
+    "A user training session",
+    "An alternative control that reduces risk when a patch can't be applied",
+    "A fine for missing patches"
+   ],
+   "answer": 2,
+   "why": "For example, isolating a legacy server that can't be updated."
+  },
+  {
+   "q": "Why are maintenance windows used for patching?",
+   "options": [
+    "To avoid documenting changes",
+    "To speed up the network",
+    "To apply changes when business impact is lowest",
+    "To skip testing"
+   ],
+   "answer": 2,
+   "why": "Agreed windows reduce disruption and set expectations."
+  },
+  {
+   "q": "What is a vulnerability exception?",
+   "options": [
+    "An unpatched zero-day",
+    "A documented, approved decision not to fix a vulnerability for a time",
+    "A scanner crash",
+    "A false negative"
+   ],
+   "answer": 1,
+   "why": "Exceptions should have compensating controls and an expiry or review date."
+  },
+  {
+   "q": "What is an inhibitor to remediation?",
+   "options": [
+    "Something that prevents or delays fixing a vulnerability, such as a legacy dependency",
+    "A security policy",
+    "An automated scanner",
+    "A strong patch process"
+   ],
+   "answer": 0,
+   "why": "Examples include business process interruption, SLAs and proprietary systems."
+  },
+  {
+   "q": "Why can a memorandum of understanding (MOU) inhibit remediation?",
+   "options": [
+    "It may restrict changes to a shared or partner-managed system",
+    "It removes all risk",
+    "It bans scanning",
+    "It requires instant patching"
+   ],
+   "answer": 0,
+   "why": "Agreements with partners can limit what one party may change."
+  },
+  {
+   "q": "Why might patching degrade functionality?",
+   "options": [
+    "Patches always speed up systems",
+    "Patches never change anything",
+    "Patches remove all bugs",
+    "A patch can break features or integrations that depend on old behaviour"
+   ],
+   "answer": 3,
+   "why": "Testing before deployment catches these problems."
+  },
+  {
+   "q": "What is threat modelling?",
+   "options": [
+    "Creating 3D models",
+    "Systematically identifying threats to a system and how to mitigate them",
+    "Modelling network speed",
+    "Building a SIEM"
+   ],
+   "answer": 1,
+   "why": "Methods like STRIDE help teams think like attackers during design."
+  },
+  {
+   "q": "What does STRIDE stand for?",
+   "options": [
+    "None of these",
+    "Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege",
+    "Scan, Test, Report, Investigate, Defend, Evaluate",
+    "Security, Trust, Risk, Integrity, Defence, Encryption"
+   ],
+   "answer": 1,
+   "why": "Each letter is a category of threat to consider."
+  },
+  {
+   "q": "What is the secure software development life cycle (SDLC)?",
+   "options": [
+    "A type of firewall",
+    "Testing only after release",
+    "Building security into every phase of software development",
+    "A backup schedule"
+   ],
+   "answer": 2,
+   "why": "Finding flaws early is cheaper than fixing them in production."
+  },
+  {
+   "q": "What does the Cyber Kill Chain help analysts do?",
+   "options": [
+    "Plan staffing",
+    "Price insurance",
+    "Write policies",
+    "Understand and disrupt the stages of an attack"
+   ],
+   "answer": 3,
+   "why": "Breaking any link in the chain can stop the attack."
+  },
+  {
+   "q": "What does the Diamond Model's 'infrastructure' feature describe?",
+   "options": [
+    "The defender's tools",
+    "The attacker's skills",
+    "The victim's network",
+    "The systems an attacker uses, such as servers and domains"
+   ],
+   "answer": 3,
+   "why": "Linking shared infrastructure can connect different attacks to one adversary."
+  },
+  {
+   "q": "What does MITRE ATT&CK's 'tactic' mean?",
+   "options": [
+    "A specific tool",
+    "The attacker's goal at a stage, such as persistence or exfiltration",
+    "A malware hash",
+    "An IP address"
+   ],
+   "answer": 1,
+   "why": "Techniques are how they achieve each tactic."
+  },
+  {
+   "q": "What is OSSTMM?",
+   "options": [
+    "A malware family",
+    "An open methodology for security testing",
+    "A compliance law",
+    "A firewall brand"
+   ],
+   "answer": 1,
+   "why": "The Open Source Security Testing Methodology Manual guides thorough, measurable testing."
+  },
+  {
+   "q": "What is the OWASP Web Security Testing Guide?",
+   "options": [
+    "A firewall rule set",
+    "A browser plug-in",
+    "A framework for testing web application security",
+    "A list of web hosts"
+   ],
+   "answer": 2,
+   "why": "It describes how to test for each class of web vulnerability."
+  },
+  {
+   "q": "What is the first priority when an incident is declared?",
+   "options": [
+    "Writing the final report",
+    "Notifying the press",
+    "Following the incident response plan, starting with containment of active threats",
+    "Buying new tools"
+   ],
+   "answer": 2,
+   "why": "A clear plan prevents panic and limits damage."
+  },
+  {
+   "q": "What does incident scoping determine?",
+   "options": [
+    "The patch schedule",
+    "Which systems, data and users are affected",
+    "The attacker's name",
+    "The price of the response"
+   ],
+   "answer": 1,
+   "why": "Accurate scope guides containment and notification."
+  },
+  {
+   "q": "Why isolate rather than shut down a compromised system in some cases?",
+   "options": [
+    "To preserve memory evidence while stopping the spread",
+    "Because shutdown is illegal",
+    "To keep the attacker connected on purpose",
+    "To save power"
+   ],
+   "answer": 0,
+   "why": "Powering off loses volatile evidence such as running processes and network connections."
+  },
+  {
+   "q": "What is eradication in incident response?",
+   "options": [
+    "Removing the threat, such as malware and attacker access, from the environment",
+    "Restoring backups",
+    "Notifying customers",
+    "Detecting the attack"
+   ],
+   "answer": 0,
+   "why": "Eradication must be thorough or attackers may return."
+  },
+  {
+   "q": "What is a key step before returning systems to production after an incident?",
+   "options": [
+    "Deleting all logs",
+    "Skipping tests",
+    "Changing the logo",
+    "Verifying they are clean, patched and monitored"
+   ],
+   "answer": 3,
+   "why": "Recovery includes validation and extra monitoring for reinfection."
+  },
+  {
+   "q": "Why must evidence be handled with a documented chain of custody?",
+   "options": [
+    "So it can be trusted and used in legal proceedings",
+    "To compress files",
+    "To speed up analysis",
+    "To share it publicly"
+   ],
+   "answer": 0,
+   "why": "Gaps in custody can make evidence inadmissible."
+  },
+  {
+   "q": "What is the purpose of a forensic write blocker?",
+   "options": [
+    "Wiping the drive",
+    "Encrypting the drive",
+    "Speeding up copying",
+    "Preventing any changes to the original drive while it is copied"
+   ],
+   "answer": 3,
+   "why": "The original must stay unchanged to remain valid evidence."
+  },
+  {
+   "q": "Which evidence should be collected first during live response?",
+   "options": [
+    "The hard drive",
+    "Printed reports",
+    "Memory and running processes",
+    "Backups"
+   ],
+   "answer": 2,
+   "why": "Volatile data disappears when the system powers off."
+  },
+  {
+   "q": "What tool is commonly used to capture a Windows machine's memory?",
+   "options": [
+    "A web browser",
+    "A memory acquisition tool such as FTK Imager or DumpIt",
+    "Notepad",
+    "Disk cleanup"
+   ],
+   "answer": 1,
+   "why": "Memory images can reveal malware, encryption keys and network connections."
+  },
+  {
+   "q": "What does Volatility do?",
+   "options": [
+    "Captures network traffic",
+    "Analyses memory images to find processes, connections and malware",
+    "Scans for vulnerabilities",
+    "Encrypts files"
+   ],
+   "answer": 1,
+   "why": "Volatility is a widely used open-source memory forensics framework."
+  },
+  {
+   "q": "What is a timeline in forensic analysis?",
+   "options": [
+    "An ordered sequence of events reconstructed from logs and file metadata",
+    "A patch schedule",
+    "A project plan",
+    "A network diagram"
+   ],
+   "answer": 0,
+   "why": "Timelines show how an attack unfolded step by step."
+  },
+  {
+   "q": "What are MAC times in file system forensics?",
+   "options": [
+    "Mandatory access control times",
+    "Modified, accessed and changed timestamps for files",
+    "Machine activity counts",
+    "MAC addresses"
+   ],
+   "answer": 1,
+   "why": "They help reconstruct when files were created, viewed or altered."
+  },
+  {
+   "q": "What is data carving?",
+   "options": [
+    "Recovering files from raw disk data without relying on the file system",
+    "Encrypting files",
+    "Deleting files securely",
+    "Compressing files"
+   ],
+   "answer": 0,
+   "why": "Carving finds deleted files by recognising their headers and footers."
+  },
+  {
+   "q": "What is the purpose of a lessons learned report?",
+   "options": [
+    "Buying insurance",
+    "Closing tickets",
+    "Documenting what happened and how to improve",
+    "Assigning blame"
+   ],
+   "answer": 2,
+   "why": "Improvements feed back into the preparation phase."
+  },
+  {
+   "q": "What is root cause analysis after an incident?",
+   "options": [
+    "Deleting malware only",
+    "Finding the underlying weakness that allowed the incident",
+    "Restarting systems",
+    "Paying the ransom"
+   ],
+   "answer": 1,
+   "why": "Fixing the root cause stops the same attack working again."
+  },
+  {
+   "q": "What does mean time to detect (MTTD) measure?",
+   "options": [
+    "The time between failures",
+    "The time to fix a patch",
+    "The average time between an incident starting and its detection",
+    "The time to restore backups"
+   ],
+   "answer": 2,
+   "why": "Reducing MTTD limits how long attackers operate unnoticed."
+  },
+  {
+   "q": "What does mean time to respond (MTTR) measure in security operations?",
+   "options": [
+    "The time between audits",
+    "The time to buy tools",
+    "The average time from detection to containment or resolution",
+    "The time to detect"
+   ],
+   "answer": 2,
+   "why": "Faster response after detection limits how much damage an attacker can do."
+  },
+  {
+   "q": "What does mean time to remediate measure?",
+   "options": [
+    "The average time to fix vulnerabilities after they are found",
+    "The time to write reports",
+    "The time to detect attacks",
+    "The time to hire staff"
+   ],
+   "answer": 0,
+   "why": "It shows how quickly vulnerabilities are being closed."
+  },
+  {
+   "q": "What is alert volume used for as a metric?",
+   "options": [
+    "Understanding analyst workload and tuning needs",
+    "Counting employees",
+    "Measuring network speed",
+    "Tracking budgets"
+   ],
+   "answer": 0,
+   "why": "Rising volume without more incidents suggests tuning is needed."
+  },
+  {
+   "q": "Who usually needs an executive summary of a vulnerability report?",
+   "options": [
+    "Attackers",
+    "Only system administrators",
+    "Senior management",
+    "Vendors"
+   ],
+   "answer": 2,
+   "why": "Executives need business impact and priorities, not technical detail."
+  },
+  {
+   "q": "What should a vulnerability management report for technical teams include?",
+   "options": [
+    "Only an overall risk score",
+    "Marketing information",
+    "Staff schedules",
+    "Specific vulnerabilities, affected assets and remediation steps"
+   ],
+   "answer": 3,
+   "why": "Teams need enough detail to fix each issue."
+  },
+  {
+   "q": "What is a key performance indicator (KPI) for vulnerability management?",
+   "options": [
+    "Percentage of critical vulnerabilities fixed within the SLA",
+    "Office temperature",
+    "Number of printers",
+    "Number of employees"
+   ],
+   "answer": 0,
+   "why": "KPIs show whether the programme meets its goals."
+  },
+  {
+   "q": "What is an action plan in vulnerability reporting?",
+   "options": [
+    "Specific steps, owners and deadlines for remediation",
+    "A marketing plan",
+    "A budget only",
+    "A list of attackers"
+   ],
+   "answer": 0,
+   "why": "Clear ownership ensures issues actually get fixed."
+  },
+  {
+   "q": "When should an incident be escalated?",
+   "options": [
+    "Only after it's resolved",
+    "When it meets defined criteria such as severity, data involved or legal impact",
+    "Only if the press calls",
+    "Never"
+   ],
+   "answer": 1,
+   "why": "Escalation criteria should be defined in advance in the IR plan."
+  },
+  {
+   "q": "Why is communication with legal counsel important during a breach?",
+   "options": [
+    "To avoid all notifications",
+    "Lawyers fix malware",
+    "To delay the response",
+    "Notification laws and evidence handling may have legal requirements"
+   ],
+   "answer": 3,
+   "why": "Legal advice ensures obligations are met and evidence is preserved properly."
+  },
+  {
+   "q": "Why should public relations be part of incident communications?",
+   "options": [
+    "To write code",
+    "To manage public statements and protect reputation",
+    "To find attackers",
+    "To fix systems"
+   ],
+   "answer": 1,
+   "why": "Consistent, accurate messaging prevents confusion and rumours."
+  },
+  {
+   "q": "What is a regulatory reporting requirement in incident response?",
+   "options": [
+    "A legal duty to notify authorities or affected people within a set time",
+    "A firewall log",
+    "An internal ticket",
+    "A marketing email"
+   ],
+   "answer": 0,
+   "why": "Laws like GDPR can require notification within 72 hours."
+  },
+  {
+   "q": "What is the purpose of a communication plan in incident response?",
+   "options": [
+    "Listing phone numbers only",
+    "Choosing a chat app",
+    "Writing marketing copy",
+    "Defining who is told what, when and how during an incident"
+   ],
+   "answer": 3,
+   "why": "Clear communication avoids leaks and keeps stakeholders informed."
+  },
+  {
+   "q": "Why might an organisation use out-of-band communication during an incident?",
+   "options": [
+    "It's faster",
+    "The attacker may be monitoring normal email and chat",
+    "Email is banned",
+    "It's cheaper"
+   ],
+   "answer": 1,
+   "why": "If systems are compromised, using them to coordinate could tip off the attacker."
+  },
+  {
+   "q": "What is an indicator of attack (IoA) compared with an IoC?",
+   "options": [
+    "IoAs are file hashes",
+    "IoAs focus on attacker behaviour in progress; IoCs are artefacts left after",
+    "IoCs predict future attacks",
+    "They are identical"
+   ],
+   "answer": 1,
+   "why": "Behavioural IoAs can catch attacks before damage is done."
+  },
+  {
+   "q": "What is the main goal of log retention policies?",
+   "options": [
+    "Encrypting logs only",
+    "Keeping logs long enough for investigations and compliance",
+    "Reducing disk use at all costs",
+    "Deleting logs immediately"
+   ],
+   "answer": 1,
+   "why": "Investigations often need logs from months before discovery."
+  },
+  {
+   "q": "Why is centralised logging important for security?",
+   "options": [
+    "It uses less storage",
+    "It removes the need for analysis",
+    "It speeds up servers",
+    "Attackers can't easily erase logs stored on a separate system"
+   ],
+   "answer": 3,
+   "why": "Central logs survive even if a host is wiped."
+  },
+  {
+   "q": "What does Sysmon add to Windows logging?",
+   "options": [
+    "Detailed events such as process creation, network connections and file changes",
+    "Disk encryption",
+    "Antivirus",
+    "Firewall rules"
+   ],
+   "answer": 0,
+   "why": "Sysmon greatly improves visibility for detection and investigation."
+  },
+  {
+   "q": "Which Windows event ID indicates a successful logon?",
+   "options": [
+    "1102",
+    "4625",
+    "4720",
+    "4624"
+   ],
+   "answer": 3,
+   "why": "4625 is a failed logon, 4720 an account created and 1102 the audit log cleared."
+  },
+  {
+   "q": "Which Windows event ID shows the security audit log was cleared?",
+   "options": [
+    "4688",
+    "4740",
+    "4624",
+    "1102"
+   ],
+   "answer": 3,
+   "why": "Clearing logs is a common attacker step, so 1102 should always be investigated."
+  },
+  {
+   "q": "Which Windows event ID records a new process being created?",
+   "options": [
+    "4776",
+    "4688",
+    "4725",
+    "4624"
+   ],
+   "answer": 1,
+   "why": "With command-line logging enabled, 4688 shows exactly what ran."
+  },
+  {
+   "q": "Which Windows event ID shows an account was locked out?",
+   "options": [
+    "1102",
+    "4624",
+    "4740",
+    "4688"
+   ],
+   "answer": 2,
+   "why": "Many lockouts in a short time may indicate password spraying."
+  },
+  {
+   "q": "What does a Linux /var/log/auth.log (or secure) file record?",
+   "options": [
+    "Printer jobs",
+    "Authentication events such as logins and sudo use",
+    "Disk usage",
+    "Web traffic"
+   ],
+   "answer": 1,
+   "why": "It's the first place to look for SSH brute-force attempts."
+  },
+  {
+   "q": "What does the Linux last command show?",
+   "options": [
+    "Open ports",
+    "Disk space",
+    "Recent logins and reboots",
+    "Running processes"
+   ],
+   "answer": 2,
+   "why": "It reads wtmp to show who logged in, from where and when."
+  },
+  {
+   "q": "Which Linux command shows open network connections and the processes using them?",
+   "options": [
+    "df -h",
+    "ls -l",
+    "uptime",
+    "ss -tulpn (or netstat -tulpn)"
+   ],
+   "answer": 3,
+   "why": "It reveals unexpected listeners such as backdoors."
+  },
+  {
+   "q": "What does a cron job added by an attacker on Linux provide?",
+   "options": [
+    "Persistence by running their code on a schedule",
+    "Better logging",
+    "Disk encryption",
+    "Faster backups"
+   ],
+   "answer": 0,
+   "why": "Reviewing crontabs is part of checking a compromised Linux host."
+  },
+  {
+   "q": "What does a suspicious entry in ~/.ssh/authorized_keys indicate?",
+   "options": [
+    "A password change",
+    "An attacker may have added their key for persistent SSH access",
+    "A normal update",
+    "A backup job"
+   ],
+   "answer": 1,
+   "why": "Unknown keys let attackers log in without a password."
+  },
+  {
+   "q": "What is lateral movement?",
+   "options": [
+    "Copying backups",
+    "Load balancing",
+    "An attacker moving from one compromised system to others",
+    "Moving offices"
+   ],
+   "answer": 2,
+   "why": "Detecting unusual internal logins helps stop attackers spreading."
+  },
+  {
+   "q": "What does PsExec use on a Windows network that defenders can monitor?",
+   "options": [
+    "ICMP only",
+    "SMB and service creation on the remote host",
+    "DNS only",
+    "HTTP only"
+   ],
+   "answer": 1,
+   "why": "Remote service creation events can reveal lateral movement."
+  },
+  {
+   "q": "What is credential dumping?",
+   "options": [
+    "Resetting passwords",
+    "Extracting password hashes or credentials from a system's memory or files",
+    "Writing passwords down",
+    "Deleting passwords"
+   ],
+   "answer": 1,
+   "why": "Tools like Mimikatz target LSASS; Credential Guard helps protect it."
+  },
+  {
+   "q": "What does Windows Credential Guard protect?",
+   "options": [
+    "Browser history",
+    "Credentials in memory, by isolating LSASS secrets with virtualisation",
+    "Printer settings",
+    "Disk encryption keys only"
+   ],
+   "answer": 1,
+   "why": "It makes credential dumping much harder."
+  },
+  {
+   "q": "What is living off the land?",
+   "options": [
+    "Installing new software",
+    "Working remotely",
+    "Using solar power",
+    "Attackers using built-in system tools to avoid detection"
+   ],
+   "answer": 3,
+   "why": "Tools like PowerShell, WMI and certutil are trusted, so their abuse blends in."
+  },
+  {
+   "q": "How can defenders detect living-off-the-land techniques?",
+   "options": [
+    "Blocking all built-in tools",
+    "Ignoring PowerShell",
+    "Monitoring command lines and unusual use of built-in tools",
+    "Disabling logs"
+   ],
+   "answer": 2,
+   "why": "Context, such as Word launching PowerShell, reveals abuse."
+  },
+  {
+   "q": "What is a parent-child process anomaly?",
+   "options": [
+    "A normal process tree",
+    "A process started by an unusual parent, such as Word launching cmd.exe",
+    "A child process exiting",
+    "A slow process"
+   ],
+   "answer": 1,
+   "why": "Office apps rarely need to start command shells, so this often means a malicious document."
+  },
+  {
+   "q": "What does DNS sinkholing do?",
+   "options": [
+    "Deletes DNS records",
+    "Speeds up DNS",
+    "Redirects requests for malicious domains to a controlled address",
+    "Encrypts DNS"
+   ],
+   "answer": 2,
+   "why": "It stops malware reaching its controller and identifies infected hosts."
+  },
+  {
+   "q": "What is a domain generation algorithm (DGA)?",
+   "options": [
+    "An encryption method",
+    "A registrar tool",
+    "Malware code that creates many random domains to find its controller",
+    "A DNS server feature"
+   ],
+   "answer": 2,
+   "why": "DGAs make blocking hard because domains change constantly."
+  },
+  {
+   "q": "What does 'fast flux' DNS describe?",
+   "options": [
+    "DNSSEC",
+    "DNS caching",
+    "Rapidly changing the IP addresses behind a malicious domain",
+    "Very fast DNS servers"
+   ],
+   "answer": 2,
+   "why": "Fast flux hides attacker infrastructure behind many compromised hosts."
+  },
+  {
+   "q": "What is the main security benefit of segmentation during an incident?",
+   "options": [
+    "Lower costs",
+    "Fewer logs",
+    "Containing the spread to a limited part of the network",
+    "Faster internet"
+   ],
+   "answer": 2,
+   "why": "Segmentation turns one compromise into a contained problem."
+  },
+  {
+   "q": "What is endpoint isolation in EDR?",
+   "options": [
+    "Cutting a device off from the network while keeping a connection to the EDR console",
+    "Encrypting the device",
+    "Rebooting the device",
+    "Wiping the device"
+   ],
+   "answer": 0,
+   "why": "Analysts can keep investigating while the threat can't spread."
+  },
+  {
+   "q": "What is application allow-listing's role in incident prevention?",
+   "options": [
+    "Stopping unknown executables, including new malware, from running",
+    "Allowing all apps",
+    "Logging app usage only",
+    "Speeding up apps"
+   ],
+   "answer": 0,
+   "why": "Only approved software runs, which blocks many attacks outright."
+  },
+  {
+   "q": "What is the purpose of honeytokens in detection?",
+   "options": [
+    "Encryption keys",
+    "Real passwords for admins",
+    "Backup codes",
+    "Fake credentials or files that trigger alerts when used"
+   ],
+   "answer": 3,
+   "why": "Any use of a honeytoken is suspicious, giving high-confidence alerts."
+  },
+  {
+   "q": "What is the main purpose of security baselines in operations?",
+   "options": [
+    "Setting salaries",
+    "Defining approved configurations to detect drift and misconfigurations",
+    "Measuring network speed",
+    "Choosing vendors"
+   ],
+   "answer": 1,
+   "why": "Scanning against baselines finds systems that don't meet the standard."
+  },
+  {
+   "q": "What is a CIS Benchmark used for in vulnerability management?",
+   "options": [
+    "Managing users",
+    "Scanning for malware",
+    "Writing code",
+    "Checking systems against recommended secure configuration settings"
+   ],
+   "answer": 3,
+   "why": "Configuration scans compare systems to benchmark recommendations."
+  },
+  {
+   "q": "What is PCI DSS's requirement for external vulnerability scans?",
+   "options": [
+    "Daily scans by the bank",
+    "No scans",
+    "Quarterly scans by an approved scanning vendor",
+    "Yearly scans by anyone"
+   ],
+   "answer": 2,
+   "why": "ASV scans must pass for merchants to stay compliant."
+  },
+  {
+   "q": "What is the difference between a vulnerability, a threat and a risk?",
+   "options": [
+    "Risk is the weakness",
+    "A vulnerability is a weakness, a threat is what could exploit it, and risk is the likelihood and impact",
+    "A threat is the impact",
+    "They mean the same"
+   ],
+   "answer": 1,
+   "why": "Risk combines a threat exploiting a vulnerability with the resulting harm."
+  },
+  {
+   "q": "What is an attack vector?",
+   "options": [
+    "The attacker's location",
+    "The path an attacker uses to reach a target, such as email or an exposed service",
+    "A firewall rule",
+    "A security policy"
+   ],
+   "answer": 1,
+   "why": "Reducing exposed vectors shrinks the attack surface."
+  },
+  {
+   "q": "What is the main purpose of business process interruption analysis in remediation?",
+   "options": [
+    "Understanding how a fix might disrupt operations before applying it",
+    "Finding attackers",
+    "Buying insurance",
+    "Writing malware"
+   ],
+   "answer": 0,
+   "why": "Fixes are planned to avoid stopping critical business functions."
+  },
+  {
+   "q": "What is proprietary system risk in vulnerability management?",
+   "options": [
+    "Vendors control updates, so fixes may be slow or impossible for the customer",
+    "They have no vulnerabilities",
+    "They can't be scanned",
+    "Proprietary systems are always secure"
+   ],
+   "answer": 0,
+   "why": "Customers may need compensating controls while waiting on the vendor."
+  },
+  {
+   "q": "An email claims to be from the company's bank, but the Return-Path domain differs from the From domain and SPF fails. What should the analyst conclude?",
+   "options": [
+    "The bank changed its domain",
+    "The email is definitely legitimate",
+    "The email is likely spoofed",
+    "SPF failures are normal"
+   ],
+   "answer": 2,
+   "why": "A mismatched return path plus a failed SPF check strongly suggests the sender isn't who they claim to be."
+  },
+  {
+   "q": "Which email header field is most reliable for tracing the path a message took?",
+   "options": [
+    "The Received lines, read from the bottom up",
+    "The Subject line",
+    "The From line",
+    "The Reply-To line"
+   ],
+   "answer": 0,
+   "why": "Each mail server adds a Received line; the lowest ones were added first, closest to the sender."
+  },
+  {
+   "q": "What does a DMARC policy of p=reject tell receiving servers?",
+   "options": [
+    "Accept all messages",
+    "Only log failures",
+    "Quarantine all messages",
+    "Reject messages that fail SPF and DKIM alignment"
+   ],
+   "answer": 3,
+   "why": "p=none only reports, p=quarantine sends failures to spam, and p=reject refuses them."
+  },
+  {
+   "q": "A phishing email's link text shows the company's site, but hovering reveals a different domain. What is this?",
+   "options": [
+    "A normal redirect",
+    "A DNS error",
+    "A deceptive link hiding the real destination",
+    "A broken link"
+   ],
+   "answer": 2,
+   "why": "Displayed text can be anything; the actual URL is what matters."
+  },
+  {
+   "q": "What should an analyst do with a suspicious attachment from a reported phish?",
+   "options": [
+    "Analyse it in a sandbox and extract indicators",
+    "Open it on their workstation",
+    "Forward it to all staff",
+    "Delete it without analysis"
+   ],
+   "answer": 0,
+   "why": "Sandbox analysis reveals behaviour and IOCs to block across the organisation."
+  },
+  {
+   "q": "Why search mail logs for other recipients of a reported phishing email?",
+   "options": [
+    "To count total emails",
+    "To change the subject",
+    "To find and remove it from every inbox and check who clicked",
+    "To test the mail server"
+   ],
+   "answer": 2,
+   "why": "One report often means many people received the same message."
+  },
+  {
+   "q": "What is a 'lookalike domain' in phishing?",
+   "options": [
+    "The company's real domain",
+    "A subdomain",
+    "A domain that visually resembles a real one, such as rnicrosoft.com",
+    "An IP address"
+   ],
+   "answer": 2,
+   "why": "Lookalikes trick people who don't read carefully."
+  },
+  {
+   "q": "What does an analyst look for in a phishing URL to spot credential harvesting?",
+   "options": [
+    "A secure company domain",
+    "A news article",
+    "A fake login page on an unrelated domain",
+    "A PDF download from the intranet"
+   ],
+   "answer": 2,
+   "why": "Harvesting pages copy real login screens to collect passwords."
+  },
+  {
+   "q": "Why are QR codes increasingly used in phishing?",
+   "options": [
+    "They can't be scanned",
+    "They are always malicious",
+    "They encrypt traffic",
+    "They hide the destination URL and move the user to a less protected phone"
+   ],
+   "answer": 3,
+   "why": "Email filters may not inspect images, and phones often lack corporate protections."
+  },
+  {
+   "q": "What is a regular expression used for in log analysis?",
+   "options": [
+    "Encrypting logs",
+    "Compressing logs",
+    "Matching patterns in text, such as IP addresses or error codes",
+    "Deleting logs"
+   ],
+   "answer": 2,
+   "why": "Regex lets analysts search large logs for specific formats quickly."
+  },
+  {
+   "q": "Which regex matches a simple IPv4-like pattern of four groups of digits separated by dots?",
+   "options": [
+    "^\\s*$",
+    "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}",
+    "\\w+\\.com",
+    "[a-z]+@[a-z]+"
+   ],
+   "answer": 1,
+   "why": "\\d means digit and \\. a literal dot; this pattern matches four dot-separated numbers."
+  },
+  {
+   "q": "What does grep -E do?",
+   "options": [
+    "Uses extended regular expressions",
+    "Excludes matches",
+    "Encrypts output",
+    "Exports results"
+   ],
+   "answer": 0,
+   "why": "Extended regex supports operators like + and | without escaping."
+  },
+  {
+   "q": "Which command counts how many times each IP appears in a log, sorted by frequency?",
+   "options": [
+    "cat log | wc -l",
+    "cut the IP field | sort | uniq -c | sort -rn",
+    "head log",
+    "ls -l log"
+   ],
+   "answer": 1,
+   "why": "uniq -c counts adjacent duplicates, so the data must be sorted first."
+  },
+  {
+   "q": "What is JSON commonly used for in security tools?",
+   "options": [
+    "Encrypting traffic",
+    "Structured data exchange, such as API responses and log formats",
+    "Compressing files",
+    "Network routing"
+   ],
+   "answer": 1,
+   "why": "Many SIEMs and APIs use JSON fields for events."
+  },
+  {
+   "q": "Why are scripting skills useful to an analyst?",
+   "options": [
+    "To replace all tools",
+    "To bypass policies",
+    "To avoid documentation",
+    "To automate repetitive tasks such as parsing logs or enriching alerts"
+   ],
+   "answer": 3,
+   "why": "Small scripts save hours on tasks like extracting indicators."
+  },
+  {
+   "q": "What does a PowerShell script with Invoke-WebRequest downloading an executable at logon suggest?",
+   "options": [
+    "A possible malware downloader",
+    "A printer driver",
+    "A backup",
+    "A normal Windows update"
+   ],
+   "answer": 0,
+   "why": "Downloading and running files at logon is typical of malicious persistence."
+  },
+  {
+   "q": "What is SSL/TLS inspection?",
+   "options": [
+    "Upgrading TLS versions",
+    "Blocking all HTTPS",
+    "Issuing certificates",
+    "Decrypting traffic at a security device to inspect it, then re-encrypting it"
+   ],
+   "answer": 3,
+   "why": "It lets tools see threats hidden in encrypted traffic, with privacy and trust trade-offs."
+  },
+  {
+   "q": "Why can TLS inspection break some applications?",
+   "options": [
+    "It slows DNS",
+    "Apps that pin certificates reject the inspection device's certificate",
+    "TLS can't be inspected",
+    "It changes IP addresses"
+   ],
+   "answer": 1,
+   "why": "Pinned apps expect a specific certificate, so they're often exempted from inspection."
+  },
+  {
+   "q": "What does PII stand for?",
+   "options": [
+    "Public internet identity",
+    "Personally identifiable information",
+    "Protected IP information",
+    "Private internal infrastructure"
+   ],
+   "answer": 1,
+   "why": "PII includes names, ID numbers and other data that identifies a person."
+  },
+  {
+   "q": "What is cardholder data (CHD) under PCI DSS?",
+   "options": [
+    "Any bank statement",
+    "The card number plus details like cardholder name and expiry",
+    "Customer emails",
+    "Employee salaries"
+   ],
+   "answer": 1,
+   "why": "The primary account number is the core element that must be protected."
+  },
+  {
+   "q": "What is the main purpose of data loss prevention in a SOC context?",
+   "options": [
+    "Backing up data",
+    "Detecting and blocking sensitive data leaving through email, web or devices",
+    "Scanning ports",
+    "Encrypting disks"
+   ],
+   "answer": 1,
+   "why": "DLP alerts also help investigate insider threats."
+  },
+  {
+   "q": "What is a CASB used for in security operations?",
+   "options": [
+    "Password cracking",
+    "Packet capture",
+    "Visibility and control over cloud application use",
+    "Firewall management on-premises"
+   ],
+   "answer": 2,
+   "why": "CASBs detect shadow IT and risky cloud activity."
+  },
+  {
+   "q": "What is SASE in security architecture?",
+   "options": [
+    "A backup solution",
+    "A type of malware",
+    "A local firewall",
+    "Delivering networking and security services such as secure web gateway and ZTNA from the cloud"
+   ],
+   "answer": 3,
+   "why": "SASE suits distributed workforces by protecting users wherever they connect."
+  },
+  {
+   "q": "What is ZTNA?",
+   "options": [
+    "A traditional VPN",
+    "A wireless standard",
+    "Zero trust network access that grants app-level access after verifying user and device",
+    "A routing protocol"
+   ],
+   "answer": 2,
+   "why": "Users reach only specific applications, not the whole network."
+  },
+  {
+   "q": "What is a security benefit of containerised applications?",
+   "options": [
+    "They can't run malware",
+    "They have no network access",
+    "Containers never need patching",
+    "Each container is isolated and can be rebuilt quickly from a known image"
+   ],
+   "answer": 3,
+   "why": "Immutable images make it easy to replace compromised containers."
+  },
+  {
+   "q": "What is a risk of serverless functions?",
+   "options": [
+    "They need OS patching by the customer",
+    "They have no code",
+    "Over-permissive roles and vulnerable dependencies in function code",
+    "They can't be logged"
+   ],
+   "answer": 2,
+   "why": "Function permissions should follow least privilege."
+  },
+  {
+   "q": "What is the shared responsibility model's lesson for SOC analysts in the cloud?",
+   "options": [
+    "The customer must still monitor and secure their own configurations, identities and data",
+    "Cloud is always secure",
+    "The provider handles all security",
+    "Logging is unnecessary"
+   ],
+   "answer": 0,
+   "why": "Many cloud breaches come from customer misconfigurations."
+  },
+  {
+   "q": "Which cloud log records API calls such as who created or deleted resources in AWS?",
+   "options": [
+    "VPC Flow Logs",
+    "CloudFront logs",
+    "CloudTrail",
+    "S3 access logs"
+   ],
+   "answer": 2,
+   "why": "CloudTrail is the main audit trail for AWS account activity."
+  },
+  {
+   "q": "What do VPC Flow Logs capture?",
+   "options": [
+    "Full packet contents",
+    "User passwords",
+    "Metadata about network traffic to and from cloud interfaces",
+    "Application errors"
+   ],
+   "answer": 2,
+   "why": "Flow logs show source, destination, ports and whether traffic was allowed."
+  },
+  {
+   "q": "A cloud storage bucket is discovered to be publicly readable. What is the first step?",
+   "options": [
+    "Delete the bucket immediately",
+    "Change the bucket's name",
+    "Remove public access, then investigate what was exposed and accessed",
+    "Ignore it"
+   ],
+   "answer": 2,
+   "why": "Close the exposure first, then use logs to understand the impact."
+  },
+  {
+   "q": "What is identity federation's security risk?",
+   "options": [
+    "It requires more passwords",
+    "It removes logging",
+    "A compromised identity provider can grant access to many connected services",
+    "It disables MFA"
+   ],
+   "answer": 2,
+   "why": "Protecting the IdP with strong controls is critical."
+  },
+  {
+   "q": "What is privileged access management (PAM) used for?",
+   "options": [
+    "Tracking assets",
+    "Filtering web traffic",
+    "Managing printers",
+    "Controlling, monitoring and limiting use of admin accounts"
+   ],
+   "answer": 3,
+   "why": "PAM vaults credentials and records privileged sessions."
+  },
+  {
+   "q": "Why is MFA especially important on remote access and admin accounts?",
+   "options": [
+    "It removes the need for passwords",
+    "These accounts are prime targets and a stolen password alone shouldn't be enough",
+    "MFA speeds up logins",
+    "It encrypts traffic"
+   ],
+   "answer": 1,
+   "why": "MFA blocks most credential-based attacks on high-value accounts."
+  },
+  {
+   "q": "What is MFA fatigue (push bombing)?",
+   "options": [
+    "Users forgetting passwords",
+    "Using too many tokens",
+    "Sending repeated MFA prompts until the user approves one",
+    "MFA servers crashing"
+   ],
+   "answer": 2,
+   "why": "Number matching and limits on prompts help prevent it."
+  },
+  {
+   "q": "Which MFA setting helps prevent push fatigue attacks?",
+   "options": [
+    "Number matching, where the user types a code shown on the login screen",
+    "SMS only",
+    "Allowing unlimited prompts",
+    "Disabling MFA at night"
+   ],
+   "answer": 0,
+   "why": "The user must see the login screen to approve, so random prompts can't be blindly accepted."
+  },
+  {
+   "q": "What is passwordless authentication's main security benefit?",
+   "options": [
+    "No authentication is needed",
+    "There's no password to phish, reuse or crack",
+    "It uses shorter passwords",
+    "It disables logging"
+   ],
+   "answer": 1,
+   "why": "Passkeys and FIDO2 rely on cryptographic keys bound to the device."
+  },
+  {
+   "q": "What is the purpose of OS hardening?",
+   "options": [
+    "Changing the wallpaper",
+    "Reducing attack surface by removing unnecessary services and applying secure settings",
+    "Installing more software",
+    "Making the OS run faster"
+   ],
+   "answer": 1,
+   "why": "Hardened systems give attackers fewer ways in."
+  },
+  {
+   "q": "Why is the Windows Registry important in investigations?",
+   "options": [
+    "It controls networking only",
+    "It is a log file",
+    "It stores only passwords",
+    "It stores configuration, persistence entries and evidence of user activity"
+   ],
+   "answer": 3,
+   "why": "Run keys, USB history and recently used files all live in the registry."
+  },
+  {
+   "q": "What does the Linux /etc/passwd file contain?",
+   "options": [
+    "Firewall rules",
+    "User account information, not the password hashes",
+    "Network settings",
+    "Encrypted passwords"
+   ],
+   "answer": 1,
+   "why": "Password hashes are in /etc/shadow, readable only by root."
+  },
+  {
+   "q": "What does /etc/shadow contain?",
+   "options": [
+    "Network interfaces",
+    "Password hashes and password ageing information",
+    "Group names only",
+    "User shells"
+   ],
+   "answer": 1,
+   "why": "Its restricted permissions protect hashes from normal users."
+  },
+  {
+   "q": "Why is time synchronisation critical in log analysis?",
+   "options": [
+    "It saves disk space",
+    "Events from different systems must line up to build an accurate timeline",
+    "It speeds up SIEM queries",
+    "It encrypts logs"
+   ],
+   "answer": 1,
+   "why": "Clock drift can make attacks look like they happened in the wrong order."
+  },
+  {
+   "q": "What is log verbosity?",
+   "options": [
+    "How fast logs are written",
+    "How logs are encrypted",
+    "How many logs exist",
+    "How much detail a system records in its logs"
+   ],
+   "answer": 3,
+   "why": "More detail helps investigations but uses more storage."
+  },
+  {
+   "q": "What does a web server log entry with status 200 for /admin/backup.zip from an unknown IP suggest?",
+   "options": [
+    "The server crashed",
+    "The file wasn't found",
+    "A sensitive file was successfully downloaded by an outsider",
+    "Access was denied"
+   ],
+   "answer": 2,
+   "why": "200 means success, so the file was served and exposure should be investigated."
+  },
+  {
+   "q": "A web log shows many requests with ../../ in the path. What attack is being attempted?",
+   "options": [
+    "CSRF",
+    "Directory traversal",
+    "XSS",
+    "SQL injection"
+   ],
+   "answer": 1,
+   "why": "Attackers try to climb out of the web root to read system files."
+  },
+  {
+   "q": "A web log contains <script> tags in a search parameter. What is being attempted?",
+   "options": [
+    "Cross-site scripting",
+    "DNS poisoning",
+    "Directory traversal",
+    "Brute force"
+   ],
+   "answer": 0,
+   "why": "Injected script tags test whether input is reflected without encoding."
+  },
+  {
+   "q": "A web log shows ' OR '1'='1 in a login parameter. What is being attempted?",
+   "options": [
+    "SQL injection",
+    "Command injection",
+    "SSRF",
+    "XSS"
+   ],
+   "answer": 0,
+   "why": "This classic payload tries to make the login query always true."
+  },
+  {
+   "q": "A web request parameter contains ; cat /etc/passwd. What attack is this?",
+   "options": [
+    "Command injection",
+    "XSS",
+    "SQL injection",
+    "LDAP injection"
+   ],
+   "answer": 0,
+   "why": "The semicolon ends the intended command and runs the attacker's command."
+  },
+  {
+   "q": "A request asks the server to fetch http://169.254.169.254/latest/meta-data/. What attack is this?",
+   "options": [
+    "SSRF targeting cloud metadata",
+    "SQL injection",
+    "XSS",
+    "Brute force"
+   ],
+   "answer": 0,
+   "why": "Cloud metadata endpoints can reveal credentials if a server can be tricked into fetching them."
+  },
+  {
+   "q": "What is the best defence against SSRF?",
+   "options": [
+    "Validate and restrict the destinations the server is allowed to request",
+    "Use longer passwords",
+    "Allow all outbound traffic",
+    "Disable HTTPS"
+   ],
+   "answer": 0,
+   "why": "Allow-lists and blocking internal addresses stop servers being used as proxies."
+  },
+  {
+   "q": "What is the best defence against command injection?",
+   "options": [
+    "Add more logging",
+    "Hide error messages",
+    "Use a faster server",
+    "Avoid passing user input to system shells, or strictly validate it"
+   ],
+   "answer": 3,
+   "why": "Using safe APIs instead of shell commands removes the risk."
+  },
+  {
+   "q": "What is the best defence against XSS?",
+   "options": [
+    "Context-aware output encoding plus input validation",
+    "Disabling cookies entirely",
+    "Using HTTP",
+    "Longer passwords"
+   ],
+   "answer": 0,
+   "why": "Encoding makes injected script display as text instead of running."
+  },
+  {
+   "q": "What is a Content Security Policy (CSP)?",
+   "options": [
+    "A firewall rule",
+    "A backup policy",
+    "A password policy",
+    "A browser header that restricts where scripts and content can load from"
+   ],
+   "answer": 3,
+   "why": "CSP limits the damage of XSS by blocking unauthorised scripts."
+  },
+  {
+   "q": "What is the HttpOnly cookie flag for?",
+   "options": [
+    "Encrypting the cookie",
+    "Sending the cookie over HTTP only",
+    "Preventing JavaScript from reading the cookie",
+    "Deleting the cookie"
+   ],
+   "answer": 2,
+   "why": "It protects session cookies from being stolen through XSS."
+  },
+  {
+   "q": "What is the Secure cookie flag for?",
+   "options": [
+    "Ensuring the cookie is only sent over HTTPS",
+    "Encrypting the cookie's content",
+    "Blocking third-party cookies",
+    "Making the cookie permanent"
+   ],
+   "answer": 0,
+   "why": "It stops session cookies leaking over unencrypted connections."
+  },
+  {
+   "q": "What does the SameSite cookie attribute help prevent?",
+   "options": [
+    "SQL injection",
+    "DNS poisoning",
+    "Cross-site request forgery",
+    "Buffer overflows"
+   ],
+   "answer": 2,
+   "why": "It limits when browsers send cookies with cross-site requests."
+  },
+  {
+   "q": "What is a buffer overflow's typical defence at the OS level?",
+   "options": [
+    "DNSSEC",
+    "Longer passwords",
+    "ASLR and DEP",
+    "Firewalls"
+   ],
+   "answer": 2,
+   "why": "ASLR randomises memory locations and DEP stops code running from data areas."
+  },
+  {
+   "q": "What does ASLR do?",
+   "options": [
+    "Compresses memory",
+    "Encrypts memory",
+    "Logs memory access",
+    "Randomises where code and data are loaded in memory"
+   ],
+   "answer": 3,
+   "why": "Attackers can't easily predict addresses to jump to."
+  },
+  {
+   "q": "What does DEP (data execution prevention) do?",
+   "options": [
+    "Deletes temp files",
+    "Marks memory areas as non-executable so injected data can't run as code",
+    "Encrypts disks",
+    "Prevents data loss"
+   ],
+   "answer": 1,
+   "why": "Many exploits fail when they can't execute from the stack or heap."
+  },
+  {
+   "q": "What is privilege escalation in a vulnerability report?",
+   "options": [
+    "A new account",
+    "A user being promoted",
+    "An admin password change",
+    "A flaw that lets a user gain higher permissions than intended"
+   ],
+   "answer": 3,
+   "why": "Local escalation flaws turn limited access into full control."
+  },
+  {
+   "q": "What is a race condition vulnerability?",
+   "options": [
+    "A slow network",
+    "A flaw where timing between operations can be exploited",
+    "A DDoS",
+    "Two users with one password"
+   ],
+   "answer": 1,
+   "why": "Checks and actions that aren't atomic can be manipulated in between."
+  },
+  {
+   "q": "What is an end-of-life system's main risk?",
+   "options": [
+    "It runs faster",
+    "It uses less power",
+    "No security updates, so known vulnerabilities stay open",
+    "It has no users"
+   ],
+   "answer": 2,
+   "why": "Replacement or strong isolation is needed."
+  },
+  {
+   "q": "What is the main purpose of vulnerability scan credentials?",
+   "options": [
+    "Speeding up the network",
+    "Bypassing the firewall",
+    "Encrypting the scan",
+    "Letting the scanner log in to check installed software and settings accurately"
+   ],
+   "answer": 3,
+   "why": "Credentialed scans find far more and produce fewer false positives."
+  },
+  {
+   "q": "Why should scanner accounts be tightly controlled?",
+   "options": [
+    "They have no permissions",
+    "They are never used",
+    "They often have broad privileges that attackers would value",
+    "They are public"
+   ],
+   "answer": 2,
+   "why": "Compromised scanner credentials could give wide access."
+  },
+  {
+   "q": "Why might a scan report show far fewer vulnerabilities than expected on a server?",
+   "options": [
+    "The server has no IP",
+    "The scanner is new",
+    "The scan ran without credentials or was blocked by a firewall",
+    "The server is perfectly secure"
+   ],
+   "answer": 2,
+   "why": "Reviewing scan coverage and authentication status avoids false reassurance."
+  },
+  {
+   "q": "What does a 'plugin' mean in scanners like Nessus?",
+   "options": [
+    "A check for a specific vulnerability or configuration issue",
+    "A browser extension",
+    "A user account",
+    "A hardware add-on"
+   ],
+   "answer": 0,
+   "why": "Scanners use thousands of plugins, which must be kept updated."
+  },
+  {
+   "q": "Why keep vulnerability scanner signatures updated?",
+   "options": [
+    "To speed up the network",
+    "To reduce licence costs",
+    "So new vulnerabilities are detected",
+    "To change the UI"
+   ],
+   "answer": 2,
+   "why": "Outdated scanners miss newly disclosed flaws."
+  },
+  {
+   "q": "What does a high number of 'informational' findings in a scan usually mean?",
+   "options": [
+    "Critical risks",
+    "Details about the system that aren't vulnerabilities themselves",
+    "Malware infections",
+    "Scan errors"
+   ],
+   "answer": 1,
+   "why": "Informational items, such as open ports or OS versions, give context."
+  },
+  {
+   "q": "What does a recurring vulnerability that reappears after patching suggest?",
+   "options": [
+    "The vulnerability is fake",
+    "Systems are being rebuilt from an outdated image or the patch is being rolled back",
+    "The scanner is broken",
+    "Patching works perfectly"
+   ],
+   "answer": 1,
+   "why": "Fixing the golden image stops the issue returning."
+  },
+  {
+   "q": "What is the best way to verify that a vulnerability was remediated?",
+   "options": [
+    "Ask the system owner",
+    "Wait for an attack",
+    "Rescan the affected system",
+    "Check the ticket status only"
+   ],
+   "answer": 2,
+   "why": "Validation scanning confirms the fix actually worked."
+  },
+  {
+   "q": "What is risk acceptance in vulnerability management?",
+   "options": [
+    "Avoiding the activity",
+    "Fixing every vulnerability immediately",
+    "Formally deciding to live with a vulnerability's risk",
+    "Transferring risk to an insurer"
+   ],
+   "answer": 2,
+   "why": "Acceptance should be documented and approved by the right authority."
+  },
+  {
+   "q": "What is risk transference?",
+   "options": [
+    "Removing the risk",
+    "Ignoring the risk",
+    "Shifting the financial impact of a risk to another party, such as through insurance",
+    "Reducing the risk with controls"
+   ],
+   "answer": 2,
+   "why": "The risk still exists, but someone else bears part of the cost."
+  },
+  {
+   "q": "What is risk avoidance?",
+   "options": [
+    "Adding controls",
+    "Stopping the activity that creates the risk",
+    "Buying insurance",
+    "Accepting the risk"
+   ],
+   "answer": 1,
+   "why": "For example, retiring an insecure service entirely."
+  },
+  {
+   "q": "What is risk mitigation?",
+   "options": [
+    "Transferring the risk",
+    "Reducing likelihood or impact with controls",
+    "Accepting the risk",
+    "Ignoring the risk"
+   ],
+   "answer": 1,
+   "why": "Patching, segmentation and monitoring are mitigation."
+  },
+  {
+   "q": "What is a security information sharing agreement?",
+   "options": [
+    "A service contract",
+    "An arrangement for organisations to share threat data under agreed terms",
+    "A privacy notice",
+    "A software licence"
+   ],
+   "answer": 1,
+   "why": "Agreements set what can be shared and how it may be used."
+  },
+  {
+   "q": "What does TLP:RED mean on shared threat intelligence?",
+   "options": [
+    "Share within your organisation",
+    "For named recipients only, not to be shared further",
+    "Share within the community",
+    "Free to share publicly"
+   ],
+   "answer": 1,
+   "why": "TLP levels are CLEAR, GREEN, AMBER and RED, from least to most restricted."
+  },
+  {
+   "q": "What does TLP:CLEAR mean?",
+   "options": [
+    "The information may be shared publicly",
+    "Only named recipients",
+    "Only the security team",
+    "Only the organisation"
+   ],
+   "answer": 0,
+   "why": "CLEAR (formerly WHITE) carries no sharing restrictions."
+  },
+  {
+   "q": "What does TLP:AMBER mean?",
+   "options": [
+    "Share only within your organisation and its clients on a need-to-know basis",
+    "Never share",
+    "Share publicly",
+    "Share with named recipients only"
+   ],
+   "answer": 0,
+   "why": "AMBER limits distribution while still allowing action within the organisation."
+  },
+  {
+   "q": "What is STIX?",
+   "options": [
+    "A malware family",
+    "A transport protocol",
+    "A structured language for describing threat intelligence",
+    "A SIEM product"
+   ],
+   "answer": 2,
+   "why": "STIX describes indicators, threat actors, campaigns and relationships."
+  },
+  {
+   "q": "What is TAXII?",
+   "options": [
+    "A malware scanner",
+    "A protocol for exchanging threat intelligence over HTTPS",
+    "A threat actor group",
+    "A firewall"
+   ],
+   "answer": 1,
+   "why": "TAXII servers and clients share STIX data automatically."
+  },
+  {
+   "q": "What is an advanced persistent threat (APT)?",
+   "options": [
+    "A single phishing email",
+    "A virus",
+    "A skilled, well-resourced attacker that maintains long-term access",
+    "A script kiddie"
+   ],
+   "answer": 2,
+   "why": "APTs pursue specific goals over months or years."
+  },
+  {
+   "q": "What is a nation-state threat actor usually motivated by?",
+   "options": [
+    "Small financial gains",
+    "Espionage, disruption or political goals",
+    "Personal fame",
+    "Curiosity"
+   ],
+   "answer": 1,
+   "why": "They have significant resources and patience."
+  },
+  {
+   "q": "What motivates organised cybercrime groups?",
+   "options": [
+    "Curiosity",
+    "Political protest",
+    "Financial profit",
+    "National defence"
+   ],
+   "answer": 2,
+   "why": "Ransomware and fraud are typical activities."
+  },
+  {
+   "q": "What motivates hacktivists?",
+   "options": [
+    "Testing software",
+    "Espionage for a government",
+    "Money",
+    "Promoting a political or social cause"
+   ],
+   "answer": 3,
+   "why": "Defacements and leaks are common hacktivist tactics."
+  },
+  {
+   "q": "What is an insider threat indicator?",
+   "options": [
+    "An employee taking leave",
+    "An employee arriving on time",
+    "An employee accessing large amounts of data unrelated to their job",
+    "An employee asking for training"
+   ],
+   "answer": 2,
+   "why": "Unusual access combined with behavioural changes warrants review."
+  },
+  {
+   "q": "What is the main goal of a phishing awareness metric like 'report rate'?",
+   "options": [
+    "Counting how many emails are sent",
+    "Measuring server uptime",
+    "Tracking payroll",
+    "Measuring how many users report suspicious emails"
+   ],
+   "answer": 3,
+   "why": "A rising report rate shows users are becoming active defenders."
+  },
+  {
+   "q": "What is the purpose of a SOC runbook?",
+   "options": [
+    "A marketing plan",
+    "Detailed operational steps for routine tasks and specific alert types",
+    "A budget",
+    "A list of staff"
+   ],
+   "answer": 1,
+   "why": "Runbooks help analysts work consistently, especially on night shifts."
+  },
+  {
+   "q": "What is process standardisation's benefit in a SOC?",
+   "options": [
+    "Lower salaries",
+    "Fewer alerts",
+    "Consistent handling of alerts regardless of which analyst responds",
+    "Faster networks"
+   ],
+   "answer": 2,
+   "why": "Standard processes also make automation easier."
+  },
+  {
+   "q": "What is the benefit of a single pane of glass in security tools?",
+   "options": [
+    "Fewer logs",
+    "Cheaper licences",
+    "Seeing data from many tools in one interface",
+    "Using one tool only"
+   ],
+   "answer": 2,
+   "why": "Consolidated views reduce time switching between consoles."
+  },
+  {
+   "q": "What does 'enrichment' mean for an alert?",
+   "options": [
+    "Adding context such as user details, asset value and threat intelligence",
+    "Encrypting the alert",
+    "Raising its priority automatically",
+    "Deleting duplicates"
+   ],
+   "answer": 0,
+   "why": "Enriched alerts are faster to triage because the context is already attached."
+  },
+  {
+   "q": "What is triage in a SOC?",
+   "options": [
+    "Quickly assessing and prioritising alerts",
+    "Writing reports",
+    "Patching systems",
+    "Hiring staff"
+   ],
+   "answer": 0,
+   "why": "Triage decides which alerts need deeper investigation first."
+  },
+  {
+   "q": "What is a tier 1 SOC analyst's main role?",
+   "options": [
+    "Monitoring alerts, initial triage and escalation",
+    "Writing malware",
+    "Approving budgets",
+    "Leading the SOC"
+   ],
+   "answer": 0,
+   "why": "Tier 2 and 3 handle deeper investigation and hunting."
+  },
+  {
+   "q": "What is the purpose of a ticketing system in incident response?",
+   "options": [
+    "Paying staff",
+    "Tracking incidents, actions and ownership",
+    "Booking travel",
+    "Scanning ports"
+   ],
+   "answer": 1,
+   "why": "Tickets create an audit trail of the response."
+  },
+  {
+   "q": "What is the 'need to know' principle?",
+   "options": [
+    "Everyone gets full access",
+    "Managers know everything",
+    "Information is public",
+    "Access to information is limited to those who require it for their work"
+   ],
+   "answer": 3,
+   "why": "Limiting who sees sensitive information reduces the chance it's exposed."
+  },
+  {
+   "q": "What is the difference between an event and an incident?",
+   "options": [
+    "An event is any observable occurrence; an incident is an event that harms or threatens security",
+    "An incident is always minor",
+    "They are the same",
+    "Events are always attacks"
+   ],
+   "answer": 0,
+   "why": "Most events are normal; few become incidents."
+  },
+  {
+   "q": "What is a security incident severity rating based on?",
+   "options": [
+    "Impact and urgency, such as data affected and systems disrupted",
+    "The analyst's mood",
+    "The number of emails",
+    "The time of day only"
+   ],
+   "answer": 0,
+   "why": "Severity drives escalation and resource allocation."
+  },
+  {
+   "q": "What is the purpose of a post-incident review timeline?",
+   "options": [
+    "Scheduling future meetings",
+    "Planning holidays",
+    "Tracking budget",
+    "Showing exactly when each event and response action happened"
+   ],
+   "answer": 3,
+   "why": "Timelines reveal delays and gaps in detection or response."
+  },
+  {
+   "q": "What is the main reason to preserve logs during an incident?",
+   "options": [
+    "They are evidence for investigation and possible legal action",
+    "To speed up servers",
+    "To slow attackers",
+    "To fill disk space"
+   ],
+   "answer": 0,
+   "why": "Normal log rotation should be suspended for relevant systems."
+  },
+  {
+   "q": "What is the danger of an analyst immediately wiping a compromised server?",
+   "options": [
+    "It makes the server faster",
+    "It's always the right choice",
+    "Evidence about how the attacker got in and what they did is lost",
+    "It fixes the root cause"
+   ],
+   "answer": 2,
+   "why": "Without evidence, the root cause may never be found."
+  },
+  {
+   "q": "What is a golden image in incident recovery?",
+   "options": [
+    "A backup of the compromised system",
+    "A screenshot of the attack",
+    "A known-good system image used to rebuild compromised machines",
+    "A logo"
+   ],
+   "answer": 2,
+   "why": "Rebuilding from a trusted image removes hidden persistence."
+  },
+  {
+   "q": "Why change credentials after an incident?",
+   "options": [
+    "Attackers may have stolen passwords, keys or tokens",
+    "Passwords expire anyway",
+    "It's a legal requirement in all cases",
+    "To speed up logins"
+   ],
+   "answer": 0,
+   "why": "Credential resets cut off attackers who kept stolen logins."
+  },
+  {
+   "q": "What is the KRBTGT account reset used for after a domain compromise?",
+   "options": [
+    "Creating new users",
+    "Resetting user passwords",
+    "Enabling MFA",
+    "Invalidating forged Kerberos golden tickets"
+   ],
+   "answer": 3,
+   "why": "It must be reset twice to fully invalidate old tickets."
+  },
+  {
+   "q": "What is a tabletop exercise's main benefit for incident response?",
+   "options": [
+    "Hiring staff",
+    "Testing plans and roles through discussion without risk to systems",
+    "Testing backups",
+    "Patching systems"
+   ],
+   "answer": 1,
+   "why": "It reveals gaps in communication and decision-making."
+  },
+  {
+   "q": "What is a full interruption test in disaster recovery?",
+   "options": [
+    "A phishing test",
+    "Reviewing documents only",
+    "A tabletop",
+    "Actually shutting down primary systems to fail over to the recovery site"
+   ],
+   "answer": 3,
+   "why": "It gives the most realistic results but carries real risk."
+  },
+  {
+   "q": "What does an analyst check to see if a file has been tampered with?",
+   "options": [
+    "Its icon",
+    "Its file name",
+    "Its size only",
+    "Its hash compared with a known-good value"
+   ],
+   "answer": 3,
+   "why": "Hashes change with any modification to the file's content."
+  },
+  {
+   "q": "What is an indicator of compromise for a known malware family?",
+   "options": [
+    "The company logo",
+    "A printer error",
+    "Its file hash, domains and registry changes",
+    "A normal login"
+   ],
+   "answer": 2,
+   "why": "IOCs let analysts search other systems for the same infection."
+  },
+  {
+   "q": "What is the main purpose of a malware analysis lab?",
+   "options": [
+    "Storing backups",
+    "Hosting websites",
+    "Writing malware",
+    "Safely studying malware in an isolated environment"
+   ],
+   "answer": 3,
+   "why": "Isolation prevents samples from spreading to real systems."
+  },
+  {
+   "q": "What is dynamic malware analysis?",
+   "options": [
+    "Reading its code without running it",
+    "Encrypting it",
+    "Deleting it",
+    "Running malware in a controlled environment to observe its behaviour"
+   ],
+   "answer": 3,
+   "why": "It shows network connections, file changes and processes."
+  },
+  {
+   "q": "What is reverse engineering of malware?",
+   "options": [
+    "Writing new malware",
+    "Analysing compiled code to understand how it works",
+    "Encrypting files",
+    "Patching software"
+   ],
+   "answer": 1,
+   "why": "Disassemblers and debuggers reveal functionality hidden in binaries."
+  },
+  {
+   "q": "What does packing do to malware?",
+   "options": [
+    "Speeds it up",
+    "Deletes it",
+    "Signs it",
+    "Compresses or encrypts it to hide its real code from scanners"
+   ],
+   "answer": 3,
+   "why": "Packed samples must be unpacked before deep analysis."
+  },
+  {
+   "q": "What is polymorphic malware?",
+   "options": [
+    "A harmless program",
+    "Malware that changes its code each time it spreads to avoid signature detection",
+    "A firewall",
+    "Malware that only runs once"
+   ],
+   "answer": 1,
+   "why": "Behaviour-based detection is needed because hashes keep changing."
+  },
+  {
+   "q": "What is a supply chain attack in a SOC report?",
+   "options": [
+    "Compromise through a trusted vendor's software or service",
+    "A stolen delivery truck",
+    "A phishing email",
+    "A brute-force attack"
+   ],
+   "answer": 0,
+   "why": "Trusted updates or integrations can carry malware into many organisations."
+  },
+  {
+   "q": "What is the main reason to monitor third-party access?",
+   "options": [
+    "It's cheaper",
+    "To speed up support",
+    "Vendors are always malicious",
+    "Vendors with access can be a path into your network"
+   ],
+   "answer": 3,
+   "why": "Many breaches start with a compromised supplier account."
+  },
+  {
+   "q": "What is a security baseline deviation alert?",
+   "options": [
+    "A disk space alert",
+    "An alert when a system's configuration differs from the approved standard",
+    "A user login alert",
+    "A network speed alert"
+   ],
+   "answer": 1,
+   "why": "Deviations may indicate tampering or misconfiguration."
+  },
+  {
+   "q": "What is the purpose of honeynets for threat intelligence?",
+   "options": [
+    "Backing up data",
+    "Hosting real services",
+    "Observing attacker techniques in a controlled environment",
+    "Speeding up the network"
+   ],
+   "answer": 2,
+   "why": "Captured behaviour provides fresh intelligence on tools and methods."
+  },
+  {
+   "q": "What does 'beacon jitter' mean in C2 traffic?",
+   "options": [
+    "A Wi-Fi channel change",
+    "Network latency",
+    "A broken cable",
+    "Random variation added to check-in timing to avoid detection"
+   ],
+   "answer": 3,
+   "why": "Jitter makes beacons look less regular, but statistical analysis can still find them."
+  },
+  {
+   "q": "What does a large number of DNS TXT record queries to one domain suggest?",
+   "options": [
+    "Normal email delivery",
+    "Possible DNS tunnelling",
+    "Website browsing",
+    "Printer discovery"
+   ],
+   "answer": 1,
+   "why": "TXT records can carry arbitrary data, making them useful for covert channels."
+  },
+  {
+   "q": "What does an analyst check to identify a newly registered domain?",
+   "options": [
+    "The domain's colour scheme",
+    "The TLS version",
+    "WHOIS creation date",
+    "The website's language"
+   ],
+   "answer": 2,
+   "why": "Very new domains are frequently used in phishing and malware."
+  },
+  {
+   "q": "What is passive DNS?",
+   "options": [
+    "Historical records of which domains resolved to which IPs over time",
+    "Encrypted DNS",
+    "A DNS firewall",
+    "Turning off DNS"
+   ],
+   "answer": 0,
+   "why": "It helps link malicious domains that share infrastructure."
+  },
+  {
+   "q": "What is certificate transparency useful for in threat hunting?",
+   "options": [
+    "Revoking certificates",
+    "Finding newly issued certificates for lookalike domains",
+    "Encrypting traffic",
+    "Speeding up TLS"
+   ],
+   "answer": 1,
+   "why": "Public CT logs reveal certificates attackers create for phishing sites."
+  },
+  {
+   "q": "What does geolocation of an IP address help an analyst assess?",
+   "options": [
+    "Whether a login comes from an expected location",
+    "The device's OS",
+    "The user's password",
+    "The data's sensitivity"
+   ],
+   "answer": 0,
+   "why": "Logins from unexpected countries may indicate compromise, though VPNs can skew results."
+  },
+  {
+   "q": "What is the main limitation of IP geolocation?",
+   "options": [
+    "It's always exact",
+    "VPNs and proxies can make traffic appear to come from elsewhere",
+    "It only works for IPv6",
+    "It shows the user's name"
+   ],
+   "answer": 1,
+   "why": "Geolocation is a useful clue, but VPNs and proxies mean it isn't proof."
+  },
+  {
+   "q": "What is a playbook for ransomware likely to include first?",
+   "options": [
+    "Isolating affected systems to stop the spread",
+    "Deleting backups",
+    "Notifying the attacker",
+    "Paying the ransom"
+   ],
+   "answer": 0,
+   "why": "Containment comes before eradication and recovery."
+  },
+  {
+   "q": "Why should backups be checked before restoring after ransomware?",
+   "options": [
+    "They may contain dormant malware or be encrypted too",
+    "To save storage",
+    "Backups never work",
+    "It's faster to rebuild"
+   ],
+   "answer": 0,
+   "why": "Restoring infected backups would bring the attacker straight back."
+  },
+  {
+   "q": "What is the main purpose of an incident response retainer?",
+   "options": [
+    "An insurance claim",
+    "Pre-arranged access to outside experts when a major incident occurs",
+    "A hardware warranty",
+    "A fee for antivirus"
+   ],
+   "answer": 1,
+   "why": "Retainers avoid delays negotiating contracts during a crisis."
+  },
+  {
+   "q": "What is the role of cyber insurance in incident response?",
+   "options": [
+    "It encrypts data",
+    "It prevents attacks",
+    "It may cover costs and require specific notification and response steps",
+    "It replaces the IR team"
+   ],
+   "answer": 2,
+   "why": "Policies often require notifying the insurer early and using approved firms."
+  },
+  {
+   "q": "What is a key difference between compliance and security?",
+   "options": [
+    "They are identical",
+    "Security is optional",
+    "Compliance always means secure",
+    "Compliance meets specific requirements; security addresses actual risk, which may need more"
+   ],
+   "answer": 3,
+   "why": "Being compliant doesn't guarantee being secure against current threats."
+  },
+  {
+   "q": "What is the main purpose of SOC 2 reports?",
+   "options": [
+    "Providing independent assurance about a service provider's controls",
+    "Tracking incidents",
+    "Listing vulnerabilities",
+    "Training staff"
+   ],
+   "answer": 0,
+   "why": "Customers use them to assess vendors' security."
+  },
+  {
+   "q": "What does a vulnerability's 'exploitability' mean in prioritisation?",
+   "options": [
+    "How expensive the patch is",
+    "How many users it affects",
+    "How old it is",
+    "How easily and likely attackers can use it"
+   ],
+   "answer": 3,
+   "why": "Exploit code being public or used in the wild raises priority."
+  },
+  {
+   "q": "What does asset criticality mean in vulnerability prioritisation?",
+   "options": [
+    "How many users log in",
+    "How old the system is",
+    "How important the system is to the business",
+    "How fast the system is"
+   ],
+   "answer": 2,
+   "why": "Flaws on crucial systems, such as payment servers, get fixed first."
+  },
+  {
+   "q": "What is the purpose of a remediation SLA?",
+   "options": [
+    "Setting salaries",
+    "Setting meeting times",
+    "Setting deadlines to fix vulnerabilities by severity",
+    "Setting uptime targets"
+   ],
+   "answer": 2,
+   "why": "For example, critical issues within 7 days and high within 30."
+  },
+  {
+   "q": "What is configuration compliance scanning?",
+   "options": [
+    "Scanning for malware",
+    "Checking systems against required settings such as benchmarks or policies",
+    "Checking user passwords",
+    "Testing backups"
+   ],
+   "answer": 1,
+   "why": "It finds weak settings even when software is fully patched."
+  },
+  {
+   "q": "What is the danger of scanning during peak business hours?",
+   "options": [
+    "Scans can slow or disrupt production systems",
+    "Nothing",
+    "Scans are illegal then",
+    "Scans are more accurate then"
+   ],
+   "answer": 0,
+   "why": "Scheduling scans in quieter windows reduces impact."
+  },
+  {
+   "q": "What is scan scope?",
+   "options": [
+    "The report format",
+    "The set of systems and checks included in a scan",
+    "The scan's speed",
+    "The scanner's brand"
+   ],
+   "answer": 1,
+   "why": "Clear scope avoids scanning systems you're not authorised to test."
+  },
+  {
+   "q": "What is a scan exclusion?",
+   "options": [
+    "A missing patch",
+    "Systems deliberately left out of scanning, such as fragile devices",
+    "A scan error",
+    "A false positive"
+   ],
+   "answer": 1,
+   "why": "Exclusions should be documented and reviewed, since unscanned systems carry hidden risk."
+  },
+  {
+   "q": "What is a vulnerability feed?",
+   "options": [
+    "A regularly updated source of new vulnerability information",
+    "A malware sample",
+    "A social media account",
+    "A firewall rule"
+   ],
+   "answer": 0,
+   "why": "Feeds from vendors, CISA and NVD keep teams informed."
+  },
+  {
+   "q": "What is the NVD?",
+   "options": [
+    "A threat actor",
+    "The US National Vulnerability Database, which enriches CVEs with scores and details",
+    "A firewall vendor",
+    "A malware database"
+   ],
+   "answer": 1,
+   "why": "NVD adds CVSS scores and affected product information to CVEs."
+  },
+  {
+   "q": "What is a CWE?",
+   "options": [
+    "A category of software weakness, such as improper input validation",
+    "A firewall",
+    "A specific vulnerability ID",
+    "A malware family"
+   ],
+   "answer": 0,
+   "why": "CVEs are specific instances; CWEs describe the underlying weakness types."
+  },
+  {
+   "q": "What is the difference between a CVE and an exploit?",
+   "options": [
+    "A CVE identifies a vulnerability; an exploit is code that takes advantage of it",
+    "An exploit is a patch",
+    "They are the same",
+    "A CVE is malware"
+   ],
+   "answer": 0,
+   "why": "Many CVEs never get public exploits, which affects priority."
   }
  ]
 }
