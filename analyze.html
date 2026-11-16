@@ -128,7 +128,7 @@
       <section class="panel" id="ioc" aria-labelledby="ioc-h">
         <span class="num" aria-hidden="true"></span>
         <h2 id="ioc-h">IOC extractor</h2>
-        <p class="hint">Paste an email, report or log (up to 500 KB). Defanged indicators are refanged first. Private IPs and internal names are left out, with a count of what was dropped.</p>
+        <p class="hint">Paste an email, report or log (up to 500 KB). Defanged indicators are refanged first. Private IPs and internal names are left out, with a count of what was dropped. In log mode, Apache/nginx access logs and Linux SSH login logs (auth.log, secure) also get a summary.</p>
         <form id="ioc-form" autocomplete="off">
           <label for="ioc-input" class="visually-hidden">Text to scan</label>
           <textarea id="ioc-input" class="tall" spellcheck="false" placeholder="Paste text here"></textarea>
@@ -136,6 +136,7 @@
             <label class="inline"><input id="ioc-log" type="checkbox"> Log mode</label>
             <button type="submit">Extract</button>
             <button type="button" id="ioc-clear" class="secondary">Clear</button>
+            <button type="button" id="ioc-sample" class="secondary">Try a sample SSH log</button>
           </div>
           <div id="ioc-filter-row" class="row" hidden>
             <label for="ioc-filter" class="visually-hidden">Only lines containing</label>
