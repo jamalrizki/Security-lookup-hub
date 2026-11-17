@@ -17,6 +17,7 @@
     { "id": "file", "name": "File analyzer", "href": "./analyze.html#file", "about": "Hashes, real file type and strings of a file" },
     { "id": "subnet", "name": "Subnet calculator", "href": "./analyze.html#subnet", "about": "IPv4/IPv6 network ranges; is an IP in a range" },
     { "id": "study", "name": "Study", "href": "./study.html", "about": "Exam practice questions, ports and acronyms quizzes" },
+    { "id": "risk-practice", "name": "Risk math practice", "href": "./study.html#risk-practice", "about": "SLE, ARO, ALE and control-value practice, graded in code" },
     { "id": "subnet-practice", "name": "Subnetting practice", "href": "./analyze.html#subnet-practice", "about": "Subnetting practice questions, checked in code" },
     { "id": "cert", "name": "Certificate viewer", "href": "./analyze.html#cert", "about": "Read a PEM or DER certificate: names, dates, key" },
     { "id": "nmap", "name": "Nmap viewer", "href": "./analyze.html#nmap", "about": "Table of hosts, ports and services from Nmap XML" },
