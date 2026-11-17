@@ -1,9 +1,11 @@
 // Study page: practice questions by exam (data/study.json), plus the ports and
-// acronyms quizzes, which use the same lists as the Reference page's lookups.
+// acronyms quizzes, which use the same lists as the Reference page's lookups,
+// and the risk math quiz (js/risk-drill.js), which needs no data file.
 // Everything is graded in code and shown as text; nothing is saved or sent.
 
 import { startPortsDrill } from './ports-drill.js';
 import { startAcronymsDrill } from './acronyms-drill.js';
+import { startRiskDrill } from './risk-drill.js';
 
 export const OPTIONS = 4;
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -170,7 +172,7 @@ if (globalThis.document?.getElementById('study-exams')) {
   };
 
   const openFromHash = () => {
-    const target = /^#(exam-[a-z-]+|ports-practice|acronyms-practice)$/.test(location.hash) ? $(location.hash.slice(1)) : null;
+    const target = /^#(exam-[a-z-]+|ports-practice|acronyms-practice|risk-practice)$/.test(location.hash) ? $(location.hash.slice(1)) : null;
     if (!target) return;
     target.setAttribute('open', '');
     target.ensureLoaded?.();
@@ -200,6 +202,7 @@ if (globalThis.document?.getElementById('study-exams')) {
   }).catch((err) => {
     $('pdrill-result').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the port list: ${err.message}`));
   });
+  startRiskDrill({ el, $ });
   load('data/acronyms.json').then((data) => {
     startAcronymsDrill(data.acronyms || [], { el, $, showInList: (acronym) => { location.href = `./reference.html#acronyms=${encodeURIComponent(acronym)}`; } });
   }).catch((err) => {

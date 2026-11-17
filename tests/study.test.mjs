@@ -108,7 +108,7 @@ test('page: one closed panel per exam with its count; no question file loads unt
   const { requests, $, doc } = await loadPage();
   assert.deepEqual(requests.sort(), ['data/acronyms.json', 'data/ports.json', 'data/study.json']);
   const panels = doc.querySelectorAll('details.exam');
-  assert.deepEqual(panels.map((p) => p.id), [...DATA.exams.map((e) => `exam-${e.id}`), 'ports-practice', 'acronyms-practice']);
+  assert.deepEqual(panels.map((p) => p.id), [...DATA.exams.map((e) => `exam-${e.id}`), 'ports-practice', 'acronyms-practice', 'risk-practice']);
   assert.ok(panels.every((p) => !p.hasAttribute('open')), 'closed until picked');
   assert.equal(panels[0].querySelector('summary').textContent, `Security+${FIRST.length} questions`);
   assert.equal(panels[0].querySelectorAll('li.qa-card').length, 0, 'nothing rendered before opening');
