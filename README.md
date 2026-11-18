@@ -48,6 +48,7 @@ Ask, an AI chat for security questions, on the home page; one Lookup box for a h
 | Extra | Reference: "Ports practice" (`#ports-practice`, under the ports list): random questions (which port, what runs there, TCP/UDP/both, the encrypted version) built from `data/ports.json` and graded in code; "Exam ports only" on by default | Built (Nov 4, 2026) |
 | Extra | Ask home: "Not sure something is safe?" links for beginners under the example questions (link, text or email, file, leaked password, already clicked or paid), each to the hub's own check; static links, nothing sent | Built (Nov 7, 2026), not published |
 | Extra | Reference: "Windows event IDs" (`#events`): 39 Windows Security log events (Microsoft's titles, a plain sentence, why it matters, a Microsoft Learn link), the nine logon types and 12 failure status codes for 4625; searched in code; `[[events]]` for Ask | Built (Nov 15, 2026), not deployed |
+| Extra | Reference: "What does this standard ask for?" (`#standards`): NIST CSF 2.0 (6 functions, 22 categories) and CIS Controls v8.1 (18 controls), each with a plain sentence written for the hub, "show an auditor", and links to the hub tools that help; official pages linked; searched in code (`CIS 7`, `PR.AA`, `logging`). PCI DSS, SOC 2 and ISO/IEC 27001 in a later slice | Built (Nov 18, 2026) |
 | Extra | Ask points to the scam message check: the screenshot rule now also covers a pasted or described email or text and links [[message]] (+65 prompt characters); beginner eval q21 (a pasted delivery text) must link it | Built (Nov 5, 2026), needs a Worker deploy |
 | Extra | Reference: "Acronyms practice" (`#acronyms-practice`, under the acronym list): multiple-choice questions (what an acronym stands for, or which acronym a plain sentence describes) built from `data/acronyms.json` and graded in code | Built (Nov 6, 2026) |
 | Extra | **Study** tab (`study.html`): practice questions by exam in an accordion (Security+, Network+, CySA+, PenTest+ and general Linux, multiple choice graded in code; RHCSA as hands-on task cards), ten at a time with Previous / Next / Shuffle; the banks are written from the library's study guides and practice-test books by `rag/make_questions.mjs`; the ports and acronyms quizzes are accordion panels here too (old `reference.html#ports-practice` and `#acronyms-practice` links are forwarded) | Built (Nov 15, 2026) |
@@ -306,6 +307,16 @@ Below "Where to start", `reference.html#what-now` has one card per thing that al
 - Four options, exactly one right, with the answer's position shuffled. Wrong options are other entries from the list; for "stands for" questions, acronyms starting with the same letter come first so the letters alone don't give it away.
 - A wrong option is never another meaning of the same acronym (CSP, MAC, PAM, SOC; the question says when an acronym has several), and never a close neighbour whose sentence would also fit (`CONFUSABLE` in `js/acronyms-drill.js`: 2FA/MFA, OTP/TOTP, DoS/DDoS, IDS/HIDS, EDR/XDR, SSL/TLS/HTTPS…). A sentence that names its own acronym (ARP, SSL, SOC 2) is never used for a "which acronym" question.
 - Grading is by option index, in code, with no AI; only the first pick on a question counts and the options lock after it. The session score lives in a page variable only (no storage); revealed answers don't score. Code: `js/acronyms-drill.js` (DOM-free apart from `startAcronymsDrill`), tests: `tests/acronyms-drill.test.mjs`.
+
+## Reference: what does this standard ask for?
+
+`reference.html#standards` answers "the customer asks if we follow CIS Control 7 / NIST CSF Protect: what does that mean, and what would we show?" for compliance and vendor-review staff, managers and sysadmins filling in a security questionnaire, and for Security+, CySA+, CISSP and CISM students drilling framework structure. Type a CIS number (`7`, `CIS 7`, `control 7`), a CSF code (`PR`, `PR.AA`, `PR.AA-01`), a framework (`cis`, `nist csf`) or a word (`logging`, `password`, `patch`, `supply chain`). The full list shows when the box is empty.
+
+- The data is `data/standards.json`: NIST CSF 2.0's six functions with their 22 categories, and the 18 CIS Controls v8.1. Names were checked against the official pages on Nov 18, 2026. The plain sentence and the "show an auditor" line are our own words, never the framework's text (some framework wording is licensed); each framework links to its official page (`www.nist.gov`, `www.cisecurity.org` only, re-checked by `standardUrl()` when rendering). "On this hub" links go to the hub tool that helps (CIS 7 → patch priority list, CIS 8 → Windows event IDs and log mode, CIS 9 → email-header analyzer).
+- Search is in code (`js/standards.js`, DOM-free): numbers 1 to 18 are CIS controls (others say there are 18); a CSF function or category code finds the function and highlights the category (an unknown category says so); words of 3+ characters rank the name first, then search words, then CSF category names, then the plain sentence, then the auditor line.
+- `reference.html#standards=logging` (or `#standards=cis-7`) opens the section with that value filled in.
+- `tests/standards.test.mjs` checks the shape, the six functions and 22 categories in order, all 18 CIS names, every hub link's page and anchor, the official-link host check, and the search rules. Ask has no `[[standards]]` link yet (that would add a `hub-features.json` entry to the prompt, a separate decision).
+- Next slice: PCI DSS v4.0 (12 requirements), SOC 2 Trust Services Criteria (5 categories), ISO/IEC 27001:2022 Annex A (4 themes).
 
 ## Analyze tools
 
@@ -612,6 +623,7 @@ js/what-now.js   link checks for the "What to do now" cards (DOM-free, tested in
 js/ports.js      "Ports and protocols" search and checks (DOM-free, tested in Node)
 js/acronyms.js   "Security acronyms" search and checks (DOM-free, tested in Node)
 js/events.js     "Windows event IDs" search and Microsoft link checks (DOM-free, tested in Node)
+js/standards.js  "What does this standard ask for?" search and link checks (DOM-free, tested in Node)
 js/acronyms-drill.js   "Acronyms practice" quiz: questions, options and grading from data/acronyms.json (tested in Node)
 js/actors.js     Threat actors page rendering
 js/config.js     Worker URL (local or deployed)
@@ -631,6 +643,7 @@ data/ports.json       common ports and protocols for the Reference page
 data/acronyms.json    security acronyms for the Reference page
 data/study.json       Study page exam list; data/study/<exam>.json hold the questions (written by rag/make_questions.mjs)
 data/events.json      Windows Security log event IDs, logon types and 4625 status codes for the Reference page
+data/standards.json   NIST CSF 2.0 functions and categories, CIS Controls v8.1, in plain words, for the Reference page
 data/exposure.json    My exposure sections: why, steps, outside links (fixed text)
 data/actors.json      generated threat-actor extract (do not edit by hand)
 data/public_suffix_list.dat   bundled Public Suffix List (refresh steps above)

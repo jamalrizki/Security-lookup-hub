@@ -27,7 +27,7 @@
   <script type="module" src="js/chrome.js?v=a86f7c4c00"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26NLWZWCNN"></script>
   <script src="js/analytics.js?v=b808e532a7"></script>
-  <link rel="stylesheet" href="css/style.css?v=783ac45dcf">
+  <link rel="stylesheet" href="css/style.css?v=95a4f27475">
   <script src="js/nav.js?v=96e9c81ac7"></script>
   <script type="module" src="js/reference.js"></script>
 </head>
@@ -119,6 +119,17 @@
       <div id="events-list"></div>
       <details class="meaning"><summary>Logon types (4624, 4625)</summary><div id="events-logon-types"></div></details>
       <details class="meaning"><summary>4625 failure status codes</summary><div id="events-status-codes"></div></details>
+    </section>
+
+    <section id="standards" class="search-block" aria-labelledby="standards-h">
+      <h2 id="standards-h">What does this standard ask for?</h2>
+      <p class="hint">A questionnaire asks if you follow CIS Control 7 or NIST CSF Protect? Type a number (CIS 7, PR.AA) or a word (logging, password, patch). Each part has a plain sentence written for this hub (not the framework's own text), what you would show an auditor, and the hub tools that help. The official pages are linked below.</p>
+      <div class="filters">
+        <input id="standards-filter" type="search" inputmode="search" maxlength="60" placeholder="Number or word, e.g. CIS 8, PR.AA, logging" aria-label="Find a part of a security standard">
+      </div>
+      <p id="standards-count" class="small hint" aria-live="polite"></p>
+      <div id="standards-list"></div>
+      <details class="meaning"><summary>The frameworks and their official pages</summary><div id="standards-sources"></div></details>
     </section>
 
     <p class="hint">Looking for what a tool does? See the <a href="tools.html">tools glossary</a>.</p>
