@@ -4,6 +4,7 @@ import { guidanceUrl, isHubHref } from './what-now.js';
 import { searchPorts, portLabel, secureVersions } from './ports.js';
 import { searchAcronyms } from './acronyms.js';
 import { searchEvents, eventDocUrl, eventPageId } from './events.js';
+import { searchStandards, standardUrl, standardKey } from './standards.js';
 
 // The ports and acronyms quizzes moved to the Study page; old links to them still work.
 if (location.hash === '#ports-practice' || location.hash === '#acronyms-practice') location.replace(`./study.html${location.hash}`);
@@ -293,6 +294,79 @@ async function loadEvents() {
 }
 
 loadEvents();
+
+// "What does this standard ask for?": data/standards.json, searched in code (js/standards.js).
+// A word or number from the address (#standards=logging, #standards=cis-7) fills the box.
+let standards = null;
+
+function standardRow(item, category) {
+  const fw = standards.frameworks.find((f) => f.id === item.framework);
+  const desc = [item.plain, ' ', el('strong', {}, 'Show an auditor: '), item.evidence];
+  if (item.categories?.length) {
+    const cats = [];
+    item.categories.forEach((c, n) => {
+      if (n) cats.push(' · ');
+      cats.push(category && c.code === category.code ? el('strong', {}, `${c.code} ${c.name}`) : `${c.code} ${c.name}`);
+    });
+    desc.push(el('span', { class: 'small hint std-line' }, 'Categories: ', ...cats));
+  }
+  const hub = (item.hub || []).filter((h) => isHubHref(h.href));
+  if (hub.length) {
+    const links = [];
+    hub.forEach((h, n) => {
+      if (n) links.push(' · ');
+      links.push(el('a', { href: h.href }, h.label));
+    });
+    desc.push(el('span', { class: 'small std-line' }, 'On this hub: ', ...links));
+  }
+  return el('li', { class: 'ref-row' },
+    el('span', { class: 'ref-key' }, standardKey(item)),
+    el('span', { class: 'ref-name' }, item.name, el('span', { class: 'hint' }, ` ${fw ? fw.name : ''}`)),
+    el('span', { class: 'ref-desc' }, ...desc));
+}
+
+function renderStandards() {
+  const r = searchStandards(standards, $('standards-filter').value);
+  const n = r.items.length;
+  if (r.kind === 'all') {
+    $('standards-count').textContent = `${standards.frameworks.length} frameworks, ${n} parts. Type a word (logging, password, patch) or a number (CIS 7, PR.AA) to narrow.`;
+  } else {
+    $('standards-count').textContent = r.error || (n ? `${n} ${n === 1 ? 'match' : 'matches'}.` : '');
+  }
+  const parts = [];
+  if (n) parts.push(el('ul', { class: 'rows' }, ...r.items.map((i) => standardRow(i, r.category))));
+  else if (!r.error) parts.push(el('p', { class: 'empty' }, 'Nothing in these frameworks matches. Try a shorter word, or check the official pages below.'));
+  $('standards-list').replaceChildren(...parts);
+}
+
+async function loadStandards() {
+  try {
+    const res = await fetch('data/standards.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    standards = await res.json();
+    $('standards-sources').replaceChildren(el('ul', { class: 'rows' }, ...standards.frameworks.map((f) => {
+      const href = standardUrl(f.url);
+      return el('li', { class: 'ref-row' },
+        el('span', { class: 'ref-key' }, f.id.toUpperCase()),
+        el('span', { class: 'ref-name' }, href ? el('a', { href, target: '_blank', rel: 'noopener noreferrer' }, f.name) : f.name,
+          el('span', { class: 'hint' }, ` ${f.by}`)),
+        el('span', { class: 'ref-desc' }, f.about));
+    })));
+    const m = location.hash.match(/^#standards=([A-Za-z0-9%. -]{1,60})$/);
+    if (m) {
+      let q = m[1];
+      try { q = decodeURIComponent(q); } catch { /* keep as typed */ }
+      $('standards-filter').value = q.replace(/-/g, ' ').slice(0, 60);
+      $('standards').scrollIntoView();
+    }
+    $('standards-filter').addEventListener('input', renderStandards);
+    renderStandards();
+  } catch (err) {
+    $('standards-list').replaceChildren(el('p', { class: 'notice warn' }, `Could not load the standards list: ${err.message}`));
+  }
+}
+
+loadStandards();
 
 try {
   const res = await fetch('data/reference.json');

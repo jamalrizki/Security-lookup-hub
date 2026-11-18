@@ -1,0 +1,246 @@
+{
+  "_about": "Reference page, \"What does this standard ask for?\" (#standards): the top-level parts of security frameworks, each with the official short name, a plain sentence and \"what you'd show an auditor\" written for the hub (our own words, never the framework's text, since some framework wording is licensed), and links to hub tools that help. Names were checked against the official pages on Nov 18, 2026 (NIST CSF 2.0 functions and categories; CIS Controls v8.1 list). Official pages are linked, never copied. tests/standards.test.mjs checks the shape. First slice: NIST CSF 2.0 and CIS Controls v8.1; PCI DSS, SOC 2 and ISO/IEC 27001 come later.",
+  "frameworks": [
+    {
+      "id": "csf",
+      "name": "NIST Cybersecurity Framework (CSF) 2.0",
+      "by": "NIST (US)",
+      "about": "Free, voluntary framework from the US National Institute of Standards and Technology. Six functions describe what a security programme does; each splits into categories (GV.OC, PR.AA…).",
+      "url": "https://www.nist.gov/cyberframework"
+    },
+    {
+      "id": "cis",
+      "name": "CIS Critical Security Controls v8.1",
+      "by": "Center for Internet Security",
+      "about": "18 prioritised controls, each a group of concrete safeguards. Often used as a practical checklist and in security questionnaires (\"do you follow CIS 7?\").",
+      "url": "https://www.cisecurity.org/controls/cis-controls-list"
+    }
+  ],
+  "items": [
+    {
+      "framework": "csf", "num": "GV", "name": "Govern",
+      "plain": "Leadership sets the security strategy, policy, roles and risk appetite, checks they are followed, and manages risk from suppliers.",
+      "evidence": "A signed security policy, named owners for security roles, a risk register, and records of leadership reviewing them.",
+      "tags": ["policy", "governance", "risk", "supply chain", "supplier", "vendor", "roles", "leadership", "board"],
+      "categories": [
+        { "code": "GV.OC", "name": "Organizational Context" },
+        { "code": "GV.RM", "name": "Risk Management Strategy" },
+        { "code": "GV.RR", "name": "Roles, Responsibilities, and Authorities" },
+        { "code": "GV.PO", "name": "Policy" },
+        { "code": "GV.OV", "name": "Oversight" },
+        { "code": "GV.SC", "name": "Cybersecurity Supply Chain Risk Management" }
+      ],
+      "hub": []
+    },
+    {
+      "framework": "csf", "num": "ID", "name": "Identify",
+      "plain": "Know what you have and what could go wrong: hardware, software, data and services, the risks to them, and what to improve.",
+      "evidence": "Current asset and software inventories, a risk assessment, and a list of known vulnerabilities with planned fixes.",
+      "tags": ["inventory", "asset", "risk assessment", "vulnerability", "vulnerabilities", "improvement"],
+      "categories": [
+        { "code": "ID.AM", "name": "Asset Management" },
+        { "code": "ID.RA", "name": "Risk Assessment" },
+        { "code": "ID.IM", "name": "Improvement" }
+      ],
+      "hub": [
+        { "label": "Read Nmap scan results (what's on the network)", "href": "./analyze.html#nmap" },
+        { "label": "Exploited in my products (CISA KEV)", "href": "./cves.html#kev" }
+      ]
+    },
+    {
+      "framework": "csf", "num": "PR", "name": "Protect",
+      "plain": "Safeguards that stop incidents: sign-in and access control, training, data protection, secure and patched systems, and resilient infrastructure.",
+      "evidence": "Access reviews, MFA settings, training records, encryption settings, hardening baselines and patch reports.",
+      "tags": ["password", "mfa", "access control", "authentication", "training", "encryption", "patch", "patching", "hardening", "backup"],
+      "categories": [
+        { "code": "PR.AA", "name": "Identity Management, Authentication, and Access Control" },
+        { "code": "PR.AT", "name": "Awareness and Training" },
+        { "code": "PR.DS", "name": "Data Security" },
+        { "code": "PR.PS", "name": "Platform Security" },
+        { "code": "PR.IR", "name": "Technology Infrastructure Resilience" }
+      ],
+      "hub": [
+        { "label": "Check a password against known breaches", "href": "./lookup.html#password" },
+        { "label": "Patch priority list", "href": "./cves.html#priority" }
+      ]
+    },
+    {
+      "framework": "csf", "num": "DE", "name": "Detect",
+      "plain": "Watch systems, networks and accounts so attacks and other problems are noticed quickly, and analyse odd events to decide if they are incidents.",
+      "evidence": "Log collection and alert rules, monitoring coverage, and records showing alerts were reviewed.",
+      "tags": ["logging", "logs", "monitoring", "siem", "alert", "alerts", "detection"],
+      "categories": [
+        { "code": "DE.CM", "name": "Continuous Monitoring" },
+        { "code": "DE.AE", "name": "Adverse Event Analysis" }
+      ],
+      "hub": [
+        { "label": "Windows event IDs", "href": "./reference.html#events" },
+        { "label": "IOC extractor and log mode", "href": "./analyze.html#ioc" }
+      ]
+    },
+    {
+      "framework": "csf", "num": "RS", "name": "Respond",
+      "plain": "When an incident is found, manage it: triage, investigate, contain it, and tell the people who need to know.",
+      "evidence": "An incident response plan, incident tickets or reports, and records of who was notified and when.",
+      "tags": ["incident", "incident response", "containment", "notification", "breach"],
+      "categories": [
+        { "code": "RS.MA", "name": "Incident Management" },
+        { "code": "RS.AN", "name": "Incident Analysis" },
+        { "code": "RS.CO", "name": "Incident Response Reporting and Communication" },
+        { "code": "RS.MI", "name": "Incident Mitigation" }
+      ],
+      "hub": [
+        { "label": "Already happened? What to do now", "href": "./reference.html#what-now" }
+      ]
+    },
+    {
+      "framework": "csf", "num": "RC", "name": "Recover",
+      "plain": "Restore systems and data after an incident, confirm they are clean and working, and keep people informed while you recover.",
+      "evidence": "Recovery plans with targets (RTO, RPO), backup restore tests, and post-incident review notes.",
+      "tags": ["backup", "restore", "recovery", "rto", "rpo", "business continuity"],
+      "categories": [
+        { "code": "RC.RP", "name": "Incident Recovery Plan Execution" },
+        { "code": "RC.CO", "name": "Incident Recovery Communication" }
+      ],
+      "hub": []
+    },
+    {
+      "framework": "cis", "num": "1", "name": "Inventory and Control of Enterprise Assets",
+      "plain": "Keep an accurate list of every device that connects to your network, including cloud, remote and IoT devices, and deal with unknown ones.",
+      "evidence": "An asset inventory with owners, and a process or scan that finds devices not on it and handles them.",
+      "tags": ["inventory", "asset", "devices", "discovery"],
+      "hub": [{ "label": "Read Nmap scan results (what's on the network)", "href": "./analyze.html#nmap" }]
+    },
+    {
+      "framework": "cis", "num": "2", "name": "Inventory and Control of Software Assets",
+      "plain": "Know which software is installed and allowed, keep it supported by its vendor, and stop unapproved software from running.",
+      "evidence": "A software inventory, an allowlist or approval process, and a list of unsupported software with plans for it.",
+      "tags": ["inventory", "software", "allowlist", "end of life", "unsupported"],
+      "hub": [{ "label": "Exploited in my products (CISA KEV)", "href": "./cves.html#kev" }]
+    },
+    {
+      "framework": "cis", "num": "3", "name": "Data Protection",
+      "plain": "Know where sensitive data is, who can reach it and how long you keep it; protect it with encryption and dispose of it safely.",
+      "evidence": "A data inventory and classification scheme, retention rules, and encryption at rest and in transit.",
+      "tags": ["data", "encryption", "classification", "retention", "tls", "privacy"],
+      "hub": [{ "label": "Certificate viewer (encryption in transit)", "href": "./analyze.html#cert" }]
+    },
+    {
+      "framework": "cis", "num": "4", "name": "Secure Configuration of Enterprise Assets and Software",
+      "plain": "Build devices, servers and software from a hardened standard and keep them that way: change defaults, close unneeded services and ports.",
+      "evidence": "Documented configuration baselines, firewall rules, and reports showing systems match them.",
+      "tags": ["hardening", "configuration", "baseline", "firewall", "ports", "default passwords"],
+      "hub": [{ "label": "Ports and protocols (which to keep off the internet)", "href": "./reference.html#ports" }]
+    },
+    {
+      "framework": "cis", "num": "5", "name": "Account Management",
+      "plain": "Manage user, admin and service accounts from creation to removal: keep a list, use unique passwords, and disable accounts nobody needs.",
+      "evidence": "An account inventory, records of disabling leavers' accounts, and a password policy.",
+      "tags": ["accounts", "password", "users", "admin", "dormant", "leavers"],
+      "hub": [
+        { "label": "Check a password against known breaches", "href": "./lookup.html#password" },
+        { "label": "Windows event IDs (4720 account created)", "href": "./reference.html#events" }
+      ]
+    },
+    {
+      "framework": "cis", "num": "6", "name": "Access Control Management",
+      "plain": "Grant and remove access through a process, give people only what they need, and require MFA for remote, admin and external apps.",
+      "evidence": "Access request and removal records, role-based access, and MFA settings for remote and admin access.",
+      "tags": ["access control", "mfa", "least privilege", "password", "authentication", "rbac"],
+      "hub": [{ "label": "Check a password against known breaches", "href": "./lookup.html#password" }]
+    },
+    {
+      "framework": "cis", "num": "7", "name": "Continuous Vulnerability Management",
+      "plain": "Scan for vulnerabilities on a schedule and fix them in order of risk, with automatic patching where you can.",
+      "evidence": "Scan reports, a remediation process with deadlines, and patch reports showing fixes were applied.",
+      "tags": ["patch", "patching", "vulnerability", "vulnerabilities", "cve", "scanning", "remediation"],
+      "hub": [
+        { "label": "Patch priority list", "href": "./cves.html#priority" },
+        { "label": "Exploited in my products (CISA KEV)", "href": "./cves.html#kev" }
+      ]
+    },
+    {
+      "framework": "cis", "num": "8", "name": "Audit Log Management",
+      "plain": "Collect, keep and review audit logs so you can spot attacks and investigate what happened afterwards.",
+      "evidence": "A log management process, central log collection, time sync, retention settings and records of log reviews.",
+      "tags": ["logging", "logs", "audit", "siem", "retention"],
+      "hub": [
+        { "label": "Windows event IDs", "href": "./reference.html#events" },
+        { "label": "IOC extractor and log mode", "href": "./analyze.html#ioc" }
+      ]
+    },
+    {
+      "framework": "cis", "num": "9", "name": "Email and Web Browser Protections",
+      "plain": "Defend against threats that arrive by email and web browsing: supported browsers and mail clients, DNS and URL filtering, and anti-spoofing such as DMARC.",
+      "evidence": "Browser and email client versions, filtering settings, and the domain's SPF, DKIM and DMARC records.",
+      "tags": ["email", "phishing", "browser", "dmarc", "spf", "dkim", "filtering", "spoofing"],
+      "hub": [
+        { "label": "Email-header analyzer", "href": "./analyze.html#headers" },
+        { "label": "Suspicious-link inspector", "href": "./analyze.html#link" }
+      ]
+    },
+    {
+      "framework": "cis", "num": "10", "name": "Malware Defenses",
+      "plain": "Stop malicious software from installing or running, with anti-malware that updates itself and covers every device.",
+      "evidence": "Anti-malware on all devices, automatic signature updates, and settings for removable media.",
+      "tags": ["malware", "antivirus", "anti-malware", "ransomware", "edr"],
+      "hub": [{ "label": "File analyzer (hash a file, nothing uploaded)", "href": "./analyze.html#file" }]
+    },
+    {
+      "framework": "cis", "num": "11", "name": "Data Recovery",
+      "plain": "Back up data automatically, protect the backups (including an isolated copy), and test that you can restore from them.",
+      "evidence": "A backup schedule, an isolated or offline copy, and records of restore tests.",
+      "tags": ["backup", "restore", "recovery", "ransomware"],
+      "hub": []
+    },
+    {
+      "framework": "cis", "num": "12", "name": "Network Infrastructure Management",
+      "plain": "Keep routers, switches, firewalls and other network devices updated, securely configured and documented, with admin access kept separate.",
+      "evidence": "Network diagrams, device firmware versions, and secure management settings.",
+      "tags": ["network", "router", "switch", "firewall", "firmware", "architecture"],
+      "hub": [{ "label": "Subnet calculator", "href": "./analyze.html#subnet" }]
+    },
+    {
+      "framework": "cis", "num": "13", "name": "Network Monitoring and Defense",
+      "plain": "Watch the network and defend it: alert on suspicious traffic, segment and filter it, and control remote access.",
+      "evidence": "Network intrusion detection alerts, segmentation rules, and flow or traffic logs.",
+      "tags": ["monitoring", "ids", "ips", "segmentation", "traffic", "logging", "remote access"],
+      "hub": [{ "label": "IOC extractor and log mode", "href": "./analyze.html#ioc" }]
+    },
+    {
+      "framework": "cis", "num": "14", "name": "Security Awareness and Skills Training",
+      "plain": "Train staff to spot phishing and social engineering, handle data safely and report incidents, and keep the training current.",
+      "evidence": "A training programme, completion records, and phishing awareness material.",
+      "tags": ["training", "awareness", "phishing", "social engineering"],
+      "hub": [{ "label": "Is this message a scam?", "href": "./analyze.html#message" }]
+    },
+    {
+      "framework": "cis", "num": "15", "name": "Service Provider Management",
+      "plain": "Keep a list of service providers, rate how sensitive their access is, and require and check security in their contracts.",
+      "evidence": "A provider inventory, risk ratings, security clauses in contracts, and vendor assessments.",
+      "tags": ["vendor", "supplier", "third party", "supply chain", "contracts", "questionnaire"],
+      "hub": []
+    },
+    {
+      "framework": "cis", "num": "16", "name": "Application Software Security",
+      "plain": "Build and buy software securely: secure coding, tracking third-party components, fixing flaws, and testing before release.",
+      "evidence": "A secure development process, a component inventory, and code review or security testing records.",
+      "tags": ["application", "development", "secure coding", "sbom", "components", "appsec"],
+      "hub": [{ "label": "Search CVEs by product", "href": "./cves.html" }]
+    },
+    {
+      "framework": "cis", "num": "17", "name": "Incident Response Management",
+      "plain": "Be ready to handle incidents: a written plan, named roles and contacts, a way for staff to report, and practice exercises.",
+      "evidence": "An incident response plan, a contact list, and records of exercises and post-incident reviews.",
+      "tags": ["incident", "incident response", "reporting", "tabletop", "breach"],
+      "hub": [{ "label": "Already happened? What to do now", "href": "./reference.html#what-now" }]
+    },
+    {
+      "framework": "cis", "num": "18", "name": "Penetration Testing",
+      "plain": "Test your defences by simulating real attacks with permission, then fix what the test finds.",
+      "evidence": "A penetration testing programme, test reports and remediation records.",
+      "tags": ["penetration testing", "pentest", "red team", "testing"],
+      "hub": [{ "label": "Read Nmap scan results", "href": "./analyze.html#nmap" }]
+    }
+  ]
+}
