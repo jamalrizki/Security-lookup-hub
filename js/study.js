@@ -1,9 +1,11 @@
 // Study page: practice questions by exam (data/study.json), plus the ports and
-// acronyms quizzes, which use the same lists as the Reference page's lookups.
+// acronyms quizzes, which use the same lists as the Reference page's lookups,
+// and the CVSS quiz, whose questions and scores are built in code (js/cvss-drill.js).
 // Everything is graded in code and shown as text; nothing is saved or sent.
 
 import { startPortsDrill } from './ports-drill.js';
 import { startAcronymsDrill } from './acronyms-drill.js';
+import { buildQuestions as buildCvssQuestions } from './cvss-drill.js';
 
 export const OPTIONS = 4;
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -170,12 +172,26 @@ if (globalThis.document?.getElementById('study-exams')) {
   };
 
   const openFromHash = () => {
-    const target = /^#(exam-[a-z-]+|ports-practice|acronyms-practice)$/.test(location.hash) ? $(location.hash.slice(1)) : null;
+    const target = /^#(exam-[a-z-]+|ports-practice|acronyms-practice|cvss-practice)$/.test(location.hash) ? $(location.hash.slice(1)) : null;
     if (!target) return;
     target.setAttribute('open', '');
     target.ensureLoaded?.();
     target.scrollIntoView();
   };
+
+  // The CVSS quiz: built in code the first time its panel opens, then shown like an exam.
+  const cvss = $('cvss-practice');
+  if (cvss) {
+    let built = false;
+    cvss.ensureLoaded = () => {
+      if (built) return;
+      built = true;
+      $('cvss-holder').replaceChildren(...examBody({}, buildCvssQuestions()).filter(Boolean));
+    };
+    cvss.addEventListener('toggle', () => {
+      if (cvss.hasAttribute('open')) cvss.ensureLoaded();
+    });
+  }
 
   const load = async (file) => {
     const res = await fetch(file);
