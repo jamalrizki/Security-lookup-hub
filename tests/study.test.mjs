@@ -108,7 +108,7 @@ test('page: one closed panel per exam with its count; no question file loads unt
   const { requests, $, doc } = await loadPage();
   assert.deepEqual(requests.sort(), ['data/acronyms.json', 'data/ports.json', 'data/study.json']);
   const panels = doc.querySelectorAll('details.exam');
-  assert.deepEqual(panels.map((p) => p.id), [...DATA.exams.map((e) => `exam-${e.id}`), 'ports-practice', 'acronyms-practice']);
+  assert.deepEqual(panels.map((p) => p.id), [...DATA.exams.map((e) => `exam-${e.id}`), 'ports-practice', 'acronyms-practice', 'cvss-practice']);
   assert.ok(panels.every((p) => !p.hasAttribute('open')), 'closed until picked');
   assert.equal(panels[0].querySelector('summary').textContent, `Security+${FIRST.length} questions`);
   assert.equal(panels[0].querySelectorAll('li.qa-card').length, 0, 'nothing rendered before opening');
@@ -241,7 +241,7 @@ test('study.html: in the nav, same-origin only, no storage; Reference forwards t
   const js = read('js/study.js');
   assert.ok(!/innerHTML|localStorage|sessionStorage/.test(js));
   assert.match(read('js/reference.js'), /location\.hash === '#ports-practice' \|\| location\.hash === '#acronyms-practice'\) location\.replace\(`\.\/study\.html\$\{location\.hash\}`\)/);
-  for (const id of ['exams', 'quizzes', 'ports-practice', 'acronyms-practice']) assert.ok(html.includes(`id="${id}"`), id);
+  for (const id of ['exams', 'quizzes', 'ports-practice', 'acronyms-practice', 'cvss-practice']) assert.ok(html.includes(`id="${id}"`), id);
 });
 
 test('validTask rejects wrong shapes', () => {
