@@ -1,9 +1,12 @@
 // Study page: practice questions by exam (data/study.json), plus the ports and
 // acronyms quizzes, which use the same lists as the Reference page's lookups.
 // Everything is graded in code and shown as text; nothing is saved or sent.
+// After a pick, "Ask why" opens Ask with the question filled in (a #ask= fill
+// link: Ask puts it in the box and sends nothing until the visitor presses Send).
 
 import { startPortsDrill } from './ports-drill.js';
 import { startAcronymsDrill } from './acronyms-drill.js';
+import { askHref, MAX_QUESTION } from './ask.js';
 
 export const OPTIONS = 4;
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -43,6 +46,42 @@ export function checkPick(q, index) {
   return { correct, text: `${correct ? 'Correct.' : `Not quite. The answer is ${LETTERS[q.answer]}.`} ${q.why}` };
 }
 
+const clip = (s, n) => (s.length <= n ? s : `${s.slice(0, Math.max(0, n - 1)).trimEnd()}…`);
+
+/**
+ * The text "Ask why" puts in Ask's box after a pick: the visible question, its
+ * four options, the pick and the answer key, built here (never by a model) and
+ * capped at Ask's MAX_QUESTION by shortening the options first, then the
+ * question. Null for an invalid question or pick.
+ */
+export function askWhyText(q, pick, examName = '') {
+  if (!checkPick(q, pick)) return null;
+  const exam = clip(String(examName || '').trim(), 40);
+  const X = LETTERS[pick];
+  const Y = LETTERS[q.answer];
+  const tail = pick === q.answer
+    ? `I picked ${Y}, which is right. Explain why ${Y} is right and the others are wrong.`
+    : `I picked ${X}; the answer is ${Y}. Why is ${Y} right and ${X} wrong?`;
+  const build = (question, options) => [
+    `${exam ? `${exam} practice` : 'Practice'} question: ${question}`,
+    ...options.map((o, i) => `${LETTERS[i]}. ${o}`),
+    tail,
+  ].join('\n');
+  const question = q.q.trim();
+  let options = q.options.map((o) => o.trim());
+  let text = build(question, options);
+  if (text.length > MAX_QUESTION) {
+    const room = MAX_QUESTION - build(question, ['', '', '', '']).length;
+    const each = Math.max(40, Math.floor(room / OPTIONS));
+    options = options.map((o) => clip(o, each));
+    text = build(question, options);
+  }
+  if (text.length > MAX_QUESTION) {
+    text = build(clip(question, question.length - (text.length - MAX_QUESTION)), options);
+  }
+  return text;
+}
+
 // ---------- Page wiring ----------
 
 if (globalThis.document?.getElementById('study-exams')) {
@@ -59,14 +98,21 @@ if (globalThis.document?.getElementById('study-exams')) {
 
   // One card: the question, four options to click, then the answer and why.
   // `picked` is an earlier pick of this question (from another page visit), shown locked.
-  const card = (q, picked, onFirstPick) => {
+  const card = (q, picked, onFirstPick, examName) => {
     const result = el('p', { class: 'qa-result', 'aria-live': 'polite' });
+    const askLink = el('a', { class: 'button secondary small' }, 'Ask why →');
+    const ask = el('p', { class: 'qa-ask', hidden: '' }, askLink);
     const lock = (i) => {
       const r = checkPick(q, i);
       for (const other of buttons) other.disabled = true;
       buttons[q.answer].textContent = `✔ ${LETTERS[q.answer]}. ${q.options[q.answer]}`;
       result.textContent = r.text;
       result.className = `qa-result verdict ${r.correct ? 'ok' : 'warn'}`;
+      const text = askWhyText(q, i, examName);
+      if (text) {
+        askLink.setAttribute('href', askHref(text));
+        ask.hidden = false;
+      }
       return r;
     };
     const buttons = q.options.map((text, i) => {
@@ -78,7 +124,7 @@ if (globalThis.document?.getElementById('study-exams')) {
       return b;
     });
     if (picked !== undefined) lock(picked);
-    return el('li', { class: 'qa-card' }, el('p', { class: 'qa-q' }, q.q), el('div', { class: 'qa-options' }, ...buttons), result);
+    return el('li', { class: 'qa-card' }, el('p', { class: 'qa-q' }, q.q), el('div', { class: 'qa-options' }, ...buttons), result, ask);
   };
 
   // A hands-on task: the answer stays hidden until asked for, since it can't be graded here.
@@ -122,7 +168,7 @@ if (globalThis.document?.getElementById('study-exams')) {
         picks.set(i, pick);
         if (correct) right += 1;
         showScore();
-      }))));
+      }, exam.name))));
       range.textContent = all.length ? `${tasks ? 'Tasks' : 'Questions'} ${from + 1}–${from + shown.length} of ${all.length}` : '';
       prev.disabled = page === 0;
       next.disabled = page >= pages() - 1;
