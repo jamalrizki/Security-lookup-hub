@@ -2,7 +2,8 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { validQuestion, validTask, checkPick, shuffled, OPTIONS, PAGE } from '../js/study.js';
+import { validQuestion, validTask, checkPick, shuffled, askWhyText, OPTIONS, PAGE } from '../js/study.js';
+import { readAskFragment, MAX_QUESTION } from '../js/ask.js';
 import { installDom, settle } from './helpers/dom.mjs';
 
 const root = new URL('../', import.meta.url);
@@ -68,6 +69,40 @@ test('shuffled keeps every item once and leaves the input alone', () => {
   assert.deepEqual(out.slice().sort((a, b) => a - b), list);
   assert.notDeepEqual(shuffled(list, () => 0), list);
   assert.equal(PAGE, 10);
+});
+
+test('askWhyText: the question, its options, the pick and the key, built in code', () => {
+  const q = { q: 'Which port does SSH use?', options: ['21', '22', '23', '25'], answer: 1, why: 'SSH listens on TCP 22.' };
+  assert.equal(askWhyText(q, 2, 'Network+'), [
+    'Network+ practice question: Which port does SSH use?', 'A. 21', 'B. 22', 'C. 23', 'D. 25',
+    'I picked C; the answer is B. Why is B right and C wrong?',
+  ].join('\n'));
+  assert.equal(askWhyText(q, 1, 'Network+').split('\n').at(-1), 'I picked B, which is right. Explain why B is right and the others are wrong.');
+  assert.ok(askWhyText(q, 0).startsWith('Practice question: '), 'no exam name (a built-in quiz)');
+  assert.ok(!askWhyText(q, 0, 'Network+').includes(q.why), 'the reason is not sent along');
+  for (const bad of [-1, 4, 1.5, '1', null, undefined]) assert.equal(askWhyText(q, bad, 'Network+'), null, String(bad));
+  assert.equal(askWhyText({ q: 'broken' }, 0, 'Network+'), null);
+});
+
+test('askWhyText: capped at Ask’s limit, options shortened before the question', () => {
+  const long = (c, n) => `${c} `.repeat(n).trim();
+  const q = { q: `Scenario: ${long('q', 200)}?`, options: [long('a', 200), long('b', 200), long('c', 200), long('d', 200)], answer: 3, why: 'Because.' };
+  const text = askWhyText(q, 0, 'Security+');
+  assert.ok(text.length <= MAX_QUESTION, String(text.length));
+  assert.ok(text.includes(q.q), 'the question stays whole while shortening the options is enough');
+  assert.ok(text.endsWith('I picked A; the answer is D. Why is D right and A wrong?'));
+  assert.match(text, /\nA\. a a .*…\nB\./);
+  const huge = { ...q, q: `Scenario: ${long('q', 900)}?` };
+  const t2 = askWhyText(huge, 0, 'Security+');
+  assert.ok(t2.length <= MAX_QUESTION, String(t2.length));
+  assert.ok(t2.endsWith('Why is D right and A wrong?') && /\nD\. d d/.test(t2), 'options and the pick survive');
+  for (const exam of DATA.exams.filter((e) => e.format !== 'tasks')) {
+    for (const item of bank(exam)) for (const pick of [item.answer, (item.answer + 1) % OPTIONS]) {
+      const t = askWhyText(item, pick, exam.name);
+      assert.ok(t && t.length <= MAX_QUESTION, `${exam.id}: ${item.q}`);
+      assert.equal(readAskFragment(`#ask=${encodeURIComponent(t)}`), t, 'round-trips through Ask’s fill link');
+    }
+  }
 });
 
 // ---------- The page ----------
@@ -146,6 +181,26 @@ test('page: clicking an answer grades it, marks the right one, locks the card an
   second.querySelectorAll('.qa-options button')[q2.answer].click();
   assert.ok(second.querySelector('.qa-result').textContent.startsWith('Correct. '));
   assert.match(score(), /^1 of 2 correct so far/);
+});
+
+test('page: after a pick, "Ask why" links to Ask with the question filled in; nothing is sent', async () => {
+  const { doc, requests } = await loadPage();
+  const panel = await openExam(doc, 'security-plus');
+  const [first, second] = panel.querySelectorAll('li.qa-card');
+  const q1 = FIRST[0];
+  assert.ok(first.querySelector('.qa-ask').hidden, 'hidden until a pick');
+  const wrongIndex = (q1.answer + 1) % OPTIONS;
+  first.querySelectorAll('.qa-options button')[wrongIndex].click();
+  const ask = first.querySelector('.qa-ask');
+  assert.equal(ask.hidden, false);
+  const a = ask.querySelector('a');
+  assert.equal(a.textContent, 'Ask why →');
+  const href = a.getAttribute('href');
+  assert.ok(href.startsWith('./#ask='), href);
+  assert.equal(readAskFragment(href.slice(2)), askWhyText(q1, wrongIndex, 'Security+'));
+  assert.ok(readAskFragment(href.slice(2)).startsWith(`Security+ practice question: ${q1.q.trim()}`));
+  assert.ok(second.querySelector('.qa-ask').hidden, 'other cards untouched');
+  assert.ok(!requests.some((r) => /^https?:/.test(r)), 'no request leaves the page');
 });
 
 test('page: Next and Previous page through the bank; an answered card stays locked when it comes back', async () => {
@@ -268,4 +323,5 @@ test('page: the RHCSA panel shows tasks with hidden answers, revealed on request
   assert.ok(answer.textContent.includes(tasks[0].steps[0]));
   assert.ok(answer.textContent.includes(`Check: ${tasks[0].check}`));
   assert.equal(show.textContent, 'Hide answer');
+  assert.equal(card.querySelector('.qa-ask'), null, 'no "Ask why" on hands-on tasks');
 });
