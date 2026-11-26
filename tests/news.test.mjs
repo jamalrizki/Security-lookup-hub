@@ -35,6 +35,24 @@ test('RSS: entities decoded, hostile markup stripped, no excerpts for news outle
   assert.equal(items[0].date, '2026-10-15T20:25:04.000Z', 'timezone offset applied');
 });
 
+test('NCSC (UK): an Official advisories source with short summaries, links only on ncsc.gov.uk', () => {
+  const ncsc = feed('ncsc');
+  assert.equal(ncsc.filter, 'advisories');
+  assert.equal(ncsc.summary, true, 'a government source, so summaries are allowed');
+  assert.deepEqual(ncsc.urls, ['https://www.ncsc.gov.uk/api/1/services/v1/news-rss-feed.xml']);
+  const items = parseFeed(fixture('rss-ncsc.xml'), ncsc);
+  assert.equal(items.length, 2, 'look-alike host and http items are dropped');
+  assert.equal(items[0].title, 'NCSC urges organisations to patch Example VPN flaw & check for compromise');
+  assert.equal(items[0].link, 'https://www.ncsc.gov.uk/news/example-vpn-flaw');
+  assert.equal(items[0].date, '2026-11-24T10:30:00.000Z');
+  assert.equal(items[0].source, 'ncsc');
+  assert.equal(items[0].filter, 'advisories');
+  assert.match(items[0].summary, /^The NCSC is aware of active exploitation of a vulnerability in Example VPN/);
+  assert.ok(items[0].summary.length <= 240 && !/[<>]/.test(items[0].summary));
+  assert.equal(items[1].date, '2026-11-23T09:00:00.000Z');
+  assert.equal(items[1].summary, 'Practical steps for small businesses to recognise and report suspicious emails.');
+});
+
 test('Atom: alternate link, published date, summary', () => {
   const items = parseFeed(fixture('atom.xml'), NCSC);
   assert.equal(items.length, 2);
@@ -106,18 +124,21 @@ class FakeKV {
 
 const KEV_JSON = JSON.stringify({ vulnerabilities: [{ cveID: 'CVE-2021-44228', vendorProject: 'Apache', product: 'Log4j2', vulnerabilityName: 'Log4j2 RCE', dateAdded: '2021-12-10', knownRansomwareCampaignUse: 'Known' }] });
 
-test('refresh writes one KV key with all three sources', async () => {
+test('refresh writes one KV key with all four sources', async () => {
   mockFetch([
     ['known_exploited', { text: KEV_JSON }],
     ['cisa.gov/cybersecurity-advisories', { text: fixture('rss-cisa.xml') }],
     ['feedburner.com/TheHackersNews', { text: fixture('rss-news.xml') }],
+    ['ncsc.gov.uk/api/1/services/v1/news-rss-feed.xml', { text: fixture('rss-ncsc.xml') }],
   ]);
   const kv = new FakeKV();
   const v = await refreshNews(kv, undefined, new Date('2026-10-15T12:17:00Z'));
   assert.equal(kv.puts, 1);
   assert.ok(kv.store.has(NEWS_KEY));
-  assert.deepEqual(Object.keys(v.sources).sort(), ['cisa', 'kev', 'thehackernews']);
+  assert.deepEqual(Object.keys(v.sources).sort(), ['cisa', 'kev', 'ncsc', 'thehackernews']);
   for (const s of Object.values(v.sources)) assert.equal(s.ok, true);
+  assert.equal(v.sources.ncsc.name, 'NCSC (UK)');
+  assert.equal(v.sources.ncsc.items.length, 2);
   assert.equal(v.sources.kev.items[0].cve, 'CVE-2021-44228');
 });
 
@@ -126,6 +147,7 @@ test('a failing, HTML or empty feed keeps the previous items and is marked stale
     ['known_exploited', { text: KEV_JSON }],
     ['cisa.gov/cybersecurity-advisories', { text: fixture('rss-cisa.xml') }],
     ['feedburner.com/TheHackersNews', { text: fixture('rss-news.xml') }],
+    ['ncsc.gov.uk', { text: fixture('rss-ncsc.xml') }],
   ]);
   const kv = new FakeKV();
   await refreshNews(kv, undefined, new Date('2026-10-15T12:00:00Z'));
@@ -134,9 +156,10 @@ test('a failing, HTML or empty feed keeps the previous items and is marked stale
     ['known_exploited', { status: 403, text: 'Forbidden' }],
     ['cisa.gov/cybersecurity-advisories', { text: fixture('html-challenge.html') }],
     ['feedburner.com/TheHackersNews', { text: '<rss><channel></channel></rss>' }],
+    ['ncsc.gov.uk', { status: 403, text: 'Forbidden' }],
   ]);
   const v = await refreshNews(kv, undefined, new Date('2026-10-15T13:00:00Z'));
-  for (const id of ['kev', 'cisa', 'thehackernews']) {
+  for (const id of ['kev', 'cisa', 'thehackernews', 'ncsc']) {
     assert.equal(v.sources[id].ok, false, id);
     assert.ok(v.sources[id].items.length > 0, `${id} kept its items`);
     assert.equal(v.sources[id].fetchedAt, '2026-10-15T12:00:00.000Z', `${id} keeps the last good time`);
@@ -148,8 +171,9 @@ test('a failing, HTML or empty feed keeps the previous items and is marked stale
 test('each cron run refreshes one source; other minutes refresh all', async () => {
   assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:17:00Z')), ['kev']);
   assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:37:00Z')), ['cisa']);
+  assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:47:00Z')), ['ncsc']);
   assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:57:00Z')), ['thehackernews']);
-  assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:03:00Z')), ['kev', 'cisa', 'thehackernews']);
+  assert.deepEqual(sourcesForRun(Date.parse('2026-10-15T12:03:00Z')), ['kev', 'cisa', 'thehackernews', 'ncsc']);
 
   const calls = mockFetch([['feedburner.com/TheHackersNews', { text: fixture('rss-news.xml') }]]);
   const kv = new FakeKV();
@@ -198,4 +222,16 @@ test('cutAtLastItem keeps only complete items', () => {
   assert.equal(cutAtLastItem('<rss><item>only part'), '');
   assert.equal(cutAtLastItem('<rss><item>a</item><item>b</ite'), '<rss><item>a</item>', 'cut inside a closing tag');
   assert.equal(cutAtLastItem('<rss><item>a</item><item>b</item'), '<rss><item>a</item>', 'cut just before the closing ">"');
+});
+
+test('the cron in wrangler.toml fires at every CRON_MINUTES minute plus the network lists\' :07, in one trigger', async () => {
+  const { CRON_MINUTES } = await import('../worker/src/news.js');
+  const { RANGES_MINUTE } = await import('../worker/src/ranges.js');
+  const toml = readFileSync(new URL('../worker/wrangler.toml', import.meta.url), 'utf8');
+  const crons = JSON.parse(/^crons\s*=\s*(\[.*\])\s*$/m.exec(toml)[1]);
+  assert.equal(crons.length, 1, 'one of the 5 triggers the Free plan allows');
+  const minutes = crons[0].split(' ')[0].split(',').map(Number).sort((a, b) => a - b);
+  assert.deepEqual(minutes, [RANGES_MINUTE, ...Object.keys(CRON_MINUTES).map(Number)].sort((a, b) => a - b));
+  for (const id of Object.values(CRON_MINUTES)) assert.ok(FEEDS.some((f) => f.id === id), id);
+  assert.equal(new Set(Object.values(CRON_MINUTES)).size, FEEDS.length, 'every feed has its own minute');
 });

@@ -637,8 +637,9 @@ test('news relevance: generic security words never make a headline relevant; a p
     news('Critical Security Update: Patch This Flaw Now', 2),
     news('Siemens SIMATIC S7 Webserver API', 3),
     news(`PHP2Shell flaws ${PHP_CVE} under attack`, 4),
+    news('UK NCSC Warns of Exploitation', 5),
   ];
-  const answer = `${PHP_CVE} isn't in CISA's Known Exploited Vulnerabilities catalog. It is a critical security flaw; patch the update. Siemens RUGGEDCOM is affected.`;
+  const answer = `${PHP_CVE} isn't in CISA's Known Exploited Vulnerabilities catalog, and the UK NCSC has no notice for it. It is a critical security flaw; patch the update. Siemens RUGGEDCOM is affected.`;
   assert.deepEqual(numberSources(list, `Is Contoso FacilityHub affected? ${answer}`).map((s) => s.title), ['Siemens SIMATIC S7 Webserver API', `PHP2Shell flaws ${PHP_CVE} under attack`]);
 });
 
