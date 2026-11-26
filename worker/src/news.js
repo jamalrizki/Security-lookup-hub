@@ -27,12 +27,15 @@ export const FEEDS = [
   // with 403, so it never updated. The Hacker News feed (advertised on thehackernews.com)
   // answers Workers normally.
   { id: 'thehackernews', name: 'The Hacker News', filter: 'news', kind: 'rss', urls: ['https://feeds.feedburner.com/TheHackersNews'], hosts: ['thehackernews.com'] },
+  // UK NCSC's news feed (alerts and announcements), listed on ncsc.gov.uk/information/rss-feeds.
+  // A government source, so short summaries are kept, as for CISA.
+  { id: 'ncsc', name: 'NCSC (UK)', filter: 'advisories', kind: 'rss', urls: ['https://www.ncsc.gov.uk/api/1/services/v1/news-rss-feed.xml'], hosts: ['ncsc.gov.uk'], summary: true },
 ];
 
-// The cron runs at :17, :37 and :57; each run refreshes one source so a run
+// The cron runs at :17, :37, :47 and :57; each run refreshes one source so a run
 // stays inside the Free plan's 10 ms CPU budget. Any other minute (a manual
 // trigger) refreshes them all.
-export const CRON_MINUTES = { 17: 'kev', 37: 'cisa', 57: 'thehackernews' };
+export const CRON_MINUTES = { 17: 'kev', 37: 'cisa', 47: 'ncsc', 57: 'thehackernews' };
 
 // ---------- Text helpers ----------
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Shaped like NCSC's news feed (https://www.ncsc.gov.uk/api/1/services/v1/news-rss-feed.xml); invented items. -->
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>NCSC News</title>
+    <link>https://www.ncsc.gov.uk</link>
+    <description>News from the National Cyber Security Centre</description>
+    <item>
+      <title><![CDATA[NCSC urges organisations to patch Example VPN flaw &amp; check for compromise]]></title>
+      <link>https://www.ncsc.gov.uk/news/example-vpn-flaw</link>
+      <description><![CDATA[<p>The NCSC is aware of <strong>active exploitation</strong> of a vulnerability in Example VPN appliances and urges organisations to apply the vendor's update and follow the mitigation advice.</p>]]></description>
+      <pubDate>Tue, 24 Nov 2026 10:30:00 GMT</pubDate>
+      <guid isPermaLink="false">ncsc-news-1</guid>
+    </item>
+    <item>
+      <title>New guidance helps small businesses spot scam emails</title>
+      <link>https://www.ncsc.gov.uk/news/small-business-scam-guidance</link>
+      <description>Practical steps for small businesses to recognise and report suspicious emails.</description>
+      <pubDate>Mon, 23 Nov 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Off-domain item that must be dropped</title>
+      <link>https://ncsc.gov.uk.example.com/news/fake</link>
+      <pubDate>Mon, 23 Nov 2026 08:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Plain http item that must be dropped</title>
+      <link>http://www.ncsc.gov.uk/news/insecure</link>
+      <pubDate>Sun, 22 Nov 2026 08:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>
